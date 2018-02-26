@@ -1,0 +1,26 @@
+page-history {
+    ion-card-content {
+        
+        h2 {
+            padding-top: 5px;
+        }
+
+        p {
+            font-size: 12px !important;
+        }
+
+        .isOffer {
+            text-decoration: line-through;
+            color: gray;
+        }
+    }
+
+    .no-transaction {
+        padding-top: 15%;
+
+        .message {
+            font-weight: bold;
+            margin-top: -8px;
+        }
+    }
+}

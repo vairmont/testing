@@ -1,0 +1,53 @@
+<ion-header>
+
+  <ion-navbar color="primary">
+    <ion-title>Konfirmasi Order</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+<ion-content>
+
+  <ion-card>
+    <ion-list>
+
+        <ion-item *ngFor="let cart of carts">
+            <ion-thumbnail item-start>
+                <img src="{{baseImgUrl}}/{{cart.img_url}}">
+            </ion-thumbnail>
+            <h2>{{cart.product_name}}</h2>
+            <div text-left class="price">  
+                {{ cart.category_name }} <br>          
+                Rp {{cart.formatted_price}} x {{cart.qty}}
+            </div>     
+        </ion-item>
+
+    </ion-list>
+  </ion-card>
+
+  <ion-card padding text-wrap>
+    <h2><strong>Detail Pembeli</strong></h2> <br>
+    <p>{{ user?.name }}</p>
+    <p>{{ user?.phone }}</p>
+    <p>{{ user?.email }}</p>
+    <p>{{ user?.address_1 }}</p>
+    <p>{{ user?.address_2 }}</p>
+  </ion-card>
+
+  <ion-card padding text-right>
+    <p><strong>Voucher Code:</strong> {{ voucherCode }}</p>
+    <p><strong>Discount:</strong> {{ discount | number }}% for {{ discountCategory }}</p> 
+  </ion-card>
+
+  <ion-card padding text-right>
+    <p><strong>Subtotal:</strong> Rp {{ subtotal | number }}</p>
+    <p><strong>Discount Value:</strong> Rp {{ discountVal | number }}</p> 
+    <hr>
+    <p><strong>Total:</strong> Rp {{ total | number }}</p>
+  </ion-card>
+
+</ion-content>
+
+<ion-footer no-border padding>
+  <button ion-button round block (click)="order()">Pesan</button>
+</ion-footer>

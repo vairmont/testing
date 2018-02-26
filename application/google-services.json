@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "665446333063",
+    "firebase_url": "https://brother-indonesi-1511768432238.firebaseio.com",
+    "project_id": "brother-indonesi-1511768432238",
+    "storage_bucket": "brother-indonesi-1511768432238.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:665446333063:android:22f352b4d76038cd",
+        "android_client_info": {
+          "package_name": "com.brother.ishop"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "665446333063-a56qhldd4peh0pv8g9pub9jo31i90rnt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAkaHzEEJJyOn42yRjRn3HflG20E-8_ZIs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

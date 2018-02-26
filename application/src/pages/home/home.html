@@ -1,0 +1,57 @@
+<ion-header>
+    <page-navbar-with-cart></page-navbar-with-cart>
+</ion-header>
+
+<ion-content>
+
+  <ion-searchbar (click)="doProducts('all')"></ion-searchbar>
+
+  <ion-slides pager>
+
+    <ion-slide *ngFor="let item of news">
+      <img src="{{imgBaseUrl}}/{{item.image}}">
+    </ion-slide>
+
+  </ion-slides>
+
+  <ion-grid text-center no-padding>
+
+    <ion-row>
+
+      <ion-col col-6 (click)="doProducts(1)">
+        <div><img src="assets/icon/category-big-inkjet.jpg"> <p>Printer Inkjet</p></div>
+      </ion-col>
+
+      <ion-col col-6 (click)="doProducts(2)">
+        <div><img src="assets/icon/category-big-laser.jpg"> <p>Printer Laser</p></div>
+      </ion-col>
+
+    </ion-row>
+
+    <ion-row>
+
+      <ion-col col-6 (click)="doProducts(3)">
+        <div><img src="assets/icon/category-big-labeller.jpg"> <p>Printer Label</p></div>
+      </ion-col>
+
+      <ion-col col-6 (click)="doProducts(4)">
+        <div><img src="assets/icon/category-big-scanner.jpg"> <p>Scanner</p></div>
+      </ion-col>
+
+    </ion-row>
+
+    <ion-row>
+
+      <ion-col col-6 (click)="doProducts(5)">
+        <div><img src="assets/icon/category-big-sewing-machine.jpg"> <p>Mesin Jahit</p></div>
+      </ion-col>
+
+      <ion-col col-6 (click)="doProducts(6)">
+        <div><img src="assets/icon/category-big-other.jpg"> <p>Lain-lain</p></div>
+      </ion-col>
+
+    </ion-row>
+
+  </ion-grid>
+
+  </ion-content>

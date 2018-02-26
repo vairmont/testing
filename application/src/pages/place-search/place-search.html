@@ -1,0 +1,44 @@
+<ion-header>
+
+  <ion-navbar>
+    <ion-searchbar 
+    placeholder="Cari alamat" 
+    [(ngModel)]="geocodeAddress"
+    (ionInput)="updateSearch()"
+    [autocomplete]="off"
+    [autocorrect]="off"
+    [spellcheck]="false">
+  </ion-searchbar>
+  </ion-navbar>
+
+</ion-header>
+
+<ion-content>
+
+  <agm-map [latitude]="lat" [longitude]="lng" [zoom]="16" [usePanning]='true'>
+    <agm-marker [latitude]="lat" [longitude]="lng" [markerDraggable]="true" (dragEnd)="markerMoved($event)"></agm-marker>
+  </agm-map>
+
+  <ion-list>
+
+    <ion-item-group>
+        <ion-item-divider>Lokasi saya</ion-item-divider>
+        <ion-item>{{ geocodeAddress }}</ion-item>
+    </ion-item-group>
+
+    <ion-item-group>
+        <ion-item-divider>Hasil pencarian</ion-item-divider>
+        <ion-item *ngFor="let item of autocompleteItems" (click)="selectedItem(item.description)">
+          <ion-icon name="navigate" item-start></ion-icon>
+          {{ item.description }}
+        </ion-item>
+    </ion-item-group>
+
+  </ion-list>
+
+</ion-content>
+
+<ion-footer no-border padding>
+  <button ion-button round block (click)="locateMe()"><ion-icon name="locate"></ion-icon>&nbsp;&nbsp;Lokasi Saya</button>
+  <button ion-button round block (click)="onDismiss()"><ion-icon name="checkmark"></ion-icon>&nbsp;&nbsp;Selesai</button>
+</ion-footer>

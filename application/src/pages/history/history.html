@@ -1,0 +1,187 @@
+<ion-header>
+    <page-navbar-without-cart></page-navbar-without-cart>
+</ion-header>
+
+<ion-content padding>
+    <ion-refresher (ionRefresh)="refresh($event)">
+        <ion-refresher-content></ion-refresher-content>
+    </ion-refresher>
+
+    <ion-segment [(ngModel)]="historyStatus">
+        <ion-segment-button value="new">
+            BARU
+        </ion-segment-button>
+        <ion-segment-button value="progress">
+            PROSES
+        </ion-segment-button>
+        <ion-segment-button value="cancel">
+            BATAL
+        </ion-segment-button>
+        <ion-segment-button value="finish">
+            SELESAI
+        </ion-segment-button>
+    </ion-segment>
+
+    <div [ngSwitch]="historyStatus">
+        <div *ngSwitchCase="'new'">
+          <div *ngIf="newHistories?.length > 0">
+            <ion-card *ngFor="let newHistory of newHistories; let i = index">
+                <ion-item>
+                    <ion-buttons item-end>
+                    <button ion-button clear icon-only color="danger" (click)="showConfirmCancel(newHistory.order_id, newHistory.category_id)">
+                      <ion-icon name="close"></ion-icon>
+                    </button>
+                    </ion-buttons>
+                    <h2><strong>Order #{{newHistory.order_id}}</strong></h2>
+                    <p>{{newHistory.date}}</p>
+                </ion-item>
+                <ion-card-content>
+                    <p><strong>Category: {{newHistory.category_name}}</strong></p>
+                    <p *ngFor="let item of itemsNewHistories[newHistory?.order_id][newHistory?.category_name]; let j = index">{{item.product_name}} ({{item.qty}} items) x Rp {{item.base_price | number}}</p>
+
+                    <h5 padding-top="10px"><strong>Status:</strong></h5>
+                    <p>Sedang mencari penjual</p>
+                </ion-card-content>
+            </ion-card>
+          </div>
+
+            <div *ngIf="newHistories?.length == 0" class="no-transaction" text-center>
+                <img src="assets/imgs/no_transaction.png" width="60%">
+                <p class="message">Tidak Ada Transaksi</p>
+                <button ion-button small round color="primary" (click)="addOrder()">Mari Order Produk Brother</button>
+            </div>
+        </div>
+
+      <div *ngSwitchCase="'progress'">
+        <div *ngIf="progressHistories?.length > 0">
+        <ion-card *ngFor="let progressHistory of progressHistories; let i = index">
+          <ion-item>
+            <ion-buttons item-end>
+              <button *ngIf="progressHistory.status_progress == 'offering' || progressHistory.status_progress == 'approval'" ion-button clear icon-only color="danger" (click)="showConfirmCancel(progressHistory.order_id, progressHistory.category_id)">
+                <ion-icon name="close"></ion-icon>
+              </button>
+              <button *ngIf="progressHistory.status_progress == 'approved' || progressHistory.status_progress == 'delivery order'" disabled ion-button clear icon-only color="danger">
+                <ion-icon name="close"></ion-icon>
+              </button>
+            </ion-buttons>
+            <h2><strong>Order #{{progressHistory.order_id}}</strong></h2>
+            <p>{{progressHistory.date}}</p>
+          </ion-item>
+
+          <ion-card-content>
+            <p><strong>Category: {{progressHistory.category_name}}</strong></p>
+            <p *ngFor="let item of itemsProgressHistories[progressHistory?.order_id][progressHistory?.category_name]; let j = index">
+                {{item.product_name}} ({{item.qty}} items) x 
+                <span *ngIf="progressHistory.status_progress != 'approval'">Rp {{item.base_price | number}}</span>
+                <span *ngIf="progressHistory.status_progress == 'approval'" class="isOffer" padding-right>Rp {{item.base_price | number}}</span>
+                <span *ngIf="progressHistory.status_progress == 'approval'">Rp {{item.nego_price | number}}</span>
+            </p>
+
+            <h5 padding-top="5px"><strong>Di ambil oleh:</strong></h5>
+            <p *ngIf="progressHistory.reseller_store_name != null">{{progressHistory.reseller_store_name}}</p>
+            <p *ngIf="progressHistory.dealer_store_name != null">{{progressHistory.dealer_store_name}}</p>
+            <p *ngIf="progressHistory.reseller_name != null">{{progressHistory.reseller_name}}</p>
+            <p *ngIf="progressHistory.dealer_name != null">{{progressHistory.dealer_name}}</p>
+            <p *ngIf="progressHistory.reseller_phone != null">{{progressHistory.reseller_phone}}</p>
+            <p *ngIf="progressHistory.dealer_phone != null">{{progressHistory.dealer_phone}}</p>
+            <p *ngIf="progressHistory.reseller_address1 != null">{{progressHistory.reseller_address1}}</p>
+            <p *ngIf="progressHistory.dealer_address1 != null">{{progressHistory.dealer_address1}}</p>
+            <p *ngIf="progressHistory.reseller_address2 != null">{{progressHistory.reseller_address2}}</p>
+            <p *ngIf="progressHistory.dealer_address2 != null">{{progressHistory.dealer_address2}}</p>
+
+            <h5 padding-top="10px"><strong>Status:</strong></h5>
+            <p *ngIf="progressHistory.status_progress == 'offering'">Menunggu penawaran harga dari penjual</p>
+            <p *ngIf="progressHistory.status_progress == 'approval'">Menunggu persetujuan dari pembeli</p>
+            <p *ngIf="progressHistory.status_progress == 'approved'">Sudah disetujui, menunggu penjual menyiapkan pesanan</p>
+            <p *ngIf="progressHistory.status_progress == 'delivery order'">Pesanan sedang dalam proses persiapan dan pengiriman oleh penjual</p>
+          </ion-card-content>
+
+
+          <ion-row text-center>
+            <ion-col>
+                <button *ngIf="progressHistory.status_progress == 'approval'" ion-button clear icon-only round color="dark" (click)="showConfirmDeal(progressHistory.order_id, progressHistory.category_id)">
+                    <ion-icon name="checkmark"></ion-icon>
+                </button>
+                <button *ngIf="progressHistory.status_progress != 'approval'" ion-button clear icon-only round color="dark" disabled>
+                    <ion-icon name="checkmark"></ion-icon>
+                </button>
+            </ion-col>
+
+            <ion-col>
+              <button ion-button clear icon-only round color="primary" (click)="doChat(progressHistory.order_id, progressHistory.category_id, progressHistory.seller_id)">
+                <ion-icon name="chatboxes"></ion-icon>
+              </button>
+            </ion-col>
+
+            <ion-col>
+              <button *ngIf="progressHistory.reseller_phone != null" ion-button clear icon-only round color="secondary" (click)="doTelp(progressHistory.reseller_phone)">
+                <ion-icon name="call"></ion-icon>
+              </button>
+              <button *ngIf="progressHistory.dealer_phone != null" ion-button clear icon-only round color="secondary" (click)="doTelp(progressHistory.dealer_phone)">
+                    <ion-icon name="call"></ion-icon>
+                </button>
+            </ion-col>
+          </ion-row>
+
+        </ion-card>
+        </div>
+
+        <div *ngIf="progressHistories?.length == 0" class="no-transaction" text-center>
+            <img src="assets/imgs/no_transaction.png" width="60%">
+            <p class="message">Tidak Ada Transaksi</p>
+            <button ion-button small round color="primary" (click)="addOrder()">Mari Order Produk Brother</button>
+        </div>
+      </div>
+
+        <div *ngSwitchCase="'cancel'">
+            <div *ngIf="cancelHistories?.length > 0">
+            <ion-card *ngFor="let cancelHistory of cancelHistories; let i = index">
+
+                <ion-item>
+                    <h2><strong>Order #{{cancelHistory.order_id}}</strong></h2>
+                    <p>{{cancelHistory.date}}</p>
+                </ion-item>
+
+                <ion-card-content>
+                    <p><strong>Category: {{cancelHistory.category_name}}</strong></p>
+                    <p *ngFor="let item of itemsCancelHistories[cancelHistory?.order_id][cancelHistory?.category_name]; let j = index">{{item.product_name}} ({{item.qty}} items)  x Rp {{item.base_price | number}}</p>
+
+                    <h5 padding-top="5px"><strong>Keterangan dibatalkan:</strong></h5>
+                    <p>{{cancelHistory.reason}}</p>
+                </ion-card-content>
+
+            </ion-card>
+            </div>
+
+            <div *ngIf="cancelHistories?.length == 0" class="no-transaction" text-center>
+                <img src="assets/imgs/no_transaction.png" width="60%">
+                <p class="message">Tidak Ada Transaksi</p>
+                <button ion-button small round color="primary" (click)="addOrder()">Mari Order Produk Brother</button>
+            </div>
+        </div>
+
+        <div *ngSwitchCase="'finish'">
+            <div *ngIf="finishHistories?.length > 0">
+            <ion-card *ngFor="let finishHistory of finishHistories; let i = index">
+
+                <ion-item>
+                    <h2><strong>Order #{{finishHistory.order_id}}</strong></h2>
+                    <p>{{finishHistory.date}}</p>
+                </ion-item>
+
+                <ion-card-content>
+                    <p><strong>Category: {{finishHistory.category_name}}</strong></p>
+                    <p *ngFor="let item of itemsFinishHistories[finishHistory?.order_id][finishHistory?.category_name]; let j = index">{{item.product_name}} ({{item.qty}} items)  x Rp {{item.base_price | number}}</p>
+                </ion-card-content>
+
+            </ion-card>
+            </div>
+
+            <div *ngIf="finishHistories?.length == 0" class="no-transaction" text-center>
+                <img src="assets/imgs/no_transaction.png" width="60%">
+                <p class="message">Tidak Ada Transaksi</p>
+                <button ion-button small round color="primary" (click)="addOrder()">Mari Order Produk Brother</button>
+            </div>
+        </div>
+    </div>
+</ion-content>

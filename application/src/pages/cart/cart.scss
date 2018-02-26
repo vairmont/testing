@@ -1,0 +1,23 @@
+page-cart {
+    ion-list {
+        ion-item {
+            h2 {
+                font-weight: bold;
+            }
+
+            .price {
+                font-size: 12px;
+                color: darkslategray;
+            }
+        }
+    }
+
+    .no-transaction {
+        padding-top: 15%;
+
+        .message {
+            font-weight: bold;
+            margin-top: -8px;
+        }
+    }
+}

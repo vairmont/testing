@@ -1,0 +1,36 @@
+<ion-header>
+  <page-navbar-without-cart></page-navbar-without-cart>
+</ion-header>
+
+<ion-content>
+  <ion-list inset>
+    <button ion-item (click)="goProfile()">
+        <ion-icon name="person" item-left color="primary"></ion-icon>
+        <h2>Profil</h2>
+    </button>
+    <button ion-item (click)="goFavorite()">
+        <ion-icon name="heart" item-left color="primary"></ion-icon>
+        <h2>Favorit</h2>
+    </button>
+    <button ion-item (click)="goBrotherApps()">
+        <ion-icon name="appstore" item-left color="primary"></ion-icon>
+        <h2>Brother Apps</h2>
+    </button>
+    <button ion-item (click)="goContact()">
+        <ion-icon name="call" item-left color="primary"></ion-icon>
+        <h2>Kontak</h2>
+    </button>
+    <button ion-item (click)="goTerms()">
+        <ion-icon name="information-circle" item-left color="primary"></ion-icon>
+        <h2>Syarat & Ketentuan</h2>
+    </button>
+    <button ion-item (click)="goPrivacy()">
+        <ion-icon name="document" item-left color="primary"></ion-icon>
+        <h2>Kebijakan Privasi</h2>
+    </button>
+    <button ion-item (click)="signOut()">
+        <ion-icon name="log-out" item-left color="primary"></ion-icon>
+        <h2>Keluar</h2>
+    </button>
+  </ion-list>
+</ion-content>

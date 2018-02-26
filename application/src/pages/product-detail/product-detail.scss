@@ -1,0 +1,21 @@
+page-product-detail {
+  ion-card {
+    
+    ion-item {
+      h2 {
+        color: #00a9c5;
+        font-weight: bold;
+      }
+    }
+    ion-col {
+      button {
+        ion-icon {
+          color: #00a9c5;
+        }
+        div {
+          color: #00a9c5;
+        }
+      }
+    }
+  }
+}

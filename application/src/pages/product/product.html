@@ -1,0 +1,28 @@
+<ion-header>
+    <page-navbar-with-cart></page-navbar-with-cart>
+</ion-header>
+
+<ion-content>
+  <ion-searchbar [(ngModel)]="searchTerm" (ionInput)="setFilteredItems()"></ion-searchbar>
+
+  <div *ngIf="searching" text-center>
+    <ion-spinner></ion-spinner>
+  </div>
+
+  <ion-grid text-center>
+    <ion-row>
+      <ion-col col-6 *ngFor="let product of products">
+        <div (click)="doDetailProduct(product)">
+            <img src="{{baseUrl}}/{{product.img_url}}">
+            <p>{{ product.product_name }}</p>
+            <p>Rp {{ product.formatted_price }}</p>
+        </div>
+        <button ion-button block (click)="qtyPrompt(product.id)">
+          <ion-icon name="cart" padding-right></ion-icon>
+          Beli
+        </button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+</ion-content>

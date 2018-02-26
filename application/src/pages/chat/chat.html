@@ -1,0 +1,45 @@
+<ion-header>
+  <ion-navbar color="primary">
+    <ion-title>Chat</ion-title>
+  </ion-navbar>
+</ion-header>
+
+
+<ion-content>
+
+  <div class="message-wrap">
+
+    <div *ngFor="let msg of msgList"
+         class="message"
+         [ngClass]="{ 'left': msg.sender_id == recipient_id, 'right': msg.sender_id == user_id }">
+      <div class="msg-detail">
+        <div class="msg-info">
+          <p>
+            {{msg.created_at}}</p>
+        </div>
+        <div class="msg-content">
+          <span class="triangle"></span>
+          <p class="line-breaker ">{{msg.message}}</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</ion-content>
+
+<ion-footer no-border>
+  <ion-grid class="input-wrap">
+    <ion-row>
+      <ion-col col-10>
+        <ion-textarea #chat_input [(ngModel)]="item.msg" (click)="scrollToBottom()">
+        </ion-textarea>
+      </ion-col>
+      <ion-col col-2>
+        <button ion-button clear icon-only item-right (click)="sendMessage()">
+          <ion-icon name="ios-send" ios="ios-send" md="md-send"></ion-icon>
+        </button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-footer>

@@ -1,0 +1,62 @@
+<ion-header>
+
+  <ion-navbar color="primary">
+    <ion-title>Profil</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+<ion-content padding>
+  <form enctype="multipart/form-data">
+  <ion-item>
+    <ion-label>Nama</ion-label>
+    <ion-input text-end type="text" name="name" [(ngModel)]="user.name" readonly></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label>E-mail</ion-label>
+    <ion-input text-end type="email" name="email" [(ngModel)]="user.email" readonly></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label>Nomor Ponsel</ion-label>
+    <ion-input text-end type="tel" name="phone" [(ngModel)]="user.phone"></ion-input>
+    <ion-icon name="md-create" color="primary" small item-end></ion-icon>
+  </ion-item>
+
+  <ion-item>
+      <ion-textarea placeholder="Alamat" name="address_1" [(ngModel)]="user.address_1" readonly></ion-textarea>
+      <button ion-button clear icon-only item-end (click)="placeSearch()"><ion-icon name="search"></ion-icon></button>
+  </ion-item>
+
+  <ion-item>
+    <agm-map [latitude]="user.lat" [longitude]="user.lng" [zoom]="16" [usePanning]='true'>
+      <agm-marker [latitude]="user.lat" [longitude]="user.lng" [markerDraggable]="true" (dragEnd)="markerMoved($event)"></agm-marker>
+    </agm-map>
+  </ion-item>
+
+  <ion-item>
+    <ion-label>Alamat Lengkap</ion-label>
+    <ion-textarea text-end name="address_2" [(ngModel)]="user.address_2"></ion-textarea>
+    <ion-icon name="md-create" color="primary" small item-end></ion-icon>
+  </ion-item>
+
+  <ion-item padding-bottom="5px">
+    <ion-label>Kota</ion-label>
+    <ion-select text-end name="city_id" [(ngModel)]="user.city_id">
+      <ion-option *ngFor="let city of cities" value="{{ city.id }}" selected="{{ user.city_id == city.id }}">
+        {{ city.name }}
+      </ion-option>
+    </ion-select>
+    <ion-icon name="md-create" color="primary" small item-end></ion-icon>
+  </ion-item>
+
+  <ion-input type="hidden" name="lat" [(ngModel)]="user.lat"></ion-input>
+  <ion-input type="hidden" name="lng" [(ngModel)]="user.lng"></ion-input>
+
+  <div padding>
+    <button ion-button block round (click)="updateProfile()">Ubah</button>
+    <button ion-button outline block round (click)="changePassword()">Ubah Password</button>
+  </div>
+  </form>
+</ion-content>
