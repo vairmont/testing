@@ -1,69 +1,53 @@
 <?php
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
+// routes API
+Route::get('/v1/productCategories', 'ProductCategoryController@getProductCategory');
 
-Route::get('/register', 'RegisterController@create');
-Route::post('/register/store', 'RegisterController@store');
+Route::post('/v1/register/customer', 'RegisterController@addCustomer');
+Route::post('/v1/register/reseller', 'RegisterController@addReseller');
+Route::post('/v1/register/reseller/photo/upload', 'RegisterController@uploadStorePhoto');
 
-Route::get('/', 'LoginController@getLogin')->name('login');
-Route::post('/login', 'LoginController@doLogin');
-Route::get('/logout', 'LoginController@doLogout');
+Route::post('/v1/forgotPassword', 'UserController@forgotPassword');
+Route::post('/v1/login', 'AuthController@doLogin');
+Route::post('/v1/logout', 'AuthController@doLogout');
 
-Route::group(['middleware' => 'isAuthenticated'], function() {
-	Route::get('/dashboard', 'DashboardController@create');
+	Route::post('/v1/token/check', 'FCMTokenController@checkToken');
+	Route::post('/v1/token/add', 'FCMTokenController@addToken');
 
-	Route::get('/product', 'ProductController@create');
-	Route::post('/product/add', ['before' => 'csrf', 'uses' => 'ProductController@store']);
-	Route::post('/product/edit/{id}', ['before' => 'csrf', 'uses' => 'ProductController@update'])->name('updateProduct');
-	Route::post('/product/delete/{id}', ['before' => 'csrf', 'uses' => 'ProductController@delete'])->name('deleteProduct');
+	Route::post('/v1/products', 'ProductController@getProduct');
+	Route::post('/v1/productByCategory', 'ProductController@getProductByCategory');
 
-	Route::get('/reseller', 'ResellerController@create');
-	Route::post('/reseller/store', ['before' => 'csrf', 'uses' => 'ResellerController@store']);
-	Route::post('/reseller/edit/{id}', ['before' => 'csrf', 'uses' => 'ResellerController@update'])->name('updateReseller');
-	Route::post('/reseller/delete/{id}', ['before' => 'csrf', 'uses' => 'ResellerController@delete'])->name('deleteReseller');
+	Route::post('/v1/cart', 'CartController@getCart');
+	Route::post('/v1/cart/add', 'CartController@addCart');
+	Route::post('/v1/cart/qty', 'CartController@updateQty');
+	Route::post('/v1/cart/remove', 'CartController@removeProduct');
 
-	Route::get('/customer', 'CustomerController@create');
-	Route::post('/customer/edit/{id}', ['before' => 'csrf', 'uses' => 'CustomerController@update'])->name('updateCustomer');
-	Route::post('/customer/delete/{id}', ['before' => 'csrf', 'uses' => 'CustomerController@delete'])->name('deleteCustomer');
+	Route::post('/v1/voucher/check', 'VoucherController@checkVoucher');
 
-	Route::get('/masterdealer', 'MasterDealerController@create');
-	Route::post('/masterdealer/store', ['before' => 'csrf', 'uses' => 'MasterDealerController@store']);
-	Route::post('/masterdealer/edit/{id}', ['before' => 'csrf', 'uses' => 'MasterDealerController@update'])->name('updateDealer');
-	Route::post('/masterdealer/delete/{id}', ['before' => 'csrf', 'uses' => 'MasterDealerController@delete'])->name('deleteDealer');
+	Route::post('/v1/orders/new', 'OrderController@getOrderNew');
+	Route::post('/v1/orders/progress', 'OrderController@getOrderProgress');
+	Route::post('/v1/orders/cancel', 'OrderController@getOrderCancel');
+	Route::post('/v1/orders/finish', 'OrderController@getOrderFinish');
+	Route::post('/v1/order/checkout', 'OrderController@orderCheckout');
+	Route::post('/v1/order/take', 'OrderController@orderTake');
+	Route::post('/v1/order/approve', 'OrderController@orderApprove');
+	Route::post('/v1/order/cancel', 'OrderController@orderCancel');
+	Route::post('/v1/order/history/new', 'OrderController@orderHistoryNew');
+	Route::post('/v1/order/history/progress', 'OrderController@orderHistoryProgress');
+	Route::post('/v1/order/history/cancel', 'OrderController@orderHistoryCancel');
+	Route::post('/v1/order/history/finish', 'OrderController@orderHistoryFinish');
+	Route::post('/v1/order/chatList', 'OrderController@chatList');
+	Route::post('/v1/order/chat', 'OrderController@orderChat');
+	Route::post('/v1/order/offeringList', 'OrderController@getOffering');
+	Route::post('/v1/order/offering', 'OrderController@orderOffering');
+	Route::post('/v1/order/licenseList', 'OrderController@getLicenseNumber');
+	Route::post('/v1/order/licenseNumber', 'OrderController@orderLicenseNumber');
+	Route::post('/v1/order/complete', 'OrderController@markAsComplete');
 
-	Route::get('/voucher', 'VoucherController@create');
-	Route::post('/voucher/add', ['before' => 'csrf', 'uses' => 'VoucherController@store']);
-	Route::post('/voucher/edit/{id}', ['before' => 'csrf', 'uses' => 'VoucherController@update'])->name('updateVoucher');
-	Route::post('/voucher/delete/{id}', ['before' => 'csrf', 'uses' => 'VoucherController@delete'])->name('deleteVoucher');
+	Route::post('/v1/testproduct', 'TestProductController@testProduct');
 
-	Route::get('/ticket-support', 'TicketController@create');
-	Route::post('/ticket-support/reply', ['before' => 'csrf', 'uses' => 'TicketController@reply']);
-	Route::post('/ticket-support/close', ['before' => 'csrf', 'uses' => 'TicketController@close']);
+	Route::post('/v1/profile', 'UserController@getProfile');
+	Route::post('/v1/profile/edit', 'UserController@editProfile');
+	Route::post('/v1/profile/changePassword', 'UserController@changePassword');
 
-	Route::get('/service-location', 'ServiceController@create');
-	Route::post('/service-location/add', ['before' => 'csrf', 'uses' => 'ServiceController@store']);
-	Route::post('/service-location/edit/{id}', ['before' => 'csrf', 'uses' => 'ServiceController@update'])->name('updateService');
-	Route::post('/service-location/delete/{id}', ['before' => 'csrf', 'uses' => 'ServiceController@delete'])->name('deleteService');
-
-	Route::get('/newspromo', 'NewsPromoController@create');
-	Route::post('/newspromo/add', ['before' => 'csrf', 'uses' => 'NewsPromoController@store']);
-	Route::post('/newspromo/edit/{id}', ['before' => 'csrf', 'uses' => 'NewsPromoController@update'])->name('updateNews');
-	Route::post('/newspromo/delete/{id}', ['before' => 'csrf', 'uses' => 'NewsPromoController@delete'])->name('deleteNews');
-
-	Route::get('/report/orders', 'ReportController@getOrders');
-	Route::get('/report/product', 'ReportController@getProducts');
-
-	Route::post('/city/add', ['before' => 'csrf', 'uses' => 'CityController@store']);
-
-	Route::get('/placeSearch', 'MapsController@create')->name('placeSearch');
-	Route::post('/placeSearch/store', ['before' => 'csrf', 'uses' => 'MapsController@store'])->name('storePlaceSearch');
-});
+	

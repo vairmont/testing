@@ -6,6 +6,9 @@
 	<title>{{ $data['subject'] }}</title>
 </head>
 <body>
-	{{ $data['message'] }}
+	Halo Brother Indonesia,<br>
+	Email : {{ $data['email'] }}<br>
+	Subject : {{ $data['subject'] }}<br>
+	Message : {{ $data['message'] }}
 </body>
 </html>

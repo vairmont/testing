@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit4b9b7d44e224e51c12b244e43b45696a
+class ComposerStaticInit4cbb279d126e644433acb507ce1ec17a
 {
     public static $files = array (
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
@@ -88,6 +88,10 @@ class ComposerStaticInit4b9b7d44e224e51c12b244e43b45696a
         array (
             'Cron\\' => 5,
             'Carbon\\' => 7,
+        ),
+        'B' => 
+        array (
+            'Barryvdh\\Cors\\' => 14,
         ),
         'A' => 
         array (
@@ -226,6 +230,10 @@ class ComposerStaticInit4b9b7d44e224e51c12b244e43b45696a
         array (
             0 => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon',
         ),
+        'Barryvdh\\Cors\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/barryvdh/laravel-cors/src',
+        ),
         'App\\' => 
         array (
             0 => __DIR__ . '/../..' . '/app',
@@ -274,13 +282,11 @@ class ComposerStaticInit4b9b7d44e224e51c12b244e43b45696a
     public static $classMap = array (
         'App\\Console\\Kernel' => __DIR__ . '/../..' . '/app/Console/Kernel.php',
         'App\\Exceptions\\Handler' => __DIR__ . '/../..' . '/app/Exceptions/Handler.php',
-        'App\\Http\\Controllers\\AppController' => __DIR__ . '/../..' . '/app/Http/Controllers/AppController.php',
         'App\\Http\\Controllers\\Auth\\ForgotPasswordController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/ForgotPasswordController.php',
         'App\\Http\\Controllers\\Auth\\LoginController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/LoginController.php',
         'App\\Http\\Controllers\\Auth\\RegisterController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/RegisterController.php',
         'App\\Http\\Controllers\\Auth\\ResetPasswordController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/ResetPasswordController.php',
         'App\\Http\\Controllers\\Controller' => __DIR__ . '/../..' . '/app/Http/Controllers/Controller.php',
-        'App\\Http\\Controllers\\LoginController' => __DIR__ . '/../..' . '/app/Http/Controllers/LoginController.php',
         'App\\Http\\Kernel' => __DIR__ . '/../..' . '/app/Http/Kernel.php',
         'App\\Http\\Middleware\\EncryptCookies' => __DIR__ . '/../..' . '/app/Http/Middleware/EncryptCookies.php',
         'App\\Http\\Middleware\\RedirectIfAuthenticated' => __DIR__ . '/../..' . '/app/Http/Middleware/RedirectIfAuthenticated.php',
@@ -292,9 +298,17 @@ class ComposerStaticInit4b9b7d44e224e51c12b244e43b45696a
         'App\\Providers\\EventServiceProvider' => __DIR__ . '/../..' . '/app/Providers/EventServiceProvider.php',
         'App\\Providers\\RouteServiceProvider' => __DIR__ . '/../..' . '/app/Providers/RouteServiceProvider.php',
         'App\\User' => __DIR__ . '/../..' . '/app/User.php',
+        'Barryvdh\\Cors\\CorsService' => __DIR__ . '/..' . '/barryvdh/laravel-cors/src/CorsService.php',
+        'Barryvdh\\Cors\\HandleCors' => __DIR__ . '/..' . '/barryvdh/laravel-cors/src/HandleCors.php',
+        'Barryvdh\\Cors\\HandlePreflight' => __DIR__ . '/..' . '/barryvdh/laravel-cors/src/HandlePreflight.php',
+        'Barryvdh\\Cors\\LumenServiceProvider' => __DIR__ . '/..' . '/barryvdh/laravel-cors/src/LumenServiceProvider.php',
+        'Barryvdh\\Cors\\OriginMatcher' => __DIR__ . '/..' . '/barryvdh/laravel-cors/src/OriginMatcher.php',
+        'Barryvdh\\Cors\\ServiceProvider' => __DIR__ . '/..' . '/barryvdh/laravel-cors/src/ServiceProvider.php',
         'Carbon\\Carbon' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/Carbon.php',
         'Carbon\\CarbonInterval' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/CarbonInterval.php',
         'Carbon\\Exceptions\\InvalidDateException' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/Exceptions/InvalidDateException.php',
+        'CorsKernel' => __DIR__ . '/..' . '/barryvdh/laravel-cors/tests/CorsKernel.php',
+        'CorsServiceTest' => __DIR__ . '/..' . '/barryvdh/laravel-cors/tests/CorsServiceTest.php',
         'CreatePasswordResetsTable' => __DIR__ . '/../..' . '/database/migrations/2014_10_12_100000_create_password_resets_table.php',
         'CreateUsersTable' => __DIR__ . '/../..' . '/database/migrations/2014_10_12_000000_create_users_table.php',
         'Cron\\AbstractField' => __DIR__ . '/..' . '/mtdowling/cron-expression/src/Cron/AbstractField.php',
@@ -770,6 +784,8 @@ class ComposerStaticInit4b9b7d44e224e51c12b244e43b45696a
         'File_Iterator' => __DIR__ . '/..' . '/phpunit/php-file-iterator/src/Iterator.php',
         'File_Iterator_Facade' => __DIR__ . '/..' . '/phpunit/php-file-iterator/src/Facade.php',
         'File_Iterator_Factory' => __DIR__ . '/..' . '/phpunit/php-file-iterator/src/Factory.php',
+        'GlobalMiddlewareTest' => __DIR__ . '/..' . '/barryvdh/laravel-cors/tests/GlobalMiddlewareTest.php',
+        'GroupMiddlewareTest' => __DIR__ . '/..' . '/barryvdh/laravel-cors/tests/GroupMiddlewareTest.php',
         'Hamcrest\\Arrays\\IsArray' => __DIR__ . '/..' . '/hamcrest/hamcrest-php/hamcrest/Hamcrest/Arrays/IsArray.php',
         'Hamcrest\\Arrays\\IsArrayContaining' => __DIR__ . '/..' . '/hamcrest/hamcrest-php/hamcrest/Hamcrest/Arrays/IsArrayContaining.php',
         'Hamcrest\\Arrays\\IsArrayContainingInAnyOrder' => __DIR__ . '/..' . '/hamcrest/hamcrest-php/hamcrest/Hamcrest/Arrays/IsArrayContainingInAnyOrder.php',
@@ -1597,6 +1613,7 @@ class ComposerStaticInit4b9b7d44e224e51c12b244e43b45696a
         'League\\Flysystem\\Util\\ContentListingFormatter' => __DIR__ . '/..' . '/league/flysystem/src/Util/ContentListingFormatter.php',
         'League\\Flysystem\\Util\\MimeType' => __DIR__ . '/..' . '/league/flysystem/src/Util/MimeType.php',
         'League\\Flysystem\\Util\\StreamHasher' => __DIR__ . '/..' . '/league/flysystem/src/Util/StreamHasher.php',
+        'MockApp' => __DIR__ . '/..' . '/barryvdh/laravel-cors/tests/CorsServiceTest.php',
         'Mockery' => __DIR__ . '/..' . '/mockery/mockery/library/Mockery.php',
         'Mockery\\Adapter\\Phpunit\\MockeryPHPUnitIntegration' => __DIR__ . '/..' . '/mockery/mockery/library/Mockery/Adapter/Phpunit/MockeryPHPUnitIntegration.php',
         'Mockery\\Adapter\\Phpunit\\MockeryTestCase' => __DIR__ . '/..' . '/mockery/mockery/library/Mockery/Adapter/Phpunit/MockeryTestCase.php',
@@ -1751,6 +1768,7 @@ class ComposerStaticInit4b9b7d44e224e51c12b244e43b45696a
         'Monolog\\Processor\\UidProcessor' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Processor/UidProcessor.php',
         'Monolog\\Processor\\WebProcessor' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Processor/WebProcessor.php',
         'Monolog\\Registry' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Registry.php',
+        'OriginMatcherTest' => __DIR__ . '/..' . '/barryvdh/laravel-cors/tests/OriginMatcherTest.php',
         'PHPUnit\\Framework\\Assert' => __DIR__ . '/..' . '/phpunit/phpunit/src/ForwardCompatibility/Assert.php',
         'PHPUnit\\Framework\\AssertionFailedError' => __DIR__ . '/..' . '/phpunit/phpunit/src/ForwardCompatibility/AssertionFailedError.php',
         'PHPUnit\\Framework\\BaseTestListener' => __DIR__ . '/..' . '/phpunit/phpunit/src/ForwardCompatibility/BaseTestListener.php',
@@ -2337,6 +2355,7 @@ class ComposerStaticInit4b9b7d44e224e51c12b244e43b45696a
         'PhpParser\\Serializer\\XML' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Serializer/XML.php',
         'PhpParser\\Unserializer' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Unserializer.php',
         'PhpParser\\Unserializer\\XML' => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser/Unserializer/XML.php',
+        'PreflightTest' => __DIR__ . '/..' . '/barryvdh/laravel-cors/tests/PreflightTest.php',
         'Prophecy\\Argument' => __DIR__ . '/..' . '/phpspec/prophecy/src/Prophecy/Argument.php',
         'Prophecy\\Argument\\ArgumentsWildcard' => __DIR__ . '/..' . '/phpspec/prophecy/src/Prophecy/Argument/ArgumentsWildcard.php',
         'Prophecy\\Argument\\Token\\AnyValueToken' => __DIR__ . '/..' . '/phpspec/prophecy/src/Prophecy/Argument/Token/AnyValueToken.php',
@@ -3220,6 +3239,7 @@ class ComposerStaticInit4b9b7d44e224e51c12b244e43b45696a
         'Symfony\\Component\\Yaml\\Unescaper' => __DIR__ . '/..' . '/symfony/yaml/Unescaper.php',
         'Symfony\\Component\\Yaml\\Yaml' => __DIR__ . '/..' . '/symfony/yaml/Yaml.php',
         'Symfony\\Polyfill\\Mbstring\\Mbstring' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/Mbstring.php',
+        'TestCase' => __DIR__ . '/..' . '/barryvdh/laravel-cors/tests/TestCase.php',
         'Tests\\CreatesApplication' => __DIR__ . '/../..' . '/tests/CreatesApplication.php',
         'Tests\\Feature\\ExampleTest' => __DIR__ . '/../..' . '/tests/Feature/ExampleTest.php',
         'Tests\\TestCase' => __DIR__ . '/../..' . '/tests/TestCase.php',
@@ -3303,10 +3323,10 @@ class ComposerStaticInit4b9b7d44e224e51c12b244e43b45696a
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit4b9b7d44e224e51c12b244e43b45696a::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit4b9b7d44e224e51c12b244e43b45696a::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit4b9b7d44e224e51c12b244e43b45696a::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInit4b9b7d44e224e51c12b244e43b45696a::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit4cbb279d126e644433acb507ce1ec17a::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit4cbb279d126e644433acb507ce1ec17a::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit4cbb279d126e644433acb507ce1ec17a::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInit4cbb279d126e644433acb507ce1ec17a::$classMap;
 
         }, null, ClassLoader::class);
     }
