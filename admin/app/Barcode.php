@@ -4,10 +4,10 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ProductCategory extends Model
+class Reseller extends Model
 {
-    protected $table = "product_category";
+    protected $table = 'barcode';
     protected $fillable = [
-        'name', 'slug'
+    	'product_id'
     ];
 }

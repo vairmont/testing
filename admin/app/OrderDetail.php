@@ -9,6 +9,6 @@ class OrderDetail extends Model
     protected $table = 'order_detail';
 
     protected $fillable = [
-    	'order_progress_id', 'order_id','product_id','category_id','qty','base_price','nego_price'
+    	'order_id','product_id','category_id','qty','base_price'
     ];
 }

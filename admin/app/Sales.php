@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProductCategory extends Model
 {
-    protected $table = "product_category";
+    protected $table = "sales";
     protected $fillable = [
-        'name', 'slug'
+        'order_id'
     ];
 }

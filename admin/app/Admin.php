@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Reseller extends Model
 {
-    protected $table = 'agen';
+    protected $table = 'admin';
     protected $fillable = [
-    	'identifier', 'name', 'phone', 'address'
+    	'identifier', 'name', 'phone', 'department'
     ];
 }
