@@ -13,15 +13,11 @@ use DB;
 
 class ProductController extends Controller
 {
-	/*
-		role id 2 = Customer 
-		role id 3 & 4 = Reseller
-	*/
 
 	public function getProduct(Request $request) 
 	{
 		$val = Validator::make($request->all(), [
-			'role_id' => 'required'
+			'user_id' => 'required'
 		]);
 
 		if($val->fails()) {
@@ -32,7 +28,7 @@ class ProductController extends Controller
                 ->where('id', "=", $request->user_id)
                 ->first();
 
-            $product = Product::Join('product_category', 'product.id', '=', 'product_category.id')
+            $product = Product::Join('product_category', 'product_category.id', '=', 'product.category_id')
                     ->select('product.product_name', 'product.price_for_customer');
                     
                 

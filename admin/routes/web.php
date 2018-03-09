@@ -14,7 +14,7 @@ Route::post('/v1/logout', 'AuthController@doLogout');
 	Route::post('/v1/token/check', 'FCMTokenController@checkToken');
 	Route::post('/v1/token/add', 'FCMTokenController@addToken');
 
-	Route::post('/v1/products', 'ProductController@getProduct');
+	
 	Route::post('/v1/productByCategory', 'ProductController@getProductByCategory');
 
 	Route::post('/v1/cart', 'CartController@getCart');
