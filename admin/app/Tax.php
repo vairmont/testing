@@ -4,11 +4,10 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class VerifyCode extends Model
+class ProductCategory extends Model
 {
-    protected $table = 'verify_code';
-
+    protected $table = "tax";
     protected $fillable = [
-    	'otp','hash'
+        'tax_name','tax_value'
     ];
 }
