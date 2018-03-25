@@ -70,12 +70,19 @@ class ProductController extends Controller
 
   public function edit(Request $request, $id) {
     $validator = Validator::make($request->all(), [
-      'sku' => 'unique:products,sku',
-      'category_id' => 'exists:product_category,id',
+      'sku' => 'numeric|unique:product,sku',
+      'category_id' => 'numeric|exists:product_category,id',
       'cost' => 'numeric',
       'price_for_agen' => 'numeric',
       'price_for_customer' => 'numeric',
     ]);
+
+    if ($validator->fails()) {
+      return response()->json([
+        'error' => $validator->errors()->all()
+      ], 400);
+    }
+
 	  $data = $request->all();
 	  try {
 	    $product = Product::whereId($id)->update($data);
