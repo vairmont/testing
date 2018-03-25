@@ -8,34 +8,88 @@ use Hash;
 use Auth;
 use App\User;
 use App\Product;
+use Mockery\Exception;
 use Validator;
 use DB;
 
 class ProductController extends Controller
 {
 
-	public function getProduct(Request $request) 
+	public function index(Request $request)
 	{
-		$val = Validator::make($request->all(), [
-			'user_id' => 'required'
-		]);
-
-		if($val->fails()) {
-            return response()->json(['data' => [], 'message' => $val->errors()->all()]);
-        }
-            else {
-                $user = User::select('role_id')
-                ->where('id', "=", $request->user_id)
-                ->first();
-
-            $product = Product::Join('product_category', 'product_category.id', '=', 'product.category_id')
-                    ->select('product.product_name', 'product.price_for_customer');
-                    
-                
-                $product = $product->get();
-                
-                return response()->json(['data' => $product, 'message' => ['OK']]);
-     			}
+    $product = Product::all();
+    if (isset($request['filters'])) {
+      foreach ($request['filters'] as $key => $val) {
+        $product = $product->where($key, '=', $val);
+      }
     }
-	
+
+    return response()->json(['data' => $product], 200);
+  }
+
+  public function add(Request $request) {
+	  $validator = Validator::make($request->all(), [
+      'sku' => 'required|numeric|unique:product,sku',
+      'product_name' => 'required',
+      'category_id' => 'required|numeric|exists:product_category,id',
+      'type' => 'required',
+      'cost' => 'required|numeric',
+      'price_for_agen' => 'required|numeric',
+      'price_for_customer' => 'required|numeric',
+      'description' => 'required',
+      'img_url' => 'required'
+    ]);
+
+    if ($validator->fails()) {
+      return response()->json([
+        'error' => $validator->errors()->all()
+      ], 400);
+    }
+
+    $product = new Product();
+    $product->sku = $request['sku'];
+    $product->product_name = $request['product_name'];
+    $product->category_id = $request['category_id'];
+    $product->type = $request['type'];
+    $product->cost = $request['cost'];
+    $product->price_for_agen = $request['price_for_agen'];
+    $product->price_for_customer = $request['price_for_customer'];
+    $product->description = $request['description'];
+    $product->img_url = $request['img_url'];
+    $product->created_by = "test";
+    $product->updated_by = "test";
+    $product->save();
+
+    return response()->json(['data' => $product], 201);
+  }
+
+  public function show(Request $request, $id) {
+    $product = Product::whereId($id)->get();
+    return response()->json(['data' => $product], 200);
+  }
+
+  public function edit(Request $request, $id) {
+    $validator = Validator::make($request->all(), [
+      'sku' => 'unique:products,sku',
+      'category_id' => 'exists:product_category,id',
+      'cost' => 'numeric',
+      'price_for_agen' => 'numeric',
+      'price_for_customer' => 'numeric',
+    ]);
+	  $data = $request->all();
+	  try {
+	    $product = Product::whereId($id)->update($data);
+      return response()->json(['message' => 'Product updated.', 'data' => $data], 200);
+    } catch (\Exception $e) {
+	    return response()->json(['error' => 'Product not found/Error updating product.'], 400);
+    }
+  }
+
+  public function remove(Request $request, $id) {
+	    if (Product::whereId($id)->delete()) {
+	      return response()->json(['message' => 'Product has been removed.'], 200);
+      }
+      return response()->json(['error' => 'Failed to remove product/Product not found.'], 400);
+  }
+
 }
