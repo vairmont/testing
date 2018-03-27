@@ -52,8 +52,6 @@ class ApiCartController extends Controller {
       return response()->json(['error' => 'Unauthorized role access.'], 401);
     }
 
-    \Log::info(json_encode($request));
-
     $val = Validator::make($request->all(), [
       'product_id' => 'required|numeric|exists:product,id',
       'qty' => 'required|numeric'
