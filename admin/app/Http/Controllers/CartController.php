@@ -17,7 +17,7 @@ class CartController extends Controller
 		3 & 4 = Reseller
 	*/
 
-    public function getCart(Request $request) 
+    public function getCart(Request $request)
     {
     	$val = Validator::make($request->all(), [
     		'cart_id' => 'required',

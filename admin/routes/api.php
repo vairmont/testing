@@ -20,4 +20,7 @@ Route::group(['middleware' => 'VerifyBearerToken'], function () {
   Route::get('/v1/product/{id}', 'ProductController@show');
   Route::patch('/v1/product/{id}', 'ProductController@edit');
   Route::delete('/v1/product/{id}', 'ProductController@remove');
+
+  Route::get('/v1/cart', 'ApiCartController@index');
+  Route::post('/v1/cart', 'ApiCartController@updateCart');
 });

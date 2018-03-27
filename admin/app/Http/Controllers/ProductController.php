@@ -86,7 +86,7 @@ class ProductController extends Controller
 	  $data = $request->all();
 	  try {
 	    $product = Product::whereId($id)->update($data);
-      return response()->json(['message' => 'Product updated.', 'data' => $data], 200);
+      return response()->json(['message' => 'Product updated.'], 200);
     } catch (\Exception $e) {
 	    return response()->json(['error' => 'Product not found/Error updating product.'], 400);
     }

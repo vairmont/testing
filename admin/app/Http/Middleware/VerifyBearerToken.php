@@ -16,11 +16,11 @@ class VerifyBearerToken {
 
   public function handle(Request $request, Closure $next)
   {
-    $user = User::where('api_token', '=', $request->bearerToken())->get();
-    if (count($user) == 0) {
-      return response()->json(['error' => 'Access Unauthorized', 'message' => 'Invalid token was provided.'], 400);
+    $user = User::where('api_token', '=', $request->bearerToken())->first();
+    if ($user) {
+      $request->attributes->add(['user' => $user]);
+      return $next($request);
     }
-    $request->attributes->add(['user' => $user]);
-    return $next($request);
+    return response()->json(['error' => 'Authorization failed.'], 401);
   }
 }
