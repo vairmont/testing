@@ -11,7 +11,6 @@ namespace App\Http\Controllers;
 
 use App\Cart;
 use App\CartDetail;
-use App\Product;
 use Validator;
 use Illuminate\Http\Request;
 

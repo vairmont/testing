@@ -14,13 +14,13 @@ use Illuminate\Http\Request;
 */
 Route::get('/v1/users', ['as' => 'login', 'uses' => 'AuthController@doLogin']);
 
-Route::group(['middleware' => 'VerifyBearerToken'], function () {
-  Route::get('/v1/products', 'ProductController@index');
-  Route::post('/v1/products', 'ProductController@add');
-  Route::get('/v1/product/{id}', 'ProductController@show');
-  Route::patch('/v1/product/{id}', 'ProductController@edit');
-  Route::delete('/v1/product/{id}', 'ProductController@remove');
+Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function () {
+  Route::get('/products', 'ProductController@index');
+  Route::post('/products', 'ProductController@add');
+  Route::get('/product/{id}', 'ProductController@show');
+  Route::patch('/product/{id}', 'ProductController@edit');
+  Route::delete('/product/{id}', 'ProductController@remove');
 
-  Route::get('/v1/cart', 'ApiCartController@index');
-  Route::post('/v1/cart', 'ApiCartController@updateCart');
+  Route::get('/cart', 'ApiCartController@index');
+  Route::post('/cart', 'ApiCartController@updateCart');
 });
