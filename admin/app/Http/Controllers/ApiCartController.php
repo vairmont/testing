@@ -35,13 +35,11 @@ class ApiCartController extends Controller {
       ->get();
 
     return response()->json([
-      'data' => [
-        'cart' => [
-          'subtotal' => $cart->subtotal,
-          'tax' => $cart->tax,
-          'total' => $cart->total,
-          'items' => $items
-        ],
+      'cart' => [
+        'subtotal' => $cart->subtotal,
+        'tax' => $cart->tax,
+        'total' => $cart->total,
+        'items' => $items
       ]
     ], 201);
   }
@@ -107,15 +105,35 @@ class ApiCartController extends Controller {
     $cart->save();
 
     return response()->json([
-      'data' => [
-        'cart' => [
+      'cart' => [
+        'subtotal' => $cart->subtotal,
+        'tax' => $cart->tax,
+        'total' => $cart->total,
+        'items' => $items
+      ]
+    ], 201);
+  }
+
+  public function clearCartItems(Request $request) {
+
+    $cart = Cart::where('user_id', '=', $request->get('user')->id)->first();
+    $cart->subtotal = 0;
+    $cart->tax = 0;
+    $cart->total = 0;
+    $cart->save();
+
+    $detail = CartDetail::where('cart_id', '=', $cart->id)
+      ->update(['qty' => 0]);
+
+    return response()->json([
+      'message' => 'Cart items has been removed.',
+      'cart' => [
           'subtotal' => $cart->subtotal,
           'tax' => $cart->tax,
           'total' => $cart->total,
-          'items' => $items
-        ],
-      ]
-    ], 201);
+          'items' => []
+        ]
+      ], 200);
   }
 
 }
