@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Reseller extends Model
+class Agen extends Model
 {
     protected $table = 'agen';
     protected $fillable = [

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Commission;
+use App\Constant\OrderStatus;
 use Illuminate\Http\Request;
 use Validator;
 use DB;
@@ -11,13 +13,8 @@ use App\OrderCancel;
 use App\Product;
 use App\User;
 use App\Agen;
-use App\VoucherUse;
-use App\Voucher;
-use App\Chat;
 use App\Cart;
 use App\CartDetail;
-use App\ProductCategory;
-use App\FCM;
 
 class OrderController extends Controller
 {
@@ -69,6 +66,7 @@ class OrderController extends Controller
       $order->tax = $cart->tax;
       $order->discount = 0;
       $order->total = $cart->total;
+      $order->status = OrderStatus::CREATED;
       $order->save();
 
       $cart->subtotal = 0;
@@ -85,7 +83,6 @@ class OrderController extends Controller
         $orderDetail->category_id = $product->category_id;
         $orderDetail->qty = $cartDetail->qty;
         $orderDetail->base_price = $product->price_for_customer;
-        $orderDetail->nego_price = $product->price_for_agen;
         $orderDetail->save();
 
         $items[] = [
@@ -114,4 +111,133 @@ class OrderController extends Controller
         ]
       ], 201);
     }
+
+    public function assignOrderAgent(Request $request) {
+      $validator = Validator::make($request->all(), [
+        'order_id' => 'required|numeric|exists:order,id',
+        'agen_id' => 'required|numeric|exists:agen,id'
+      ]);
+
+      if ($validator->fails()) {
+        return response()->json(['error' => $validator->errors()->all()]);
+      }
+
+      $cancelOrder = OrderCancel::where('order_id', '=', $request['order_id'])
+        ->where('agen_id', '=', $request['agen_id'])
+        ->first();
+      if ($cancelOrder) {
+        return response()->json(['error' => 'Selected agent has already rejected this order.'], 400);
+      }
+
+      $order = Order::whereId($request['order_id'])->first();
+      $order->status = OrderStatus::ASSIGNED;
+      $order->agen_id = $request['agen_id'];
+      $order->save();
+
+      $items = OrderDetail::Join('product', 'product.id', '=', 'order_detail.product_id')
+        ->where('order_id', '=', $order->id)
+        ->select('product.id as product_id', 'product.sku', 'order_detail.qty', 'order_detail.base_price', 'order_detail.nego_price')
+        ->get();
+
+      $result[] = [
+        'order_id' => $order->id,
+        'invoice_no' => $order->invoice_no,
+        'subtotal' => $order->subtotal,
+        'tax' => $order->tax,
+        'discount' => $order->discount,
+        'items' => $items
+      ];
+
+      $agent = Agen::whereId($request['agen_id'])->first();
+
+      return response()->json([
+        'order' => $result,
+        'agen' => $agent
+      ]);
+    }
+
+    public function cancelOrder(Request $request) {
+
+      $validator = Validator::make($request->all(), [
+        'order_id' => 'required|numeric|exists:order,id',
+      ]);
+
+      if ($validator->fails()) {
+        return response()->json([
+          'error' => $validator->errors()->all()
+        ], 400);
+      }
+
+      $order = Order::whereId($request['order_id'])->first();
+      $order->status = OrderStatus::CANCELLED;
+      $order->save();
+
+      return response()->json(['message' => 'Order '.$order->id .' has been succesfully cancelled'], 200);
+    }
+
+    public function cancelOrderAgent(Request $request) {
+      $validator = Validator::make($request->all(),[
+        'order_id' => 'required|numeric|exists:order,id',
+        'reason' => 'required'
+      ]);
+
+      if ($validator->fails()) {
+        return response()->json([
+          'error' => $validator->errors()->all()
+        ]);
+      }
+
+      $order = Order::whereId($request['order_id'])
+        ->first();
+      $order->status = OrderStatus::REASSIGN;
+      $order->save();
+
+      $orderCancel = new OrderCancel;
+      $orderCancel->order_id = $order->id;
+      $orderCancel->cancel_by = $request->get('user')->id;
+      $orderCancel->agen_id = $order->agen_id;
+      $orderCancel->reason = $request['reason'];
+      $orderCancel->save();
+
+      return response()->json(['message' => 'Order status has been updated.'], 200);
+    }
+
+    public function finalizeOrder(Request $request) {
+
+      $validator = Validator::make($request->all(),[
+        'order_id' => 'required|numeric|exists:order,id'
+      ]);
+
+      if ($validator->fails()) {
+        return response()->json([
+          'error' => $validator->errors()->all()
+        ]);
+      }
+
+      $order = Order::whereId($request['order_id'])->first();
+      $order->status = OrderStatus::COMPLETED;
+      $order->save();
+
+      $incentiveDetails = OrderDetail::Join('incentive_category', 'order_detail.category_id', '=', 'incentive_category.id')
+                    ->where('order_id', '=', $order->id)
+                    ->select('base_price', 'incentive_category.rate')
+                    ->get();
+
+      $incentive = 0;
+
+      foreach ($incentiveDetails as $detail) {
+        $incentive += $detail->base_price * $detail->rate;
+      }
+
+      $commission = new Commission;
+      $commission->order_id = $order->id;
+      $commission->agen_id = $order->agen_id;
+      $commission->incentive = $incentive;
+      $commission->margin_penjualan = $incentive;
+      $commission->save();
+
+      return response()->json(['message' => 'Order has been completed.'], 201);
+
+    }
+
 }
