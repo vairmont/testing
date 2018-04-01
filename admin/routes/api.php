@@ -14,8 +14,8 @@ use Illuminate\Http\Request;
 */
 Route::get('/v1/users', ['as' => 'login', 'uses' => 'AuthController@doLogin']);
 
+Route::get('/products', 'ProductController@index');
 Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function () {
-  Route::get('/products', 'ProductController@index');
   Route::post('/products', 'ProductController@add');
   Route::get('/product/{id}', 'ProductController@show');
   Route::patch('/product/{id}', 'ProductController@edit');
@@ -28,4 +28,6 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
 
   Route::get('/orders', 'OrderController@index');
   Route::post('/order', 'OrderController@create');
+
+  Route::get('/ranks', 'RankingController@index');
 });
