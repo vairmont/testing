@@ -14,7 +14,7 @@ class RegisterController extends Controller
 {
     public function create()
     {
-    	return view('register')->withTitle('Registration');
+        return view('register')->withTitle('Registration');
     }
 
     public function addAgen(Request $request)
