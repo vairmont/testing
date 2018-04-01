@@ -8,24 +8,17 @@ use DB;
 use App\Order;
 use App\OrderDetail;
 use App\OrderCancel;
-use App\Product;
 use App\User;
 use App\Agen;
-use App\VoucherUse;
-use App\Voucher;
-use App\Chat;
-use App\Cart;
-use App\CartDetail;
-use App\ProductCategory;
 use App\FCM;
 
 class RankingController extends Controller
 {
 
     public function index(Request $request) {
-        $items = Order::Join('agen', 'order.user_id', '=', 'agen.id')
+        $items = Order::Join('agen', 'order.agen_id', '=', 'agen.id')
           ->where('order.status', 'LIKE', '%finish%')
-          ->select('SUM(total)', 'agen.name')
+          ->select(DB::raw('SUM(total) as total_sales'), 'agen.name')
           ->groupBy('agen.name')
           ->orderBy('total_sales', 'desc')
           ->get();

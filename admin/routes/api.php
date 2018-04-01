@@ -32,7 +32,7 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
   Route::post('/order/assign-agent', 'OrderController@assignOrderAgent');
   Route::post('/order/cancel', 'OrderController@cancelOrder');
   Route::post('/order/cancel-agent', 'OrderController@cancelOrderAgent');
-  Route::post('/order/finalize', 'OrderControl  ler@finalizeOrder');
+  Route::post('/order/finalize', 'OrderController@finalizeOrder');
 
 
   Route::get('/ranks', 'RankingController@index');
