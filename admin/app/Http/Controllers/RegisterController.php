@@ -3,121 +3,70 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use App\User;
-use App\Reseller;
-use Validator;
 use Hash;
-use App\Customer;
+use App\Admin;
+use App\User;
+use App\Agen;
+use App\Role;
+use DB;
 
 class RegisterController extends Controller
 {
-	public function addReseller(Request $request)
-	{
-		 $val = Validator::make($request->all(), [
-			'store_name' => 'required',
-			'name' => 'required',
-			'phone' => 'required|unique:reseller,phone',
-			'city_id' => 'required',
-			'address_1' => 'required',
-			'address_2' => 'required',
-			'email' => 'required|unique:users,email',
-			'password' => 'required|min:6',
-			'confirm_password' => 'required|same:password'
+    public function create()
+    {
+    	return view('register')->withTitle('Registration');
+    }
+
+    public function addAgen(Request $request)
+    {
+
+        if(empty($request->name)) {
+            return response()->json(['data' => [], 'message' => ['Nama tidak boleh kosong']]);
+        }
+
+        if(empty($request->phone)) {
+            return response()->json(['data' => [], 'message' => ['Nomor Ponsel tidak boleh kosong']]);
+        }
+
+        if(empty($request->address)) {
+            return response()->json(['data' => [], 'message' => ['Alamat tidak boleh kosong']]);
+        }
+
+        if(empty($request->email)) {
+            return response()->json(['data' => [], 'message' => ['E-mail tidak boleh kosong']]);
+        }
+
+        if(empty($request->password)) {
+            return response()->json(['data' => [], 'message' => ['Password tidak boleh kosong']]);
+        }
+
+        if(empty($request->confirm_password)) {
+            return response()->json(['data' => [], 'message' => ['Konfirmasi Password tidak boleh kosong']]);
+        }
+
+        $val = Validator::make($request->all(), [
+            'phone' => 'unique:reseller,phone',
+            'email' => 'unique:users,email',
+            'password' => 'min:6',
+            'confirm_password' => 'same:password'
         ]);
 
         if($val->fails()) {
             return response()->json(['data' => [], 'message' => $val->errors()->all()]);
-		}
-		else {
-		
-			$user = [
-				'email' => $request->email,
-				'password' => Hash::make($request->password),
-				'api_key' => 'key-'.uniqid(),
-				'role_id' => 4,
-				'status' => 'inactive'
-			];
-			$save = User::create($user);
+        }
+        else {
+        
+            $agen = [
+                'identifier' =>$save->id,
+                'name' => $request->name,
+                'phone' => $request->phone,
+                'address' => $request->address,
+                'lat'=> $request->lat,
+                'lng' => $request ->lng
+            ];
+            Agen::create($agen);
 
-	    	$reseller = [
-				'identifier' =>$save->id,
-				'store_name' => $request->store_name,
-				'name' => $request->name,
-				'phone' => $request->phone,
-				'store_photo' => "",
-				'city_id' => $request->city_id,
-				'address_1' => $request->address_1,
-				'address_2' => $request->address_2,
-				'printer_inkjet' => empty($request->printer_inkjet)? 0 : $request->printer_inkjet,
-				'printer_laser' => empty($request->printer_laser)? 0 : $request->printer_laser,
-				'printer_label' => empty($request->printer_label)? 0 : $request->printer_label,
-				'scanner' => empty($request->scanner)? 0 : $request->scanner,
-				'mesin_jahit' => empty($request->mesin_jahit)? 0 : $request->mesin_jahit,
-				'lain_lain' => empty($request->lain_lain)? 0 : $request->lain_lain,
-				'lat'=> $request->lat,
-				'lng' => $request ->lng
-			];
-			Reseller::create($reseller);
-
-			return response()->json(['data' => ['registration_id' => $save->id], 'message' => ['OK']]);
-		}
-	}
-
-	public function uploadStorePhoto(Request $request)
-	{
-		// upload image
-		// will store in storage/app/image
-		$path = $request->file('photo')->store('image');
-
-		Reseller::where('identifier', $request->header('registration_id'))
-		->update([
-			'store_photo' => "storage/app/".$path
-		]);
-
-		return response()->json(['data' => [], 'message' => ['OK']]);
-	}
-	
-	public function addCustomer(Request $request)
-	{
-		 $val = Validator::make($request->all(), [
-			'name' => 'required',
-			'phone' => 'required|unique:customer,phone',
-			'city_id' => 'required',
-			'address_1' => 'required',
-			'address_2' => 'required',
-			'email' => 'required|unique:users,email',
-			'password' => 'required|min:6',
-			'confirm_password' => 'required|same:password'
-        ]);
-
-        if($val->fails()) {
-            return response()->json(['data' => [], 'message' => $val->errors()->all()]);
-		}
-		else {
-		
-			$user =[
-				'email' => $request->email,
-				'password' => Hash::make($request->password),
-				'api_key' => 'key-'.uniqid(),
-				'role_id' => 2,
-				'status' => 'inactive'
-			];
-			$save = User::create($user);
-
-	    	$customer =[
-				'identifier' =>$save->id,
-				'name' => $request->name,
-				'phone' => $request->phone,
-				'city_id' => $request->city_id,
-				'address_1' => $request->address_1,
-				'address_2' => $request->address_2,
-				'lat'=> $request->lat,
-				'lng' => $request ->lng
-			];
-			Customer::create($customer);
-
-			return response()->json(['data' => ['registration_id' => $save->id], 'message' => ['OK']]);
-		}
-	}
+            return response()->json(['data' => ['registration_id' => $save->id], 'message' => ['OK']]);
+        }
+    }
 }

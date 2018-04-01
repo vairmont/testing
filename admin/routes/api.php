@@ -14,6 +14,12 @@ use Illuminate\Http\Request;
 */
 Route::get('/v1/users', ['as' => 'login', 'uses' => 'AuthController@doLogin']);
 
+Route::post('/v1/register/agen', 'RegisterController@addAgen');
+
+Route::post('/v1/login', 'AuthController@doLogin');
+Route::post('/v1/logout', 'AuthController@doLogout');
+Route::post('/v1/forgotPassword', 'UserController@forgotPassword');
+
 Route::get('/products', 'ProductController@index');
 Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function () {
   Route::post('/products', 'ProductController@add');
