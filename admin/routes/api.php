@@ -40,6 +40,11 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
   Route::post('/order/cancel-agent', 'OrderController@cancelOrderAgent');
   Route::post('/order/finalize', 'OrderController@finalizeOrder');
 
-
   Route::get('/ranks', 'RankingController@index');
+
+  Route::get('/getheir', 'HeirController@getHeir');
+  Route::post('/heir', 'HeirController@addHeir');
+  Route::post('/heir/uploadktp', 'HeirController@uploadKtpPhoto');
+  Route::post('/heir/uploadkk', 'HeirController@uploadKkPhoto');
+  Route::post('/heir/uploadakta', 'HeirController@uploadAktaPhoto');
 });
