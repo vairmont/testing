@@ -8,6 +8,7 @@ use App\Admin;
 use App\User;
 use App\Agen;
 use App\Role;
+use Validator;
 use DB;
 
 class RegisterController extends Controller
@@ -45,7 +46,7 @@ class RegisterController extends Controller
         }
 
         $val = Validator::make($request->all(), [
-            'phone' => 'unique:reseller,phone',
+            'phone' => 'unique:agen,phone',
             'email' => 'unique:users,email',
             'password' => 'min:6',
             'confirm_password' => 'same:password'
@@ -56,13 +57,20 @@ class RegisterController extends Controller
         }
         else {
         
+            $user =[
+				'email' => $request->email,
+				'password' => Hash::make($request->password),
+				'api_token' => 'key-'.uniqid(),
+				'role_id' => 2,
+				'status' => 'active'
+			];
+			$save = User::create($user);
+
             $agen = [
                 'identifier' =>$save->id,
                 'name' => $request->name,
                 'phone' => $request->phone,
-                'address' => $request->address,
-                'lat'=> $request->lat,
-                'lng' => $request ->lng
+                'address' => $request->address
             ];
             Agen::create($agen);
 

@@ -19,6 +19,7 @@ Route::post('/v1/register/agen', 'RegisterController@addAgen');
 Route::post('/v1/login', 'AuthController@doLogin');
 Route::post('/v1/logout', 'AuthController@doLogout');
 Route::post('/v1/forgotPassword', 'UserController@forgotPassword');
+Route::post('/v1/changePassword', 'UserController@changePassword');
 
 Route::get('/products', 'ProductController@index');
 Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function () {

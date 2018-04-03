@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Validator;
+use Auth;
 use DB;
 use App\Heir;
 use App\User;
@@ -24,21 +25,15 @@ class HeirController extends Controller
 
 	Public function addHeir (Request $request)
 	{
-		if(empty($request->name)) {
-            return response()->json(['data' => [], 'message' => ['Nama tidak boleh kosong']]);
-        }
-
-        else{
 
 			$heir = [
-                'identifier' =>$save->id,
-                'agen_id' => Auth::user()->id,
+				'user_id' => $request->user_id,
                 'name' => $request->name
             	];
             Heir::create($heir);
 
-            return response()->json(['data' => ['agen_id' => $save->id], 'message' => ['OK']]);
-    		}
+            return response()->json(['data' => ['user_id' => $request->user_id], 'message' => ['OK']]);
+    		
     }		
 
     public function uploadKtpPhoto(Request $request)
@@ -52,7 +47,7 @@ class HeirController extends Controller
 		else{
 		$path = $request->file('ktp_photo')->store('photos');
 
-		Heir::where('id', $request->header('agen_id'))
+		Heir::where('id', $request->header('user_id'))
 		->update([
 			'store_photo' => "storage/app/".$path
 		]);

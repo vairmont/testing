@@ -223,7 +223,7 @@ class UserController extends Controller
             $newpassword = rand(111111,999999);
 
             $user = User::where('email', "=", $request->email)
-            ->whereIn('role_id',['2','3','4']);
+            ->whereIn('role_id',['2','3','4', '5']);
                 if(count($user->first())>0)
                 {
                     $data = [
