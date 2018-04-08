@@ -46,6 +46,6 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
   Route::get('/getheir', 'HeirController@getHeir');
   Route::post('/heir', 'HeirController@addHeir');
   Route::post('/heir/uploadktp', 'HeirController@uploadKtpPhoto');
-  Route::post('/heir/uploadkk', 'HeirController@uploadKkPhoto');
+  Route::post('/heir/uploadkk', 'HeirController@uploadKkPhoto'); 
   Route::post('/heir/uploadakta', 'HeirController@uploadAktaPhoto');
 });
