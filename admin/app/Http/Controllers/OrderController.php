@@ -26,6 +26,8 @@ class OrderController extends Controller
     -Cancel Order (agen)
     */
 
+    private $marginRate = .05;
+
     public function index(Request $request) {
       $orders = Order::where('user_id', '=', $request->get('user')->id)->get();
 
@@ -224,16 +226,17 @@ class OrderController extends Controller
                     ->get();
 
       $incentive = 0;
-
+      $margin = 0;
       foreach ($incentiveDetails as $detail) {
         $incentive += $detail->base_price * $detail->rate;
+        $margin += $detail->base_price * $this->marginRate;
       }
 
       $commission = new Commission;
       $commission->order_id = $order->id;
       $commission->agen_id = $order->agen_id;
       $commission->incentive = $incentive;
-      $commission->margin_penjualan = $incentive;
+      $commission->margin_penjualan = $margin;
       $commission->save();
 
       return response()->json(['message' => 'Order has been completed.'], 201);
