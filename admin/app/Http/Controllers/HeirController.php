@@ -45,7 +45,7 @@ class HeirController extends Controller
 		// upload photos
 		// will store in storage/app/photos
 		if(empty($request->ktp_photo)) {
-            return response()->json(['data' => [], 'message' => ['Foto Ktp boleh kosong']]);
+            return response()->json(['data' => [], 'message' => ['Foto Ktp tidak boleh kosong']]);
         }
 
 		else{

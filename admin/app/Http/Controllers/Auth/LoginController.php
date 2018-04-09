@@ -17,7 +17,7 @@ class LoginController extends Controller
     public function doLogin(Request $request)
     {
         $this->validate($request, [
-            'email' => 'required',
+            'phone' => 'required',
             'password' => 'required'
         ]);
 
