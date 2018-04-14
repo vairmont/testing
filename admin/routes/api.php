@@ -49,5 +49,6 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
   Route::post('/heir/uploadkk', 'HeirController@uploadKkPhoto');
   Route::post('/heir/uploadakta', 'HeirController@uploadAktaPhoto');
 
-  Route::get('/commission', 'CommissionController@getAgentCommission');
+  Route::get('/commission/agen/{id}', 'CommissionController@getTodayCommission');
+  Route::get('/commission/agen/{id}/week', 'CommissionController@getWeeklyCommission');
 });

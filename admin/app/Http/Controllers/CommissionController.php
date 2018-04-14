@@ -9,30 +9,57 @@
 namespace App\Http\Controllers;
 
 
+use App\Agen;
 use App\Commission;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Validator;
 
 class CommissionController extends Controller {
 
-  public function getAgentCommission(Request $request) {
 
-    $validator = Validator::make($request->all(),[
-      'agen_id' => 'required|numeric|exists:agen,id',
-    ]);
+  public function getTodayCommission(Request $request, $id) {
 
-    if ($validator->fails()) {
-      return response()->json([
-        'error' => $validator->errors()->all()
-      ]);
+    $agen = Agen::whereId($id)->first();
+    if ($agen) {
+
+      $commissions = Commission::Join('agen', 'agen.id', '=', 'commission.agen_id')
+        ->where('agen.id', '=', $id)
+        ->whereDate('commission.created_at', Carbon::now()->toDateString())
+        ->selectRaw('commission.incentive, order_id')
+        ->get();
+
+      $incentiveTotal = 0;
+      foreach ($commissions as $commission) {
+        $incentiveTotal += $commission->incentive;
+      }
+
+      return response()->json(['data' => ['incentives' => $commissions, 'incentive_total' => $incentiveTotal]], 200);
     }
 
-    $weeklyCommision = Commission::Join('agen', 'agen.id', '=', 'commission.agen_id')
-      ->where('agen.id', '=', $request['agen_id'])
-      ->selectRaw('sum(commission.incentive) as incentive_amount, min(created_at), max(created_at)')
-      ->get();
+    return response()->json(['error' => 'INVALID AGENT ID'], 400);
+  }
 
-    return response()->json(['data' => $weeklyCommision], 200);
+  public function getWeeklyCommission(Request $request, $id) {
+
+    $agen = Agen::whereId($id)->first();
+    if ($agen) {
+
+      $commissions = Commission::Join('agen', 'agen.id', '=', 'commission.agen_id')
+        ->where('agen.id', '=', $id)
+        ->whereRaw('commission.created_at >= DATE_SUB(DATE(NOW()), INTERVAL DAYOFWEEK(NOW())+6 DAY)')
+        ->selectRaw('commission.incentive, order_id')
+        ->get();
+
+      $incentiveTotal = 0;
+      foreach ($commissions as $commission) {
+        $incentiveTotal += $commission->incentive;
+      }
+
+      return response()->json(['data' => ['incentives' => $commissions, 'incentive_total' => $incentiveTotal]], 200);
+    }
+
+    return response()->json(['error' => 'INVALID AGENT ID'], 400);
   }
 
 }
