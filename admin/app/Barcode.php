@@ -8,6 +8,6 @@ class Reseller extends Model
 {
     protected $table = 'barcode';
     protected $fillable = [
-    	'product_id'
+    	'product_id'  
     ];
 }

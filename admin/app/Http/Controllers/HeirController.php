@@ -15,8 +15,8 @@ class HeirController extends Controller
 {
 	public function getHeir(Request $request)
 	{
-            $agen = Heir::select('heir.name')
-                ->where('user_id', "=", $request->id)
+            $agen = Heir::select('name')
+                ->where('user_id', "=", $request->get('user')->id)
                 ->first();
 
             return response()->json(['data' => $agen, 'message' => ['OK']]);
@@ -25,15 +25,19 @@ class HeirController extends Controller
 
 	Public function addHeir (Request $request)
 	{
+			if(empty($request->name)) {
+            return response()->json(['data' => [], 'message' => ['Nama tidak boleh kosong']]);
+        }
 
+		else{
 			$heir = [
 				'user_id' => $request->user_id,
                 'name' => $request->name
             	];
             Heir::create($heir);
 
-            return response()->json(['data' => ['user_id' => $request->user_id], 'message' => ['OK']]);
-    		
+            return response()->json(['data' => $heir, 'message' => ['OK']]);
+    		}
     }		
 
     public function uploadKtpPhoto(Request $request)
@@ -41,7 +45,7 @@ class HeirController extends Controller
 		// upload photos
 		// will store in storage/app/photos
 		if(empty($request->ktp_photo)) {
-            return response()->json(['data' => [], 'message' => ['Foto Ktp boleh kosong']]);
+            return response()->json(['data' => [], 'message' => ['Foto Ktp tidak boleh kosong']]);
         }
 
 		else{
