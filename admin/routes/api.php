@@ -43,11 +43,9 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
 
   Route::get('/ranks', 'RankingController@index');
 
-  Route::get('/getheir', 'HeirController@getHeir');
-  Route::post('/heir', 'HeirController@addHeir');
-  Route::post('/heir/uploadktp', 'HeirController@uploadKtpPhoto');
-  Route::post('/heir/uploadkk', 'HeirController@uploadKkPhoto'); 
-  Route::post('/heir/uploadakta', 'HeirController@uploadAktaPhoto');
+  Route::get('/getfamily', 'FamilyController@getFamily');
+  Route::post('/family', 'FamilyController@addFamily');
+  Route::post('/family/uploadktp', 'FamilyController@uploadKtpPhoto');
 
   Route::get('/commission/agen/{id}', 'CommissionController@getTodayCommission');
   Route::get('/commission/agen/{id}/week', 'CommissionController@getWeeklyCommission');
