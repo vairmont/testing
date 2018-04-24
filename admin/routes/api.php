@@ -21,9 +21,10 @@ Route::post('/v1/logout', 'AuthController@doLogout');
 Route::post('/v1/forgotPassword', 'UserController@forgotPassword');
 Route::post('/v1/changePassword', 'UserController@changePassword');
 
-Route::get('/products', 'ProductController@index');
+Route::get('/v1/products', 'ProductController@index');
 Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function () {
   Route::post('/products', 'ProductController@add');
+
   Route::get('/product/{id}', 'ProductController@show');
   Route::patch('/product/{id}', 'ProductController@edit');
   Route::delete('/product/{id}', 'ProductController@remove');
