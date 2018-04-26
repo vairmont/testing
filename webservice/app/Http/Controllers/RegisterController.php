@@ -20,36 +20,44 @@ class RegisterController extends Controller
 
     public function addAgen(Request $request)
     {
-
-        if(empty($request->name)) {
-            return response()->json(['data' => [], 'message' => ['Nama tidak boleh kosong']]);
+        if(empty($request->business_name)) {
+            return response()->json(['data' => [], 'message' => ['Nama usaha tidak boleh kosong']]);
         }
 
-        if(empty($request->phone)) {
-            return response()->json(['data' => [], 'message' => ['Nomor Ponsel tidak boleh kosong']]);
+        if(empty($request->name)) {
+            return response()->json(['data' => [], 'message' => ['Nama lengkap tidak boleh kosong']]);
         }
 
         if(empty($request->address)) {
             return response()->json(['data' => [], 'message' => ['Alamat tidak boleh kosong']]);
         }
 
-        if(empty($request->email)) {
-            return response()->json(['data' => [], 'message' => ['E-mail tidak boleh kosong']]);
+        if(empty($request->province)) {
+            return response()->json(['data' => [], 'message' => ['Provinsi tidak boleh kosong']]);
         }
 
-        if(empty($request->password)) {
-            return response()->json(['data' => [], 'message' => ['Password tidak boleh kosong']]);
+        if(empty($request->city)) {
+            return response()->json(['data' => [], 'message' => ['Kota tidak boleh kosong']]);
         }
 
-        if(empty($request->confirm_password)) {
-            return response()->json(['data' => [], 'message' => ['Konfirmasi Password tidak boleh kosong']]);
+        if(empty($request->district)) {
+            return response()->json(['data' => [], 'message' => ['Kecamatan tidak boleh kosong']]);
+        }
+
+        if(empty($request->phone)) {
+            return response()->json(['data' => [], 'message' => ['Nomor Ponsel tidak boleh kosong']]);
+        }
+
+        if(empty($request->ktp_photo)) {
+            return response()->json(['data' => [], 'message' => ['Photo KTP tidak boleh kosong']]);
+        }
+
+        if(empty($request->kk_photo)) {
+            return response()->json(['data' => [], 'message' => ['Photo Password tidak boleh kosong']]);
         }
 
         $val = Validator::make($request->all(), [
-            'phone' => 'unique:agen,phone',
-            'email' => 'unique:users,email',
-            'password' => 'min:6',
-            'confirm_password' => 'same:password'
+            'phone' => 'unique:agen,phone'
         ]);
 
         if($val->fails()) {

@@ -1,9 +1,6 @@
 <?php
-
 namespace App\Http;
-
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
-
 class Kernel extends HttpKernel
 {
     /**
@@ -19,9 +16,7 @@ class Kernel extends HttpKernel
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
         \Barryvdh\Cors\HandleCors::class,
-        \App\Http\Middleware\VerifyBearerToken::class
     ];
-
     /**
      * The application's route middleware groups.
      *
@@ -38,15 +33,12 @@ class Kernel extends HttpKernel
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \Barryvdh\Cors\HandleCors::class,
         ],
-
         'api' => [
             'throttle:60,1',
             'bindings',
             \Barryvdh\Cors\HandleCors::class,
-              \App\Http\Middleware\VerifyBearerToken::class
         ],
     ];
-
     /**
      * The application's route middleware.
      *

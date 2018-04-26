@@ -14,7 +14,7 @@ class AuthController extends Controller
     public function doLogin(Request $request) 
     {
     	$val = Validator::make($request->all(), [
-			'email' => 'required',
+			'phone' => 'required',
 			'password' => 'required'
 		]);
 
@@ -23,20 +23,20 @@ class AuthController extends Controller
 		}
 		else {
 			$credentials = [
-				'email' => $request->email,
+				'phone' => $request->email,
 				'password' =>  $request->password,
 				'status' => 'active'
 			];
 
 			if(Auth::attempt($credentials)) {
 			    $data = User::leftjoin('role','users.role_id','=','role.id')
-			    			->select('users.id as user_id','users.role_id','users.email','users.api_key','role.name as role_name')
+			    			->select('users.id as user_id','users.role_id','users.phone','users.api_token')
 			    			->where('users.id',Auth::user()->id)
 			    			->first();
 				return response()->json(['data' => $data, 'message' => ['OK']]);
 			}
 			else {
-				return response()->json(['data' => [], 'message' => ['Email and Password Incorrect.']]);
+				return response()->json(['data' => [], 'message' => ['Nomor Telepon atau Password Salah.']]);
 			}
     	}
     }
