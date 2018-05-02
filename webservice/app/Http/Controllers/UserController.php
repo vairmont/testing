@@ -128,24 +128,25 @@ class UserController extends Controller
 
     public function forgotPassword(Request $request) {
         $val = Validator::make($request->all(), [
-            'phone' => 'required'
+            'email' => 'required'
         ]);
         if($val->fails()) {
             return response()->json(['data' => [], 'message' => $val->errors()->all()]);
         } 
         else {
-            $newpassword = rand(111111,999999);
+            $newpassword = 123456;
 
-            $user = User::where('phone', "=", $request->phone)
-            ->whereIn('role_id',['5']);
-                if(count($user->first())>0)
+            $user = User::where('email', "=", $request->email)
+            ->whereIn('role_id',['2','3','4', '5'])->first();
+
+                if($user != null)
                 {
                     $data = [
-                        'phone' => $request->phone,
+                        'email' => $request->email,
                         'password' => $newpassword
                     ];
                     $user->update(['password' => Hash::make($newpassword)]);
-                    //Mail::to($request->email)->send(new ResetPassword($data));
+                    Mail::to($request->email)->send(new ResetPassword($data));
                     return response()->json(['data' => [], 'message' => ['OK']]);
                 }
                 else

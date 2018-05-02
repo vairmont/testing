@@ -23,7 +23,7 @@ class AuthController extends Controller
 		}
 		else {
 			$credentials = [
-				'phone' => $request->email,
+				'phone' => $request->phone,
 				'password' =>  $request->password,
 				'status' => 'active'
 			];
