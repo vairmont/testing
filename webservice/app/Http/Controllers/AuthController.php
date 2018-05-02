@@ -13,6 +13,15 @@ class AuthController extends Controller
 {
     public function doLogin(Request $request) 
     {
+    	if(empty($request->phone)) {
+            return response()->json(['data' => [], 'message' => ['Nomor Telepon usaha tidak boleh kosong']]);
+        }
+
+        if(empty($request->password)) {
+            return response()->json(['data' => [], 'message' => ['Password tidak boleh kosong']]);
+        }
+
+        else
     	$val = Validator::make($request->all(), [
 			'phone' => 'required',
 			'password' => 'required'
