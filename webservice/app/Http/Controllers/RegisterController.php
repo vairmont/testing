@@ -57,7 +57,9 @@ class RegisterController extends Controller
         }
 
         $val = Validator::make($request->all(), [
+            'business_name' => 'unique:agen,business_name',
             'phone' => 'unique:agen,phone'
+
         ]);
 
         if($val->fails()) {
@@ -66,19 +68,24 @@ class RegisterController extends Controller
         else {
         
             $user =[
-				'email' => $request->email,
+				'phone' => $request->phone,
 				'password' => Hash::make($request->password),
 				'api_token' => 'key-'.uniqid(),
-				'role_id' => 2,
+				'role_id' => 5,
 				'status' => 'active'
 			];
 			$save = User::create($user);
 
             $agen = [
                 'identifier' =>$save->id,
+                'business_name' => $request->bu siness_name,
                 'name' => $request->name,
                 'phone' => $request->phone,
-                'address' => $request->address
+                'address' => $request->address,
+                'province' => $request->province,
+                'district' => $request->district,
+                'ktp_photo' => $request->ktp_photo,
+                'kk_photo' => $request->kk_photo
             ];
             Agen::create($agen);
 

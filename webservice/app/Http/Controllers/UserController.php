@@ -128,7 +128,7 @@ class UserController extends Controller
 
     public function forgotPassword(Request $request) {
         $val = Validator::make($request->all(), [
-            'email' => 'required'
+            'phone' => 'required'
         ]);
         if($val->fails()) {
             return response()->json(['data' => [], 'message' => $val->errors()->all()]);
@@ -136,16 +136,16 @@ class UserController extends Controller
         else {
             $newpassword = rand(111111,999999);
 
-            $user = User::where('email', "=", $request->email)
-            ->whereIn('role_id',['2','3','4', '5']);
+            $user = User::where('phone', "=", $request->phone)
+            ->whereIn('role_id',['5']);
                 if(count($user->first())>0)
                 {
                     $data = [
-                        'email' => $request->email,
+                        'phone' => $request->phone,
                         'password' => $newpassword
                     ];
                     $user->update(['password' => Hash::make($newpassword)]);
-                    Mail::to($request->email)->send(new ResetPassword($data));
+                    //Mail::to($request->email)->send(new ResetPassword($data));
                     return response()->json(['data' => [], 'message' => ['OK']]);
                 }
                 else

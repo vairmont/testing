@@ -70,7 +70,7 @@ class OrderController extends Controller
       $order->total = $cart->total;
       $order->status = OrderStatus::CREATED;
       $order->save();
-
+ 
       $cart->subtotal = 0;
       $cart->tax = 0;
       $cart->total = 0;
