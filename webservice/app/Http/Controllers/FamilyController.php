@@ -37,9 +37,9 @@ class FamilyController extends Controller
 				'relation' => $request->relation,
                 'name' => $request->name
             	];
-            Family::create($family);
+            $create = Family::create($family);
 
-            return response()->json(['data' => $family, 'message' => ['OK']]);
+            return response()->json(['family_id' => $create->id, 'message' => ['OK']]);
     		}
     }		
 
@@ -51,12 +51,13 @@ class FamilyController extends Controller
             return response()->json(['data' => [], 'message' => ['Foto Ktp tidak boleh kosong']]);
         }
 
-		else{
-		$path = $request->file('ktp_photo')->store('photos');
+		else {
+		var_dump($request);die;
+		$path = $request->file('ktp_photo')->store('photo_ktp');
 
-		Family::where('id', $request->header('user_id'))
+		Family::where('id', $request->family_id)
 		->update([
-			'store_photo' => "storage/app/".$path
+			'ktp_photo' => "storage/app/".$path
 		]);
 
 		return response()->json(['data' => [], 'message' => ['OK']]);
