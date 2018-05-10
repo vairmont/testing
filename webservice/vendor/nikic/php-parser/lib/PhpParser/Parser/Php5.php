@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <?php
 
 namespace PhpParser\Parser;
@@ -2633,3 +2634,5 @@ class Php5 extends \PhpParser\ParserAbstract
         ];
     }
 }
+=======
+>>>>>>> 619a3f5790498c5a9f8c67d24329979255995d27

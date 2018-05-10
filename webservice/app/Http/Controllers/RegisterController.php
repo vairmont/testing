@@ -84,12 +84,12 @@ class RegisterController extends Controller
                 'address' => $request->address,
                 'province' => $request->province,
                 'district' => $request->district,
-                'ktp_photo' => $request->ktp_photo,
-                'kk_photo' => $request->kk_photo
+                'ktp_photo' => '',
+                'kk_photo' => ''
             ];
-            Agen::create($agen);
+            $create = Agen::create($agen);
 
-            return response()->json(['data' => ['registration_id' => $save->id], 'message' => ['OK']]);
+            return response()->json(['data' => ['agen_id' => $create->id], 'message' => ['OK']]);
         }
     }
 }

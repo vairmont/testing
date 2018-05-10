@@ -17,14 +17,19 @@ class ProductController extends Controller
 
 	public function index(Request $request)
 	{
-    $product = Product::all();
-    if (isset($request['filters'])) {
-      foreach ($request['filters'] as $key => $val) {
-        $product = $product->where($key, '=', $val);
-      }
+    $products = Product::Join('product_category', 'product.category_id','=','product_category.id')
+    ->join('incentive_category', 'product.incentive_id','=', 'incentive_category.id')
+    ->select(
+      DB::raw('product.id , product.product_name , product.category_id, product_category.name as category_name, product.price_for_customer as price', 'incentive_category.rate')
+      );
+
+    if(isset($request->category_id) && !empty($request->category_id)) {
+      $products = $products->where('product.category_id', $request->category_id);
     }
 
-    return response()->json(['data' => $product], 200);
+    $products = $products->orderBy('product.product_name','asc')->get();
+
+    return response()->json(['data' => $products, 'message' => ['OK']]);
   }
 
   public function add(Request $request) {
