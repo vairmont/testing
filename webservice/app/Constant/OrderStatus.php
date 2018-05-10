@@ -9,10 +9,10 @@ namespace App\Constant;
  */
 class OrderStatus {
 
-  const CREATED = 10000;
-  const ASSIGNED = 20000;
-  const REASSIGN = 20001;
-  const COMPLETED = 50000;
-  const CANCELLED = 90000;
+  const CREATED = 1;
+  const ASSIGNED = 2;
+  const REASSIGN = 3;
+  const COMPLETED = 4;
+  const CANCELLED = 5;
 
 }

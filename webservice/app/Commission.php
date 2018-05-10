@@ -8,6 +8,6 @@ class Commission extends Model{
 
   protected $table = 'commission';
 
-  protected $fillable = ['agen_id', 'order_id', 'margin_penjualan', 'incentive'];
+  protected $fillable = ['agen_id', 'order_id', 'margin_penjualan', 'incentive','commission_netto','commission_pph'];
 
 }

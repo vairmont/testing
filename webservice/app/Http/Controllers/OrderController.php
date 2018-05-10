@@ -11,6 +11,7 @@ use App\Order;
 use App\OrderDetail;
 use App\OrderCancel;
 use App\Product;
+use App\Family;
 use App\User;
 use App\Agen;
 use App\Cart;
@@ -27,18 +28,140 @@ class OrderController extends Controller
     */
 
     private $marginRate = .05;
+    private $pph = .02;
 
-    public function index(Request $request) {
-      $orders = Order::where('user_id', '=', $request->get('user')->id)->get();
+    public function orderPending(Request $request) {
+      $agen = Agen::where('identifier','=', $request->get('user')->id)->first();
+
+      if($agen->parent == 1){
+        $orders = Order::where('agen_id', '=', $agen->id)->get();
+        $relation = "Kepala Keluarga";
+      }
+      else{
+        $parent = Family::where('child_id','=', $agen->id)->first();
+        $orders = Order::where('agen_id','=', $parent->parent_id)->get();
+        $relation = $parent->relation;
+      }
 
       $result = [];
       foreach ($orders as $order) {
         $items = OrderDetail::Join('product', 'product.id', '=', 'order_detail.product_id')
           ->where('order_id', '=', $order->id)
+          ->where('status','=','1')
           ->select('product.id as product_id', 'product.sku', 'order_detail.qty', 'order_detail.base_price', 'order_detail.nego_price')
           ->get();
 
+
         $result[] = [
+          'relation' => $relation,
+          'order_id' => $order->id,
+          'invoice_no' => $order->invoice_no,
+          'subtotal' => $order->subtotal,
+          'tax' => $order->tax,
+          'discount' => $order->discount,
+          'items' => $items
+        ];
+      }
+
+      return response()->json($result, 200);
+    }
+
+        public function orderProcess(Request $request) {
+      $agen = Agen::where('identifier','=', $request->get('user')->id)->first();
+
+      if($agen->parent == 1){
+        $orders = Order::where('agen_id', '=', $agen->id)->get();
+        $relation = "Kepala Keluarga";
+      }
+      else{
+        $parent = Family::where('child_id','=', $agen->id)->first();
+        $orders = Order::where('agen_id','=', $parent->parent_id)->get();
+        $relation = $parent->relation;
+      }
+
+      $result = [];
+      foreach ($orders as $order) {
+        $items = OrderDetail::Join('product', 'product.id', '=', 'order_detail.product_id')
+          ->where('order_id', '=', $order->id)
+          ->where('status','=','2')
+          ->select('product.id as product_id', 'product.sku', 'order_detail.qty', 'order_detail.base_price', 'order_detail.nego_price')
+          ->get();
+
+
+        $result[] = [
+          'relation' => $relation,
+          'order_id' => $order->id,
+          'invoice_no' => $order->invoice_no,
+          'subtotal' => $order->subtotal,
+          'tax' => $order->tax,
+          'discount' => $order->discount,
+          'items' => $items
+        ];
+      }
+
+      return response()->json($result, 200);
+    }
+
+    public function orderDone(Request $request) {
+      $agen = Agen::where('identifier','=', $request->get('user')->id)->first();
+
+      if($agen->parent == 1){
+        $orders = Order::where('agen_id', '=', $agen->id)->get();
+        $relation = "Kepala Keluarga";
+      }
+      else{
+        $parent = Family::where('child_id','=', $agen->id)->first();
+        $orders = Order::where('agen_id','=', $parent->parent_id)->get();
+        $relation = $parent->relation;
+      }
+
+      $result = [];
+      foreach ($orders as $order) {
+        $items = OrderDetail::Join('product', 'product.id', '=', 'order_detail.product_id')
+          ->where('order_id', '=', $order->id)
+          ->where('status','=','3')
+          ->select('product.id as product_id', 'product.sku', 'order_detail.qty', 'order_detail.base_price', 'order_detail.nego_price')
+          ->get();
+
+
+        $result[] = [
+          'relation' => $relation,
+          'order_id' => $order->id,
+          'invoice_no' => $order->invoice_no,
+          'subtotal' => $order->subtotal,
+          'tax' => $order->tax,
+          'discount' => $order->discount,
+          'items' => $items
+        ];
+      }
+
+      return response()->json($result, 200);
+    }
+
+    public function orderCancel(Request $request) {
+      $agen = Agen::where('identifier','=', $request->get('user')->id)->first();
+
+      if($agen->parent == 1){
+        $orders = Order::where('agen_id', '=', $agen->id)->get();
+        $relation = "Kepala Keluarga";
+      }
+      else{
+        $parent = Family::where('child_id','=', $agen->id)->first();
+        $orders = Order::where('agen_id','=', $parent->parent_id)->get();
+        $relation = $parent->relation;
+      }
+
+      $result = [];
+      foreach ($orders as $order) {
+        $items = OrderDetail::Join('product', 'product.id', '=', 'order_detail.product_id')
+          ->where('order_id', '=', $order->id)
+          ->where('status','=','4')
+          ->select('product.id as product_id', 'product.sku', 'order_detail.qty', 'order_detail.base_price', 'order_detail.nego_price')
+          ->get();
+
+
+        $result[] = [
+          'relation' => $relation,
           'order_id' => $order->id,
           'invoice_no' => $order->invoice_no,
           'subtotal' => $order->subtotal,
@@ -59,11 +182,14 @@ class OrderController extends Controller
         return response()->json(['message' => 'There is no item to order.'], 400);
       }
 
+      #ROLE AGEN / CUST
+
       $cartDetails = CartDetail::where('cart_id', '=', $cart->id)->get();
 
       $order = new Order;
       $order->invoice_no = $cart->id;
       $order->user_id = $cart->user_id;
+
       $order->subtotal = $cart->subtotal;
       $order->tax = $cart->tax;
       $order->discount = 0;
@@ -227,14 +353,19 @@ class OrderController extends Controller
 
       $incentive = 0;
       $margin = 0;
+
       foreach ($incentiveDetails as $detail) {
         $incentive += $detail->base_price * $detail->rate;
         $margin += $detail->base_price * $this->marginRate;
       }
+      $commission_pph = ($incentive + $margin) * $this->pph;
+      $commission_netto = ($incentive + $margin) - $commission_pph;
 
       $commission = new Commission;
       $commission->order_id = $order->id;
       $commission->agen_id = $order->agen_id;
+      $commission->commission_pph = $commission_pph;
+      $commission->commission_netto = $commission_netto;
       $commission->incentive = $incentive;
       $commission->margin_penjualan = $margin;
       $commission->save();
