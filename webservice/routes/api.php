@@ -17,7 +17,7 @@ Route::post('/v1/forgotPassword', 'UserController@forgotPassword');
 Route::post('/v1/changePassword', 'UserController@changePassword');
 
 Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function () {
-  Route::get('/v1/products', 'ProductController@index');
+  Route::get('/products', 'ProductController@index');
   Route::post('/products', 'ProductController@add');
   Route::get('/product/{id}', 'ProductController@show');
   Route::patch('/product/{id}', 'ProductController@edit');
