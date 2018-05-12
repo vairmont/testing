@@ -62,16 +62,6 @@
                                     </div>
                             </div>
                             <div class="form-group col-lg-6">
-                                <label>Negara</label>
-                                <select class="form-control">
-                                    <option>1</option>
-                                    <option>2</option>
-                                    <option>3</option>
-                                    <option>4</option>
-                                    <option>5</option>
-                                </select>
-                            </div>
-                            <div class="form-group col-lg-6">
                                 <label>Region/state/Province :</label>
                                 <input class="form-control" placeholder="Negara/State/provinsi">
                             </div>
