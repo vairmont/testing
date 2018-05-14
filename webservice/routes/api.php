@@ -36,6 +36,8 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
   Route::post('/order/cancel-agent', 'OrderController@cancelOrderAgent');
   Route::post('/order/finalize', 'OrderController@finalizeOrder');
   Route::get('/ranks', 'RankingController@index');
+  Route::get('/getcustomer', 'CustomerController@getCustomer');
+  Route::post('/customer', 'CustomerController@addCustomer');
   Route::get('/getfamily', 'FamilyController@getFamily');
   Route::post('/family', 'FamilyController@addFamily');
   Route::post('/family/uploadktp', 'FamilyController@uploadKtpPhoto');
