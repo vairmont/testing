@@ -78,7 +78,7 @@ class ApiCartController extends Controller {
       $cartDetail->product_id = $request['product_id'];
     }
 
-    $cartDetail->qty = $request['qty'];
+    $cartDetail->qty += $request['qty'];
     $cartDetail->save();
 
     $items = CartDetail::Join('product', 'cart_detail.product_id', '=', 'product_id')
