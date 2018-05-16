@@ -31,7 +31,14 @@ Route::get('/verifyagent/{id}','EmployeeController@updateVerify')->name('verify'
 Route::get('/bypurchaseorder','InventoryController@getByPurchaseorder');
 Route::get('/bytransferorder','InventoryController@getByTransferorder');
 Route::get('/bystockadjustment','InventoryController@getByAdjustment');
+
 Route::get('/bysupplier','InventoryController@getBySupplier');
+Route::get('/addsupplier','InventoryController@formBySupplier');
+Route::post('/addsupplier','InventoryController@saveBySupplier');
+Route::get('/editsupplier/{id}','InventoryController@formBySupplier');
+Route::post('/editsupplier/{id}','InventoryController@saveBySupplier');
+Route::get('/deletesupplier/{id}', 'ItemController@deleteSupplier');
+
 Route::get('/byinventoryhistory','InventoryController@getByInventoryHistory');
 Route::get('/byinventoryvaluation','InventoryController@getByInventoryValuation');
 
