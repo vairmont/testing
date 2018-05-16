@@ -330,6 +330,27 @@ class OrderController extends Controller
       return response()->json(['message' => 'Order status has been updated.'], 200);
     }
 
+    public function deliveryOrder(Request $request) {
+
+      $validator = Validator::make($request->all(),[
+        'order_id' => 'required|numeric|exists:order,id'
+      ]);
+
+      if ($validator->fails()) {
+        return response()->json([
+          'error' => $validator->errors()->all()
+        ]);
+      }
+
+      #change order status
+      $order = Order::whereId($request['order_id'])->first();
+      $order->status = OrderStatus::DELIVERY;
+      $order->save();
+
+      return response()->json(['message' => 'Order has been on delivery.'], 201);
+
+    }
+
     public function finalizeOrder(Request $request) {
 
       $validator = Validator::make($request->all(),[

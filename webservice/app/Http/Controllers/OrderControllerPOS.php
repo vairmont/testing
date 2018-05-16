@@ -18,6 +18,8 @@ use App\Cart;
 use App\CartDetail;
 use App\ProductCategory;
 use App\FCM;
+use App\Stock;
+use App\StockHistory;
 
 class OrderController extends Controller
 {
@@ -113,5 +115,54 @@ class OrderController extends Controller
           ]
         ]
       ], 201);
+    }
+
+    public function finalizeOrder(Request $request) {
+
+      $validator = Validator::make($request->all(),[
+        'order_id' => 'required|numeric|exists:order,id'
+      ]);
+
+      if ($validator->fails()) {
+        return response()->json([
+          'error' => $validator->errors()->all()
+        ]);
+      }
+
+      #kurangin stock
+      $orderDetail = OrderDetail::where('order_id','=',$request['order_id'])
+      ->get();
+
+      foreach ($orderDetail as $key => $val) {
+        $stock = Stock::where('store_id','=',$request['store_id'])
+                ->where('product_id','=',$val->product_id[$key])
+                ->first();
+
+        $stock->quantity -= $val->qty[$key];
+        $stock->save();
+
+        $stockhistory = new StockHistory;
+        $stockhistory->product_id = $val->product_id[$key];
+        $stockhistory->store_id = $request['store_id'];
+        $stockhistory->user_id = $request->get('user')->id;
+        $stockhistory->reason = 'Terjual';
+        $stockhistory->quantity = $val->qty[$key];
+        $stockhistory->save();
+
+      }
+
+      #change order status
+      $order = Order::whereId($request['order_id'])->first();
+      if($order->agen_id != 0)
+      {
+        
+      }
+      else{
+      $order->status = OrderStatus::COMPLETED;
+      $order->payment = $request['payment'];
+      $order->save();
+      }
+      return response()->json(['message' => 'Order has been completed.'], 201);
+
     }
 }
