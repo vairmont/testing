@@ -12,6 +12,43 @@
                 <form class="form-inline">
                     
                     <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">+Add Supplier</button>
+                    <div class="col-lg-12">
+   
+        <!-- /.panel-heading -->
+      <div>
+        <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-example">
+          <thead>
+            <tr>
+              <th>Nama</th>
+              <th>Kontak</th>
+              <th>No.Telp</th>
+              <th>Email</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          
+          <tbody>
+            @if(count($suppliers)> 0)
+                @foreach($suppliers ->all() as $supplier)
+            
+                  <tr>
+                    <td>{{$supplier -> name}}</td>
+                    <td>{{$supplier -> contact}}</td>
+                    <td>{{$supplier -> phone}}</td>
+                    <td>{{$supplier -> email}}</td>
+                    <td>
+                    <a href="#">Edit</a>
+                      <a href="#">Delete</a>
+                    </td>
+                  </tr>
+                  @endforeach
+            @endif
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
                     
                       <!-- Modal -->
                       <div class="modal fade" id="myModal" role="dialog">
@@ -25,9 +62,9 @@
                             </div>
                             <div class="modal-body col-lg-12">
                                    <div class="form-group col-lg-12">
-                                           <label>Supplier Name :</label>
-                                           <input class="form-control" placeholder="Nama supplier">
-                                       </div>
+                                        <label>Supplier Name :</label>
+                                        <input class="form-control" placeholder="Nama supplier">
+                                    </div>
                                        <div class="form-group col-lg-12">
                                         <label>Contact :</label>
                                         <input class="form-control" placeholder="Kontak">
@@ -60,25 +97,15 @@
                                         <label>zip code :</label>
                                         <input class="form-control" placeholder="Zip code">
                                     </div>
-                            </div>
-                            <div class="form-group col-lg-6">
-                                <label>Negara</label>
-                                <select class="form-control">
-                                    <option>1</option>
-                                    <option>2</option>
-                                    <option>3</option>
-                                    <option>4</option>
-                                    <option>5</option>
-                                </select>
-                            </div>
-                            <div class="form-group col-lg-6">
-                                <label>Region/state/Province :</label>
-                                <input class="form-control" placeholder="Negara/State/provinsi">
-                            </div>
-                            <div class="form-group col-lg-12">
-                                <label>Catatan :</label>
-                                <input class="form-control" placeholder="Catatan">
-                            </div>
+                                    </div>
+                                    <div class="form-group col-lg-6">
+                                        <label>Region/state/Province :</label>
+                                        <input class="form-control" placeholder="Negara/State/provinsi">
+                                    </div>
+                                    <div class="form-group col-lg-12">
+                                        <label>Catatan :</label>
+                                        <input class="form-control" placeholder="Catatan">
+                                </div>
                        
                            
                             <button type="submit" class="btn btn-default">Save</button>

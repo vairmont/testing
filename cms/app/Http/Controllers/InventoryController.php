@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Supplier;
 
 class InventoryController extends Controller
 {
@@ -22,9 +23,9 @@ class InventoryController extends Controller
         return view('inventory.stockadjustment')->withTitle('by stock adjustment');
     }
     public function getBySupplier(){
-
-
-        return view('inventory.supplier')->withTitle('by Supplier');
+        $suppliers = Supplier::all();
+        return view('inventory.supplier',compact('suppliers'))->withTitle('by Supplier');
+       
     }
     public function getByInventoryHistory(){
 

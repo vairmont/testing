@@ -28,7 +28,7 @@ class ApiCartController extends Controller {
       $cart->save();
     }
 
-    $items = CartDetail::Join('product', 'cart_detail.product_id', '=', 'product_id')
+    $items = CartDetail::Join('product', 'cart_detail.product_id', '=', 'product.id')
       ->where('cart_id', '=', $cart->id)
       ->where('qty', '>', 0)
       ->select('product.id', 'product.sku', 'product.product_name', 'cart_detail.qty', 'product.price_for_customer', 'product.price_for_agen')
