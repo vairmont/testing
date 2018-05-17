@@ -8,6 +8,6 @@ class Agen extends Model
 {
     protected $table = 'agen';
     protected $fillable = [
-    	'identifier', 'business_name', 'name', 'phone', 'address'
+    	'identifier', 'parent', 'business_name', 'name', 'address', 'province', 'district', 'ktp_photo', 'kk_photo'
     ];
 }

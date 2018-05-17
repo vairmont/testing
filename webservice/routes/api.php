@@ -4,11 +4,17 @@
 | API Routes
 |--------------------------------------------------------------------------
 */
-Route::post('/v1/register/agen', 'RegisterController@addAgen');
 Route::post('/v1/login', 'AuthController@doLogin');
 Route::post('/v1/logout', 'AuthController@doLogout');
 Route::post('/v1/forgotPassword', 'UserController@forgotPassword');
 Route::post('/v1/changePassword', 'UserController@changePassword');
+
+Route::post('/v1/register/agen', 'RegisterController@addAgen');
+Route::post('/v1/register/agen/ktp/upload', 'RegisterController@uploadKTP');
+Route::post('/v1/register/agen/kk/upload', 'RegisterController@uploadKK');
+
+Route::post('/v1/register/family', 'FamilyController@addFamily');
+Route::post('/v1/register/family/ktp/upload', 'FamilyController@uploadKTP');
 
 Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function() {
   Route::get('/products', 'ProductController@index');
@@ -24,7 +30,7 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function()
   Route::post('/cart/confirm', 'ApiCartController@finalizeCart');
 
   Route::get('/order', 'OrderControllerPOS@getOrderById');
-  
+
   Route::get('/order/pending', 'OrderController@orderPending');
   Route::get('/order/process', 'OrderController@orderProcess');
   Route::get('/order/done', 'OrderController@orderDone');
@@ -40,8 +46,7 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function()
   Route::get('/customer', 'CustomerController@getCustomer');
   Route::post('/customer', 'CustomerController@addCustomer');
   Route::get('/family', 'FamilyController@getFamily');
-  Route::post('/family', 'FamilyController@addFamily');
-  Route::post('/family/ktp/upload', 'FamilyController@uploadKtpPhoto');
+  
   Route::get('/commission/agent/{id}', 'CommissionController@getTodayCommission');
   Route::get('/commission/agent/{id}/week', 'CommissionController@getWeeklyCommission');
 });

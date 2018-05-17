@@ -83,7 +83,43 @@ class RegisterController extends Controller
             ];
             $create = Agen::create($agen);
 
-            return response()->json(['data' => ['registration_id' => $create->id], 'message' => ['OK']]);
+            return response()->json(['data' => ['agen_id' => $create->id], 'message' => ['OK']]);
         }
     }
+
+    public function uploadKTP(Request $request)
+	{
+		// upload photos will store in storage/app/photos
+		if(empty($request->ktp_photo)) {
+            return response()->json(['data' => [], 'message' => ['Foto Ktp tidak boleh kosong']]);
+        }
+		else {
+			$path = $request->file('ktp_photo')->store('photo_ktp');
+
+			Agen::where('id', $request->family_id)
+			->update([
+				'ktp_photo' => "storage/app/".$path
+			]);
+
+			return response()->json(['data' => [], 'message' => ['OK']]);
+		}
+    }
+    
+    public function uploadKK(Request $request)
+	{
+		// upload photos will store in storage/app/photos
+		if(empty($request->kk_photo)) {
+            return response()->json(['data' => [], 'message' => ['Foto KK tidak boleh kosong']]);
+        }
+		else {
+			$path = $request->file('kk_photo')->store('photo_kk');
+
+			Agen::where('id', $request->family_id)
+			->update([
+				'kk_photo' => "storage/app/".$path
+			]);
+
+			return response()->json(['data' => [], 'message' => ['OK']]);
+		}
+	}
 }
