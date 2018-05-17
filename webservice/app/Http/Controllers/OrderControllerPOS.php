@@ -19,7 +19,7 @@ use App\CartDetail;
 use App\ProductCategory;
 use App\FCM;
 
-class OrderController extends Controller
+class OrderControllerPOS extends Controller
 {
     /*
     -Get Order (untuk agen)
@@ -29,28 +29,45 @@ class OrderController extends Controller
     -Cancel Order (agen)
     */
 
-    public function index(Request $request) {
-      $orders = Order::where('user_id', '=', $request->get('user')->id)->get();
 
-      $result = [];
-      foreach ($orders as $order) {
-        $items = OrderDetail::Join('product', 'product.id', '=', 'order_detail.product_id')
-          ->where('order_id', '=', $order->id)
-          ->select('product.id as product_id', 'product.sku', 'order_detail.qty', 'order_detail.base_price', 'order_detail.nego_price')
-          ->get();
+    public function getOrderById(Request $request) {
+      // if{
+      var_dump($request);die;
+      $order = OrderDetail::Join('product', 'order_detail.product_id', '=', 'product.id')
+          ->where('order_detail.order_id', '=', $request->order_id)
+          ->select(DB::raw('product.id, product.product_name, product.price_for_customer as price, product.price_for_agen'))
+          ->first();
 
-        $result[] = [
-          'order_id' => $order->id,
-          'invoice_no' => $order->invoice_no,
-          'subtotal' => $order->subtotal,
-          'tax' => $order->tax,
-          'discount' => $order->discount,
-          'items' => $items
-        ];
-      }
+      return response()->json(['data' => $order, 'message' => ['OK']]);
+      // }
 
-      return response()->json($result, 200);
-    }
+      // else{
+      //   return response()->json(['message' => 'Order ID tidak ada.']);
+      // }
+     }
+
+    // public function index(Request $request) {
+    //   $orders = Order::where('user_id', '=', $request->get('user')->id)->get();
+
+    //   $result = [];
+    //   foreach ($orders as $order) {
+    //     $items = OrderDetail::Join('product', 'product.id', '=', 'order_detail.product_id')
+    //       ->where('order_id', '=', $order->id)
+    //       ->select('product.id as product_id', 'product.sku', 'order_detail.qty', 'order_detail.base_price', 'order_detail.nego_price')
+    //       ->get();
+
+    //     $result[] = [
+    //       'order_id' => $order->id,
+    //       'invoice_no' => $order->invoice_no,
+    //       'subtotal' => $order->subtotal,
+    //       'tax' => $order->tax,
+    //       'discount' => $order->discount,
+    //       'items' => $items
+    //     ];
+    //   }
+
+    //   return response()->json($result, 200);
+    // }
 
     public function create(Request $request) {
 

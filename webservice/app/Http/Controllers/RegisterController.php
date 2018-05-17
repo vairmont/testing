@@ -66,19 +66,19 @@ class RegisterController extends Controller
             return response()->json(['data' => [], 'message' => $val->errors()->all()]);
         }
         else {
-        
+            
             $user =[
 				'phone' => $request->phone,
 				'password' => Hash::make($request->password),
-				'api_token' => 'key-'.uniqid(),
+				'api_token' => uniqid(),
 				'role_id' => 5,
-				'status' => 'active'
+				'status' => 'inactive'
 			];
 			$save = User::create($user);
 
             $agen = [
                 'identifier' =>$save->id,
-                'business_name' => $request->bu siness_name,
+                'business_name' => $request->business_name,
                 'name' => $request->name,
                 'phone' => $request->phone,
                 'address' => $request->address,

@@ -36,7 +36,7 @@ class FamilyController extends Controller
         }
     
 		else{
-			$customre = [
+			$customer = [
 				'identifier' =>$save->id,
 				'name' => $request->name,
 				'phone' => $request->phone,
