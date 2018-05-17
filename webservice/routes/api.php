@@ -12,6 +12,7 @@ Route::post('/v1/changePassword', 'UserController@changePassword');
 
 Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function() {
   Route::get('/products', 'ProductController@index');
+  Route::get('/products', 'ProductControllerPOS@index');
   Route::post('/products', 'ProductController@add');
   Route::get('/product/{id}', 'ProductController@show');
   Route::patch('/product/{id}', 'ProductController@edit');
@@ -22,6 +23,8 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function()
   Route::post('/cart/clear', 'ApiCartController@clearCartItems');
   Route::post('/cart/confirm', 'ApiCartController@finalizeCart');
 
+  Route::get('/order', 'OrderControllerPOS@getOrderById');
+  
   Route::get('/order/pending', 'OrderController@orderPending');
   Route::get('/order/process', 'OrderController@orderProcess');
   Route::get('/order/done', 'OrderController@orderDone');
