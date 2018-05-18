@@ -13,11 +13,6 @@ use DB;
 
 class RegisterController extends Controller
 {
-    public function create()
-    {
-        return view('register')->withTitle('Registration');
-    }
-
     public function addAgen(Request $request)
     {
         if(empty($request->business_name)) {
@@ -59,26 +54,25 @@ class RegisterController extends Controller
         $val = Validator::make($request->all(), [
             'business_name' => 'unique:agen,business_name',
             'phone' => 'unique:agen,phone'
-
         ]);
 
         if($val->fails()) {
             return response()->json(['data' => [], 'message' => $val->errors()->all()]);
         }
         else {
-        
+            
             $user =[
 				'phone' => $request->phone,
 				'password' => Hash::make($request->password),
-				'api_token' => 'key-'.uniqid(),
+				'api_token' => uniqid(),
 				'role_id' => 5,
-				'status' => 'active'
+				'status' => 'inactive'
 			];
 			$save = User::create($user);
 
             $agen = [
                 'identifier' =>$save->id,
-                'business_name' => $request->bu siness_name,
+                'business_name' => $request->business_name,
                 'name' => $request->name,
                 'phone' => $request->phone,
                 'address' => $request->address,
@@ -92,4 +86,40 @@ class RegisterController extends Controller
             return response()->json(['data' => ['agen_id' => $create->id], 'message' => ['OK']]);
         }
     }
+
+    public function uploadKTP(Request $request)
+	{
+		// upload photos will store in storage/app/photos
+		if(empty($request->ktp_photo)) {
+            return response()->json(['data' => [], 'message' => ['Foto Ktp tidak boleh kosong']]);
+        }
+		else {
+			$path = $request->file('ktp_photo')->store('photo_ktp');
+
+			Agen::where('id', $request->family_id)
+			->update([
+				'ktp_photo' => "storage/app/".$path
+			]);
+
+			return response()->json(['data' => [], 'message' => ['OK']]);
+		}
+    }
+    
+    public function uploadKK(Request $request)
+	{
+		// upload photos will store in storage/app/photos
+		if(empty($request->kk_photo)) {
+            return response()->json(['data' => [], 'message' => ['Foto KK tidak boleh kosong']]);
+        }
+		else {
+			$path = $request->file('kk_photo')->store('photo_kk');
+
+			Agen::where('id', $request->family_id)
+			->update([
+				'kk_photo' => "storage/app/".$path
+			]);
+
+			return response()->json(['data' => [], 'message' => ['OK']]);
+		}
+	}
 }

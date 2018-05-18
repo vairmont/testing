@@ -15,53 +15,75 @@ class FamilyController extends Controller
 {
 	public function getFamily(Request $request)
 	{
-			$agen = Agen::join('user', 'agen.identifier', '=', 'user.id')
-				->join('family', 'agen.id', '=', 'family.parent_id')
-                ->where('agen.identifier', "=", $request->get('user')->id)
-				->select('agen.name', 'user.phone', 'family.relation');
+		$agen = Agen::join('user', 'agen.identifier', '=', 'user.id')
+			->join('family', 'agen.id', '=', 'family.parent_id')
+			->where('agen.identifier', "=", $request->get('user')->id)
+			->select('agen.name', 'user.phone', 'family.relation');
 
-            return response()->json(['data' => $agen, 'message' => ['OK']]);
+		return response()->json(['data' => $agen, 'message' => ['OK']]);
     }
        
 
-	Public function addFamily (Request $request)
+	Public function addFamily(Request $request)
 	{
-			if(empty($request->name)) {
+		if(empty($request->name)) {
             return response()->json(['data' => [], 'message' => ['Nama tidak boleh kosong']]);
         }
 
-		else{
-			$family = [
-				'agen_id' => $request->get('user')->id,
+		else {
+
+			$user = [
+				'role_id' => 5,
 				'phone' => $request->phone,
-				'password' => $request->password,
-				'relation' => $request->relation,
-                'name' => $request->name
-            	];
+				'password' => Hash::make('123456'),
+				'api_token' => uniqid(),
+				'status' => 'active'
+			];
+
+			$createUser = User::create($user);
+
+			$dataAgen = Agen::where('id', $request->agen_id)->first();
+
+			$agen = [
+				'identifier' => $createUser->id,
+				'parent' => 0,
+				'business_name' => $dataAgen->business_name,
+				'name' => $request->name,
+				'address' => $dataAgen->address,
+				'province' => $dataAgen->province,
+				'district' => $dataAgen->district,
+				'ktp_photo' => '',
+				'kk_photo' => $dataAgen->kk_photo
+			];
+
+			$createAgen = Agen::create($agen);
+
+			$family = [
+				'parent_id' => $request->agen_id,
+				'child_id' => $createAgen->id,
+				'relation' => $request->relation
+            ];
             $create = Family::create($family);
 
-            return response()->json(['family_id' => $create->id, 'message' => ['OK']]);
-    		}
+            return response()->json(['family_id' => $createAgen->id, 'message' => ['OK']]);
+    	}
     }		
 
-    public function uploadKtpPhoto(Request $request)
+    public function uploadKTP(Request $request)
 	{
-		// upload photos
-		// will store in storage/app/photos
+		// upload photos will store in storage/app/photos
 		if(empty($request->ktp_photo)) {
             return response()->json(['data' => [], 'message' => ['Foto Ktp tidak boleh kosong']]);
         }
-
 		else {
-		var_dump($request);die;
-		$path = $request->file('ktp_photo')->store('photo_ktp');
+			$path = $request->file('ktp_photo')->store('photo_ktp');
 
-		Family::where('id', $request->family_id)
-		->update([
-			'ktp_photo' => "storage/app/".$path
-		]);
+			Agen::where('id', $request->family_id)
+			->update([
+				'ktp_photo' => "storage/app/".$path
+			]);
 
-		return response()->json(['data' => [], 'message' => ['OK']]);
+			return response()->json(['data' => [], 'message' => ['OK']]);
 		}
 	}
 

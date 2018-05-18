@@ -16,7 +16,7 @@ class RankingController extends Controller
 {
 
     public function index(Request $request) {
-        $items = Order::Join('agen', 'order.agen_id', '=', 'agen.id')
+        $items = Order::Join('agen', 'order.user_id', '=', 'agen.id')
           ->where('order.status', 'LIKE', '%finish%')
           ->select(DB::raw('SUM(total) as total_sales'), 'agen.name')
           ->groupBy('agen.name')
