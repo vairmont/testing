@@ -8,6 +8,7 @@ use DB;
 use App\Order;
 use App\OrderDetail;
 use App\OrderCancel;
+use App\OrderBillingDetail;
 use App\Product;
 use App\User;
 use App\Agen;
@@ -111,6 +112,14 @@ class OrderControllerPOS extends Controller
       }
 
       $cartDetail = CartDetail::where('cart_id', '=', $cart->id)->update(['qty' => 0]);
+
+
+
+      $orderbillingdetail = new OrderBillingDetail;
+
+      $orderbillingdetail->order_id =  $order->id;
+      $orderbillingdetail->customer_name = $request['customer_name'];
+      $orderbillingdetail->save();
 
       return response(['data' => [
         'message' => 'Order created with Invoice No: '. $order->id,
