@@ -43,14 +43,6 @@ class RegisterController extends Controller
             return response()->json(['data' => [], 'message' => ['Nomor Ponsel tidak boleh kosong']]);
         }
 
-        if(empty($request->ktp_photo)) {
-            return response()->json(['data' => [], 'message' => ['Photo KTP tidak boleh kosong']]);
-        }
-
-        if(empty($request->kk_photo)) {
-            return response()->json(['data' => [], 'message' => ['Photo Password tidak boleh kosong']]);
-        }
-
         $val = Validator::make($request->all(), [
             'business_name' => 'unique:agen,business_name',
             'phone' => 'unique:agen,phone'
@@ -96,7 +88,7 @@ class RegisterController extends Controller
 		else {
 			$path = $request->file('ktp_photo')->store('photo_ktp');
 
-			Agen::where('id', $request->family_id)
+			Agen::where('id', $request->agen_id)
 			->update([
 				'ktp_photo' => "storage/app/".$path
 			]);
@@ -114,7 +106,7 @@ class RegisterController extends Controller
 		else {
 			$path = $request->file('kk_photo')->store('photo_kk');
 
-			Agen::where('id', $request->family_id)
+			Agen::where('id', $request->agen_id)
 			->update([
 				'kk_photo' => "storage/app/".$path
 			]);

@@ -38,8 +38,8 @@ class AuthController extends Controller
 			];
 
 			if(Auth::attempt($credentials)) {
-			    $data = User::leftjoin('role','users.role_id','=','role.id')
-			    			->select('users.id as user_id','users.api_token')
+			    $data = User::join('role','users.role_id','=','role.id')
+			    			->select('users.id as user_id','users.api_token', 'role.name', '')
 			    			->where('users.id',Auth::user()->id)
 			    			->first();
 				return response()->json(['data' => $data, 'message' => ['OK']]);

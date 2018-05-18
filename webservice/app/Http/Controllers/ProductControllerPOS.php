@@ -12,7 +12,7 @@ use Mockery\Exception;
 use Validator;
 use DB;
 
-class ProductController extends Controller
+class ProductControllerPOS extends Controller
 {
   public function searchProduct (Request $request)
   {
