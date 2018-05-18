@@ -14,7 +14,7 @@ use App\CartDetail;
 use Validator;
 use Illuminate\Http\Request;
 
-class ApiCartController extends Controller {
+class ApiCartControllerPOS extends Controller {
 
   public function index(Request $request) {
     $cart = Cart::where('user_id', '=', $request->get('user')->id)->first();
@@ -77,7 +77,6 @@ class ApiCartController extends Controller {
       $cartDetail->cart_id = $cart->id;
       $cartDetail->product_id = $request['product_id'];
     }
-
 
     $cartDetail->qty += $request['qty'];
     $cartDetail->save();

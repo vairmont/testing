@@ -29,6 +29,14 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function()
   Route::post('/cart/clear', 'ApiCartController@clearCartItems');
   Route::post('/cart/confirm', 'ApiCartController@finalizeCart');
 
+  Route::get('/cart/customer', 'ApiCartControllerCustomer@index');
+  Route::post('/cart/customer', 'ApiCartControllerCustomer@updateCart');
+  Route::post('/cart/customer/clear', 'ApiCartControllerCustomer@clearCartItems');
+
+  Route::get('/cart/pos', 'ApiCartControllerPOS@index');
+  Route::post('/cart/pos', 'ApiCartControllerPOS@updateCart');
+  Route::post('/cart/pos/clear', 'ApiCartControllerPOS@clearCartItems');
+
   Route::get('/order', 'OrderControllerPOS@getOrderById');
 
   Route::get('/order/pending', 'OrderController@orderPending');

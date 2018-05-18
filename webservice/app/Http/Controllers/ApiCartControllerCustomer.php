@@ -14,7 +14,7 @@ use App\CartDetail;
 use Validator;
 use Illuminate\Http\Request;
 
-class ApiCartController extends Controller {
+class ApiCartControllerCustomer extends Controller {
 
   public function index(Request $request) {
     $cart = Cart::where('user_id', '=', $request->get('user')->id)->first();
@@ -33,7 +33,7 @@ class ApiCartController extends Controller {
       ->where('qty', '>', 0)
       ->select('product.id', 'product.sku', 'product.product_name', 'cart_detail.qty', 'product.price_for_customer', 'product.price_for_agen')
       ->get();
-
+    
     return response()->json([
       'cart' => [
         'subtotal' => $cart->subtotal,
