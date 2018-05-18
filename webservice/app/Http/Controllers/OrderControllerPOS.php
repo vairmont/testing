@@ -34,19 +34,12 @@ class OrderControllerPOS extends Controller
 
 
     public function getOrderById(Request $request) {
-      // if{
-      var_dump($request);die;
       $order = OrderDetail::Join('product', 'order_detail.product_id', '=', 'product.id')
-          ->where('order_detail.order_id', '=', $request->order_id)
+          ->where('order_id', '=', $request->order_id)
           ->select(DB::raw('product.id, product.product_name, product.price_for_customer as price, product.price_for_agen'))
-          ->first();
+          ->get();
 
       return response()->json(['data' => $order, 'message' => ['OK']]);
-      // }
-
-      // else{
-      //   return response()->json(['message' => 'Order ID tidak ada.']);
-      // }
      }
 
     // public function index(Request $request) {
