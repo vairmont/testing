@@ -8,6 +8,7 @@ use DB;
 use App\Order;
 use App\OrderDetail;
 use App\OrderCancel;
+use App\OrderBillingDetail;
 use App\Product;
 use App\User;
 use App\Agen;
@@ -18,8 +19,10 @@ use App\Cart;
 use App\CartDetail;
 use App\ProductCategory;
 use App\FCM;
+use App\Stock;
+use App\StockHistory;
 
-class OrderController extends Controller
+class OrderControllerPOS extends Controller
 {
     /*
     -Get Order (untuk agen)
@@ -29,28 +32,38 @@ class OrderController extends Controller
     -Cancel Order (agen)
     */
 
-    public function index(Request $request) {
-      $orders = Order::where('user_id', '=', $request->get('user')->id)->get();
 
-      $result = [];
-      foreach ($orders as $order) {
-        $items = OrderDetail::Join('product', 'product.id', '=', 'order_detail.product_id')
-          ->where('order_id', '=', $order->id)
-          ->select('product.id as product_id', 'product.sku', 'order_detail.qty', 'order_detail.base_price', 'order_detail.nego_price')
+    public function getOrderById(Request $request) {
+      $order = OrderDetail::Join('product', 'order_detail.product_id', '=', 'product.id')
+          ->where('order_id', '=', $request->order_id)
+          ->select(DB::raw('product.id, product.product_name, product.price_for_customer as price, product.price_for_agen'))
           ->get();
 
-        $result[] = [
-          'order_id' => $order->id,
-          'invoice_no' => $order->invoice_no,
-          'subtotal' => $order->subtotal,
-          'tax' => $order->tax,
-          'discount' => $order->discount,
-          'items' => $items
-        ];
-      }
+      return response()->json(['data' => $order, 'message' => ['OK']]);
+     }
 
-      return response()->json($result, 200);
-    }
+    // public function index(Request $request) {
+    //   $orders = Order::where('user_id', '=', $request->get('user')->id)->get();
+
+    //   $result = [];
+    //   foreach ($orders as $order) {
+    //     $items = OrderDetail::Join('product', 'product.id', '=', 'order_detail.product_id')
+    //       ->where('order_id', '=', $order->id)
+    //       ->select('product.id as product_id', 'product.sku', 'order_detail.qty', 'order_detail.base_price', 'order_detail.nego_price')
+    //       ->get();
+
+    //     $result[] = [
+    //       'order_id' => $order->id,
+    //       'invoice_no' => $order->invoice_no,
+    //       'subtotal' => $order->subtotal,
+    //       'tax' => $order->tax,
+    //       'discount' => $order->discount,
+    //       'items' => $items
+    //     ];
+    //   }
+
+    //   return response()->json($result, 200);
+    // }
 
     public function create(Request $request) {
 
@@ -100,6 +113,14 @@ class OrderController extends Controller
 
       $cartDetail = CartDetail::where('cart_id', '=', $cart->id)->update(['qty' => 0]);
 
+
+
+      $orderbillingdetail = new OrderBillingDetail;
+
+      $orderbillingdetail->order_id =  $order->id;
+      $orderbillingdetail->customer_name = $request['customer_name'];
+      $orderbillingdetail->save();
+
       return response(['data' => [
         'message' => 'Order created with Invoice No: '. $order->id,
         'order' => [
@@ -113,5 +134,54 @@ class OrderController extends Controller
           ]
         ]
       ], 201);
+    }
+
+    public function finalizeOrder(Request $request) {
+
+      $validator = Validator::make($request->all(),[
+        'order_id' => 'required|numeric|exists:order,id'
+      ]);
+
+      if ($validator->fails()) {
+        return response()->json([
+          'error' => $validator->errors()->all()
+        ]);
+      }
+
+      #kurangin stock
+      $orderDetail = OrderDetail::where('order_id','=',$request['order_id'])
+      ->get();
+
+      foreach ($orderDetail as $key => $val) {
+        $stock = Stock::where('store_id','=',$request['store_id'])
+                ->where('product_id','=',$val->product_id[$key])
+                ->first();
+
+        $stock->quantity -= $val->qty[$key];
+        $stock->save();
+
+        $stockhistory = new StockHistory;
+        $stockhistory->product_id = $val->product_id[$key];
+        $stockhistory->store_id = $request['store_id'];
+        $stockhistory->user_id = $request->get('user')->id;
+        $stockhistory->reason = 'Terjual';
+        $stockhistory->quantity = $val->qty[$key];
+        $stockhistory->save();
+
+      }
+
+      #change order status
+      $order = Order::whereId($request['order_id'])->first();
+      if($order->agen_id != 0)
+      {
+        
+      }
+      else{
+      $order->status = OrderStatus::COMPLETED;
+      $order->payment = $request['payment'];
+      $order->save();
+      }
+      return response()->json(['message' => 'Order has been completed.'], 201);
+
     }
 }
