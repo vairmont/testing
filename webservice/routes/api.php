@@ -62,7 +62,7 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
   Route::get('/customer', 'CustomerController@getCustomer');
   Route::post('/customer', 'CustomerController@addCustomer');
 
-  Route::get('/getfamily', 'FamilyController@getFamily');
+  Route::get('/family', 'FamilyController@getFamily');
   Route::post('/family', 'FamilyController@addFamily');
   Route::post('/family/uploadktp', 'FamilyController@uploadKtpPhoto');
 

@@ -46,6 +46,7 @@ class OrderController extends Controller
       $result = [];
       foreach ($orders as $order) {
         $items = OrderDetail::Join('product', 'product.id', '=', 'order_detail.product_id')
+          ->Join('order','order.id','=','order_detail.order_id')
           ->where('order_id', '=', $order->id)
           ->where('status','=','1')
           ->select('product.id as product_id', 'product.sku', 'order_detail.qty', 'order_detail.base_price', 'order_detail.nego_price')
@@ -78,16 +79,15 @@ class OrderController extends Controller
         $orders = Order::where('agen_id','=', $parent->parent_id)->get();
         $relation = $parent->relation;
       }
-
       $result = [];
       foreach ($orders as $order) {
         $items = OrderDetail::Join('product', 'product.id', '=', 'order_detail.product_id')
+          ->Join('order','order.id','=','order_detail.order_id')
           ->where('order_id', '=', $order->id)
-          ->where('status','=','2')
+          ->where('status','=',2)
           ->orWhere('status','=','6')
           ->select('product.id as product_id', 'product.sku', 'order_detail.qty', 'order_detail.base_price', 'order_detail.nego_price')
           ->get();
-
 
         $result[] = [
           'relation' => $relation,
@@ -99,7 +99,6 @@ class OrderController extends Controller
           'items' => $items
         ];
       }
-
       return response()->json($result, 200);
     }
 
@@ -119,6 +118,7 @@ class OrderController extends Controller
       $result = [];
       foreach ($orders as $order) {
         $items = OrderDetail::Join('product', 'product.id', '=', 'order_detail.product_id')
+          ->Join('order','order.id','=','order_detail.order_id')
           ->where('order_id', '=', $order->id)
           ->where('status','=','7')
           ->select('product.id as product_id', 'product.sku', 'order_detail.qty', 'order_detail.base_price', 'order_detail.nego_price')
@@ -155,6 +155,7 @@ class OrderController extends Controller
       $result = [];
       foreach ($orders as $order) {
         $items = OrderDetail::Join('product', 'product.id', '=', 'order_detail.product_id')
+          ->Join('order','order.id','=','order_detail.order_id')
           ->where('order_id', '=', $order->id)
           ->where('status','=','8')
           ->select('product.id as product_id', 'product.sku', 'order_detail.qty', 'order_detail.base_price', 'order_detail.nego_price')
