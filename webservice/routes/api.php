@@ -23,7 +23,8 @@ Route::post('/v1/register/family/ktp/upload', 'FamilyController@uploadKTP');
 
 Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function () {
   Route::get('/products', 'ProductController@index');
-  Route::get('/products', 'ProductControllerPOS@index');
+  Route::get('/pos/products', 'ProductControllerPOS@index');
+  Route::get('/searchproducts', 'ProductControllerPOS@searchProducts');
   Route::post('/products', 'ProductController@add');
   Route::get('/product/{id}', 'ProductController@show');
   Route::patch('/product/{id}', 'ProductController@edit');
