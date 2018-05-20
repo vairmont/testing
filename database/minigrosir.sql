@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: May 17, 2018 at 07:50 AM
+-- Generation Time: May 20, 2018 at 07:01 AM
 -- Server version: 5.6.34-log
 -- PHP Version: 7.1.7
 
@@ -113,7 +113,8 @@ CREATE TABLE `cart` (
 --
 
 INSERT INTO `cart` (`id`, `user_id`, `voucher_id`, `subtotal`, `discount`, `tax`, `total`, `created_at`, `updated_at`) VALUES
-(1, 33, NULL, 0, NULL, 0, 0, '2018-03-27 18:48:23', '2018-03-28 18:17:57');
+(1, 1, NULL, 0, NULL, 0, 0, '2018-03-27 18:48:23', '2018-05-18 05:51:30'),
+(2, 33, NULL, 0, NULL, 0, 0, '2018-05-18 05:27:49', '2018-05-18 05:27:49');
 
 -- --------------------------------------------------------
 
@@ -135,8 +136,32 @@ CREATE TABLE `cart_detail` (
 --
 
 INSERT INTO `cart_detail` (`id`, `cart_id`, `product_id`, `qty`, `created_at`, `updated_at`) VALUES
-(1, 1, 3, 0, '2018-03-27 18:51:19', '2018-03-28 18:17:57'),
-(2, 1, 4, 0, '2018-03-27 18:56:14', '2018-03-28 18:17:57');
+(1, 1, 3, 0, '2018-03-27 18:51:19', '2018-05-18 05:51:30'),
+(2, 1, 4, 0, '2018-03-27 18:56:14', '2018-05-18 05:51:30');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `cash`
+--
+
+CREATE TABLE `cash` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `starting_cash` varchar(150) NOT NULL,
+  `sales` varchar(150) NOT NULL,
+  `cash_out` varchar(150) NOT NULL,
+  `closing_cash` varchar(150) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00'
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `cash`
+--
+
+INSERT INTO `cash` (`id`, `user_id`, `starting_cash`, `sales`, `cash_out`, `closing_cash`, `created_at`, `updated_at`) VALUES
+(1, 33, '100000', '10000', '10000', '10000', '2018-05-18 07:50:26', '0000-00-00 00:00:00');
 
 -- --------------------------------------------------------
 
@@ -223,10 +248,9 @@ CREATE TABLE `customer` (
   `id` int(11) UNSIGNED NOT NULL,
   `identifier` int(11) DEFAULT NULL,
   `name` varchar(150) DEFAULT NULL,
+  `gender` varchar(10) NOT NULL,
   `phone` varchar(150) DEFAULT NULL,
   `address` longtext,
-  `lat` varchar(150) DEFAULT '0',
-  `lng` varchar(150) DEFAULT '0',
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -235,11 +259,11 @@ CREATE TABLE `customer` (
 -- Dumping data for table `customer`
 --
 
-INSERT INTO `customer` (`id`, `identifier`, `name`, `phone`, `address`, `lat`, `lng`, `created_at`, `updated_at`) VALUES
-(1, 3, 'Jordy Jonatan', '081289256242', 'Jl. Daan Mogot', '0', '0', '2017-12-05 15:21:45', '2017-12-06 06:03:33'),
-(27, 33, 'George', '08999310048', 'Jalan Princess Alice 2,Kelapa Dua,Tangerang', '-6.2429802', '106.6138121', '2017-12-29 06:28:31', '2018-01-09 08:56:49'),
-(28, 34, 'Jonatan', '08921038201', 'Balikpapan City, East Kalimantan, Indonesia', '0', '0', '2017-12-29 06:31:28', '2017-12-29 06:31:28'),
-(29, 1, 'bry', '0813123213', 'jl panjang', '0', '0', '2018-03-24 17:51:37', '0000-00-00 00:00:00');
+INSERT INTO `customer` (`id`, `identifier`, `name`, `gender`, `phone`, `address`, `created_at`, `updated_at`) VALUES
+(1, 3, 'Jordy Jonatan', '', '081289256242', 'Jl. Daan Mogot', '2017-12-05 15:21:45', '2017-12-06 06:03:33'),
+(27, 33, 'George', '', '08999310048', 'Jalan Princess Alice 2,Kelapa Dua,Tangerang', '2017-12-29 06:28:31', '2018-01-09 08:56:49'),
+(28, 34, 'Jonatan', '', '08921038201', 'Balikpapan City, East Kalimantan, Indonesia', '2017-12-29 06:31:28', '2017-12-29 06:31:28'),
+(29, 1, 'bry', '', '0813123213', 'jl panjang', '2018-03-24 17:51:37', '0000-00-00 00:00:00');
 
 -- --------------------------------------------------------
 
@@ -391,7 +415,11 @@ CREATE TABLE `order` (
 --
 
 INSERT INTO `order` (`id`, `invoice_no`, `user_id`, `subtotal`, `discount`, `tax`, `total`, `type`, `status`, `payment`, `agen_id`, `created_at`, `updated_at`) VALUES
-(2, '1', 33, 161250, 0, 0, 161250, 'sembako', 4, 'cash', 2, '2018-03-28 18:17:57', '2018-05-06 08:59:18');
+(2, '1', 33, 161250, 0, 0, 161250, 'sembako', 4, '', 2, '2018-03-28 18:17:57', '2018-05-06 08:59:18'),
+(3, '2', 33, 431341, 0, 0, 431341, 'sembako', 3, '', 2, '2018-05-12 06:57:34', '0000-00-00 00:00:00'),
+(4, '3', 33, 2323, 0, 0, 2323, 'sembako', 2, '', 2, '2018-05-12 06:57:34', '0000-00-00 00:00:00'),
+(5, '2', 33, 431341, 0, 0, 431341, 'sembako', 3, '', 2, '2018-05-12 06:57:47', '0000-00-00 00:00:00'),
+(6, '3', 33, 2323, 0, 0, 2323, 'sembako', 2, '', 2, '2018-05-12 06:57:47', '0000-00-00 00:00:00');
 
 -- --------------------------------------------------------
 
@@ -408,6 +436,9 @@ CREATE TABLE `order_billing_detail` (
   `customer_city` varchar(50) NOT NULL,
   `customer_district` varchar(50) NOT NULL,
   `customer_address` varchar(200) NOT NULL,
+  `lat` varchar(255) NOT NULL,
+  `long` varchar(255) NOT NULL,
+  `customer_address2` varchar(255) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -469,10 +500,12 @@ CREATE TABLE `product` (
   `id` int(11) UNSIGNED NOT NULL,
   `sku` int(11) NOT NULL,
   `product_name` varchar(150) NOT NULL DEFAULT '',
+  `description` longtext NOT NULL,
   `store_id` int(11) DEFAULT NULL,
   `tax_id` int(11) DEFAULT NULL,
   `category_id` int(11) NOT NULL,
   `incentive_id` int(11) DEFAULT NULL,
+  `shelf` varchar(20) NOT NULL,
   `cost` int(11) NOT NULL,
   `price_for_customer` float NOT NULL,
   `price_for_agen` float NOT NULL,
@@ -485,11 +518,11 @@ CREATE TABLE `product` (
 -- Dumping data for table `product`
 --
 
-INSERT INTO `product` (`id`, `sku`, `product_name`, `store_id`, `tax_id`, `category_id`, `incentive_id`, `cost`, `price_for_customer`, `price_for_agen`, `img_url`, `created_at`, `updated_at`) VALUES
-(6, 2525156, 'mie 50gr', NULL, NULL, 1, 1, 19000, 25000, 23750, NULL, '2018-04-17 23:20:08', '2018-04-17 23:20:08'),
-(8, 56478979, 'Bihun 200gr', 1, 1, 2, 2, 15000, 20000, 19000, NULL, '2018-04-17 23:23:23', '2018-04-17 23:23:23'),
-(9, 676765, 'sarden', 1, 1, 2, 1, 55000, 60000, 57000, NULL, '2018-04-17 23:42:29', '2018-04-17 23:42:29'),
-(10, 5628874, 'beras 5kg', 1, 1, 4, 2, 58000, 62500, 59375, NULL, '2018-04-18 02:46:56', '2018-04-18 02:46:56');
+INSERT INTO `product` (`id`, `sku`, `product_name`, `description`, `store_id`, `tax_id`, `category_id`, `incentive_id`, `shelf`, `cost`, `price_for_customer`, `price_for_agen`, `img_url`, `created_at`, `updated_at`) VALUES
+(3, 2525156, 'mie 50gr', '', NULL, NULL, 1, 1, '', 19000, 25000, 23750, NULL, '2018-04-17 23:20:08', '2018-04-17 23:20:08'),
+(4, 56478979, 'Bihun 200gr', '', 1, 1, 2, 2, '', 15000, 20000, 19000, NULL, '2018-04-17 23:23:23', '2018-04-17 23:23:23'),
+(9, 676765, 'sarden', '', 1, 1, 2, 1, '', 55000, 60000, 57000, NULL, '2018-04-17 23:42:29', '2018-04-17 23:42:29'),
+(10, 5628874, 'beras 5kg', '', 1, 1, 4, 2, '', 58000, 62500, 59375, NULL, '2018-04-18 02:46:56', '2018-04-18 02:46:56');
 
 -- --------------------------------------------------------
 
@@ -625,6 +658,22 @@ CREATE TABLE `purchase_order_detail` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `rating`
+--
+
+CREATE TABLE `rating` (
+  `id` int(11) NOT NULL,
+  `order_id` int(11) NOT NULL,
+  `agen_id` int(11) NOT NULL,
+  `customer_id` int(11) NOT NULL,
+  `rating` varchar(150) NOT NULL,
+  `notes` varchar(255) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `receipt`
 --
 
@@ -665,19 +714,6 @@ INSERT INTO `role` (`id`, `name`, `slug`, `created_at`, `updated_at`) VALUES
 (5, 'Agen', 'agen', '2017-11-20 06:48:00', '0000-00-00 00:00:00'),
 (6, 'Member', 'member', '2017-11-20 06:48:00', '0000-00-00 00:00:00'),
 (7, 'Customer', 'customer', '2017-11-20 06:48:00', '0000-00-00 00:00:00');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `sales`
---
-
-CREATE TABLE `sales` (
-  `id` int(11) NOT NULL,
-  `order_id` int(11) NOT NULL,
-  `created_at` int(11) NOT NULL,
-  `updated_at` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -773,11 +809,19 @@ INSERT INTO `store` (`id`, `store_name`, `phone`, `address`, `created_at`, `upda
 
 CREATE TABLE `suppliers` (
   `id` int(11) NOT NULL,
-  `name` int(11) NOT NULL,
-  `phone` int(11) NOT NULL,
-  `address` int(11) NOT NULL,
-  `created_at` int(11) NOT NULL,
-  `updated_at` int(11) NOT NULL
+  `name` varchar(60) NOT NULL,
+  `phone` varchar(16) NOT NULL,
+  `contact` varchar(30) NOT NULL,
+  `email` varchar(30) NOT NULL,
+  `website` varchar(40) NOT NULL,
+  `province` varchar(30) NOT NULL,
+  `city` varchar(30) NOT NULL,
+  `zipcode` varchar(10) NOT NULL,
+  `notes` longtext NOT NULL,
+  `address_1` longtext NOT NULL,
+  `address_2` longtext NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -857,6 +901,7 @@ CREATE TABLE `transfer_order_detail` (
 CREATE TABLE `users` (
   `id` int(11) UNSIGNED NOT NULL,
   `role_id` int(11) DEFAULT NULL,
+  `store_id` int(11) NOT NULL,
   `phone` varchar(15) DEFAULT NULL,
   `password` varchar(255) DEFAULT '',
   `api_token` varchar(255) NOT NULL,
@@ -870,10 +915,10 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `role_id`, `phone`, `password`, `api_token`, `status`, `remember_token`, `created_at`, `updated_at`) VALUES
-(7, 4, '081234567', '$2y$10$X4Lnzx08Fubv8/D67W4rXObEUUqO/7E0aO3C/ojQpV809RcNNvNNK', 'R2AIpZfzNDlXsrHZAKxlu1EmqKA6Pmeijasm933CZnOruNwXR5VMExVHYPyQ', 'active', '', '2017-12-06 09:43:12', '2018-05-02 08:13:50'),
-(33, 1, '0812155645', '$2y$10$81fghEe6XwCWbPA3mrpnluDX4Ukv7Hy6kbmoJNtiPRkmCkmgRDoje', 'OmIqqBTbcOrwF80i3PSPBBfxAg0aHDjqQTV96pXGJSsbxBPP2DlfyH9DHFIR', 'active', '', '2017-12-28 09:26:31', '2017-12-28 09:22:58'),
-(35, 5, NULL, '$2y$10$gmspt2tl8RoBlECHaJ.0DuBOgK5oehNbQdaDmW2rtzIra4xWBPN0G', 'key-5acb0d6e9c7d8', 'active', '', '2018-04-09 06:51:26', '2018-04-09 06:51:26');
+INSERT INTO `users` (`id`, `role_id`, `store_id`, `phone`, `password`, `api_token`, `status`, `remember_token`, `created_at`, `updated_at`) VALUES
+(1, 2, 0, '0000', '$2y$10$GYojji5pa7m9EChRptSAGO0OM8yFCmZ1OkycDo/Ogfz9.RKxXreEy', 'R2AIpZfzNDlXsrHZAKxlu1EmqKA6Pmeijasm933CZnOruNwXR5VMExVHYPyQ', 'active', '', '2017-12-06 09:43:12', '2018-05-12 07:11:41'),
+(33, 5, 0, '0812155645', '$2y$10$81fghEe6XwCWbPA3mrpnluDX4Ukv7Hy6kbmoJNtiPRkmCkmgRDoje', 'OmIqqBTbcOrwF80i3PSPBBfxAg0aHDjqQTV96pXGJSsbxBPP2DlfyH9DHFIR', 'active', '', '2017-12-28 09:26:31', '2017-12-28 09:22:58'),
+(35, 5, 0, NULL, '$2y$10$gmspt2tl8RoBlECHaJ.0DuBOgK5oehNbQdaDmW2rtzIra4xWBPN0G', 'key-5acb0d6e9c7d8', 'active', '', '2018-04-09 06:51:26', '2018-04-09 06:51:26');
 
 -- --------------------------------------------------------
 
@@ -965,6 +1010,12 @@ ALTER TABLE `cart`
 -- Indexes for table `cart_detail`
 --
 ALTER TABLE `cart_detail`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `cash`
+--
+ALTER TABLE `cash`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -1094,6 +1145,12 @@ ALTER TABLE `purchase_order_cancel`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `rating`
+--
+ALTER TABLE `rating`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `receipt`
 --
 ALTER TABLE `receipt`
@@ -1103,12 +1160,6 @@ ALTER TABLE `receipt`
 -- Indexes for table `role`
 --
 ALTER TABLE `role`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `sales`
---
-ALTER TABLE `sales`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -1133,6 +1184,12 @@ ALTER TABLE `stock_history`
 -- Indexes for table `store`
 --
 ALTER TABLE `store`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `suppliers`
+--
+ALTER TABLE `suppliers`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -1194,12 +1251,17 @@ ALTER TABLE `barcode`
 -- AUTO_INCREMENT for table `cart`
 --
 ALTER TABLE `cart`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 --
 -- AUTO_INCREMENT for table `cart_detail`
 --
 ALTER TABLE `cart_detail`
   MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+--
+-- AUTO_INCREMENT for table `cash`
+--
+ALTER TABLE `cash`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 --
 -- AUTO_INCREMENT for table `chat`
 --
@@ -1254,7 +1316,7 @@ ALTER TABLE `log`
 -- AUTO_INCREMENT for table `order`
 --
 ALTER TABLE `order`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 --
 -- AUTO_INCREMENT for table `order_billing_detail`
 --
@@ -1306,6 +1368,11 @@ ALTER TABLE `purchase_order`
 ALTER TABLE `purchase_order_cancel`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
+-- AUTO_INCREMENT for table `rating`
+--
+ALTER TABLE `rating`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+--
 -- AUTO_INCREMENT for table `receipt`
 --
 ALTER TABLE `receipt`
@@ -1315,11 +1382,6 @@ ALTER TABLE `receipt`
 --
 ALTER TABLE `role`
   MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
---
--- AUTO_INCREMENT for table `sales`
---
-ALTER TABLE `sales`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `stock`
 --
@@ -1340,6 +1402,11 @@ ALTER TABLE `stock_history`
 --
 ALTER TABLE `store`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+--
+-- AUTO_INCREMENT for table `suppliers`
+--
+ALTER TABLE `suppliers`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `tax`
 --
