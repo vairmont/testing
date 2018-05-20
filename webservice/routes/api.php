@@ -61,6 +61,7 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
   Route::get('/ranks', 'RankingController@index');
 
   Route::get('/rating', 'RatingController@index');
+  Route::post('/rating', 'RatingController@addRating');
 
   Route::get('/customer', 'CustomerController@getCustomer');
   Route::post('/customer', 'CustomerController@addCustomer');
