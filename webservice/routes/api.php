@@ -22,6 +22,10 @@ Route::post('/v1/register/family', 'FamilyController@addFamily');
 Route::post('/v1/register/family/ktp/upload', 'FamilyController@uploadKTP');
 
 Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function () {
+
+  Route::post('token/check', 'FCMTokenController@checkToken');
+  Route::post('token/add', 'FCMTokenController@addToken');
+  
   Route::get('/products', 'ProductController@index');
   Route::get('/pos/products', 'ProductControllerPOS@index');
   Route::get('/searchproducts', 'ProductControllerPOS@searchProducts');
