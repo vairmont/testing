@@ -7,7 +7,7 @@
 #
 # Host: localhost (MySQL 5.6.38)
 # Database: minigrosir
-# Generation Time: 2018-05-21 09:22:46 +0000
+# Generation Time: 2018-05-21 09:34:53 +0000
 # ************************************************************
 
 
@@ -759,8 +759,17 @@ CREATE TABLE `rating` (
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 
+LOCK TABLES `rating` WRITE;
+/*!40000 ALTER TABLE `rating` DISABLE KEYS */;
+
+INSERT INTO `rating` (`id`, `order_id`, `agen_id`, `customer_id`, `rating`, `notes`, `created_at`, `updated_at`)
+VALUES
+	(1,3,2,1,'5','mantap','2018-05-21 16:34:37','2018-05-21 16:34:37');
+
+/*!40000 ALTER TABLE `rating` ENABLE KEYS */;
+UNLOCK TABLES;
 
 
 # Dump of table receipt

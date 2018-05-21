@@ -29,12 +29,13 @@ class RatingController extends Controller
     }
     else {
 
+        $user_id = $request->get('user')->id;
         $order = Order::find($request->order_id);
 
         $data['order_id'] = $request->order_id;
         $data['agen_id'] = $order->agen_id;
-        $data['customer_id'] = $request->get('user_id')->id;
-        $data['value'] = $request->value;
+        $data['customer_id'] = $user_id;
+        $data['rating'] = $request->value;
         $data['notes'] = nl2br($request->notes);
         
         Rating::create($data);
