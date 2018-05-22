@@ -36,12 +36,7 @@ class OrderControllerCustomer extends Controller
       foreach ($orders as $order) {
         $items = OrderDetail::Join('product', 'product.id', '=', 'order_detail.product_id')
           ->where('order_id', '=', $order->id)
-<<<<<<< HEAD
           ->select('product.id as product_id', 'product.sku', 'order_detail.qty','product.price_for_customer','product.price_for_agen','product.img_url')
-=======
-          ->where('status','=','1')
-          ->select('product.id as product_id', 'product.sku', 'order_detail.qty', 'order_detail.base_price', 'order_detail.nego_price')
->>>>>>> e89d29cf39a244426cb03424efa747b93502336e
           ->get();
 
 
