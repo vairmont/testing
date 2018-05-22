@@ -20,16 +20,6 @@ class AuthController extends Controller
         if(empty($request->password)) {
             return response()->json(['data' => [], 'message' => ['Password tidak boleh kosong']]);
         }
-
-        else
-    	$val = Validator::make($request->all(), [
-			'phone' => 'required',
-			'password' => 'required'
-		]);
-
-		if($val->fails()) {
-			return response()->json(['data' => [], 'message' => $val->errors()->all()]);
-		}
 		else {
 			$credentials = [
 				'phone' => $request->phone,
@@ -39,7 +29,8 @@ class AuthController extends Controller
 
 			if(Auth::attempt($credentials)) {
 			    $data = User::join('role','users.role_id','=','role.id')
-			    			->select('users.id as user_id','users.api_token', 'role.name', '')
+			    			->join('agen', 'users.id', '=', 'agen.identifier')
+			    			->select('users.id as user_id','users.api_token', 'role.name', 'agen.name')
 			    			->where('users.id',Auth::user()->id)
 			    			->first();
 				return response()->json(['data' => $data, 'message' => ['OK']]);

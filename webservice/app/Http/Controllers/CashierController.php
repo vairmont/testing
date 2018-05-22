@@ -13,7 +13,7 @@ use Illuminate\Http\Request;
 class CashierController extends Controller {
 
   public function createCashier(Request $request) {
-    $user_id = $request->get('user')->id)->first();
+    $user_id = $request->get('user')->id;
 
     $cash = new Cash;
     $cash->user_id = $user_id;
@@ -27,13 +27,13 @@ class CashierController extends Controller {
   }
 
   public function closingCashier(Request $request) {
-    $user_id = $request->get('user')->id)->first();
+    $user_id = $request->get('user')->id;
 
     $cash_id = $request['cash_id'];
 
     $sales = Order::where('user_id','=',$user_id)
                     ->where('status','=','7')
-                    ->whereDate('order.updated_at', Carbon::now()->toDateString())
+                    ->whereDate('updated_at', Carbon::now()->toDateString())
                     ->get();
 
     $salestotal = 0;
@@ -47,25 +47,19 @@ class CashierController extends Controller {
     $cash->sales = $salestotal;
     $cash->cash_out = $request['cash_out'];
     $cash->closing_cash = ($cash->starting_cash + $salestotal)-$cash_out;
-    $cash->update();
+    $cash->save();
 
     return response()->json(['data' => [], 'message' => ['OK']]);
   }
 
   public function getCash(Request $request) {
-
-    $user_id = $request->get('user')->id)->first();
+   
+    $user_id = $request->get('user')->id;
 
     $getCash = Cash::where('user_id','=',$user_id)
-                ->whereDate('cash.created_at', Carbon::now()->toDateString())
+                ->whereDate('created_at', Carbon::now()->toDateString())
                 ->get();
 
-    $result[] = [
-      'starting_cash' => $getCash->starting_cash,
-      'sales' => $getCash->sales,
-      'closing_cash' => $getCash->closing_cash,
-      'cash_out' => $getCash->cash_out
-    ];
-    return response()->json($result, 200);
+    return response()->json($getCash, 200);
   }
 }

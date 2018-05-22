@@ -14,7 +14,6 @@ use App\User;
 use App\Agen;
 use App\VoucherUse;
 use App\Voucher;
-use App\Chat;
 use App\Cart;
 use App\CartDetail;
 use App\ProductCategory;
@@ -24,15 +23,6 @@ use App\StockHistory;
 
 class OrderControllerPOS extends Controller
 {
-    /*
-    -Get Order (untuk agen)
-    -Add Order (customer)
-    -Add Order (agen)
-    -Cancel Order (customer)
-    -Cancel Order (agen)
-    */
-
-
     public function getOrderById(Request $request) {
       $order = OrderDetail::Join('product', 'order_detail.product_id', '=', 'product.id')
           ->where('order_id', '=', $request->order_id)

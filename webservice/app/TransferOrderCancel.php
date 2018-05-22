@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ProductCategory extends Model
+class TransferOrderCancel extends Model
 {
     protected $table = "transfer_order_cancel";
     protected $fillable = [

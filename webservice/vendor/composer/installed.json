@@ -595,17 +595,17 @@
     },
     {
         "name": "laravel/tinker",
-        "version": "v1.0.6",
-        "version_normalized": "1.0.6.0",
+        "version": "v1.0.7",
+        "version_normalized": "1.0.7.0",
         "source": {
             "type": "git",
             "url": "https://github.com/laravel/tinker.git",
-            "reference": "b22fe905fcefdffae76b011e27c7ac09e07e052b"
+            "reference": "e3086ee8cb1f54a39ae8dcb72d1c37d10128997d"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/laravel/tinker/zipball/b22fe905fcefdffae76b011e27c7ac09e07e052b",
-            "reference": "b22fe905fcefdffae76b011e27c7ac09e07e052b",
+            "url": "https://api.github.com/repos/laravel/tinker/zipball/e3086ee8cb1f54a39ae8dcb72d1c37d10128997d",
+            "reference": "e3086ee8cb1f54a39ae8dcb72d1c37d10128997d",
             "shasum": ""
         },
         "require": {
@@ -622,7 +622,7 @@
         "suggest": {
             "illuminate/database": "The Illuminate Database package (~5.1)."
         },
-        "time": "2018-04-16T12:10:37+00:00",
+        "time": "2018-05-17T13:42:07+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -660,17 +660,17 @@
     },
     {
         "name": "league/flysystem",
-        "version": "1.0.44",
-        "version_normalized": "1.0.44.0",
+        "version": "1.0.45",
+        "version_normalized": "1.0.45.0",
         "source": {
             "type": "git",
             "url": "https://github.com/thephpleague/flysystem.git",
-            "reference": "168dbe519737221dc87d17385cde33073881fd02"
+            "reference": "a99f94e63b512d75f851b181afcdf0ee9ebef7e6"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/168dbe519737221dc87d17385cde33073881fd02",
-            "reference": "168dbe519737221dc87d17385cde33073881fd02",
+            "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/a99f94e63b512d75f851b181afcdf0ee9ebef7e6",
+            "reference": "a99f94e63b512d75f851b181afcdf0ee9ebef7e6",
             "shasum": ""
         },
         "require": {
@@ -700,7 +700,7 @@
             "spatie/flysystem-dropbox": "Allows you to use Dropbox storage",
             "srmklive/flysystem-dropbox-v2": "Allows you to use Dropbox storage for PHP 5 applications"
         },
-        "time": "2018-04-06T09:58:14+00:00",
+        "time": "2018-05-07T08:44:23+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
