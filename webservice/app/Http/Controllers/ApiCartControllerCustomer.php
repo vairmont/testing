@@ -8,9 +8,10 @@
 
 namespace App\Http\Controllers;
 
-
+use App\Order;
 use App\Cart;
 use App\CartDetail;
+use App\OrderBillingDetail;
 use Validator;
 use Illuminate\Http\Request;
 
@@ -140,7 +141,7 @@ class ApiCartControllerCustomer extends Controller {
         $data['long'] = $request->long;
         $data['customer_address2'] = $request->customer_address2;
         
-        Rating::create($data);
+        OrderBillingDetail::create($data);
 
         return response()->json(['data' => [], 'message' => ['OK']]);
       }
