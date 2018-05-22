@@ -20,16 +20,6 @@ class AuthController extends Controller
         if(empty($request->password)) {
             return response()->json(['data' => [], 'message' => ['Password tidak boleh kosong']]);
         }
-
-        else
-    	$val = Validator::make($request->all(), [
-			'phone' => 'required',
-			'password' => 'required'
-		]);
-
-		if($val->fails()) {
-			return response()->json(['data' => [], 'message' => $val->errors()->all()]);
-		}
 		else {
 			$credentials = [
 				'phone' => $request->phone,
