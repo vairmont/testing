@@ -17,6 +17,7 @@ use App\Customer;
 use App\Family;
 use App\User;
 use App\Agen;
+use App\FCM;
 use App\Cart;
 use App\CartDetail;
 
@@ -296,6 +297,26 @@ class OrderController extends Controller
       $this->_sendPushNotification($order->user_id, "Order Status", "Order sedang di antar oleh agen.");
 
       return response()->json(['message' => 'Order has been on delivery.'], 201);
+
+    }
+
+    public function acceptOrder(Request $request) {
+
+      $validator = Validator::make($request->all(),[
+        'order_id' => 'required|numeric|exists:order,id'
+      ]);
+
+      if ($validator->fails()) {
+        return response()->json([
+          'error' => $validator->errors()->all()
+        ]);
+      }
+
+      $order = Order::whereId($request['order_id'])->first();
+      $order->status = OrderStatus::ASSIGNED;
+      $order->save();
+
+      return response()->json(['message' => 'Order berhasil anda ambil.'], 201);
 
     }
 

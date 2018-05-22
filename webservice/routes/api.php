@@ -38,6 +38,9 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
   Route::patch('/product/{id}', 'ProductController@edit');
   Route::delete('/product/{id}', 'ProductController@remove');
 
+  Route::get('/chatlist', 'ChatController@chatList');
+  Route::post('/chat', 'ChatController@orderChat');
+
   Route::get('/cart', 'ApiCartController@index');
   Route::post('/cart', 'ApiCartController@updateCart');
   Route::post('/cart/clear', 'ApiCartController@clearCartItems');
@@ -69,6 +72,7 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
   Route::post('/order/assign-agent', 'OrderController@assignOrderAgent');
   Route::post('/order/cancel-agent', 'OrderController@cancelOrderAgent');
   Route::post('/order/finalize', 'OrderController@finalizeOrder');
+  Route::post('/order/accept', 'OrderController@acceptOrder');
 
   Route::get('/ranks', 'RankingController@index');
 

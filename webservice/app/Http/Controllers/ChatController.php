@@ -7,6 +7,7 @@ use Validator;
 use Auth;
 use DB;
 use App\Customer;
+use App\Agen;
 use App\Chat;
 use App\FCM;
 
@@ -16,7 +17,6 @@ class ChatController extends Controller
     {
         $val = Validator::make($request->all(), [
             'order_id' => 'required',
-            'category_id' => 'required'
         ]);
 
         if($val->fails()) {
@@ -24,7 +24,6 @@ class ChatController extends Controller
         }
         else {
             $chats = Chat::where('order_id',$request->order_id)
-                    ->where('category_id',$request->category_id)
                     ->orderBy('id','asc')
                     ->select('id','sender_id','recipient_id','message','created_at')
                     ->get();
@@ -37,7 +36,6 @@ class ChatController extends Controller
     {
         $val = Validator::make($request->all(), [
             'order_id' => 'required',
-            'category_id' => 'required',
             'sender_id' => 'required',
             'message' => 'required'
         ]);
@@ -48,18 +46,15 @@ class ChatController extends Controller
         else {
             $order = Order::leftJoin('order_action','order_action.order_id','=','order.id')
                     ->where('order.id',$request->order_id)
-                    ->where('order_action.category_id',$request->category_id)
                     ->first();
 
             $orderProgress = OrderProgress::where('order_id',$request->order_id)
-            ->where('category_id',$request->category_id)
             ->first();
 
             $user = User::find($request->sender_id);
 
             $chat['order_progress_id'] = $orderProgress->id;
             $chat['order_id'] = $request->order_id;
-            $chat['category_id'] = $request->category_id;
             $chat['sender_id'] = $request->sender_id;
             if($user->role_id == 2) {
                 $chat['recipient_id'] = $order->take_by;
