@@ -34,20 +34,22 @@ class OrderControllerCustomer extends Controller
       foreach ($orders as $order) {
         $items = OrderDetail::Join('product', 'product.id', '=', 'order_detail.product_id')
           ->where('order_id', '=', $order->id)
-          // ->where('status','=','1')
           ->select('product.id as product_id', 'product.sku', 'order_detail.qty', 'order_detail.base_price', 'order_detail.nego_price')
           ->get();
 
+
         $result[] = [
+          'relation' => $relation,
           'order_id' => $order->id,
           'invoice_no' => $order->invoice_no,
           'subtotal' => $order->subtotal,
+          'total' => $order->total,
           'tax' => $order->tax,
           'discount' => $order->discount,
+          'created_at' => Carbon::parse($order->created_at)->format('d M Y H:i'),
           'items' => $items
         ];
       }
-
       return response()->json($result, 200);
     }
 
@@ -59,7 +61,6 @@ class OrderControllerCustomer extends Controller
       foreach ($orders as $order) {
         $items = OrderDetail::Join('product', 'product.id', '=', 'order_detail.product_id')
           ->where('order_id', '=', $order->id)
-          // ->where('status','=','2')
           ->select('product.id as product_id', 'product.sku', 'order_detail.qty', 'order_detail.base_price', 'order_detail.nego_price')
           ->get();
 
@@ -69,24 +70,24 @@ class OrderControllerCustomer extends Controller
           'order_id' => $order->id,
           'invoice_no' => $order->invoice_no,
           'subtotal' => $order->subtotal,
+          'total' => $order->total,
           'tax' => $order->tax,
           'discount' => $order->discount,
+          'created_at' => Carbon::parse($order->created_at)->format('d M Y H:i'),
           'items' => $items
         ];
       }
-
       return response()->json($result, 200);
     }
 
     public function orderDone(Request $request) {
 
       $orders = Order::where('user_id', '=', $request->get('user')->id)->get();
-
+      
       $result = [];
       foreach ($orders as $order) {
         $items = OrderDetail::Join('product', 'product.id', '=', 'order_detail.product_id')
           ->where('order_id', '=', $order->id)
-          // ->where('status','=','3')
           ->select('product.id as product_id', 'product.sku', 'order_detail.qty', 'order_detail.base_price', 'order_detail.nego_price')
           ->get();
 
@@ -96,12 +97,13 @@ class OrderControllerCustomer extends Controller
           'order_id' => $order->id,
           'invoice_no' => $order->invoice_no,
           'subtotal' => $order->subtotal,
+          'total' => $order->total,
           'tax' => $order->tax,
           'discount' => $order->discount,
+          'created_at' => Carbon::parse($order->created_at)->format('d M Y H:i'),
           'items' => $items
         ];
       }
-
       return response()->json($result, 200);
     }
 
@@ -113,7 +115,6 @@ class OrderControllerCustomer extends Controller
       foreach ($orders as $order) {
         $items = OrderDetail::Join('product', 'product.id', '=', 'order_detail.product_id')
           ->where('order_id', '=', $order->id)
-          // ->where('status','=','4')
           ->select('product.id as product_id', 'product.sku', 'order_detail.qty', 'order_detail.base_price', 'order_detail.nego_price')
           ->get();
 
@@ -123,12 +124,13 @@ class OrderControllerCustomer extends Controller
           'order_id' => $order->id,
           'invoice_no' => $order->invoice_no,
           'subtotal' => $order->subtotal,
+          'total' => $order->total,
           'tax' => $order->tax,
           'discount' => $order->discount,
+          'created_at' => Carbon::parse($order->created_at)->format('d M Y H:i'),
           'items' => $items
         ];
       }
-
       return response()->json($result, 200);
     }
 

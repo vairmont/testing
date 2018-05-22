@@ -7,10 +7,13 @@ use App\Constant\OrderStatus;
 use Illuminate\Http\Request;
 use Validator;
 use DB;
+use Carbon\Carbon;
 use App\Order;
 use App\OrderDetail;
+use App\OrderBillingDetail;
 use App\OrderCancel;
 use App\Product;
+use App\Customer;
 use App\Family;
 use App\User;
 use App\Agen;
@@ -27,21 +30,30 @@ class OrderController extends Controller
       $agen = Agen::where('identifier','=', $request->get('user')->id)->first();
 
       if($agen->parent == 1){
-        $orders = Order::where('agen_id', '=', $agen->id)->get();
+        $orders = Order::Join('customer','customer.identifier','=','order.user_id')
+        ->where('agen_id', '=', $agen->id)
+        ->where('status','=','1')
+        ->select('order.*','customer.name as name')
+        ->get();
+
         $relation = "Kepala Keluarga";
       }
       else{
         $parent = Family::where('child_id','=', $agen->id)->first();
-        $orders = Order::where('agen_id','=', $parent->parent_id)->get();
+        $orders = Order::Join('customer','customer.identifier','=','order.user_id')
+        ->where('agen_id', '=', $parent->id)
+        ->where('status','=','1')
+        ->select('order.*','customer.name as name')
+        ->get();
+
+
         $relation = $parent->relation;
-      }
+      } 
 
       $result = [];
       foreach ($orders as $order) {
         $items = OrderDetail::Join('product', 'product.id', '=', 'order_detail.product_id')
-          ->Join('order','order.id','=','order_detail.order_id')
           ->where('order_id', '=', $order->id)
-          // ->where('status','=','1')
           ->select('product.id as product_id', 'product.sku', 'order_detail.qty', 'order_detail.base_price', 'order_detail.nego_price')
           ->get();
 
@@ -51,8 +63,12 @@ class OrderController extends Controller
           'order_id' => $order->id,
           'invoice_no' => $order->invoice_no,
           'subtotal' => $order->subtotal,
+          'total' => $order->total,
           'tax' => $order->tax,
           'discount' => $order->discount,
+          'customer_name' => $order->name,
+          'customer_photo' => $order->photo,
+          'created_at' => Carbon::parse($order->created_at)->format('d M Y H:i'),
           'items' => $items
         ];
       }
@@ -60,35 +76,51 @@ class OrderController extends Controller
       return response()->json($result, 200);
     }
 
-        public function orderProcess(Request $request) {
+    public function orderProcess(Request $request) {
       $agen = Agen::where('identifier','=', $request->get('user')->id)->first();
 
       if($agen->parent == 1){
-        $orders = Order::where('agen_id', '=', $agen->id)->get();
+        $orders = Order::Join('customer','customer.identifier','=','order.user_id')
+        ->where('agen_id', '=', $agen->id)
+        ->where('status','=','2')
+        ->orWhere('status','=',6)
+        ->select('order.*','customer.name as name')
+        ->get();
+
         $relation = "Kepala Keluarga";
       }
       else{
         $parent = Family::where('child_id','=', $agen->id)->first();
-        $orders = Order::where('agen_id','=', $parent->parent_id)->get();
+        $orders = Order::Join('customer','customer.identifier','=','order.user_id')
+        ->where('agen_id', '=', $parent->id)
+        ->where('status','=','2')
+        ->orWhere('status','=',6)
+        ->select('order.*','customer.name as name')
+        ->get();
+
+
         $relation = $parent->relation;
-      }
+      } 
+
       $result = [];
       foreach ($orders as $order) {
         $items = OrderDetail::Join('product', 'product.id', '=', 'order_detail.product_id')
-          ->Join('order','order.id','=','order_detail.order_id')
           ->where('order_id', '=', $order->id)
-          // ->where('status','=',2)
-          // ->orWhere('status','=','6')
           ->select('product.id as product_id', 'product.sku', 'order_detail.qty', 'order_detail.base_price', 'order_detail.nego_price')
           ->get();
+
 
         $result[] = [
           'relation' => $relation,
           'order_id' => $order->id,
           'invoice_no' => $order->invoice_no,
           'subtotal' => $order->subtotal,
+          'total' => $order->total,
           'tax' => $order->tax,
           'discount' => $order->discount,
+          'customer_name' => $order->name,
+          'customer_photo' => $order->photo,
+          'created_at' => Carbon::parse($order->created_at)->format('d M Y H:i'),
           'items' => $items
         ];
       }
@@ -99,21 +131,30 @@ class OrderController extends Controller
       $agen = Agen::where('identifier','=', $request->get('user')->id)->first();
 
       if($agen->parent == 1){
-        $orders = Order::where('agen_id', '=', $agen->id)->get();
+        $orders = Order::Join('customer','customer.identifier','=','order.user_id')
+        ->where('agen_id', '=', $agen->id)
+        ->where('status','=','7')
+        ->select('order.*','customer.name as name')
+        ->get();
+
         $relation = "Kepala Keluarga";
       }
       else{
         $parent = Family::where('child_id','=', $agen->id)->first();
-        $orders = Order::where('agen_id','=', $parent->parent_id)->get();
+        $orders = Order::Join('customer','customer.identifier','=','order.user_id')
+        ->where('agen_id', '=', $parent->id)
+        ->where('status','=','7')
+        ->select('order.*','customer.name as name')
+        ->get();
+
+
         $relation = $parent->relation;
-      }
+      } 
 
       $result = [];
       foreach ($orders as $order) {
         $items = OrderDetail::Join('product', 'product.id', '=', 'order_detail.product_id')
-          ->Join('order','order.id','=','order_detail.order_id')
           ->where('order_id', '=', $order->id)
-          // ->where('status','=','7')
           ->select('product.id as product_id', 'product.sku', 'order_detail.qty', 'order_detail.base_price', 'order_detail.nego_price')
           ->get();
 
@@ -123,12 +164,15 @@ class OrderController extends Controller
           'order_id' => $order->id,
           'invoice_no' => $order->invoice_no,
           'subtotal' => $order->subtotal,
+          'total' => $order->total,
           'tax' => $order->tax,
           'discount' => $order->discount,
+          'customer_name' => $order->name,
+          'customer_photo' => $order->photo,
+          'created_at' => Carbon::parse($order->created_at)->format('d M Y H:i'),
           'items' => $items
         ];
       }
-
       return response()->json($result, 200);
     }
 
@@ -136,21 +180,30 @@ class OrderController extends Controller
       $agen = Agen::where('identifier','=', $request->get('user')->id)->first();
 
       if($agen->parent == 1){
-        $orders = Order::where('agen_id', '=', $agen->id)->get();
+        $orders = Order::Join('customer','customer.identifier','=','order.user_id')
+        ->where('agen_id', '=', $agen->id)
+        ->where('status','=','8')
+        ->select('order.*','customer.name as name')
+        ->get();
+
         $relation = "Kepala Keluarga";
       }
       else{
         $parent = Family::where('child_id','=', $agen->id)->first();
-        $orders = Order::where('agen_id','=', $parent->parent_id)->get();
+        $orders = Order::Join('customer','customer.identifier','=','order.user_id')
+        ->where('agen_id', '=', $parent->id)
+        ->where('status','=','8')
+        ->select('order.*','customer.name as name')
+        ->get();
+
+
         $relation = $parent->relation;
-      }
+      } 
 
       $result = [];
       foreach ($orders as $order) {
         $items = OrderDetail::Join('product', 'product.id', '=', 'order_detail.product_id')
-          ->Join('order','order.id','=','order_detail.order_id')
           ->where('order_id', '=', $order->id)
-          // ->where('status','=','8')
           ->select('product.id as product_id', 'product.sku', 'order_detail.qty', 'order_detail.base_price', 'order_detail.nego_price')
           ->get();
 
@@ -160,12 +213,15 @@ class OrderController extends Controller
           'order_id' => $order->id,
           'invoice_no' => $order->invoice_no,
           'subtotal' => $order->subtotal,
+          'total' => $order->total,
           'tax' => $order->tax,
           'discount' => $order->discount,
+          'customer_name' => $order->name,
+          'customer_photo' => $order->photo,
+          'created_at' => Carbon::parse($order->created_at)->format('d M Y H:i'),
           'items' => $items
         ];
       }
-
       return response()->json($result, 200);
     }
 
@@ -357,5 +413,5 @@ class OrderController extends Controller
         curl_setopt($ch,CURLOPT_POSTFIELDS, json_encode($fields));
         $result = curl_exec($ch);
         curl_close($ch);
-
+      }
 }
