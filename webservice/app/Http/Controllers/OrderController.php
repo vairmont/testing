@@ -31,9 +31,10 @@ class OrderController extends Controller
 
       if($agen->parent == 1){
         $orders = Order::Join('customer','customer.identifier','=','order.user_id')
+        ->leftJoin('order_billing_detail','order_billing_detail.order_id','=','order.id')
         ->where('agen_id', '=', $agen->id)
-        ->where('status','=','1')
-        ->select('order.*','customer.name as name')
+        ->where('status','=',1)
+        ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.lat','order_billing_detail.long','order_billing_detail.customer_address2')
         ->get();
 
         $relation = "Kepala Keluarga";
@@ -41,11 +42,11 @@ class OrderController extends Controller
       else{
         $parent = Family::where('child_id','=', $agen->id)->first();
         $orders = Order::Join('customer','customer.identifier','=','order.user_id')
+        ->leftJoin('order_billing_detail','order_billing_detail.order_id','=','order.id')
         ->where('agen_id', '=', $parent->id)
-        ->where('status','=','1')
-        ->select('order.*','customer.name as name')
+        ->where('status','=',1)
+        ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.lat','order_billing_detail.long','order_billing_detail.customer_address2')
         ->get();
-
 
         $relation = $parent->relation;
       } 
@@ -54,22 +55,14 @@ class OrderController extends Controller
       foreach ($orders as $order) {
         $items = OrderDetail::Join('product', 'product.id', '=', 'order_detail.product_id')
           ->where('order_id', '=', $order->id)
-          ->select('product.id as product_id', 'product.sku', 'order_detail.qty', 'order_detail.base_price', 'order_detail.nego_price')
+          ->select('product.id as product_id', 'product.sku', 'order_detail.qty','product.price_for_customer','product.price_for_agen','product.img_url')
           ->get();
 
 
         $result[] = [
-          'relation' => $relation,
-          'order_id' => $order->id,
-          'invoice_no' => $order->invoice_no,
-          'subtotal' => $order->subtotal,
-          'total' => $order->total,
-          'tax' => $order->tax,
-          'discount' => $order->discount,
-          'customer_name' => $order->name,
-          'customer_photo' => $order->photo,
-          'created_at' => Carbon::parse($order->created_at)->format('d M Y H:i'),
-          'items' => $items
+          'order' => $orders,
+          'items' => $items,
+          'created_at' => Carbon::parse($order->created_at)->format('d M Y H:i')
         ];
       }
 
@@ -81,10 +74,11 @@ class OrderController extends Controller
 
       if($agen->parent == 1){
         $orders = Order::Join('customer','customer.identifier','=','order.user_id')
+        ->leftJoin('order_billing_detail','order_billing_detail.order_id','=','order.id')
         ->where('agen_id', '=', $agen->id)
-        ->where('status','=','2')
-        ->orWhere('status','=',6)
-        ->select('order.*','customer.name as name')
+        ->where('status','=',2)
+        ->where('status','=',6)
+        ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.lat','order_billing_detail.long','order_billing_detail.customer_address2')
         ->get();
 
         $relation = "Kepala Keluarga";
@@ -92,12 +86,12 @@ class OrderController extends Controller
       else{
         $parent = Family::where('child_id','=', $agen->id)->first();
         $orders = Order::Join('customer','customer.identifier','=','order.user_id')
+        ->leftJoin('order_billing_detail','order_billing_detail.order_id','=','order.id')
         ->where('agen_id', '=', $parent->id)
-        ->where('status','=','2')
-        ->orWhere('status','=',6)
-        ->select('order.*','customer.name as name')
+        ->where('status','=',2)
+        ->where('status','=',6)
+        ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.lat','order_billing_detail.long','order_billing_detail.customer_address2')
         ->get();
-
 
         $relation = $parent->relation;
       } 
@@ -106,35 +100,29 @@ class OrderController extends Controller
       foreach ($orders as $order) {
         $items = OrderDetail::Join('product', 'product.id', '=', 'order_detail.product_id')
           ->where('order_id', '=', $order->id)
-          ->select('product.id as product_id', 'product.sku', 'order_detail.qty', 'order_detail.base_price', 'order_detail.nego_price')
+          ->select('product.id as product_id', 'product.sku', 'order_detail.qty','product.price_for_customer','product.price_for_agen','product.img_url')
           ->get();
 
 
         $result[] = [
-          'relation' => $relation,
-          'order_id' => $order->id,
-          'invoice_no' => $order->invoice_no,
-          'subtotal' => $order->subtotal,
-          'total' => $order->total,
-          'tax' => $order->tax,
-          'discount' => $order->discount,
-          'customer_name' => $order->name,
-          'customer_photo' => $order->photo,
-          'created_at' => Carbon::parse($order->created_at)->format('d M Y H:i'),
-          'items' => $items
+          'order' => $orders,
+          'items' => $items,
+          'created_at' => Carbon::parse($order->created_at)->format('d M Y H:i')
         ];
       }
+
       return response()->json($result, 200);
     }
 
     public function orderDone(Request $request) {
-      $agen = Agen::where('identifier','=', $request->get('user')->id)->first();
+            $agen = Agen::where('identifier','=', $request->get('user')->id)->first();
 
       if($agen->parent == 1){
         $orders = Order::Join('customer','customer.identifier','=','order.user_id')
+        ->leftJoin('order_billing_detail','order_billing_detail.order_id','=','order.id')
         ->where('agen_id', '=', $agen->id)
-        ->where('status','=','7')
-        ->select('order.*','customer.name as name')
+        ->where('status','=',7)
+        ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.lat','order_billing_detail.long','order_billing_detail.customer_address2')
         ->get();
 
         $relation = "Kepala Keluarga";
@@ -142,11 +130,11 @@ class OrderController extends Controller
       else{
         $parent = Family::where('child_id','=', $agen->id)->first();
         $orders = Order::Join('customer','customer.identifier','=','order.user_id')
+        ->leftJoin('order_billing_detail','order_billing_detail.order_id','=','order.id')
         ->where('agen_id', '=', $parent->id)
-        ->where('status','=','7')
-        ->select('order.*','customer.name as name')
+        ->where('status','=',7)
+        ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.lat','order_billing_detail.long','order_billing_detail.customer_address2')
         ->get();
-
 
         $relation = $parent->relation;
       } 
@@ -155,35 +143,29 @@ class OrderController extends Controller
       foreach ($orders as $order) {
         $items = OrderDetail::Join('product', 'product.id', '=', 'order_detail.product_id')
           ->where('order_id', '=', $order->id)
-          ->select('product.id as product_id', 'product.sku', 'order_detail.qty', 'order_detail.base_price', 'order_detail.nego_price')
+          ->select('product.id as product_id', 'product.sku', 'order_detail.qty','product.price_for_customer','product.price_for_agen','product.img_url')
           ->get();
 
 
         $result[] = [
-          'relation' => $relation,
-          'order_id' => $order->id,
-          'invoice_no' => $order->invoice_no,
-          'subtotal' => $order->subtotal,
-          'total' => $order->total,
-          'tax' => $order->tax,
-          'discount' => $order->discount,
-          'customer_name' => $order->name,
-          'customer_photo' => $order->photo,
-          'created_at' => Carbon::parse($order->created_at)->format('d M Y H:i'),
-          'items' => $items
+          'order' => $orders,
+          'items' => $items,
+          'created_at' => Carbon::parse($order->created_at)->format('d M Y H:i')
         ];
       }
+
       return response()->json($result, 200);
     }
 
     public function orderCancel(Request $request) {
-      $agen = Agen::where('identifier','=', $request->get('user')->id)->first();
+            $agen = Agen::where('identifier','=', $request->get('user')->id)->first();
 
       if($agen->parent == 1){
         $orders = Order::Join('customer','customer.identifier','=','order.user_id')
+        ->leftJoin('order_billing_detail','order_billing_detail.order_id','=','order.id')
         ->where('agen_id', '=', $agen->id)
-        ->where('status','=','8')
-        ->select('order.*','customer.name as name')
+        ->where('status','=',8)
+        ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.lat','order_billing_detail.long','order_billing_detail.customer_address2')
         ->get();
 
         $relation = "Kepala Keluarga";
@@ -191,11 +173,11 @@ class OrderController extends Controller
       else{
         $parent = Family::where('child_id','=', $agen->id)->first();
         $orders = Order::Join('customer','customer.identifier','=','order.user_id')
+        ->leftJoin('order_billing_detail','order_billing_detail.order_id','=','order.id')
         ->where('agen_id', '=', $parent->id)
-        ->where('status','=','8')
-        ->select('order.*','customer.name as name')
+        ->where('status','=',8)
+        ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.lat','order_billing_detail.long','order_billing_detail.customer_address2')
         ->get();
-
 
         $relation = $parent->relation;
       } 
@@ -204,24 +186,17 @@ class OrderController extends Controller
       foreach ($orders as $order) {
         $items = OrderDetail::Join('product', 'product.id', '=', 'order_detail.product_id')
           ->where('order_id', '=', $order->id)
-          ->select('product.id as product_id', 'product.sku', 'order_detail.qty', 'order_detail.base_price', 'order_detail.nego_price')
+          ->select('product.id as product_id', 'product.sku', 'order_detail.qty','product.price_for_customer','product.price_for_agen','product.img_url')
           ->get();
 
 
         $result[] = [
-          'relation' => $relation,
-          'order_id' => $order->id,
-          'invoice_no' => $order->invoice_no,
-          'subtotal' => $order->subtotal,
-          'total' => $order->total,
-          'tax' => $order->tax,
-          'discount' => $order->discount,
-          'customer_name' => $order->name,
-          'customer_photo' => $order->photo,
-          'created_at' => Carbon::parse($order->created_at)->format('d M Y H:i'),
-          'items' => $items
+          'order' => $orders,
+          'items' => $items,
+          'created_at' => Carbon::parse($order->created_at)->format('d M Y H:i')
         ];
       }
+
       return response()->json($result, 200);
     }
 

@@ -28,109 +28,100 @@ class OrderControllerCustomer extends Controller
 
     public function orderPending(Request $request) {
 
-      $orders = Order::where('user_id', '=', $request->get('user')->id)->get();
+      $orders = Order::where('user_id', '=', $request->get('user')->id)
+      ->where('status','=',1)
+      ->get();
 
       $result = [];
       foreach ($orders as $order) {
         $items = OrderDetail::Join('product', 'product.id', '=', 'order_detail.product_id')
           ->where('order_id', '=', $order->id)
-          ->select('product.id as product_id', 'product.sku', 'order_detail.qty', 'order_detail.base_price', 'order_detail.nego_price')
+          ->select('product.id as product_id', 'product.sku', 'order_detail.qty','product.price_for_customer','product.price_for_agen','product.img_url')
           ->get();
 
 
         $result[] = [
-          'relation' => $relation,
-          'order_id' => $order->id,
-          'invoice_no' => $order->invoice_no,
-          'subtotal' => $order->subtotal,
-          'total' => $order->total,
-          'tax' => $order->tax,
-          'discount' => $order->discount,
-          'created_at' => Carbon::parse($order->created_at)->format('d M Y H:i'),
-          'items' => $items
+          'order' => $orders,
+          'items' => $items,
+          'created_at' => Carbon::parse($order->created_at)->format('d M Y H:i')
         ];
       }
+
       return response()->json($result, 200);
     }
 
     public function orderProcess(Request $request) {
 
-      $orders = Order::where('user_id', '=', $request->get('user')->id)->get();
+      $orders = Order::where('user_id', '=', $request->get('user')->id)
+      ->where('status','=',2)
+      ->orwhere('status','=',6)
+      ->get();
 
       $result = [];
       foreach ($orders as $order) {
         $items = OrderDetail::Join('product', 'product.id', '=', 'order_detail.product_id')
           ->where('order_id', '=', $order->id)
-          ->select('product.id as product_id', 'product.sku', 'order_detail.qty', 'order_detail.base_price', 'order_detail.nego_price')
+          ->select('product.id as product_id', 'product.sku', 'order_detail.qty','product.price_for_customer','product.price_for_agen','product.img_url')
           ->get();
 
 
         $result[] = [
-          'relation' => $relation,
-          'order_id' => $order->id,
-          'invoice_no' => $order->invoice_no,
-          'subtotal' => $order->subtotal,
-          'total' => $order->total,
-          'tax' => $order->tax,
-          'discount' => $order->discount,
-          'created_at' => Carbon::parse($order->created_at)->format('d M Y H:i'),
-          'items' => $items
+          'order' => $orders,
+          'items' => $items,
+          'created_at' => Carbon::parse($order->created_at)->format('d M Y H:i')
         ];
       }
+
       return response()->json($result, 200);
     }
 
     public function orderDone(Request $request) {
 
-      $orders = Order::where('user_id', '=', $request->get('user')->id)->get();
-      
+      $orders = Order::where('user_id', '=', $request->get('user')->id)
+      ->where('status','=',2)
+      ->orwhere('status','=',6)
+      ->get();
+
       $result = [];
       foreach ($orders as $order) {
         $items = OrderDetail::Join('product', 'product.id', '=', 'order_detail.product_id')
           ->where('order_id', '=', $order->id)
-          ->select('product.id as product_id', 'product.sku', 'order_detail.qty', 'order_detail.base_price', 'order_detail.nego_price')
+          ->select('product.id as product_id', 'product.sku', 'order_detail.qty','product.price_for_customer','product.price_for_agen','product.img_url')
           ->get();
 
 
         $result[] = [
-          'relation' => $relation,
-          'order_id' => $order->id,
-          'invoice_no' => $order->invoice_no,
-          'subtotal' => $order->subtotal,
-          'total' => $order->total,
-          'tax' => $order->tax,
-          'discount' => $order->discount,
-          'created_at' => Carbon::parse($order->created_at)->format('d M Y H:i'),
-          'items' => $items
+          'order' => $orders,
+          'items' => $items,
+          'created_at' => Carbon::parse($order->created_at)->format('d M Y H:i')
         ];
       }
+
       return response()->json($result, 200);
     }
 
     public function orderCancel(Request $request) {
 
-      $orders = Order::where('user_id', '=', $request->get('user')->id)->get();
+      $orders = Order::where('user_id', '=', $request->get('user')->id)
+      ->where('status','=',2)
+      ->orwhere('status','=',6)
+      ->get();
 
       $result = [];
       foreach ($orders as $order) {
         $items = OrderDetail::Join('product', 'product.id', '=', 'order_detail.product_id')
           ->where('order_id', '=', $order->id)
-          ->select('product.id as product_id', 'product.sku', 'order_detail.qty', 'order_detail.base_price', 'order_detail.nego_price')
+          ->select('product.id as product_id', 'product.sku', 'order_detail.qty','product.price_for_customer','product.price_for_agen','product.img_url')
           ->get();
 
 
         $result[] = [
-          'relation' => $relation,
-          'order_id' => $order->id,
-          'invoice_no' => $order->invoice_no,
-          'subtotal' => $order->subtotal,
-          'total' => $order->total,
-          'tax' => $order->tax,
-          'discount' => $order->discount,
-          'created_at' => Carbon::parse($order->created_at)->format('d M Y H:i'),
-          'items' => $items
+          'order' => $orders,
+          'items' => $items,
+          'created_at' => Carbon::parse($order->created_at)->format('d M Y H:i')
         ];
       }
+
       return response()->json($result, 200);
     }
 
