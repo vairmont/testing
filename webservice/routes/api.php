@@ -38,7 +38,7 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
   Route::patch('/product/{id}', 'ProductController@edit');
   Route::delete('/product/{id}', 'ProductController@remove');
 
-  Route::get('/chatlist', 'ChatController@chatList');
+  Route::get('/chat', 'ChatController@chatList');
   Route::post('/chat', 'ChatController@orderChat');
 
   Route::get('/cart', 'ApiCartController@index');
