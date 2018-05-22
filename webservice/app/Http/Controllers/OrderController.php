@@ -60,7 +60,7 @@ class OrderController extends Controller
 
 
         $result[] = [
-          'order' => $orders,
+          'order' => $order,
           'items' => $items,
           'created_at' => Carbon::parse($order->created_at)->format('d M Y H:i')
         ];
@@ -105,7 +105,7 @@ class OrderController extends Controller
 
 
         $result[] = [
-          'order' => $orders,
+          'order' => $order,
           'items' => $items,
           'created_at' => Carbon::parse($order->created_at)->format('d M Y H:i')
         ];
@@ -148,7 +148,7 @@ class OrderController extends Controller
 
 
         $result[] = [
-          'order' => $orders,
+          'order' => $order,
           'items' => $items,
           'created_at' => Carbon::parse($order->created_at)->format('d M Y H:i')
         ];
@@ -191,7 +191,7 @@ class OrderController extends Controller
 
 
         $result[] = [
-          'order' => $orders,
+          'order' => $order,
           'items' => $items,
           'created_at' => Carbon::parse($order->created_at)->format('d M Y H:i')
         ];
