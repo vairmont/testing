@@ -18,6 +18,8 @@ Route::post('/v1/register/agen', 'RegisterController@addAgen');
 Route::post('/v1/register/agen/ktp/upload', 'RegisterController@uploadKTP');
 Route::post('/v1/register/agen/kk/upload', 'RegisterController@uploadKK');
 
+Route::post('/v1/customer', 'CustomerController@addCustomer');
+
 Route::post('/v1/register/family', 'FamilyController@addFamily');
 Route::post('/v1/register/family/ktp/upload', 'FamilyController@uploadKTP');
 
@@ -68,7 +70,6 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
   Route::post('/rating', 'RatingController@addRating');
 
   Route::get('/customer', 'CustomerController@getCustomer');
-  Route::post('/customer', 'CustomerController@addCustomer');
 
   Route::get('/family', 'FamilyController@getFamily');
   Route::post('/family', 'FamilyController@addFamily');

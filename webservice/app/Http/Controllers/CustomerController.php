@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Validator;
+use Hash;
 use Auth;
 use DB;
-use App\Customer
+use App\User;
+use App\Customer;
 use App\FCM;
 
-class FamilyController extends Controller
+class CustomerController extends Controller
 {
 	public function getCustomer(Request $request)
 	{
@@ -22,12 +24,28 @@ class FamilyController extends Controller
 
 	Public function addCustomer (Request $request)
 	{
-			if(empty($request->name)) {
+		if(empty($request->name)) {
             return response()->json(['data' => [], 'message' => ['Nama tidak boleh kosong']]);
+        }	
+
+       	if(empty($request->phone)) {
+            return response()->json(['data' => [], 'message' => ['Nomor HP tidak boleh kosong']]);
+        }
+
+        if(empty($request->password)) {
+            return response()->json(['data' => [], 'message' => ['Password baru anda tidak boleh kosong']]);
+        }
+
+        if(empty($request->gender)) {
+            return response()->json(['data' => [], 'message' => ['Gender tidak boleh kosong']]);
+        }
+
+        if(empty($request->address)) {
+            return response()->json(['data' => [], 'message' => ['Nomor HP tidak boleh kosong']]);
         }
 
         $val = Validator::make($request->all(), [
-            'phone' => 'unique:customer,phone'
+            'phone' => 'unique:users,phone'
 
         ]);
 
@@ -36,12 +54,22 @@ class FamilyController extends Controller
         }
     
 		else{
+
+			$user =[
+				'phone' => $request->phone,
+				'password' => Hash::make($request->password),
+				'api_token' => uniqid(),
+				'role_id' => 2,
+				'store_id' => $request->store_id,
+				'status' => 'active'
+			];
+			$save = User::create($user);
+
 			$customer = [
 				'identifier' =>$save->id,
+				'agen_id' => $request->agen_id,
 				'name' => $request->name,
-				'phone' => $request->phone,
 				'address' => $request->address,
-				'email' => $request->password,
 				'gender' => $request->gender
             	];
             $create = Customer::create($customer);

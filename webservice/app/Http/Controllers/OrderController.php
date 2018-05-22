@@ -22,7 +22,7 @@ class OrderController extends Controller
     /*
     -Get Order (untuk agen)
     -Add Order (customer)
-    -Add Order (agen)
+    -Add Order (agen)d
     -Cancel Order (customer)
     -Cancel Order (agen)
     */
