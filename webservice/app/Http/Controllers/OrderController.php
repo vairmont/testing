@@ -164,8 +164,8 @@ class OrderController extends Controller
       if($agen->parent == 1){
         $orders = Order::Join('customer','customer.identifier','=','order.user_id')
         ->leftJoin('order_billing_detail','order_billing_detail.order_id','=','order.id')
-        ->where('agen_id', '=', $agen->id)
-        ->where('status','=',8)
+        ->where('order.agen_id', '=', $agen->id)
+        ->where('order.status','=',8)
         ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.lat','order_billing_detail.long','order_billing_detail.customer_address2')
         ->get();
 
@@ -175,8 +175,8 @@ class OrderController extends Controller
         $parent = Family::where('child_id','=', $agen->id)->first();
         $orders = Order::Join('customer','customer.identifier','=','order.user_id')
         ->leftJoin('order_billing_detail','order_billing_detail.order_id','=','order.id')
-        ->where('agen_id', '=', $parent->id)
-        ->where('status','=',8)
+        ->where('order.agen_id', '=', $parent->id)
+        ->where('order.status','=',8)
         ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.lat','order_billing_detail.long','order_billing_detail.customer_address2')
         ->get();
 
