@@ -194,13 +194,15 @@ class OrderController extends Controller
 
       $order = Order::whereId($request['order_id'])->first();
       $order->status = OrderStatus::ASSIGNED;
-      $order->agen_id = $request['agen_id'];
       $order->save();
 
       $items = OrderDetail::Join('product', 'product.id', '=', 'order_detail.product_id')
         ->where('order_id', '=', $order->id)
         ->select('product.id as product_id', 'product.sku', 'order_detail.qty', 'order_detail.base_price', 'order_detail.nego_price')
         ->get();
+
+      #send push notif ke customer
+      $this->_sendPushNotification($order->user_id, "Order Status", "Order telah di terima agen.");
 
       $result[] = [
         'order_id' => $order->id,
@@ -217,25 +219,6 @@ class OrderController extends Controller
         'order' => $result,
         'agen' => $agent
       ]);
-    }
-
-    public function cancelOrder(Request $request) {
-
-      $validator = Validator::make($request->all(), [
-        'order_id' => 'required|numeric|exists:order,id',
-      ]);
-
-      if ($validator->fails()) {
-        return response()->json([
-          'error' => $validator->errors()->all()
-        ], 400);
-      }
-
-      $order = Order::whereId($request['order_id'])->first();
-      $order->status = OrderStatus::CANCELLED;
-      $order->save();
-
-      return response()->json(['message' => 'Order '.$order->id .' has been succesfully cancelled'], 200);
     }
 
     public function cancelOrderAgent(Request $request) {
@@ -262,6 +245,9 @@ class OrderController extends Controller
       $orderCancel->reason = $request['reason'];
       $orderCancel->save();
 
+      #send push notif ke customer
+      $this->_sendPushNotification($order->user_id, "Order Status", "Order di cancel oleh agen.");
+
       return response()->json(['message' => 'Order status has been updated.'], 200);
     }
 
@@ -281,6 +267,8 @@ class OrderController extends Controller
       $order = Order::whereId($request['order_id'])->first();
       $order->status = OrderStatus::DELIVERY;
       $order->save();
+
+      $this->_sendPushNotification($order->user_id, "Order Status", "Order sedang di antar oleh agen.");
 
       return response()->json(['message' => 'Order has been on delivery.'], 201);
 
@@ -326,8 +314,55 @@ class OrderController extends Controller
       $commission->margin_penjualan = $margin;
       $commission->save();
 
+      $this->_sendPushNotification($order->user_id, "Order Status", "Terima kasih transaksi selesai tolong berikan rating.");
+
       return response()->json(['message' => 'Order has been completed.'], 201);
 
+    }
+
+    protected function _sendPushNotification($user_id, $title, $body) {
+        // API access key from Google API's Console
+        define('API_ACCESS_KEY', ' ');
+
+        $registrationIds = array();
+
+        $recipients = FCM::where('user_id',$user_id)->select('fcm_token')->get();
+
+        foreach ($recipients as $recipient) {
+            array_push($registrationIds, $recipient->fcm_token);
+        }
+
+        $msg = array
+        (
+            'title' => $title,
+            'body' => $body,
+            'vibrate' => "1",
+            'sound' => 'default',
+            'badge' => "1"
+        );
+
+        $fields = array
+        (
+            'registration_ids'  => $registrationIds,
+            'notification'  => $msg,
+            'priority' => 'high'
+        );
+         
+        $headers = array
+        (
+            'Authorization: key=' . API_ACCESS_KEY,
+            'Content-Type: application/json'
+        );
+         
+        $ch = curl_init();
+        curl_setopt($ch,CURLOPT_URL, 'https://fcm.googleapis.com/fcm/send');
+        curl_setopt($ch,CURLOPT_POST, true);
+        curl_setopt($ch,CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch,CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch,CURLOPT_POSTFIELDS, json_encode($fields));
+        $result = curl_exec($ch);
+        curl_close($ch);
     }
 
 }
