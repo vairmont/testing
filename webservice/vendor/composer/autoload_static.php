@@ -9,6 +9,7 @@ class ComposerStaticInit4cbb279d126e644433acb507ce1ec17a
     public static $files = array (
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
         '5255c38a0faeba867671b61dfda6d864' => __DIR__ . '/..' . '/paragonie/random_compat/lib/random.php',
+        '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
         '023d27dca8066ef29e6739335ea73bad' => __DIR__ . '/..' . '/symfony/polyfill-php70/bootstrap.php',
         '667aeda72477189d0494fecd327c3641' => __DIR__ . '/..' . '/symfony/var-dumper/Resources/functions/dump.php',
         '1d1b89d124cc9cb8219922c9d5569199' => __DIR__ . '/..' . '/hamcrest/hamcrest-php/hamcrest/Hamcrest.php',
@@ -41,6 +42,7 @@ class ComposerStaticInit4cbb279d126e644433acb507ce1ec17a
         array (
             'Symfony\\Polyfill\\Php70\\' => 23,
             'Symfony\\Polyfill\\Mbstring\\' => 26,
+            'Symfony\\Polyfill\\Ctype\\' => 23,
             'Symfony\\Component\\Yaml\\' => 23,
             'Symfony\\Component\\VarDumper\\' => 28,
             'Symfony\\Component\\Translation\\' => 30,
@@ -132,6 +134,10 @@ class ComposerStaticInit4cbb279d126e644433acb507ce1ec17a
         'Symfony\\Polyfill\\Mbstring\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
+        ),
+        'Symfony\\Polyfill\\Ctype\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-ctype',
         ),
         'Symfony\\Component\\Yaml\\' => 
         array (
@@ -301,11 +307,14 @@ class ComposerStaticInit4cbb279d126e644433acb507ce1ec17a
         'App\\Http\\Controllers\\ApiCartControllerPOS' => __DIR__ . '/../..' . '/app/Http/Controllers/ApiCartControllerPOS.php',
         'App\\Http\\Controllers\\AuthController' => __DIR__ . '/../..' . '/app/Http/Controllers/AuthController.php',
         'App\\Http\\Controllers\\CashierController' => __DIR__ . '/../..' . '/app/Http/Controllers/CashierController.php',
+        'App\\Http\\Controllers\\ChatController' => __DIR__ . '/../..' . '/app/Http/Controllers/ChatController.php',
         'App\\Http\\Controllers\\CommissionController' => __DIR__ . '/../..' . '/app/Http/Controllers/CommissionController.php',
         'App\\Http\\Controllers\\Controller' => __DIR__ . '/../..' . '/app/Http/Controllers/Controller.php',
+        'App\\Http\\Controllers\\CustomerController' => __DIR__ . '/../..' . '/app/Http/Controllers/CustomerController.php',
         'App\\Http\\Controllers\\FCMTokenController' => __DIR__ . '/../..' . '/app/Http/Controllers/FCMTokenController.php',
         'App\\Http\\Controllers\\FamilyController' => __DIR__ . '/../..' . '/app/Http/Controllers/FamilyController.php',
-        'App\\Http\\Controllers\\OrderController' => __DIR__ . '/../..' . '/app/Http/Controllers/OrderControllerCustomer.php',
+        'App\\Http\\Controllers\\OrderController' => __DIR__ . '/../..' . '/app/Http/Controllers/OrderController.php',
+        'App\\Http\\Controllers\\OrderControllerCustomer' => __DIR__ . '/../..' . '/app/Http/Controllers/OrderControllerCustomer.php',
         'App\\Http\\Controllers\\OrderControllerPOS' => __DIR__ . '/../..' . '/app/Http/Controllers/OrderControllerPOS.php',
         'App\\Http\\Controllers\\ProductCategoryController' => __DIR__ . '/../..' . '/app/Http/Controllers/ProductCategoryController.php',
         'App\\Http\\Controllers\\ProductController' => __DIR__ . '/../..' . '/app/Http/Controllers/ProductController.php',
@@ -2541,6 +2550,7 @@ class ComposerStaticInit4cbb279d126e644433acb507ce1ec17a
         'Psy\\CodeCleaner\\InstanceOfPass' => __DIR__ . '/..' . '/psy/psysh/src/CodeCleaner/InstanceOfPass.php',
         'Psy\\CodeCleaner\\LeavePsyshAlonePass' => __DIR__ . '/..' . '/psy/psysh/src/CodeCleaner/LeavePsyshAlonePass.php',
         'Psy\\CodeCleaner\\LegacyEmptyPass' => __DIR__ . '/..' . '/psy/psysh/src/CodeCleaner/LegacyEmptyPass.php',
+        'Psy\\CodeCleaner\\ListPass' => __DIR__ . '/..' . '/psy/psysh/src/CodeCleaner/ListPass.php',
         'Psy\\CodeCleaner\\LoopContextPass' => __DIR__ . '/..' . '/psy/psysh/src/CodeCleaner/LoopContextPass.php',
         'Psy\\CodeCleaner\\MagicConstantsPass' => __DIR__ . '/..' . '/psy/psysh/src/CodeCleaner/MagicConstantsPass.php',
         'Psy\\CodeCleaner\\NamespaceAwarePass' => __DIR__ . '/..' . '/psy/psysh/src/CodeCleaner/NamespaceAwarePass.php',
@@ -2585,7 +2595,6 @@ class ComposerStaticInit4cbb279d126e644433acb507ce1ec17a
         'Psy\\Command\\TraceCommand' => __DIR__ . '/..' . '/psy/psysh/src/Command/TraceCommand.php',
         'Psy\\Command\\WhereamiCommand' => __DIR__ . '/..' . '/psy/psysh/src/Command/WhereamiCommand.php',
         'Psy\\Command\\WtfCommand' => __DIR__ . '/..' . '/psy/psysh/src/Command/WtfCommand.php',
-        'Psy\\Compiler' => __DIR__ . '/..' . '/psy/psysh/src/Compiler.php',
         'Psy\\ConfigPaths' => __DIR__ . '/..' . '/psy/psysh/src/ConfigPaths.php',
         'Psy\\Configuration' => __DIR__ . '/..' . '/psy/psysh/src/Configuration.php',
         'Psy\\ConsoleColorFactory' => __DIR__ . '/..' . '/psy/psysh/src/ConsoleColorFactory.php',
@@ -2602,6 +2611,7 @@ class ComposerStaticInit4cbb279d126e644433acb507ce1ec17a
         'Psy\\Exception\\TypeErrorException' => __DIR__ . '/..' . '/psy/psysh/src/Exception/TypeErrorException.php',
         'Psy\\ExecutionClosure' => __DIR__ . '/..' . '/psy/psysh/src/ExecutionClosure.php',
         'Psy\\ExecutionLoop' => __DIR__ . '/..' . '/psy/psysh/src/ExecutionLoop.php',
+        'Psy\\ExecutionLoopClosure' => __DIR__ . '/..' . '/psy/psysh/src/ExecutionLoopClosure.php',
         'Psy\\ExecutionLoop\\AbstractListener' => __DIR__ . '/..' . '/psy/psysh/src/ExecutionLoop/AbstractListener.php',
         'Psy\\ExecutionLoop\\Listener' => __DIR__ . '/..' . '/psy/psysh/src/ExecutionLoop/Listener.php',
         'Psy\\ExecutionLoop\\ProcessForker' => __DIR__ . '/..' . '/psy/psysh/src/ExecutionLoop/ProcessForker.php',
@@ -3353,6 +3363,7 @@ class ComposerStaticInit4cbb279d126e644433acb507ce1ec17a
         'Symfony\\Component\\Yaml\\Tag\\TaggedValue' => __DIR__ . '/..' . '/symfony/yaml/Tag/TaggedValue.php',
         'Symfony\\Component\\Yaml\\Unescaper' => __DIR__ . '/..' . '/symfony/yaml/Unescaper.php',
         'Symfony\\Component\\Yaml\\Yaml' => __DIR__ . '/..' . '/symfony/yaml/Yaml.php',
+        'Symfony\\Polyfill\\Ctype\\Ctype' => __DIR__ . '/..' . '/symfony/polyfill-ctype/Ctype.php',
         'Symfony\\Polyfill\\Mbstring\\Mbstring' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/Mbstring.php',
         'Symfony\\Polyfill\\Php70\\Php70' => __DIR__ . '/..' . '/symfony/polyfill-php70/Php70.php',
         'TestCase' => __DIR__ . '/..' . '/barryvdh/laravel-cors/tests/TestCase.php',
