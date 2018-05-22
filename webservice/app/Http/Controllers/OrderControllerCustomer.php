@@ -13,13 +13,14 @@ use App\OrderBillingDetail;
 use App\OrderCancel;
 use App\Product;
 use App\Family;
+use App\Customer;
 use App\User;
 use App\Agen;
 use App\Cart;
 use App\Chat;
 use App\CartDetail;
 
-class OrderController extends Controller
+class OrderControllerCustomer extends Controller
 {
 
     private $marginRate = .05;
@@ -33,12 +34,11 @@ class OrderController extends Controller
       foreach ($orders as $order) {
         $items = OrderDetail::Join('product', 'product.id', '=', 'order_detail.product_id')
           ->where('order_id', '=', $order->id)
-          ->where('status','=','1')
+          // ->where('status','=','1')
           ->select('product.id as product_id', 'product.sku', 'order_detail.qty', 'order_detail.base_price', 'order_detail.nego_price')
           ->get();
 
         $result[] = [
-          'relation' => $relation,
           'order_id' => $order->id,
           'invoice_no' => $order->invoice_no,
           'subtotal' => $order->subtotal,
@@ -59,7 +59,7 @@ class OrderController extends Controller
       foreach ($orders as $order) {
         $items = OrderDetail::Join('product', 'product.id', '=', 'order_detail.product_id')
           ->where('order_id', '=', $order->id)
-          ->where('status','=','2')
+          // ->where('status','=','2')
           ->select('product.id as product_id', 'product.sku', 'order_detail.qty', 'order_detail.base_price', 'order_detail.nego_price')
           ->get();
 
@@ -86,7 +86,7 @@ class OrderController extends Controller
       foreach ($orders as $order) {
         $items = OrderDetail::Join('product', 'product.id', '=', 'order_detail.product_id')
           ->where('order_id', '=', $order->id)
-          ->where('status','=','3')
+          // ->where('status','=','3')
           ->select('product.id as product_id', 'product.sku', 'order_detail.qty', 'order_detail.base_price', 'order_detail.nego_price')
           ->get();
 
@@ -113,7 +113,7 @@ class OrderController extends Controller
       foreach ($orders as $order) {
         $items = OrderDetail::Join('product', 'product.id', '=', 'order_detail.product_id')
           ->where('order_id', '=', $order->id)
-          ->where('status','=','4')
+          // ->where('status','=','4')
           ->select('product.id as product_id', 'product.sku', 'order_detail.qty', 'order_detail.base_price', 'order_detail.nego_price')
           ->get();
 
@@ -281,68 +281,5 @@ class OrderController extends Controller
         curl_close($ch);
     }
 
-    public function chatList(Request $request)
-    {
-        $val = Validator::make($request->all(), [
-            'order_id' => 'required',
-            'category_id' => 'required'
-        ]);
-
-        if($val->fails()) {
-            return response()->json(['data' => [], 'message' => $val->errors()->all()]);
-        }
-        else {
-            $chats = Chat::where('order_id',$request->order_id)
-                    ->where('category_id',$request->category_id)
-                    ->orderBy('id','asc')
-                    ->select('id','sender_id','recipient_id','message','created_at')
-                    ->get();
-
-            return response()->json(['data' => $chats, 'message' => ['OK']]);
-        }
-    }
-
-    public function orderChat(Request $request)
-    {
-    	$val = Validator::make($request->all(), [
-    		'order_id' => 'required',
-            'category_id' => 'required',
-    		'sender_id' => 'required',
-    		'message' => 'required'
-    	]);
-
-    	if($val->fails()) {
-    		return response()->json(['data' => [], 'message' => $val->errors()->all()]);
-    	}
-    	else {
-    		$order = Order::leftJoin('order_action','order_action.order_id','=','order.id')
-    				->where('order.id',$request->order_id)
-                    ->where('order_action.category_id',$request->category_id)
-    				->first();
-
-            $orderProgress = OrderProgress::where('order_id',$request->order_id)
-            ->where('category_id',$request->category_id)
-            ->first();
-
-    		$user = User::find($request->sender_id);
-
-            $chat['order_progress_id'] = $orderProgress->id;
-    		$chat['order_id'] = $request->order_id;
-            $chat['category_id'] = $request->category_id;
-    		$chat['sender_id'] = $request->sender_id;
-    		if($user->role_id == 2) {
-    			$chat['recipient_id'] = $order->take_by;
-    		}
-    		elseif($user->role_id == 3 || $user->role_id == 4 || $user->role_id == 5) {
-    			$chat['recipient_id'] = $order->user_id;
-    		}
-    		$chat['message'] = nl2br($request->message);
-    		Chat::create($chat);
-
-            // send push notification
-            $this->_sendPushNotification($chat['recipient_id'], "New Message", nl2br($chat['message']));
-
-    		return response()->json(['data' => [], 'message' => ['OK']]);
-    	}
-    }
+   
 }
