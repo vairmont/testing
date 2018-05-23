@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Validator;
 use Auth;
 use DB;
+use Hash;
 use App\Family;
 use App\User;
 use App\Agen;
@@ -15,10 +16,11 @@ class FamilyController extends Controller
 {
 	public function getFamily(Request $request)
 	{
-		$agen = Agen::join('user', 'agen.identifier', '=', 'user.id')
-			->join('family', 'agen.id', '=', 'family.parent_id')
-			->where('agen.identifier', "=", $request->get('user')->id)
-			->select('agen.name', 'user.phone', 'family.relation');
+		$agen = Agen::Join('users', 'agen.identifier', '=', 'users.id')
+			->Join('family', 'agen.id', '=', 'family.parent_id')
+			->where('agen.identifier', $request->get('user')->id)
+			->select('agen.name', 'users.phone', 'family.relation')
+			->get();
 
 		return response()->json(['data' => $agen, 'message' => ['OK']]);
     }
@@ -42,7 +44,7 @@ class FamilyController extends Controller
 
 			$createUser = User::create($user);
 
-			$dataAgen = Agen::where('id', $request->agen_id)->first();
+			$dataAgen = Agen::where('identifier', $request->get('user')->id)->first();
 
 			$agen = [
 				'identifier' => $createUser->id,
@@ -50,8 +52,6 @@ class FamilyController extends Controller
 				'business_name' => $dataAgen->business_name,
 				'name' => $request->name,
 				'address' => $dataAgen->address,
-				'province' => $dataAgen->province,
-				'district' => $dataAgen->district,
 				'ktp_photo' => '',
 				'kk_photo' => $dataAgen->kk_photo
 			];
@@ -59,7 +59,7 @@ class FamilyController extends Controller
 			$createAgen = Agen::create($agen);
 
 			$family = [
-				'parent_id' => $request->agen_id,
+				'parent_id' => $dataAgen->id,
 				'child_id' => $createAgen->id,
 				'relation' => $request->relation
             ];
