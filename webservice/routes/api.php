@@ -85,6 +85,5 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
   Route::post('/family', 'FamilyController@addFamily');
   Route::post('/family/uploadktp', 'FamilyController@uploadKtpPhoto');
 
-  Route::get('/commission/agen/{id}', 'CommissionController@getTodayCommission');
-  Route::get('/commission/agen/{id}/week', 'CommissionController@getWeeklyCommission');
+  Route::get('/commission/agen', 'CommissionController@getCommission');
 });
