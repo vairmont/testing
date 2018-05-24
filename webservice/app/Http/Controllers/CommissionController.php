@@ -18,17 +18,24 @@ use Validator;
 class CommissionController extends Controller {
 
 
-  public function getTodayCommission(Request $request, $id) {
+  public function getCommission(Request $request) {
 
-    $agen = Agen::whereId($id)->first();
+    $agen = Agen::where('agen.identifier', '=', $request->get('user')->id)
+          ->select('id')
+          ->first();
     if ($agen) {
 
       $commissions = Commission::Join('agen', 'agen.id', '=', 'commission.agen_id')
-        ->where('agen.id', '=', $id)
-        ->whereDate('commission.created_at', Carbon::now()->toDateString())
-        ->selectRaw('commission.incentive,commission.margin_penjualan,commission.commission_netto,commission.commission_pph,order_id')
-        ->get();
+        ->join('order', 'order.id', '=', 'commission.order_id')
+        ->where('agen.id', '=', $agen->id)
+        ->selectRaw('commission.incentive,commission.margin_penjualan,commission.commission_netto,commission.commission_pph,order_id, invoice_no, order.created_at, order.total');
+      
+      if(isset($request->from) && !empty($request->from) && isset($request->to) && !empty($request->to)) {
+        $commissions = $commissions->whereBetween('commission.created_at', [$request->from, $request->to]);
+      }
 
+      $commissions = $commissions->get();
+      
       $incentiveTotal = 0;
       $marginTotal = 0;
       $commissionNettoTotal = 0;
@@ -46,32 +53,5 @@ class CommissionController extends Controller {
     return response()->json(['error' => 'INVALID AGENT ID'], 400);
   }
 
-  public function getWeeklyCommission(Request $request, $id) {
-
-    $agen = Agen::whereId($id)->first();
-    if ($agen) {
-
-      $commissions = Commission::Join('agen', 'agen.id', '=', 'commission.agen_id')
-        ->where('agen.id', '=', $id)
-        ->whereRaw('commission.created_at >= DATE_SUB(DATE(NOW()), INTERVAL DAYOFWEEK(NOW())+6 DAY)')
-        ->selectRaw('commission.incentive, order_id')
-        ->get();
-
-      $incentiveTotal = 0;
-      $marginTotal = 0;
-      $commissionNettoTotal = 0;
-      $commissionPphTotal = 0;
-      foreach ($commissions as $commission) {
-        $incentiveTotal += $commission->incentive;
-        $commissionPphTotal += $commission->commission_pph;
-        $commissionNettoTotal += $commission->commission_netto;
-        $marginTotal += $commission->margin_penjualan;
-      }
-
-      return response()->json(['data' => ['commission' => $commissions, 'incentive_total' => $incentiveTotal, 'commissionPphTotal' => $commissionPphTotal, 'commissionNettoTotal' => $commissionNettoTotal, 'marginTotal' => $marginTotal]], 200);
-    }
-
-    return response()->json(['error' => 'INVALID AGENT ID'], 400);
-  }
 
 }

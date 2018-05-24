@@ -8,9 +8,10 @@
 
 namespace App\Http\Controllers;
 
-
+use App\Order;
 use App\Cart;
 use App\CartDetail;
+use App\OrderBillingDetail;
 use Validator;
 use Illuminate\Http\Request;
 
@@ -112,6 +113,38 @@ class ApiCartControllerCustomer extends Controller {
         'items' => $items
       ]
     ], 201);
+  }
+
+  public function addOrderBillingDetail(Request $request) {
+
+    if(empty($request->customer_name)) {
+        return response()->json(['data' => [], 'message' => ['Nama tidak boleh kosong']]);
+    }
+
+    if(empty($request->customer_phone)) {
+        return response()->json(['data' => [], 'message' => ['No HP tidak boleh kosong']]);
+    }
+
+    if(empty($request->customer_address)) {
+        return response()->json(['data' => [], 'message' => ['Alamat penerima tidak boleh kosong']]);
+    }
+    
+    else {
+        $user_id = $request->get('user')->id;
+        $order = Order::find($request->order_id);
+
+        $data['order_id'] = $request->order_id;
+        $data['customer_name'] = $request->customer_name;
+        $data['customer_phone'] = $request->customer_phone;
+        $data['customer_address'] = $request->customer_address;
+        $data['lat'] = $request->lat;
+        $data['long'] = $request->long;
+        $data['customer_address2'] = $request->customer_address2;
+        
+        OrderBillingDetail::create($data);
+
+        return response()->json(['data' => [], 'message' => ['OK']]);
+      }
   }
 
   public function clearCartItems(Request $request) {

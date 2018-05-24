@@ -38,6 +38,11 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
   Route::patch('/product/{id}', 'ProductController@edit');
   Route::delete('/product/{id}', 'ProductController@remove');
 
+  Route::post('/agen/photo', 'UserController@uploadPhoto');
+
+  Route::get('/chat', 'ChatController@chatList');
+  Route::post('/chat', 'ChatController@orderChat');
+
   Route::get('/cart', 'ApiCartController@index');
   Route::post('/cart', 'ApiCartController@updateCart');
   Route::post('/cart/clear', 'ApiCartController@clearCartItems');
@@ -60,6 +65,7 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
   Route::get('/order/done', 'OrderController@orderDone');
   Route::get('/order/cancel', 'OrderController@orderCancel');
 
+  Route::post('/orderbill', 'ApiCartControllerCustomer@addOrderBillingDetail');
   Route::get('/order/customer/pending', 'OrderControllerCustomer@orderPending');
   Route::get('/order/customer/process', 'OrderControllerCustomer@orderProcess');
   Route::get('/order/customer/done', 'OrderControllerCustomer@orderDone');
@@ -68,6 +74,7 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
   Route::post('/order/assign-agent', 'OrderController@assignOrderAgent');
   Route::post('/order/cancel-agent', 'OrderController@cancelOrderAgent');
   Route::post('/order/finalize', 'OrderController@finalizeOrder');
+  Route::post('/order/accept', 'OrderController@acceptOrder');
 
   Route::get('/ranks', 'RankingController@index');
 
@@ -77,9 +84,6 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
   Route::get('/customer', 'CustomerController@getCustomer');
 
   Route::get('/family', 'FamilyController@getFamily');
-  Route::post('/family', 'FamilyController@addFamily');
-  Route::post('/family/uploadktp', 'FamilyController@uploadKtpPhoto');
 
-  Route::get('/commission/agen/{id}', 'CommissionController@getTodayCommission');
-  Route::get('/commission/agen/{id}/week', 'CommissionController@getWeeklyCommission');
+  Route::get('/commission', 'CommissionController@getCommission');
 });

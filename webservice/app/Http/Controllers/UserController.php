@@ -15,6 +15,24 @@ use App\Mail\ResetPassword;
 
 class UserController extends Controller
 {
+    public function uploadPhoto(Request $request)
+    {
+        // upload photos will store in storage/app/photos
+        if(empty($request->photo)) {
+            return response()->json(['data' => [], 'message' => ['Foto tidak boleh kosong']]);
+        }
+        else {
+
+            $path = $request->file('photo')->store('photo_agen');
+
+            Agen::where('identifier', $request->get('user')->id)
+            ->update([
+                'photo' => "storage/app/".$path
+            ]);
+
+            return response()->json(['data' => [], 'message' => ['OK']]);
+        }
+    }
 
 	public function getProfile(Request $request)
 	{

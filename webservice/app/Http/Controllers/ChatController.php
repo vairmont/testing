@@ -7,6 +7,9 @@ use Validator;
 use Auth;
 use DB;
 use App\Customer;
+use App\Order;
+use App\User;
+use App\Agen;
 use App\Chat;
 use App\FCM;
 
@@ -16,7 +19,6 @@ class ChatController extends Controller
     {
         $val = Validator::make($request->all(), [
             'order_id' => 'required',
-            'category_id' => 'required'
         ]);
 
         if($val->fails()) {
@@ -24,7 +26,6 @@ class ChatController extends Controller
         }
         else {
             $chats = Chat::where('order_id',$request->order_id)
-                    ->where('category_id',$request->category_id)
                     ->orderBy('id','asc')
                     ->select('id','sender_id','recipient_id','message','created_at')
                     ->get();
@@ -37,8 +38,6 @@ class ChatController extends Controller
     {
         $val = Validator::make($request->all(), [
             'order_id' => 'required',
-            'category_id' => 'required',
-            'sender_id' => 'required',
             'message' => 'required'
         ]);
 
@@ -46,27 +45,25 @@ class ChatController extends Controller
             return response()->json(['data' => [], 'message' => $val->errors()->all()]);
         }
         else {
-            $order = Order::leftJoin('order_action','order_action.order_id','=','order.id')
-                    ->where('order.id',$request->order_id)
-                    ->where('order_action.category_id',$request->category_id)
+
+        	$sender_id = $request->get('user')->id;
+
+            $order = Order::join('users', 'users.id', '=', 'order.user_id')
+            		->where('order.id',$request->order_id)
                     ->first();
 
-            $orderProgress = OrderProgress::where('order_id',$request->order_id)
-            ->where('category_id',$request->category_id)
-            ->first();
+            $user = User::find($sender_id);
 
-            $user = User::find($request->sender_id);
-
-            $chat['order_progress_id'] = $orderProgress->id;
-            $chat['order_id'] = $request->order_id;
-            $chat['category_id'] = $request->category_id;
-            $chat['sender_id'] = $request->sender_id;
             if($user->role_id == 2) {
-                $chat['recipient_id'] = $order->take_by;
+            	// customer
+                $chat['recipient_id'] = $order->agen_id;
             }
-            elseif($user->role_id == 3 || $user->role_id == 4 || $user->role_id == 5) {
+            elseif($user->role_id == 5) {
+            	// agen
                 $chat['recipient_id'] = $order->user_id;
             }
+            $chat['order_id'] = $request->order_id;
+            $chat['sender_id'] = $sender_id;
             $chat['message'] = nl2br($request->message);
             Chat::create($chat);
 
@@ -75,6 +72,51 @@ class ChatController extends Controller
 
             return response()->json(['data' => [], 'message' => ['OK']]);
         }
+    }
+
+    protected function _sendPushNotification($user_id, $title, $body) {
+        // API access key from Google API's Console
+        define('API_ACCESS_KEY', ' ');
+
+        $registrationIds = array();
+
+        $recipients = FCM::where('user_id',$user_id)->select('fcm_token')->get();
+
+        foreach ($recipients as $recipient) {
+            array_push($registrationIds, $recipient->fcm_token);
+        }
+
+        $msg = array
+        (
+            'title' => $title,
+            'body' => $body,
+            'vibrate' => "1",
+            'sound' => 'default',
+            'badge' => "1"
+        );
+
+        $fields = array
+        (
+            'registration_ids'  => $registrationIds,
+            'notification'  => $msg,
+            'priority' => 'high'
+        );
+         
+        $headers = array
+        (
+            'Authorization: key=' . API_ACCESS_KEY,
+            'Content-Type: application/json'
+        );
+         
+        $ch = curl_init();
+        curl_setopt($ch,CURLOPT_URL, 'https://fcm.googleapis.com/fcm/send');
+        curl_setopt($ch,CURLOPT_POST, true);
+        curl_setopt($ch,CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch,CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch,CURLOPT_POSTFIELDS, json_encode($fields));
+        $result = curl_exec($ch);
+        curl_close($ch);
     }
 }
 

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Validator;
 use Auth;
 use DB;
+use Hash;
 use App\Family;
 use App\User;
 use App\Agen;
@@ -15,10 +16,11 @@ class FamilyController extends Controller
 {
 	public function getFamily(Request $request)
 	{
-		$agen = Agen::join('user', 'agen.identifier', '=', 'user.id')
-			->join('family', 'agen.id', '=', 'family.parent_id')
-			->where('agen.identifier', "=", $request->get('user')->id)
-			->select('agen.name', 'user.phone', 'family.relation');
+		$agen = Family::join('agen', 'agen.id','=','family.child_id')
+		->join('users', 'users.id', '=', 'agen.identifier')
+		->select('agen.name', 'family.relation', 'agen.ktp_photo', 'users.phone')
+		->where('family.parent_id', $request->get('user')->id)
+		->get();
 
 		return response()->json(['data' => $agen, 'message' => ['OK']]);
     }
@@ -50,8 +52,6 @@ class FamilyController extends Controller
 				'business_name' => $dataAgen->business_name,
 				'name' => $request->name,
 				'address' => $dataAgen->address,
-				'province' => $dataAgen->province,
-				'district' => $dataAgen->district,
 				'ktp_photo' => '',
 				'kk_photo' => $dataAgen->kk_photo
 			];
@@ -59,7 +59,7 @@ class FamilyController extends Controller
 			$createAgen = Agen::create($agen);
 
 			$family = [
-				'parent_id' => $request->agen_id,
+				'parent_id' => $dataAgen->id,
 				'child_id' => $createAgen->id,
 				'relation' => $request->relation
             ];
@@ -76,9 +76,10 @@ class FamilyController extends Controller
             return response()->json(['data' => [], 'message' => ['Foto Ktp tidak boleh kosong']]);
         }
 		else {
+
 			$path = $request->file('ktp_photo')->store('photo_ktp');
 
-			Agen::where('id', $request->family_id)
+			Agen::where('id', $request->header('family_id'))
 			->update([
 				'ktp_photo' => "storage/app/".$path
 			]);

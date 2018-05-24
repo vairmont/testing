@@ -17,6 +17,7 @@ use App\Customer;
 use App\Family;
 use App\User;
 use App\Agen;
+use App\FCM;
 use App\Cart;
 use App\CartDetail;
 
@@ -55,7 +56,7 @@ class OrderController extends Controller
       foreach ($orders as $order) {
         $items = OrderDetail::Join('product', 'product.id', '=', 'order_detail.product_id')
           ->where('order_id', '=', $order->id)
-          ->select('product.id as product_id', 'product.sku', 'order_detail.qty','product.price_for_customer','product.price_for_agen','product.img_url')
+          ->select('product.id as product_id', 'product.sku', 'product.product_name', 'order_detail.qty','product.price_for_customer','product.price_for_agen','product.img_url')
           ->get();
 
 
@@ -100,7 +101,7 @@ class OrderController extends Controller
       foreach ($orders as $order) {
         $items = OrderDetail::Join('product', 'product.id', '=', 'order_detail.product_id')
           ->where('order_id', '=', $order->id)
-          ->select('product.id as product_id', 'product.sku', 'order_detail.qty','product.price_for_customer','product.price_for_agen','product.img_url')
+          ->select('product.id as product_id', 'product.sku', 'product.product_name', 'order_detail.qty','product.price_for_customer','product.price_for_agen','product.img_url')
           ->get();
 
 
@@ -143,7 +144,7 @@ class OrderController extends Controller
       foreach ($orders as $order) {
         $items = OrderDetail::Join('product', 'product.id', '=', 'order_detail.product_id')
           ->where('order_id', '=', $order->id)
-          ->select('product.id as product_id', 'product.sku', 'order_detail.qty','product.price_for_customer','product.price_for_agen','product.img_url')
+          ->select('product.id as product_id', 'product.sku', 'product.product_name', 'order_detail.qty','product.price_for_customer','product.price_for_agen','product.img_url')
           ->get();
 
 
@@ -163,8 +164,8 @@ class OrderController extends Controller
       if($agen->parent == 1){
         $orders = Order::Join('customer','customer.identifier','=','order.user_id')
         ->leftJoin('order_billing_detail','order_billing_detail.order_id','=','order.id')
-        ->where('agen_id', '=', $agen->id)
-        ->where('status','=',8)
+        ->where('order.agen_id', '=', $agen->id)
+        ->where('order.status','=',8)
         ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.lat','order_billing_detail.long','order_billing_detail.customer_address2')
         ->get();
 
@@ -174,8 +175,8 @@ class OrderController extends Controller
         $parent = Family::where('child_id','=', $agen->id)->first();
         $orders = Order::Join('customer','customer.identifier','=','order.user_id')
         ->leftJoin('order_billing_detail','order_billing_detail.order_id','=','order.id')
-        ->where('agen_id', '=', $parent->id)
-        ->where('status','=',8)
+        ->where('order.agen_id', '=', $parent->id)
+        ->where('order.status','=',8)
         ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.lat','order_billing_detail.long','order_billing_detail.customer_address2')
         ->get();
 
@@ -186,7 +187,7 @@ class OrderController extends Controller
       foreach ($orders as $order) {
         $items = OrderDetail::Join('product', 'product.id', '=', 'order_detail.product_id')
           ->where('order_id', '=', $order->id)
-          ->select('product.id as product_id', 'product.sku', 'order_detail.qty','product.price_for_customer','product.price_for_agen','product.img_url')
+          ->select('product.id as product_id', 'product.sku', 'product.product_name', 'order_detail.qty','product.price_for_customer','product.price_for_agen','product.img_url')
           ->get();
 
 
@@ -299,6 +300,26 @@ class OrderController extends Controller
 
     }
 
+    public function acceptOrder(Request $request) {
+
+      $validator = Validator::make($request->all(),[
+        'order_id' => 'required|numeric|exists:order,id'
+      ]);
+
+      if ($validator->fails()) {
+        return response()->json([
+          'error' => $validator->errors()->all()
+        ]);
+      }
+
+      $order = Order::whereId($request['order_id'])->first();
+      $order->status = OrderStatus::ASSIGNED;
+      $order->save();
+
+      return response()->json(['message' => 'Order berhasil anda ambil.'], 201);
+
+    }
+
     public function finalizeOrder(Request $request) {
 
       $validator = Validator::make($request->all(),[
@@ -324,7 +345,7 @@ class OrderController extends Controller
       $margin = 0;
 
       foreach ($incentiveDetails as $detail) {
-        $incentive += $detail->base_price * $detail->rate;
+        $incentive += $detail->base_price * $detail->rate / 100;
         $margin += $detail->base_price * $this->marginRate;
       }
       $commission_pph = ($incentive + $margin) * $this->pph;
