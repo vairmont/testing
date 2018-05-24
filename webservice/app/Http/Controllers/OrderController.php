@@ -345,7 +345,7 @@ class OrderController extends Controller
       $margin = 0;
 
       foreach ($incentiveDetails as $detail) {
-        $incentive += $detail->base_price * $detail->rate;
+        $incentive += $detail->base_price * $detail->rate / 100;
         $margin += $detail->base_price * $this->marginRate;
       }
       $commission_pph = ($incentive + $margin) * $this->pph;
