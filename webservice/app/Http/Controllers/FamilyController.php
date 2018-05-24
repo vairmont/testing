@@ -44,7 +44,7 @@ class FamilyController extends Controller
 
 			$createUser = User::create($user);
 
-			$dataAgen = Agen::where('id', $request->agen_id)->first();
+			$dataAgen = Agen::where('id', $request->header('agen_id'))->first();
 
 			$agen = [
 				'identifier' => $createUser->id,
