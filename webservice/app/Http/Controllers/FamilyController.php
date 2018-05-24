@@ -16,11 +16,11 @@ class FamilyController extends Controller
 {
 	public function getFamily(Request $request)
 	{
-		$agen = Agen::Join('users', 'agen.identifier', '=', 'users.id')
-			->Join('family', 'agen.id', '=', 'family.parent_id')
-			->where('agen.identifier', $request->get('user')->id)
-			->select('agen.name', 'users.phone', 'family.relation')
-			->get();
+		$agen = Family::join('agen', 'agen.id','=','family.child_id')
+		->join('users', 'users.id', '=', 'agen.identifier')
+		->select('agen.name', 'family.relation', 'agen.ktp_photo', 'users.phone')
+		->where('family.parent_id', $request->get('user')->id)
+		->get();
 
 		return response()->json(['data' => $agen, 'message' => ['OK']]);
     }
