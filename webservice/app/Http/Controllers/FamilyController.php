@@ -44,7 +44,7 @@ class FamilyController extends Controller
 
 			$createUser = User::create($user);
 
-			$dataAgen = Agen::where('identifier', $request->get('user')->id)->first();
+			$dataAgen = Agen::where('id', $request->agen_id)->first();
 
 			$agen = [
 				'identifier' => $createUser->id,
@@ -76,6 +76,7 @@ class FamilyController extends Controller
             return response()->json(['data' => [], 'message' => ['Foto Ktp tidak boleh kosong']]);
         }
 		else {
+
 			$path = $request->file('ktp_photo')->store('photo_ktp');
 
 			Agen::where('id', $request->family_id)
