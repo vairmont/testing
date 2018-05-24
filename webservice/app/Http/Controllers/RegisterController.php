@@ -27,18 +27,6 @@ class RegisterController extends Controller
             return response()->json(['data' => [], 'message' => ['Alamat tidak boleh kosong']]);
         }
 
-        if(empty($request->province)) {
-            return response()->json(['data' => [], 'message' => ['Provinsi tidak boleh kosong']]);
-        }
-
-        if(empty($request->city)) {
-            return response()->json(['data' => [], 'message' => ['Kota tidak boleh kosong']]);
-        }
-
-        if(empty($request->district)) {
-            return response()->json(['data' => [], 'message' => ['Kecamatan tidak boleh kosong']]);
-        }
-
         if(empty($request->phone)) {
             return response()->json(['data' => [], 'message' => ['Nomor Ponsel tidak boleh kosong']]);
         }
@@ -68,8 +56,6 @@ class RegisterController extends Controller
                 'name' => $request->name,
                 'phone' => $request->phone,
                 'address' => $request->address,
-                'province' => $request->province,
-                'district' => $request->district,
                 'ktp_photo' => '',
                 'kk_photo' => ''
             ];
