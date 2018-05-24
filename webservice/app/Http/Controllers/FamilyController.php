@@ -44,7 +44,7 @@ class FamilyController extends Controller
 
 			$createUser = User::create($user);
 
-			$dataAgen = Agen::where('id', $request->header('agen_id'))->first();
+			$dataAgen = Agen::where('id', $request->agen_id)->first();
 
 			$agen = [
 				'identifier' => $createUser->id,
@@ -79,7 +79,7 @@ class FamilyController extends Controller
 
 			$path = $request->file('ktp_photo')->store('photo_ktp');
 
-			Agen::where('id', $request->family_id)
+			Agen::where('id', $request->header('family_id'))
 			->update([
 				'ktp_photo' => "storage/app/".$path
 			]);
