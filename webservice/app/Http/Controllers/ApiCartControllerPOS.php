@@ -29,7 +29,7 @@ class ApiCartControllerPOS extends Controller {
     }
 
     $items = Cart::Join('cart_detail','cart_detail.cart_id','cart.id')
-      ->Join('product', 'cart_detail.product_id', '=', 'product_id')
+      ->Join('product', 'cart_detail.product_id', '=', 'product.id')
       ->where('cart_id', '=', $cart->id)
       ->where('qty', '>', 0)
       ->select('product.id', 'product.sku', 'product.product_name', 'cart_detail.qty', 'product.price_for_customer', 'product.price_for_agen')
@@ -160,6 +160,7 @@ class ApiCartControllerPOS extends Controller {
         'subtotal' => $cart->subtotal,
         'tax' => $cart->tax,
         'total' => $cart->total,
+
         'items' => $items
       ]
     ], 201);
