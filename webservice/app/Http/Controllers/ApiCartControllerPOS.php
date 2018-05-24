@@ -45,9 +45,6 @@ class ApiCartControllerPOS extends Controller {
   }
 
   public function updateCart(Request $request) {
-    if (!in_array($request->get('user')->role_id, [2,3,4])) {
-      return response()->json(['error' => 'Unauthorized role access.'], 401);
-    }
 
     $val = Validator::make($request->all(), [
       'product_id' => 'required|numeric|exists:product,id',
