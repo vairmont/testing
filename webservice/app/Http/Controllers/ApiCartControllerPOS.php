@@ -28,8 +28,8 @@ class ApiCartControllerPOS extends Controller {
       $cart->save();
     }
 
-    $items = CartDetail::Join('product', 'cart_detail.product_id', '=', 'product_id')
-      ->where('cart_id', '=', $cart->id)
+    $items = CartDetail::Join('product', 'cart_detail.product_id', '=', 'product.id')
+      ->where('cart_detail.cart_id', '=', $cart->id)
       ->where('qty', '>', 0)
       ->select('product.id', 'product.sku', 'product.product_name', 'cart_detail.qty', 'product.price_for_customer', 'product.price_for_agen')
       ->get();
@@ -45,10 +45,6 @@ class ApiCartControllerPOS extends Controller {
   }
 
   public function updateCart(Request $request) {
-    if (!in_array($request->get('user')->role_id, [2,3,4])) {
-      return response()->json(['error' => 'Unauthorized role access.'], 401);
-    }
-
     $val = Validator::make($request->all(), [
       'product_id' => 'required|numeric|exists:product,id',
       'qty' => 'required|numeric'
@@ -81,11 +77,11 @@ class ApiCartControllerPOS extends Controller {
     $cartDetail->qty += $request['qty'];
     $cartDetail->save();
 
-    $items = CartDetail::Join('product', 'cart_detail.product_id', '=', 'product_id')
-              ->where('cart_id', '=', $cart->id)
-              ->where('qty', '>', 0)
-              ->select('product.id', 'product.sku', 'product.product_name', 'cart_detail.qty', 'product.price_for_customer', 'product.price_for_agen')
-              ->get();
+    $items = CartDetail::Join('product', 'cart_detail.product_id', '=', 'product.id')
+      ->where('cart_detail.cart_id', '=', $cart->id)
+      ->where('qty', '>', 0)
+      ->select('product.id', 'product.sku', 'product.product_name', 'cart_detail.qty', 'product.price_for_customer', 'product.price_for_agen')
+      ->get();
 
     $subtotal = 0;
     foreach ($items as $item) {
@@ -163,6 +159,7 @@ class ApiCartControllerPOS extends Controller {
         'subtotal' => $cart->subtotal,
         'tax' => $cart->tax,
         'total' => $cart->total,
+
         'items' => $items
       ]
     ], 201);

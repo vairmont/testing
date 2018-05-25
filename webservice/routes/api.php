@@ -53,7 +53,7 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
   Route::post('/cart/customer/clear', 'ApiCartControllerCustomer@clearCartItems');
 
   Route::get('/cart/pos', 'ApiCartControllerPOS@index');
-  Route::post('/cart/pos', 'ApiCartControllerPOS@updateCart');
+  Route::post('/cart/pos/update', 'ApiCartControllerPOS@updateCart');
   Route::post('/cart/pos/clear', 'ApiCartControllerPOS@clearCartItems');
 
   Route::get('/order', 'OrderControllerPOS@getOrderById');
