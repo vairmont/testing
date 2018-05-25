@@ -53,7 +53,6 @@ class CashierController extends Controller {
   }
 
   public function getCash(Request $request) {
-   
     $user_id = $request->get('user')->id;
 
     $getCash = Cash::where('user_id','=',$user_id)

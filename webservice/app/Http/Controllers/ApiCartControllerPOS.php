@@ -85,15 +85,7 @@ class ApiCartControllerPOS extends Controller {
 
     $subtotal = 0;
     foreach ($items as $item) {
-      switch ($request->get('user')->role_id) {
-        case 2:
-          $subtotal += $item->price_for_customer * $item->qty;
-          break;
-        case 3:
-        case 4:
-          $subtotal += $item->price_for_agen * $item->qty;
-          break;
-      }
+      $subtotal += $item->price_for_customer * $item->qty;
     }
 
     $cart->subtotal = $subtotal;
