@@ -15,37 +15,36 @@ use App\Mail\ResetPassword;
 
 class UserController extends Controller
 {
+    public function uploadPhoto(Request $request)
+    {
+        // upload photos will store in storage/app/photos
+        if(empty($request->photo)) {
+            return response()->json(['data' => [], 'message' => ['Foto tidak boleh kosong']]);
+        }
+        else {
+
+            $path = $request->file('photo')->store('photo_agen');
+
+            Agen::where('identifier', $request->get('user')->id)
+            ->update([
+                'photo' => "storage/app/".$path
+            ]);
+
+            return response()->json(['data' => [], 'message' => ['OK']]);
+        }
+    }
 
 	public function getProfile(Request $request)
 	{
-        $val = Validator::make($request->all(), [
-            'user_id' => 'required'
-        ]);
+                    
+            $agen = Agen::join('users', 'agen.identifier', '=', 'users.id')
+                        ->select('agen.*', 'users.phone')
+                        ->where('users.id', "=", $request->get('user')->id)
+                        ->first();
 
-        if($val->fails()) {
-            return response()->json(['data' => [], 'message' => $val->errors()->all()]);
+            return response()->json(['data' => $agen, 'message' => ['OK']]);
         }
-        else {
-            $user = User::select('role_id')
-                ->where('id', "=", $request->user_id)
-                ->first();
-
-            $profile = User::where('users.id', $request->user_id);
-
-            if($user->role_id == 2) {
-                $profile = $profile->select('users.email', 'customer.name', 'customer.phone', 'customer.city_id', 'customer.address_1 as map_address', 'customer.lat', 'customer.lng', 'customer.address_2 as detail_address', 'city.name as city_name')
-                ->Join('customer', 'users.id', '=', 'customer.identifier')
-                ->Join('city', 'customer.city_id', '=', 'city.id');
-            }
-            else {
-                return response()->json(['data' => [], 'message' => ['You are not authorized']]);
-            }
-
-            $profile = $profile->first();
-
-            return response()->json(['data' => $profile, 'message' => ['OK']]);
-        }
-    }
+    
    
     public function editProfile(Request $request) {
 
