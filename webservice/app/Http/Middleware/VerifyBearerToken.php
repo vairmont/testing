@@ -17,7 +17,7 @@ class VerifyBearerToken {
   public function handle(Request $request, Closure $next)
   {
     $user = User::where('api_token', '=', $request->bearerToken())->first();
-    if ($user) {
+    if($user) {
       $request->attributes->add(['user' => $user]);
       return $next($request);
     }

@@ -7,25 +7,22 @@ use App\Constant\OrderStatus;
 use Illuminate\Http\Request;
 use Validator;
 use DB;
+use Carbon\Carbon;
 use App\Order;
 use App\OrderDetail;
+use App\OrderBillingDetail;
 use App\OrderCancel;
 use App\Product;
+use App\Customer;
 use App\Family;
 use App\User;
 use App\Agen;
+use App\FCM;
 use App\Cart;
 use App\CartDetail;
 
 class OrderController extends Controller
 {
-    /*
-    -Get Order (untuk agen)
-    -Add Order (customer)
-    -Add Order (agen)
-    -Cancel Order (customer)
-    -Cancel Order (agen)
-    */
 
     private $marginRate = .05;
     private $pph = .02;
@@ -34,68 +31,84 @@ class OrderController extends Controller
       $agen = Agen::where('identifier','=', $request->get('user')->id)->first();
 
       if($agen->parent == 1){
-        $orders = Order::where('agen_id', '=', $agen->id)->get();
+        $orders = Order::Join('customer','customer.identifier','=','order.user_id')
+        ->leftJoin('order_billing_detail','order_billing_detail.order_id','=','order.id')
+        ->where('order.agen_id', '=', $agen->id)
+        ->where('order.status','=',1)
+        ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.lat','order_billing_detail.long','order_billing_detail.customer_address2')
+        ->get();
+
         $relation = "Kepala Keluarga";
       }
       else{
         $parent = Family::where('child_id','=', $agen->id)->first();
-        $orders = Order::where('agen_id','=', $parent->parent_id)->get();
+        $orders = Order::Join('customer','customer.identifier','=','order.user_id')
+        ->leftJoin('order_billing_detail','order_billing_detail.order_id','=','order.id')
+        ->where('order.agen_id', '=', $parent->id)
+        ->where('order.status','=',1)
+        ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.lat','order_billing_detail.long','order_billing_detail.customer_address2')
+        ->get();
+
         $relation = $parent->relation;
-      }
+      } 
 
       $result = [];
       foreach ($orders as $order) {
         $items = OrderDetail::Join('product', 'product.id', '=', 'order_detail.product_id')
           ->where('order_id', '=', $order->id)
-          ->where('status','=','1')
-          ->select('product.id as product_id', 'product.sku', 'order_detail.qty', 'order_detail.base_price', 'order_detail.nego_price')
+          ->select('product.id as product_id', 'product.sku', 'product.product_name', 'order_detail.qty','product.price_for_customer','product.price_for_agen','product.img_url')
           ->get();
 
 
         $result[] = [
-          'relation' => $relation,
-          'order_id' => $order->id,
-          'invoice_no' => $order->invoice_no,
-          'subtotal' => $order->subtotal,
-          'tax' => $order->tax,
-          'discount' => $order->discount,
-          'items' => $items
+          'order' => $order,
+          'items' => $items,
+          'created_at' => Carbon::parse($order->created_at)->format('d M Y H:i')
         ];
       }
 
       return response()->json($result, 200);
     }
 
-        public function orderProcess(Request $request) {
+    public function orderProcess(Request $request) {
       $agen = Agen::where('identifier','=', $request->get('user')->id)->first();
 
       if($agen->parent == 1){
-        $orders = Order::where('agen_id', '=', $agen->id)->get();
+        $orders = Order::Join('customer','customer.identifier','=','order.user_id')
+        ->leftJoin('order_billing_detail','order_billing_detail.order_id','=','order.id')
+        ->where('order.agen_id', '=', $agen->id)
+        ->where('order.status','=',2)
+        ->orWhere('order.status','=',6)
+        ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.lat','order_billing_detail.long','order_billing_detail.customer_address2')
+        ->get();
+
         $relation = "Kepala Keluarga";
       }
       else{
         $parent = Family::where('child_id','=', $agen->id)->first();
-        $orders = Order::where('agen_id','=', $parent->parent_id)->get();
+        $orders = Order::Join('customer','customer.identifier','=','order.user_id')
+        ->leftJoin('order_billing_detail','order_billing_detail.order_id','=','order.id')
+        ->where('order.agen_id', '=', $parent->id)
+        ->where('order.status','=',2)
+        ->orWhere('order.status','=',6)
+        ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.lat','order_billing_detail.long','order_billing_detail.customer_address2')
+        ->get();
+
         $relation = $parent->relation;
-      }
+      } 
 
       $result = [];
       foreach ($orders as $order) {
         $items = OrderDetail::Join('product', 'product.id', '=', 'order_detail.product_id')
           ->where('order_id', '=', $order->id)
-          ->where('status','=','2')
-          ->select('product.id as product_id', 'product.sku', 'order_detail.qty', 'order_detail.base_price', 'order_detail.nego_price')
+          ->select('product.id as product_id', 'product.sku', 'product.product_name', 'order_detail.qty','product.price_for_customer','product.price_for_agen','product.img_url')
           ->get();
 
 
         $result[] = [
-          'relation' => $relation,
-          'order_id' => $order->id,
-          'invoice_no' => $order->invoice_no,
-          'subtotal' => $order->subtotal,
-          'tax' => $order->tax,
-          'discount' => $order->discount,
-          'items' => $items
+          'order' => $order,
+          'items' => $items,
+          'created_at' => Carbon::parse($order->created_at)->format('d M Y H:i')
         ];
       }
 
@@ -103,35 +116,43 @@ class OrderController extends Controller
     }
 
     public function orderDone(Request $request) {
-      $agen = Agen::where('identifier','=', $request->get('user')->id)->first();
+            $agen = Agen::where('identifier','=', $request->get('user')->id)->first();
 
       if($agen->parent == 1){
-        $orders = Order::where('agen_id', '=', $agen->id)->get();
+        $orders = Order::Join('customer','customer.identifier','=','order.user_id')
+        ->leftJoin('order_billing_detail','order_billing_detail.order_id','=','order.id')
+        ->where('order.agen_id', '=', $agen->id)
+        ->where('order.status','=',7)
+        ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.lat','order_billing_detail.long','order_billing_detail.customer_address2')
+        ->get();
+
         $relation = "Kepala Keluarga";
       }
       else{
         $parent = Family::where('child_id','=', $agen->id)->first();
-        $orders = Order::where('agen_id','=', $parent->parent_id)->get();
+        $orders = Order::Join('customer','customer.identifier','=','order.user_id')
+        ->leftJoin('order_billing_detail','order_billing_detail.order_id','=','order.id')
+        ->where('order.agen_id', '=', $parent->id)
+        ->where('order.status','=',7)
+        ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.lat','order_billing_detail.long','order_billing_detail.customer_address2')
+        ->get();
+
         $relation = $parent->relation;
-      }
+      } 
 
       $result = [];
       foreach ($orders as $order) {
         $items = OrderDetail::Join('product', 'product.id', '=', 'order_detail.product_id')
-          ->where('order_id', '=', $order->id)
-          ->where('status','=','3')
-          ->select('product.id as product_id', 'product.sku', 'order_detail.qty', 'order_detail.base_price', 'order_detail.nego_price')
+          ->join('rating', 'rating.order_id', '=', 'order_detail.order_id')
+          ->where('rating.order_id', '=', $order->id)
+          ->select('product.id as product_id', 'product.sku', 'product.product_name', 'order_detail.qty','product.price_for_customer','product.price_for_agen','product.img_url', 'rating.rating', 'rating.notes')
           ->get();
 
 
         $result[] = [
-          'relation' => $relation,
-          'order_id' => $order->id,
-          'invoice_no' => $order->invoice_no,
-          'subtotal' => $order->subtotal,
-          'tax' => $order->tax,
-          'discount' => $order->discount,
-          'items' => $items
+          'order' => $order,
+          'items' => $items,
+          'created_at' => Carbon::parse($order->created_at)->format('d M Y H:i')
         ];
       }
 
@@ -139,105 +160,46 @@ class OrderController extends Controller
     }
 
     public function orderCancel(Request $request) {
-      $agen = Agen::where('identifier','=', $request->get('user')->id)->first();
+            $agen = Agen::where('identifier','=', $request->get('user')->id)->first();
 
       if($agen->parent == 1){
-        $orders = Order::where('agen_id', '=', $agen->id)->get();
+        $orders = Order::Join('customer','customer.identifier','=','order.user_id')
+        ->leftJoin('order_billing_detail','order_billing_detail.order_id','=','order.id')
+        ->where('order.agen_id', '=', $agen->id)
+        ->where('order.status','=',8)
+        ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.lat','order_billing_detail.long','order_billing_detail.customer_address2')
+        ->get();
+
         $relation = "Kepala Keluarga";
       }
       else{
         $parent = Family::where('child_id','=', $agen->id)->first();
-        $orders = Order::where('agen_id','=', $parent->parent_id)->get();
+        $orders = Order::Join('customer','customer.identifier','=','order.user_id')
+        ->leftJoin('order_billing_detail','order_billing_detail.order_id','=','order.id')
+        ->where('order.agen_id', '=', $parent->id)
+        ->where('order.status','=',8)
+        ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.lat','order_billing_detail.long','order_billing_detail.customer_address2')
+        ->get();
+
         $relation = $parent->relation;
-      }
+      } 
 
       $result = [];
       foreach ($orders as $order) {
         $items = OrderDetail::Join('product', 'product.id', '=', 'order_detail.product_id')
           ->where('order_id', '=', $order->id)
-          ->where('status','=','4')
-          ->select('product.id as product_id', 'product.sku', 'order_detail.qty', 'order_detail.base_price', 'order_detail.nego_price')
+          ->select('product.id as product_id', 'product.sku', 'product.product_name', 'order_detail.qty','product.price_for_customer','product.price_for_agen','product.img_url')
           ->get();
 
 
         $result[] = [
-          'relation' => $relation,
-          'order_id' => $order->id,
-          'invoice_no' => $order->invoice_no,
-          'subtotal' => $order->subtotal,
-          'tax' => $order->tax,
-          'discount' => $order->discount,
-          'items' => $items
+          'order' => $order,
+          'items' => $items,
+          'created_at' => Carbon::parse($order->created_at)->format('d M Y H:i')
         ];
       }
 
       return response()->json($result, 200);
-    }
-
-    public function create(Request $request) {
-
-      $cart = Cart::where('user_id', '=', $request->get('user')->id)->first();
-
-      if ($cart->total == 0) {
-        return response()->json(['message' => 'There is no item to order.'], 400);
-      }
-
-      #ROLE AGEN / CUST
-
-      $cartDetails = CartDetail::where('cart_id', '=', $cart->id)->get();
-
-      $order = new Order;
-      $order->invoice_no = $cart->id;
-      $order->user_id = $cart->user_id;
-
-      $order->subtotal = $cart->subtotal;
-      $order->tax = $cart->tax;
-      $order->discount = 0;
-      $order->total = $cart->total;
-      $order->status = OrderStatus::CREATED;
-      $order->save();
- 
-      $cart->subtotal = 0;
-      $cart->tax = 0;
-      $cart->total = 0;
-      $cart->save();
-
-      $items = [];
-      foreach ($cartDetails as $cartDetail) {
-        $product = Product::whereId($cartDetail->product_id)->first();
-        $orderDetail = new OrderDetail;
-        $orderDetail->order_id = $order->id;
-        $orderDetail->product_id = $product->id;
-        $orderDetail->category_id = $product->category_id;
-        $orderDetail->qty = $cartDetail->qty;
-        $orderDetail->base_price = $product->price_for_customer;
-        $orderDetail->save();
-
-        $items[] = [
-          'product_id' => $product->id,
-          'sku' => $product->sku,
-          'category_id' => $orderDetail->category_id,
-          'qty' => $orderDetail->qty,
-          'base_price' => $orderDetail->base_price,
-          'nego_price' => $orderDetail->nego_price
-        ];
-      }
-
-      $cartDetail = CartDetail::where('cart_id', '=', $cart->id)->update(['qty' => 0]);
-
-      return response(['data' => [
-        'message' => 'Order created with Invoice No: '. $order->id,
-        'order' => [
-            'order_id' => $order->id,
-            'invoice_no' => $order->invoice_no,
-            'subtotal' => $order->subtotal,
-            'tax' => $order->tax,
-            'discount' => $order->discount,
-            'total' => $order->total,
-            'items' => $items
-          ]
-        ]
-      ], 201);
     }
 
     public function assignOrderAgent(Request $request) {
@@ -259,13 +221,15 @@ class OrderController extends Controller
 
       $order = Order::whereId($request['order_id'])->first();
       $order->status = OrderStatus::ASSIGNED;
-      $order->agen_id = $request['agen_id'];
       $order->save();
 
       $items = OrderDetail::Join('product', 'product.id', '=', 'order_detail.product_id')
         ->where('order_id', '=', $order->id)
         ->select('product.id as product_id', 'product.sku', 'order_detail.qty', 'order_detail.base_price', 'order_detail.nego_price')
         ->get();
+
+      #send push notif ke customer
+      $this->_sendPushNotification($order->user_id, "Order Status", "Order telah di terima agen.");
 
       $result[] = [
         'order_id' => $order->id,
@@ -282,25 +246,6 @@ class OrderController extends Controller
         'order' => $result,
         'agen' => $agent
       ]);
-    }
-
-    public function cancelOrder(Request $request) {
-
-      $validator = Validator::make($request->all(), [
-        'order_id' => 'required|numeric|exists:order,id',
-      ]);
-
-      if ($validator->fails()) {
-        return response()->json([
-          'error' => $validator->errors()->all()
-        ], 400);
-      }
-
-      $order = Order::whereId($request['order_id'])->first();
-      $order->status = OrderStatus::CANCELLED;
-      $order->save();
-
-      return response()->json(['message' => 'Order '.$order->id .' has been succesfully cancelled'], 200);
     }
 
     public function cancelOrderAgent(Request $request) {
@@ -327,7 +272,53 @@ class OrderController extends Controller
       $orderCancel->reason = $request['reason'];
       $orderCancel->save();
 
+      #send push notif ke customer
+      $this->_sendPushNotification($order->user_id, "Order Status", "Order di cancel oleh agen.");
+
       return response()->json(['message' => 'Order status has been updated.'], 200);
+    }
+
+    public function deliveryOrder(Request $request) {
+
+      $validator = Validator::make($request->all(),[
+        'order_id' => 'required|numeric|exists:order,id'
+      ]);
+
+      if ($validator->fails()) {
+        return response()->json([
+          'error' => $validator->errors()->all()
+        ]);
+      }
+
+      #change order status
+      $order = Order::whereId($request['order_id'])->first();
+      $order->status = OrderStatus::DELIVERY;
+      $order->save();
+
+      $this->_sendPushNotification($order->user_id, "Order Status", "Order sedang di antar oleh agen.");
+
+      return response()->json(['message' => 'Order has been on delivery.'], 201);
+
+    }
+
+    public function acceptOrder(Request $request) {
+
+      $validator = Validator::make($request->all(),[
+        'order_id' => 'required|numeric|exists:order,id'
+      ]);
+
+      if ($validator->fails()) {
+        return response()->json([
+          'error' => $validator->errors()->all()
+        ]);
+      }
+
+      $order = Order::whereId($request['order_id'])->first();
+      $order->status = OrderStatus::ASSIGNED;
+      $order->save();
+
+      return response()->json(['message' => 'Order berhasil anda ambil.'], 201);
+
     }
 
     public function finalizeOrder(Request $request) {
@@ -355,7 +346,7 @@ class OrderController extends Controller
       $margin = 0;
 
       foreach ($incentiveDetails as $detail) {
-        $incentive += $detail->base_price * $detail->rate;
+        $incentive += $detail->base_price * $detail->rate / 100;
         $margin += $detail->base_price * $this->marginRate;
       }
       $commission_pph = ($incentive + $margin) * $this->pph;
@@ -370,8 +361,54 @@ class OrderController extends Controller
       $commission->margin_penjualan = $margin;
       $commission->save();
 
+      $this->_sendPushNotification($order->user_id, "Order Status", "Terima kasih transaksi selesai tolong berikan rating.");
+
       return response()->json(['message' => 'Order has been completed.'], 201);
 
     }
 
+    protected function _sendPushNotification($user_id, $title, $body) {
+        // API access key from Google API's Console
+        define('API_ACCESS_KEY', ' ');
+
+        $registrationIds = array();
+
+        $recipients = FCM::where('user_id',$user_id)->select('fcm_token')->get();
+
+        foreach ($recipients as $recipient) {
+            array_push($registrationIds, $recipient->fcm_token);
+        }
+
+        $msg = array
+        (
+            'title' => $title,
+            'body' => $body,
+            'vibrate' => "1",
+            'sound' => 'default',
+            'badge' => "1"
+        );
+
+        $fields = array
+        (
+            'registration_ids'  => $registrationIds,
+            'notification'  => $msg,
+            'priority' => 'high'
+        );
+         
+        $headers = array
+        (
+            'Authorization: key=' . API_ACCESS_KEY,
+            'Content-Type: application/json'
+        );
+         
+        $ch = curl_init();
+        curl_setopt($ch,CURLOPT_URL, 'https://fcm.googleapis.com/fcm/send');
+        curl_setopt($ch,CURLOPT_POST, true);
+        curl_setopt($ch,CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch,CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch,CURLOPT_POSTFIELDS, json_encode($fields));
+        $result = curl_exec($ch);
+        curl_close($ch);
+      }
 }

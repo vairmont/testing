@@ -29,7 +29,7 @@ class ApiCartController extends Controller {
     }
 
     $items = CartDetail::Join('product', 'cart_detail.product_id', '=', 'product.id')
-      ->where('cart_id', '=', $cart->id)
+      ->where('cart_detail.cart_id', '=', $cart->id)
       ->where('qty', '>', 0)
       ->select('product.id', 'product.sku', 'product.product_name', 'cart_detail.qty', 'product.price_for_customer', 'product.price_for_agen')
       ->get();
@@ -78,14 +78,14 @@ class ApiCartController extends Controller {
       $cartDetail->product_id = $request['product_id'];
     }
 
-    $cartDetail->qty = $request['qty'];
+    $cartDetail->qty += $request['qty'];
     $cartDetail->save();
 
-    $items = CartDetail::Join('product', 'cart_detail.product_id', '=', 'product_id')
-              ->where('cart_id', '=', $cart->id)
-              ->where('qty', '>', 0)
-              ->select('product.id', 'product.sku', 'product.product_name', 'cart_detail.qty', 'product.price_for_customer', 'product.price_for_agen')
-              ->get();
+    $items = CartDetail::Join('product', 'cart_detail.product_id', '=', 'product.id')
+      ->where('cart_detail.cart_id', '=', $cart->id)
+      ->where('qty', '>', 0)
+      ->select('product.id', 'product.sku', 'product.product_name', 'cart_detail.qty', 'product.price_for_customer', 'product.price_for_agen')
+      ->get();
 
     $subtotal = 0;
     foreach ($items as $item) {
