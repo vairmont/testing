@@ -4,25 +4,38 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Agen;
+use App\User;
+use App\Stores\store;
 
 class EmployeeController extends Controller
 {
     public function getByAgent(){
 
-        $agen = Agen::all();
+        $agen = Agen::join('users','users.id','=','agen.identifier')
+        ->select('users.store_id as storeid','users.id as id','agen.name as name','agen.ktp_photo as NIK','users.phone as phone','agen.business_name as busname','agen.province as provice','agen.district as district','agen.parent as parent','agen.kk_photo as KK','agen.address as address','users.status as status')
+        ->where('users.status','=','inactive')
+        ->get();
 
-        return view('agent.agentlist',compact('agen'))->withTitle('by Agent List');
+        $stores = Store::all();
+        
+        return view('agent.agentlist',compact('agen', 'stores'))->withTitle('by Agent List');
     }
-    public function updateReject(Request $request){
-        $agen =Agen::find($request->id)
-        ->update(['status' => 0]);
+
+    public function updateVerify(Request $request, $agen_id){
+    
+        $this->validate($request, [
+            'store_id' => 'required'
+        ]);
+
+        $user = User::where('id','=',$agen_id)
+        ->update([
+            'status' => 'active',
+            'store_id' => $request->store_id
+        ]);
 
         return back();
+
     }
-    public function updateVerify(Request $request){
-        $agen = Agen::find($request->id)
-        ->update(['status' => 2]);
-        
-            return back();
-    }
+ 
+ 
 }
