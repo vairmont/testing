@@ -55,6 +55,14 @@
                 @endif
             </select>
         </div>
+            <div class="form-group">
+            <label>Description</label>
+            <textarea class="form-control" rows="3" name='description' value="{{ isset($item) ? $item->description : old('description') }}"></textarea>
+            </div>
+            <div class="form-group col-lg-6">
+            <label>Shelf</label>
+            <input class="form-control" placeholder="Shelf" name="shelf" value="{{ isset($item) ? $item->shelf : old('shelf') }}">
+        </div>
     </div>
     <!--DB Stock-->
     <div class="col-lg-12">

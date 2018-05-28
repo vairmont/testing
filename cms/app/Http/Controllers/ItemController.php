@@ -39,7 +39,7 @@ class ItemController extends Controller
         if ($isExport) {
             $this->_export_excel($items);
         }
-
+        
         return view('products.daftaritem', compact('items', 'categories'))->withTitle('Daftar Item');
     }
 
@@ -91,7 +91,7 @@ class ItemController extends Controller
 
     public function saveItem(Request $request, $id = "")
     {
-        $inputItem = $request->only(['product_name', 'category_id', 'price_for_customer', 'cost', 'sku', 'incentive_id', 'store_id', 'tax_id']);
+        $inputItem = $request->only(['product_name', 'category_id', 'price_for_customer', 'cost', 'sku', 'incentive_id', 'store_id', 'tax_id','description','shelf']);
 
         $inputStock = $request->only(['quantity', 'store_id']);
 

@@ -24,9 +24,8 @@ Route::get('/byemployee','ReportController@getByEmployee');
 Route::get('/bychasier','ReportController@getByChasier');
 
 Route::get('/byagent','EmployeeController@getByAgent');
-Route::get('/rejectagent/{id}','EmployeeController@updateReject')->name('reject');
-Route::get('/verifyagent/{id}','EmployeeController@updateVerify')->name('verify');
 
+Route::post('/verifyagent/{id}','EmployeeController@updateVerify')->name('verify');
 
 Route::get('/bypurchaseorder','InventoryController@getByPurchaseorder');
 Route::get('/bytransferorder','InventoryController@getByTransferorder');
