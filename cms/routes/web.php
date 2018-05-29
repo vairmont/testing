@@ -28,6 +28,11 @@ Route::get('/byagent','EmployeeController@getByAgent');
 Route::post('/verifyagent/{id}','EmployeeController@updateVerify')->name('verify');
 
 Route::get('/bypurchaseorder','InventoryController@getByPurchaseorder');
+Route::get('/addpurchaseorder','InventoryController@formByPurchaseorder');
+Route::post('/addpurchaseorder','InventoryController@saveByPurchaseorder');
+Route::get('/editpurchaseorder/{id}','InventoryController@formByPurchaseorder');
+Route::post('/editpurchaseorder/{id}','InventoryController@saveByPurchaseorder');
+
 Route::get('/bytransferorder','InventoryController@getByTransferorder');
 Route::get('/bystockadjustment','InventoryController@getByAdjustment');
 

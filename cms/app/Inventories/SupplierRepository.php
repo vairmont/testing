@@ -2,41 +2,41 @@
 
 namespace App\Inventories;
 
-class SupplierRepository
+class PurchaseOrderRepository
 {
-    public function getSuppliers($args=[])
+    public function getPurchaseOrders($args=[])
     {
-        $suppliers = Supplier::get();
+        $PurchaseOrders = PurchaseOrder::get();
             
-        return $suppliers;
+        return $PurchaseOrders;
     }
 
-    public function findSupplier($id)
+    public function findPurchaseOrder($id)
     {
-        $supplier = Supplier::where('id', $id)
+        $PurchaseOrder = PurchaseOrder::where('id', $id)
                         ->first();
             
-        return $supplier;
+        return $PurchaseOrder;
     }
 
-    public function createOrUpdateSupplier($id, $input)
+    public function createOrUpdatePurchaseOrder($id, $input)
     {
         if (!empty($id)) {
-            $supplier = $this->findSupplier($id);
+            $PurchaseOrder = $this->findPurchaseOrder($id);
         }
         
-        if (!isset($supplier)) {
-            $supplier = Supplier::create($input);
+        if (!isset($PurchaseOrder)) {
+            $PurchaseOrder = PurchaseOrder::create($input);
         }
         else {
-            $supplier->update($input);
+            $PurchaseOrder->update($input);
         }
 
-        return $supplier;
+        return $PurchaseOrder;
     }
 
-    public function deleteSupplier(Supplier $supplier)
+    public function deletePurchaseOrder(PurchaseOrder $PurchaseOrder)
     {
-        $supplier->delete();
+        $PurchaseOrder->delete();
     }
 }

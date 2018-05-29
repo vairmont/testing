@@ -4,18 +4,45 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Inventories\SupplierRepository;
+use App\Inventories\PurchaseOrderRepository;
 
 class InventoryController extends Controller
 {
-    protected $suppliers;
+    protected $suppliers, $purchaseOrders;
 
-    public function __construct(SupplierRepository $suppliers)
+    public function __construct(SupplierRepository $suppliers, PurchaseOrderRepository $purchaseOrders)
     {
         $this->suppliers = $suppliers;
+        $this->purchaseOrders = $purchaseOrders;
     }
 
     public function getByPurchaseorder(){
-        return view('inventory.purchaseorder')->withTitle('By purchase order');
+        $purchaseOrders = $this->purchaseOrders->getPurchaseOrders();
+
+        return view('inventory.purchaseorder', compact('purchaseOrders'))->withTitle('By purchase order');
+    }
+
+    public function formByPurchaseorder($id="") {
+        $title = empty($id) ? "Add Supplier" : "Edit Supplier";
+
+        if (!empty($id)) {
+            $supplier = $this->suppliers->findSupplier($id);
+
+            if (is_null($supplier)) {
+                abort(404);
+            }
+        }
+
+        return view('inventory.form-supplier', compact('supplier'))->withTitle($title);
+    }
+
+    public function saveByPurchaseorder(Request $request, $id = "")
+    {
+        $input = $request->only(['name', 'contact', 'email', 'phone', 'website', 'address_1', 'address_2', 'city', 'zipcode', 'province', 'notes']);
+
+        $this->suppliers->createOrUpdateSupplier($id, $input);
+
+        return redirect('bypurchaseorder');
     }
 
     public function getByTransferorder(){
