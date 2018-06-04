@@ -25,7 +25,7 @@ class UserController extends Controller
 
             $path = $request->file('photo')->store('photo_agen');
 
-            Agen::where('identifier', $request->get('user')->id)
+            Agen::where('id', $request->header('agen_id'))
             ->update([
                 'photo' => "storage/app/".$path
             ]);
