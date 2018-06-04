@@ -30,16 +30,16 @@ class ProductController extends Controller
       $products = $products->where('product.product_name','like',$request->keyword."%");
     }
     elseif(isset($request->sortBy) && !empty($request->sortBy) && $request->sortBy == 'Incentive Tertinggi') {
-      $products = $products->orderBy('incentive_category.rate','DESC')
+      $products = $products->orderBy('incentive_category.rate','DESC');
     }
     elseif(isset($request->sortBy) && !empty($request->sortBy) && $request->sortBy == 'Incentive Terendah') {
-      $products = $products->orderBy('incentive_category.rate','ASC')
+      $products = $products->orderBy('incentive_category.rate','ASC');
     }
     elseif(isset($request->sortBy) && !empty($request->sortBy) && $request->sortBy == 'Harga Tertinggi') {
-      $products = $products->orderBy('price_for_customer','DESC')
+      $products = $products->orderBy('price_for_customer','DESC');
     }
     elseif(isset($request->sortBy) && !empty($request->sortBy) && $request->sortBy == 'Harga Terendah') {
-      $products = $products->orderBy('price_for_customer','ASC')
+      $products = $products->orderBy('price_for_customer','ASC');
     }
 
     $products = $products->orderBy('product.product_name','asc')->get();

@@ -17,8 +17,10 @@ Route::post('/v1/changePassword', 'UserController@changePassword');
 Route::post('/v1/register/agen', 'RegisterController@addAgen');
 Route::post('/v1/register/agen/ktp/upload', 'RegisterController@uploadKTP');
 Route::post('/v1/register/agen/kk/upload', 'RegisterController@uploadKK');
+Route::post('/v1/agen/photo/upload', 'UserController@uploadPhoto');
 
 Route::post('/v1/customer', 'CustomerController@addCustomer');
+Route::post('/v1/customer/photo/upload', 'CustomerController@uploadPhotoCustomer');
 
 Route::post('/v1/stores', 'CustomerController@getStore');
 Route::post('/v1/agen', 'CustomerController@getAgen');
@@ -40,10 +42,6 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
   Route::get('/product/{id}', 'ProductController@show');
   Route::patch('/product/{id}', 'ProductController@edit');
   Route::delete('/product/{id}', 'ProductController@remove');
-
-  Route::post('/agen/photo/upload', 'UserController@uploadPhoto');
-
-  Route::post('/customer/photo/upload', 'CustomerController@uploadPhotoCustomer');
 
   Route::get('/chat', 'ChatController@chatList');
   Route::post('/chat', 'ChatController@orderChat');
