@@ -43,7 +43,7 @@ class RegisterController extends Controller
             
             $user =[
 				'phone' => $request->phone,
-				'password' => Hash::make($request->password),
+				'password' => 123456,
 				'api_token' => uniqid(),
 				'role_id' => 5,
 				'status' => 'inactive'
@@ -74,7 +74,7 @@ class RegisterController extends Controller
 		else {
 			$path = $request->file('ktp_photo')->store('photo_ktp');
 
-			Agen::where('id', $request->agen_id)
+			Agen::where('id', $request->header('agen_id'))
 			->update([
 				'ktp_photo' => "storage/app/".$path
 			]);
@@ -92,7 +92,7 @@ class RegisterController extends Controller
 		else {
 			$path = $request->file('kk_photo')->store('photo_kk');
 
-			Agen::where('id', $request->agen_id)
+			Agen::where('id', $request->header('agen_id'))
 			->update([
 				'kk_photo' => "storage/app/".$path
 			]);

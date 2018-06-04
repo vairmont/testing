@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Validator;
 use App\Rating;
 use App\Order;
+use App\Agen;
 use DB;
 
 class RatingController extends Controller
@@ -13,11 +14,20 @@ class RatingController extends Controller
 
     public function index(Request $request)
 	{
-        $item = Rating::select('value')
-                    ->where('agen_id', '=', $request->get('user')->id)
-                    ->avg('value');
+        $agen = Agen::where('identifier','=', $request->get('user')->id)->first();
+
+        $item = Rating::select('rating')
+                    ->where('agen_id', '=', $agen->id)
+                    ->avg('rating');
 
         $rating = number_format($item, 2, '.', '');
+
+        $rate = [
+        'rating' => $rating
+        ];
+
+        $save = Agen::where('identifier','=', $request->get('user')->id)
+        ->update($rate);
 
         return response()->json(['data' => $rating, 'message' => ['OK']]);
     }
