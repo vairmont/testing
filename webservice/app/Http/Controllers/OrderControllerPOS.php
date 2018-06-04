@@ -90,6 +90,7 @@ class OrderControllerPOS extends Controller
       $order->user_id = $cart->user_id;
       $order->subtotal = $cart->subtotal;
       $order->tax = $cart->tax;
+      $order->payment = "Cash";
       $order->discount = 0;
       $order->total = $cart->total;
       $order->save();

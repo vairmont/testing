@@ -341,23 +341,17 @@
                             <!-- /.nav-second-level -->
                         </li>
                         <li>
-                                <a href="#"><i class="fa fa-group"></i> Karyawan<span class="fa arrow"></span></a>
+                                <a href="#"><i class="fa fa-group"></i> Admin<span class="fa arrow"></span></a>
                                 <ul class="nav nav-second-level">
                                     <li>
-                                        <a href="{{url('/byagent')}}">Daftar karyawan</a>
+                                        <a href="{{url('/byagent')}}">Verifikasi Agen</a>
                                     </li>
-                                    <li>
-                                        <a href="{{url('/accessright')}}">Hak akses</a>
-                                    </li>
-                                    <li>
-                                        <a href="morris.html">Timecards</a>
-                                    </li>
-                                    <li>
-                                        <a href="morris.html">Total hours worked</a>
-                                    </li>
+                                  
+                           
                                 </ul>
                             <!-- /.nav-second-level -->
                         </li>
+                    
                         <li>
                                 <a href="#"><i class="fa fa-male"></i> Pelanggan<span class="fa arrow"></span></a>
                                 <ul class="nav nav-second-level">

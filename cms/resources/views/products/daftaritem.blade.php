@@ -61,6 +61,8 @@
                                                 <th>Biaya</th>
                                                 <th>Margin</th>
                                                 <th>Persediaan</th>
+                                                <th>Description</th>
+                                                <th>Shelf</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
@@ -69,12 +71,14 @@
                                             @if ($items)
                                               @foreach ($items as $item)
                                                 <tr>
-                                                  <th>{{ $item->product_name }}</th>
-                                                  <th>{{ $item->category->name }}</th>
-                                                  <th>Rp. {{ $item->price_for_customer }}</th>
-                                                  <th>Rp. {{ $item->cost }}</th>
-                                                  <th>Rp. {{ $item->margin }}</th>
+                                                  <th>{{$item->product_name}}</th>
+                                                  <th>{{$item->category->name}}</th>
+                                                  <th>Rp.{{ $item->price_for_customer}}</th>
+                                                  <th>Rp.{{ $item->cost }}</th>
+                                                  <th>Rp.{{ $item->margin }}</th>
                                                   <th>{{ isset($item->stock) ? $item->stock->quantity : "0" }}</th>
+                                                  <th>{{$item->description}}</th>
+                                                  <th>{{$item->shelf}}</th>
                                                   <th>
                                                     <a href="edititem/{{ $item->id }}">Edit</a>
                                                     <a href="deleteitem/{{ $item->id }}">Delete</a>
