@@ -10,30 +10,28 @@
         <div class="container-fluid">
         
             <div>
-                <h2>Penjualan Oleh Kasir</h2>
+                <h2>Riwayat persediaan</h2>
             </div>
-
-                <form class="form-inline"> 
-                            <p>
-                                    <button type="button" class="btn btn-primary">Hari ini</button>
-                                    <button type="button" class="btn btn-primary">Kemarin</button>
-                                    <button type="button" class="btn btn-primary">Minggu ini</button>
-                                    <button type="button" class="btn btn-primary">Bulan ini</button>
-                            </p>
-                    <!-- form group -->
-                    <div class="form group">
-                                <p>Purchase order date:</p>
-                                <input type="date" name="">
-                     
+            <form class="form-inline">
+                    <div class="form-group col-3 ">
+                        <label for="inputState">Semua Toko</label>
                         <select id="inputState" class="form-control">
-                                <option selected>Semua Toko</option>
-                                <option>Mobile MiniGrosir</option>
-                                <option>Toko MiniGrosir</option>
-                        </select>
-                       <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-                    </div>
+                            <option selected>Semua Toko</option>
+                            <option>Mobile MiniGrosir</option>
+                            <option>Toko MiniGrosir</option>
+                          </select>
+                      </div>
+                    <div class="form-group col-3 ">
+                            <label for="inputState">All Category</label>
+                            <select id="inputState" class="form-control">
+                              <option selected>All Category</option>
+                              <option>BAHAN KUE</option>
+                              <option>PROMOSI</option>
+                              <option>PACKAGING</option>
+                              <option>NOODLE</option>
+                            </select>
+                          </div>
                   </form>
-                  
             <!-- /.row -->
             <div class="row">
             <!-- div col -->
@@ -43,14 +41,14 @@
                             <table class="table table-striped table-bordered table-hover" id="dataTables-example">
                                 <thead>
                                     <tr>
-                                        <th>Nama</th>
-                                        <th>Penjualan</th>
-                                        <th>Pengembalian uang</th>
-                                        <th>Diskon</th>
-                                        <th>Pendapatan bersih</th>
-                                        <th>Nota</th>
-                                        <th>Rata-Rata penjualan</th>
-                                        <th>Pendaftaran langganan</th>
+                                        <th>Tanggal</th>
+                                        <th>Barang</th>
+                                        <th>Toko</th>
+                                        <th>Karyawan</th>
+                                        <th>Alasan</th>
+                                        <th>Penyesuaian</th>
+                                        <th>Stock Akhir</th>
+                                        
                                     </tr>
                                 </thead>
 
