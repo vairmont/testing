@@ -43,7 +43,7 @@ class RegisterController extends Controller
             
             $user =[
 				'phone' => $request->phone,
-				'password' => 123456,
+				'password' => Hash::make('123456'),
 				'api_token' => uniqid(),
 				'role_id' => 5,
 				'status' => 'inactive'

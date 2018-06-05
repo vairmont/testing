@@ -46,53 +46,6 @@ class UserController extends Controller
         }
     
    
-    public function editProfile(Request $request) {
-
-        $val = Validator::make($request->all(), [
-            'user_id' => 'required',
-            'address_1' => 'required',
-            'address_2' => 'required',
-            'lat' => 'required',
-            'lng' => 'required',
-            'city_id' => 'required'
-
-        ]);
-
-        if($val->fails()) {
-            return response()->json(['data' => [], 'message' => $val->errors()->all()]);
-        } 
-        else {
-
-            $user = User::select('role_id')
-            ->where('id', "=", $request->user_id)
-            ->first();
-
-            $data = array(
-                'phone' => $request->phone,
-                'address_1' =>  $request->address_1,
-                'address_2' =>  $request->address_2,
-                'lat' =>  $request->lat,
-                'lng' =>  $request->lng,
-                'city_id'	=> $request->city_id
-            );
-
-            if($user->role_id == 2) {
-                Customer::where('identifier', $request->user_id)->update($data);
-            }
-
-            elseif($user->role_id == 3 || $user->role_id == 4) {
-                Reseller::where('identifier', $request->user_id)->update($data);
-            }
-
-            elseif($user->role_id == 5) {
-                Dealer::where('identifier', $request->user_id)->update($data);
-            }
-
-            return response()->json(['data' => [], 'message' => ['OK']]);
-        }
-
-    }
-
     public function changePassword(Request $request) {
         
         $val = Validator::make($request->all(), [
@@ -133,7 +86,7 @@ class UserController extends Controller
             return response()->json(['data' => [], 'message' => $val->errors()->all()]);
         } 
         else {
-            $newpassword = 123456;
+            $newpassword = Hash::make('123456');
 
             $user = User::where('phone', "=", $request->phone)
             ->whereIn('role_id',['2','3','4', '5'])->first();
