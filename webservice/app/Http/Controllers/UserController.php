@@ -36,21 +36,21 @@ class UserController extends Controller
 
 	public function getProfile(Request $request)
 	{
-            if(Auth::user()->role_id == 5){
+            if($request->get('user')->role_id == 5){
 
                 $data = User::join('role','users.role_id','=','role.id')
                             ->join('agen', 'users.id', '=', 'agen.identifier')
                             ->select('agen.*', 'users.phone')
-                            ->where('users.id',Auth::user()->id)
+                            ->where('users.id',$request->get('user')->id)
                             ->first();
                 return response()->json(['data' => $data, 'message' => ['OK']]);
             }
-            if(Auth::user()->role_id == 2){
+            if($request->get('user')->role_id == 2){
 
                 $data = User::join('role','users.role_id','=','role.id')
                             ->join('customer', 'users.id', '=', 'customer.identifier')
                             ->select('customer.*', 'users.phone')
-                            ->where('users.id',Auth::user()->id)
+                            ->where('users.id',$request->get('user')->id)
                             ->first();
                 return response()->json(['data' => $data, 'message' => ['OK']]);
             }
