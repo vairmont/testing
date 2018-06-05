@@ -146,7 +146,7 @@ class UserController extends Controller
                 }
                 else
                 {
-                    return response()->json(['data' => [], 'message' => ['Invalid Email']]);  
+                    return response()->json(['data' => [], 'message' => ['Nomor HP yang anda masukkan salah']]);  
             }
         }
     }

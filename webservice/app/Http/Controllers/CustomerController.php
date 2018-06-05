@@ -38,11 +38,11 @@ class CustomerController extends Controller
             return response()->json(['data' => [], 'message' => ['Gender tidak boleh kosong']]);
         }
 
-        if(empty($request->address2)) {
+        if(empty($request->address)) {
             return response()->json(['data' => [], 'message' => ['Alamat rumah tidak boleh kosong']]);
         }
 
-        if(empty($request->agen)) {
+        if(empty($request->agen_id)) {
             return response()->json(['data' => [], 'message' => ['Agen tidak boleh kosong']]);
         }
 
@@ -72,6 +72,8 @@ class CustomerController extends Controller
 				'agen_id' => $request->agen_id,
 				'name' => $request->name,
 				'address' => $request->address,
+                'lat' => $request->lat,
+                'lng' => $request->lng,
 				'gender' => $request->gender
             	];
             $create = Customer::create($customer);
@@ -102,7 +104,7 @@ class CustomerController extends Controller
         public function getStore(Request $request)
         {
             $latFrom = deg2rad($request->lat);
-            $lonFrom = deg2rad($request->long);
+            $lonFrom = deg2rad($request->lng);
             $earthRadius = 6371; // in km
 
             $stores = Store::get();
@@ -111,7 +113,7 @@ class CustomerController extends Controller
             foreach($stores as $store) {
                 // LatLng TOKO
                 $latTo = deg2rad($store->lat);
-                $lonTo = deg2rad($store->long);
+                $lonTo = deg2rad($store->lnng);
 
                 $latDelta = $latTo - $latFrom;
                 $lonDelta = $lonTo - $lonFrom;
