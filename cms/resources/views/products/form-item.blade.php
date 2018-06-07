@@ -7,9 +7,9 @@
 @section('content')
 
 @if(isset($item))
-    {{ Form::open(['url' => url('edititem/' . $item->id)]) }}
+    {{ Form::open(['url' => url('edititem/' . $item->id), 'method' => 'post', 'enctype' => 'multipart/form-data']) }}
 @else
-    {{ Form::open(['url' => url('additem')]) }}
+    {{ Form::open(['url' => url('additem'), 'method' => 'post', 'enctype' => 'multipart/form-data']) }} 
 @endif
     <h1 class="page-header col-lg-12">Product</h1>
     <!--DB product-->
@@ -62,6 +62,11 @@
             <div class="form-group col-lg-6">
             <label>Shelf</label>
             <input class="form-control" placeholder="Shelf" name="shelf" value="{{ isset($item) ? $item->shelf : old('shelf') }}">
+            </div>
+            <div class="form-group col-lg-6">
+            <label>Image</label>
+            <input type="file" class="form-control" name="img_url">
+            </div>
         </div>
         <div class="form-group col-lg-6">
             <label>Image</label>
