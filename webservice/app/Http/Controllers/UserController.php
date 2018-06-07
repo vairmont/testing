@@ -36,14 +36,26 @@ class UserController extends Controller
 
 	public function getProfile(Request $request)
 	{
-                    
-            $agen = Agen::join('users', 'agen.identifier', '=', 'users.id')
-                        ->select('agen.*', 'users.phone')
-                        ->where('users.id', "=", $request->get('user')->id)
-                        ->first();
+            if($request->get('user')->role_id == 5){
 
-            return response()->json(['data' => $agen, 'message' => ['OK']]);
-        }
+                $data = User::join('role','users.role_id','=','role.id')
+                            ->join('agen', 'users.id', '=', 'agen.identifier')
+                            ->select('agen.*', 'users.phone')
+                            ->where('users.id',$request->get('user')->id)
+                            ->first();
+                return response()->json(['data' => $data, 'message' => ['OK']]);
+            }
+            if($request->get('user')->role_id == 2){
+
+                $data = User::join('role','users.role_id','=','role.id')
+                            ->join('customer', 'users.id', '=', 'customer.identifier')
+                            ->join('agen', 'customer.agen_id', '=', "agen.id")
+                            ->select('customer.*', 'users.phone', 'agen.name as nama_agen')
+                            ->where('users.id',$request->get('user')->id)
+                            ->first();
+                return response()->json(['data' => $data, 'message' => ['OK']]);
+            }
+    }
     
    
     public function changePassword(Request $request) {

@@ -90,7 +90,7 @@ class CustomerController extends Controller
         }
         else {
 
-            $path = $request->file('photo')->store('photo_agen');
+            $path = $request->file('photo')->store('photo_customer');
 
             Customer::where('id', $request->customer_id)
             ->update([
