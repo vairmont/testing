@@ -3,17 +3,21 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Products\ItemRepository;
 use App\Inventories\SupplierRepository;
 use App\Inventories\PurchaseOrderRepository;
+use App\Stores\StoreRepository;
 
 class InventoryController extends Controller
 {
-    protected $suppliers, $purchaseOrders;
+    protected $suppliers, $purchaseOrders, $stores, $items;
 
-    public function __construct(SupplierRepository $suppliers, PurchaseOrderRepository $purchaseOrders)
+    public function __construct(SupplierRepository $suppliers, PurchaseOrderRepository $purchaseOrders, StoreRepository $stores, ItemRepository $items)
     {
         $this->suppliers = $suppliers;
         $this->purchaseOrders = $purchaseOrders;
+        $this->stores = $stores;
+        $this->items = $items;
     }
 
     public function getByPurchaseorder(){
@@ -23,24 +27,27 @@ class InventoryController extends Controller
     }
 
     public function formByPurchaseorder($id="") {
-        $title = empty($id) ? "Add Supplier" : "Edit Supplier";
+        $title = empty($id) ? "Add Purchase Order" : "Edit Purchase Order";
+        $suppliers = $this->suppliers->getSuppliers();
+        $stores = $this->stores->getStores();
+        $items = $this->items->getItems();
 
         if (!empty($id)) {
-            $supplier = $this->suppliers->findSupplier($id);
+            $purchaseOrder = $this->purchaseOrders->findpurchaseOrder($id);
 
-            if (is_null($supplier)) {
+            if (is_null($purchaseOrder)) {
                 abort(404);
             }
         }
 
-        return view('inventory.form-supplier', compact('supplier'))->withTitle($title);
+        return view('inventory.form-purchaseorder', compact('purchaseOrder', 'suppliers', 'stores', 'items'))->withTitle($title);
     }
 
     public function saveByPurchaseorder(Request $request, $id = "")
     {
         $input = $request->only(['name', 'contact', 'email', 'phone', 'website', 'address_1', 'address_2', 'city', 'zipcode', 'province', 'notes']);
 
-        $this->suppliers->createOrUpdateSupplier($id, $input);
+        $this->purchaseOrders->createOrUpdatepurchaseOrder($id, $input);
 
         return redirect('bypurchaseorder');
     }

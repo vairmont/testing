@@ -15,8 +15,6 @@ Route::get('/', 'AuthController@getLogin');
 
 Route::get('/dashboard', 'DashboardController@getDashboard');
 
-Route::get('/daftaritem', 'ItemController@getDaftarItem');
-
 Route::get('/byitem', 'ReportController@getByItem');
 Route::get('/bystore', 'ReportController@getBystore');
 Route::get('/bycategory','ReportController@getBycategory');
@@ -46,8 +44,7 @@ Route::get('/deletesupplier/{id}', 'InventoryController@deleteSupplier');
 Route::get('/byinventoryhistory','InventoryController@getByInventoryHistory');
 Route::get('/byinventoryvaluation','InventoryController@getByInventoryValuation');
 
-
-
+Route::get('/daftaritem', 'ItemController@getDaftarItem');
 Route::get('/additem', 'ItemController@formItem');
 Route::post('/additem', 'ItemController@saveItem');
 Route::get('/edititem/{id}', 'ItemController@formItem');

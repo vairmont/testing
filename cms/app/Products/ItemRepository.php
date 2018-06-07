@@ -32,7 +32,7 @@ class ItemRepository
             }
         }
 
-        if ($args['pages']==0) {
+        if (isset($args['pages']) && $args['pages']==0) {
             $items = $items->paginate(20);
         } else {
             $items = $items->get();
