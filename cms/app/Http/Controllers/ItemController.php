@@ -91,7 +91,23 @@ class ItemController extends Controller
 
     public function saveItem(Request $request, $id = "")
     {
-        $inputItem = $request->only(['product_name', 'category_id', 'price_for_customer', 'cost', 'sku', 'incentive_id', 'store_id', 'tax_id','description','shelf']);
+        if($request->hasFile('img_url')){
+            $path = $request->file('img_url')->store('image');
+        }
+          $inputItem['product_name'] = $request->product_name;
+          $inputItem['category_id'] = $request->category_id;
+          $inputItem['price_for_customer'] = $request->price_for_customer;
+          $inputItem['cost'] = $request->cost;
+          $inputItem['sku'] = $request->sku;
+          $inputItem['incentive_id'] = $request->incentive_id;
+          $inputItem['store_id'] = $request->store_id;
+          $inputItem['tax_id'] = $request->tax_id;
+          $inputItem['description'] = $request->description;
+          $inputItem['shelf'] = $request->shelf;
+          $inputItem['img_url']= "storage/app/".$path;
+    
+          
+        /*$inputItem = $request->only(['product_name', 'category_id', 'price_for_customer', 'cost', 'sku', 'incentive_id', 'store_id', 'tax_id','description','shelf']);*/
 
         $inputStock = $request->only(['quantity', 'store_id']);
 
