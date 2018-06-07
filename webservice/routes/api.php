@@ -65,7 +65,7 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
   Route::get('/order', 'OrderControllerPOS@getOrderById');
 
   Route::post('/cashier/create', 'CashierController@createCashier');
-  Route::get('/cashier/get', 'CashierController@getCash');
+  Route::post('/cashier/get', 'CashierController@getCash');
   Route::post('/cashier/close', 'CashierController@closingCashier');
 
   Route::get('/order/pending', 'OrderController@orderPending');
