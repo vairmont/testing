@@ -17,8 +17,13 @@ Route::post('/v1/changePassword', 'UserController@changePassword');
 Route::post('/v1/register/agen', 'RegisterController@addAgen');
 Route::post('/v1/register/agen/ktp/upload', 'RegisterController@uploadKTP');
 Route::post('/v1/register/agen/kk/upload', 'RegisterController@uploadKK');
+Route::post('/v1/agen/photo/upload', 'UserController@uploadPhoto');
 
 Route::post('/v1/customer', 'CustomerController@addCustomer');
+Route::post('/v1/customer/photo/upload', 'CustomerController@uploadPhotoCustomer');
+
+Route::post('/v1/stores', 'CustomerController@getStore');
+Route::post('/v1/agen', 'CustomerController@getAgen');
 
 Route::post('/v1/register/family', 'FamilyController@addFamily');
 Route::post('/v1/register/family/ktp/upload', 'FamilyController@uploadKTP');
@@ -38,8 +43,6 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
   Route::patch('/product/{id}', 'ProductController@edit');
   Route::delete('/product/{id}', 'ProductController@remove');
 
-  Route::post('/agen/photo', 'UserController@uploadPhoto');
-
   Route::get('/chat', 'ChatController@chatList');
   Route::post('/chat', 'ChatController@orderChat');
 
@@ -56,6 +59,9 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
   Route::post('/cart/pos/update', 'ApiCartControllerPOS@updateCart');
   Route::get('/cart/pos/clear', 'ApiCartControllerPOS@clearCartItems');
 
+  Route::post('/order/pos/create', 'OrderControllerPOS@create');
+  Route::post('/order/pos/finalize', 'OrderControllerPOS@finalizeOrder');
+
   Route::get('/order', 'OrderControllerPOS@getOrderById');
 
   Route::post('/cashier/create', 'CashierController@createCashier');
@@ -67,7 +73,7 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
   Route::get('/order/done', 'OrderController@orderDone');
   Route::get('/order/cancel', 'OrderController@orderCancel');
 
-  Route::post('/orderbill', 'ApiCartControllerCustomer@addOrderBillingDetail');
+  Route::post('order/customer/create', 'OrderControllerCustomer@create');
   Route::get('/order/customer/pending', 'OrderControllerCustomer@orderPending');
   Route::get('/order/customer/process', 'OrderControllerCustomer@orderProcess');
   Route::get('/order/customer/done', 'OrderControllerCustomer@orderDone');

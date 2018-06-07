@@ -20,11 +20,26 @@ class ProductController extends Controller
     $products = Product::Join('product_category', 'product.category_id','=','product_category.id')
     ->join('incentive_category', 'product.incentive_id','=', 'incentive_category.id')
     ->select(
-      DB::raw('product.id , product.product_name , product.category_id, product_category.name as category_name, product.price_for_customer as price', 'incentive_category.rate')
+      DB::raw('product.id , product.product_name , product.category_id, product_category.name as category_name, product.price_for_customer as price, incentive_category.rate , product.img_url')
       );
 
     if(isset($request->category_id) && !empty($request->category_id)) {
       $products = $products->where('product.category_id', $request->category_id);
+    }
+    if(isset($request->keyword) && !empty($request->keyword)) {
+      $products = $products->where('product.product_name','like',$request->keyword."%");
+    }
+    if(isset($request->sortBy) && !empty($request->sortBy) && $request->sortBy == 'Incentive Tertinggi') {
+      $products = $products->orderBy('incentive_category.rate','DESC');
+    }
+    if(isset($request->sortBy) && !empty($request->sortBy) && $request->sortBy == 'Incentive Terendah') {
+      $products = $products->orderBy('incentive_category.rate','ASC');
+    }
+    if(isset($request->sortBy) && !empty($request->sortBy) && $request->sortBy == 'Harga Tertinggi') {
+      $products = $products->orderBy('price_for_customer','DESC');
+    }
+    if(isset($request->sortBy) && !empty($request->sortBy) && $request->sortBy == 'Harga Terendah') {
+      $products = $products->orderBy('price_for_customer','ASC');
     }
 
     $products = $products->orderBy('product.product_name','asc')->get();
