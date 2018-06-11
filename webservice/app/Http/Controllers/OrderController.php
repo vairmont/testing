@@ -333,6 +333,24 @@ class OrderController extends Controller
         ]);
       }
 
+      $latFrom = deg2rad(-6.108829);
+            $lonFrom = deg2rad(106.171406);
+            $earthRadius = 6371; // in km
+
+            $latTo = deg2rad($request->lat);
+            $lonTo = deg2rad($request->long);
+
+            $latDelta = $latTo - $latFrom;
+            $lonDelta = $lonTo - $lonFrom;
+
+            $angle = 2 * asin(sqrt(pow(sin($latDelta / 2), 2) + cos($latFrom) * cos($latTo) * pow(sin($lonDelta / 2), 2)));
+
+            // 1.6 for convert in miles to km
+            // x2 for set exact distance
+            $distance = (float)(($angle * $earthRadius) * 2);
+
+            if($distance <= 0.2) {
+
       $order = Order::whereId($request['order_id'])->first();
       $order->status = OrderStatus::COMPLETED;
       $order->save();
@@ -364,7 +382,7 @@ class OrderController extends Controller
       $this->_sendPushNotification($order->user_id, "Order Status", "Terima kasih transaksi selesai tolong berikan rating.");
 
       return response()->json(['message' => 'Order has been completed.'], 201);
-
+      }
     }
 
     protected function _sendPushNotification($user_id, $title, $body) {

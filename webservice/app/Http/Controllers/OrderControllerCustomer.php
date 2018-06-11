@@ -19,6 +19,7 @@ use App\Agen;
 use App\Cart;
 use App\Chat;
 use App\CartDetail;
+use App\FCM;
 
 class OrderControllerCustomer extends Controller
 {
@@ -126,6 +127,24 @@ class OrderControllerCustomer extends Controller
     }
 
     public function create(Request $request) {
+     
+            $latFrom = deg2rad(-6.108829);
+            $lonFrom = deg2rad(106.171406);
+            $earthRadius = 6371; // in km
+
+            $latTo = deg2rad($request->lat);
+            $lonTo = deg2rad($request->long);
+
+            $latDelta = $latTo - $latFrom;
+            $lonDelta = $lonTo - $lonFrom;
+
+            $angle = 2 * asin(sqrt(pow(sin($latDelta / 2), 2) + cos($latFrom) * cos($latTo) * pow(sin($lonDelta / 2), 2)));
+
+            // 1.6 for convert in miles to km
+            // x2 for set exact distance
+            $distance = (float)(($angle * $earthRadius) * 2);
+
+            if($distance <= 10) {
 
       $cart = Cart::where('user_id', '=', $request->get('user')->id)->first();
 
@@ -178,20 +197,17 @@ class OrderControllerCustomer extends Controller
       }
 
       #Input Billing Detail
+      $cartDetail = CartDetail::where('cart_id', '=', $cart->id)->update(['qty' => 0]);
 
       $orderbillingdetail = new OrderBillingDetail;
 
       $orderbillingdetail->order_id =  $order->id;
       $orderbillingdetail->customer_name = $request['customer_name'];
-      $orderbillingdetail->customer_name = $request['customer_phone'];
-      $orderbillingdetail->customer_name = $request['customer_province'];
-      $orderbillingdetail->customer_name = $request['customer_city'];
-      $orderbillingdetail->customer_name = $request['customer_disctrict'];
-      $orderbillingdetail->customer_name = $request['customer_address'];
+      $orderbillingdetail->customer_phone = $request['customer_phone'];
+      $orderbillingdetail->lat = $request['lat'];
+      $orderbillingdetail->long = $request['long'];
+      $orderbillingdetail->customer_address2 = $request['customer_address2'];
       $orderbillingdetail->save();
-
-      #send push notif ke agen
-      $this->_sendPushNotification($agencust->agen_id, "Order Baru", "Ada order baru.");
 
       return response(['data' => [
         'message' => 'Order created with Invoice No: '. $order->id,
@@ -206,7 +222,16 @@ class OrderControllerCustomer extends Controller
           ]
         ]
       ], 201);
+
+      $fcm_dealer = FCM::where('user_id', $orderbillingdetail->identifier)->select('fcm_token')->get();
+
+      #send push notif ke agen
+      $this->_sendPushNotification($agencust->agen_id, "Order Baru", "Ada order baru.");
+
     }
+
+    return response()->json(['message' => 'Mohon maaf lokasi pengantaran anda terlalu jauh dari store.']);
+  }
 
     public function cancelOrder(Request $request) {
 

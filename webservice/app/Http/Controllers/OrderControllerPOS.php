@@ -32,6 +32,21 @@ class OrderControllerPOS extends Controller
       return response()->json(['data' => $order, 'message' => ['OK']]);
      }
 
+   public function topUp(Request $request) {
+    $amount = $request->amount;
+
+    $user = User::where('phone',$request->phone)->first();
+
+    $topup = Agen::where('identifier', '=', $user->id)
+             ->increment('point_kredit', $amount);
+
+    $poin = Agen::select('point_kredit')
+            ->where('identifier', '=', $user->id)
+            ->first();         
+
+    return response()->json(['data' => $poin, 'message' => ['OK']]);         
+   }
+
     // public function index(Request $request) {
     //   $orders = Order::where('user_id', '=', $request->get('user')->id)->get();
 
@@ -59,14 +74,13 @@ class OrderControllerPOS extends Controller
 
       $cart = Cart::where('user_id', '=', $request->get('user')->id)->first();
 
-      if ($cart->total == 0) {
+      if ($cart == null) {
         return response()->json(['message' => 'There is no item to order.'], 400);
       }
 
       $cartDetails = CartDetail::where('cart_id', '=', $cart->id)->get();
-
       $order = new Order;
-      $order->invoice_no = $cart->id;
+      $order->invoice_no = uniqid();
       $order->user_id = $cart->user_id;
       $order->subtotal = $cart->subtotal;
       $order->tax = $cart->tax;
@@ -101,19 +115,21 @@ class OrderControllerPOS extends Controller
         ];
       }
 
-      $cartDetail = CartDetail::where('cart_id', '=', $cart->id)->update(['qty' => 0]);
-
-
-
       $orderbillingdetail = new OrderBillingDetail;
 
       $orderbillingdetail->order_id =  $order->id;
-      $orderbillingdetail->customer_name = $request['customer_name'];
+      $orderbillingdetail->customer_name ="";
+      $orderbillingdetail->customer_phone = "";
+      $orderbillingdetail->customer_address = "";
+      $orderbillingdetail->lat = "";
+      $orderbillingdetail->long = "";
+      $orderbillingdetail->customer_address2 = "";
       $orderbillingdetail->save();
 
-      return response(['data' => [
-        'message' => 'Order created with Invoice No: '. $order->id,
-        'order' => [
+      $cartDetail = CartDetail::where('cart_id', '=', $cart->id)->delete();
+      $cart->delete();
+      return response()->json(
+        [
             'order_id' => $order->id,
             'invoice_no' => $order->invoice_no,
             'subtotal' => $order->subtotal,
@@ -121,8 +137,6 @@ class OrderControllerPOS extends Controller
             'discount' => $order->discount,
             'total' => $order->total,
             'items' => $items
-          ]
-        ]
       ], 201);
     }
 

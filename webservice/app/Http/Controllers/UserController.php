@@ -25,7 +25,7 @@ class UserController extends Controller
 
             $path = $request->file('photo')->store('photo_agen');
 
-            Agen::where('identifier', $request->get('user')->id)
+            Agen::where('id', $request->header('agen_id'))
             ->update([
                 'photo' => "storage/app/".$path
             ]);
@@ -36,63 +36,28 @@ class UserController extends Controller
 
 	public function getProfile(Request $request)
 	{
-                    
-            $agen = Agen::join('users', 'agen.identifier', '=', 'users.id')
-                        ->select('agen.*', 'users.phone')
-                        ->where('users.id', "=", $request->get('user')->id)
-                        ->first();
+            if($request->get('user')->role_id == 5){
 
-            return response()->json(['data' => $agen, 'message' => ['OK']]);
-        }
+                $data = User::join('role','users.role_id','=','role.id')
+                            ->join('agen', 'users.id', '=', 'agen.identifier')
+                            ->select('agen.*', 'users.phone')
+                            ->where('users.id',$request->get('user')->id)
+                            ->first();
+                return response()->json(['data' => $data, 'message' => ['OK']]);
+            }
+            if($request->get('user')->role_id == 2){
+
+                $data = User::join('role','users.role_id','=','role.id')
+                            ->join('customer', 'users.id', '=', 'customer.identifier')
+                            ->join('agen', 'customer.agen_id', '=', "agen.id")
+                            ->select('customer.*', 'users.phone', 'agen.name as nama_agen')
+                            ->where('users.id',$request->get('user')->id)
+                            ->first();
+                return response()->json(['data' => $data, 'message' => ['OK']]);
+            }
+    }
     
    
-    public function editProfile(Request $request) {
-
-        $val = Validator::make($request->all(), [
-            'user_id' => 'required',
-            'address_1' => 'required',
-            'address_2' => 'required',
-            'lat' => 'required',
-            'lng' => 'required',
-            'city_id' => 'required'
-
-        ]);
-
-        if($val->fails()) {
-            return response()->json(['data' => [], 'message' => $val->errors()->all()]);
-        } 
-        else {
-
-            $user = User::select('role_id')
-            ->where('id', "=", $request->user_id)
-            ->first();
-
-            $data = array(
-                'phone' => $request->phone,
-                'address_1' =>  $request->address_1,
-                'address_2' =>  $request->address_2,
-                'lat' =>  $request->lat,
-                'lng' =>  $request->lng,
-                'city_id'	=> $request->city_id
-            );
-
-            if($user->role_id == 2) {
-                Customer::where('identifier', $request->user_id)->update($data);
-            }
-
-            elseif($user->role_id == 3 || $user->role_id == 4) {
-                Reseller::where('identifier', $request->user_id)->update($data);
-            }
-
-            elseif($user->role_id == 5) {
-                Dealer::where('identifier', $request->user_id)->update($data);
-            }
-
-            return response()->json(['data' => [], 'message' => ['OK']]);
-        }
-
-    }
-
     public function changePassword(Request $request) {
         
         $val = Validator::make($request->all(), [
@@ -133,7 +98,7 @@ class UserController extends Controller
             return response()->json(['data' => [], 'message' => $val->errors()->all()]);
         } 
         else {
-            $newpassword = 123456;
+            $newpassword = Hash::make('123456');
 
             $user = User::where('phone', "=", $request->phone)
             ->whereIn('role_id',['2','3','4', '5'])->first();
@@ -146,9 +111,20 @@ class UserController extends Controller
                 }
                 else
                 {
-                    return response()->json(['data' => [], 'message' => ['Invalid Email']]);  
+                    return response()->json(['data' => [], 'message' => ['Nomor HP yang anda masukkan salah']]);  
             }
         }
+    }
+
+    public function getCustomerList(Request $request){
+        $agen = Agen::where('identifier','=', $request->get('user')->id)->first();
+
+        $customer = User::Join('customer', 'users.id', '=', 'customer.identifier')
+                    ->select('customer.name', 'customer.address', 'users.phone', 'customer.lat', 'customer.lng')
+                    ->where('customer.agen_id', '=', $agen->id)
+                    ->get();
+
+        return response()->json(['data' => [$customer], 'message' => ['OK']]);            
     }
 	
 }

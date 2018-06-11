@@ -23,7 +23,7 @@ class CashierController extends Controller {
     $cash->closing_cash = 0;
     $cash->save();
 
-    return response()->json(['data' => [ 'cash_id' => $cash->id], 'message' => ['OK']]);
+    return response()->json(['data' => ['cash_id' => $cash->id], 'message' => ['OK']]);
   }
 
   public function closingCashier(Request $request) {
@@ -38,7 +38,7 @@ class CashierController extends Controller {
 
     $salestotal = 0;
 
-    foreach ($sales as $sale) {
+    foreach ($sales as $sale) { 
         $salestotal += $sale->total;
     }
 
@@ -46,7 +46,8 @@ class CashierController extends Controller {
     $cash->user_id = $user_id;
     $cash->sales = $salestotal;
     $cash->cash_out = $request['cash_out'];
-    $cash->closing_cash = ($cash->starting_cash + $salestotal)-$cash_out;
+    // $cash->closing_cash = ($cash->starting_cash + $salestotal)-$cash_out;
+    $cash->closing_cash = $request['closing_cash'];
     $cash->save();
 
     return response()->json(['data' => [], 'message' => ['OK']]);
@@ -55,10 +56,11 @@ class CashierController extends Controller {
   public function getCash(Request $request) {
     $user_id = $request->get('user')->id;
 
-    $getCash = Cash::where('user_id','=',$user_id)
-                ->whereDate('created_at', Carbon::now()->toDateString())
-                ->get();
+    $cash_id = $request['cash_id'];
 
-    return response()->json($getCash, 200);
+    $getCash = Cash::where('id','=',$cash_id)
+                ->first();
+
+    return response()->json(['data' => $getCash, 'message' => ['OK']]);
   }
 }

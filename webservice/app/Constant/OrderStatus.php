@@ -11,6 +11,7 @@ class OrderStatus {
 
   const CREATED = 1;
   const ASSIGNED = 2;
+  const PICKUP = 3;
   const DELIVERY = 6;
   const REASSIGN = 1;
   const COMPLETED = 7;
