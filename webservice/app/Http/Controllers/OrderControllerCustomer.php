@@ -207,6 +207,7 @@ class OrderControllerCustomer extends Controller
       $orderbillingdetail->lat = $request['lat'];
       $orderbillingdetail->long = $request['long'];
       $orderbillingdetail->customer_address2 = $request['customer_address2'];
+      $orderbillingdetail->notes = $request['notes'];
       $orderbillingdetail->save();
 
       return response(['data' => [

@@ -124,7 +124,7 @@ class UserController extends Controller
                     ->where('customer.agen_id', '=', $agen->id)
                     ->get();
 
-        return response()->json(['data' => [$customer], 'message' => ['OK']]);            
+        return response()->json(['data' => $customer, 'message' => ['OK']]);            
     }
 	
 }
