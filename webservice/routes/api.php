@@ -30,8 +30,8 @@ Route::post('/v1/register/family/ktp/upload', 'FamilyController@uploadKTP');
 
 Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function () {
 
-  Route::post('token/check', 'FCMTokenController@checkToken');
-  Route::post('token/add', 'FCMTokenController@addToken');
+  Route::post('/token/check', 'FCMTokenController@checkToken');
+  Route::post('/token/add', 'FCMTokenController@addToken');
 
   Route::get('/profile', 'UserController@getProfile');
 
