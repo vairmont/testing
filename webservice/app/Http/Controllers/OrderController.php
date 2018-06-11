@@ -333,12 +333,16 @@ class OrderController extends Controller
         ]);
       }
 
-      $latFrom = deg2rad(-6.108829);
-            $lonFrom = deg2rad(106.171406);
+            $latFrom = deg2rad($request->lat);
+            $lonFrom = deg2rad($request->long);
             $earthRadius = 6371; // in km
 
-            $latTo = deg2rad($request->lat);
-            $lonTo = deg2rad($request->long);
+            $orderlocation = OrderBillingDetail::select('lat', 'long')
+                            ->where('order_id', $request->order_id)
+                            ->first();  
+
+            $latTo = deg2rad($orderlocation->lat);
+            $lonTo = deg2rad($orderlocation->long);
 
             $latDelta = $latTo - $latFrom;
             $lonDelta = $lonTo - $lonFrom;
@@ -349,7 +353,7 @@ class OrderController extends Controller
             // x2 for set exact distance
             $distance = (float)(($angle * $earthRadius) * 2);
 
-            if($distance <= 0.2) {
+            if($distance <= 0.5) {
 
       $order = Order::whereId($request['order_id'])->first();
       $order->status = OrderStatus::COMPLETED;
@@ -382,6 +386,10 @@ class OrderController extends Controller
       $this->_sendPushNotification($order->user_id, "Order Status", "Terima kasih transaksi selesai tolong berikan rating.");
 
       return response()->json(['message' => 'Order has been completed.'], 201);
+      }
+
+      else{
+        return response()->json(['message' => 'Not Allowed']);
       }
     }
 
