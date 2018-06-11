@@ -29,28 +29,8 @@ class OrderControllerPOS extends Controller
           ->select(DB::raw('product.id, product.product_name, product.price_for_customer as price, product.price_for_agen'))
           ->get();
 
-           $orderDetail = OrderDetail::where('order_id','=',$request['order_id'])
-          ->get();
-
-      foreach ($orderDetail as $key => $val) {
-        $stock = Stock::where('store_id','=',$request['store_id'])
-                ->where('product_id','=',$val->product_id[$key])
-                ->first();
-
-        $stock->quantity -= $val->qty[$key];
-        $stock->save();
-
-        $stockhistory = new StockHistory;
-        $stockhistory->product_id = $val->product_id[$key];
-        $stockhistory->store_id = $request['store_id'];
-        $stockhistory->user_id = $request->get('user')->id;
-        $stockhistory->reason = 'Terjual';
-        $stockhistory->quantity = $val->qty[$key];
-        $stockhistory->save();
-
       return response()->json(['data' => $order, 'message' => ['OK']]);
      }
-   }
 
    public function topUp(Request $request) {
     $amount = $request->amount;
@@ -104,7 +84,6 @@ class OrderControllerPOS extends Controller
       $order->user_id = $cart->user_id;
       $order->subtotal = $cart->subtotal;
       $order->tax = $cart->tax;
-      $order->payment = "Cash";
       $order->discount = 0;
       $order->total = $cart->total;
       $order->save();
