@@ -52,6 +52,21 @@ class OrderControllerPOS extends Controller
      }
    }
 
+   public function topUp(Request $request) {
+    $amount = $request->amount;
+
+    $user = User::where('phone',$request->phone)->first();
+
+    $topup = Agen::where('identifier', '=', $user->id)
+             ->increment('point_kredit', $amount);
+
+    $poin = Agen::select('point_kredit')
+            ->where('identifier', '=', $user->id)
+            ->first();         
+
+    return response()->json(['data' => $poin, 'message' => ['OK']]);         
+   }
+
     // public function index(Request $request) {
     //   $orders = Order::where('user_id', '=', $request->get('user')->id)->get();
 

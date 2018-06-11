@@ -61,6 +61,7 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
 
   Route::post('/order/pos/create', 'OrderControllerPOS@create');
   Route::post('/order/pos/finalize', 'OrderControllerPOS@finalizeOrder');
+  Route::post('/pos/topup', 'OrderControllerPOS@topUp');
 
   Route::get('/order', 'OrderControllerPOS@getOrderById');
 
@@ -89,6 +90,7 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
   Route::get('/rating', 'RatingController@index');
   Route::post('/rating', 'RatingController@addRating');
 
+  Route::get('/getcustomer', 'UserController@getCustomerList');
   Route::get('/customer', 'CustomerController@getCustomer');
 
   Route::get('/family', 'FamilyController@getFamily');
