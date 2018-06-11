@@ -73,7 +73,7 @@ class CustomerController extends Controller
 				'name' => $request->name,
 				'address' => $request->address,
                 'lat' => $request->lat,
-                'lng' => $request->lng,
+                'long' => $request->long,
 				'gender' => $request->gender
             	];
             $create = Customer::create($customer);
@@ -104,7 +104,7 @@ class CustomerController extends Controller
         public function getStore(Request $request)
         {
             $latFrom = deg2rad($request->lat);
-            $lonFrom = deg2rad($request->lng);
+            $lonFrom = deg2rad($request->long);
             $earthRadius = 6371; // in km
 
             $stores = Store::get();
@@ -113,7 +113,7 @@ class CustomerController extends Controller
             foreach($stores as $store) {
                 // LatLng TOKO
                 $latTo = deg2rad($store->lat);
-                $lonTo = deg2rad($store->lnng);
+                $lonTo = deg2rad($store->long);
 
                 $latDelta = $latTo - $latFrom;
                 $lonDelta = $lonTo - $lonFrom;
