@@ -292,7 +292,7 @@ class OrderController extends Controller
 
       #change order status
       $order = Order::whereId($request['order_id'])->first();
-      $order->status = OrderStatus::DELIVERY;
+      // $order->status = OrderStatus::DELIVERY;
       $order->save();
 
       $this->_sendPushNotification($order->user_id, "Order Status", "Order sedang di antar oleh agen.");

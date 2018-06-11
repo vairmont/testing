@@ -174,11 +174,17 @@ class OrderControllerPOS extends Controller
 
       }
 
+
       #change order status
       $order = Order::whereId($request['order_id'])->first();
+
+      $amount = $order->total;
+
       if($order->agen_id != 0)
       {
-        
+      $order->status = OrderStatus::DELIVERY;
+      $topup = Agen::where('identifier', '=', $request->get('user')->id)
+             ->decrement('point_kredit', $amount);
       }
       else{
       $order->status = OrderStatus::COMPLETED;
