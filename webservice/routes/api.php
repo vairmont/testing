@@ -73,7 +73,7 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
   Route::get('/order/done', 'OrderController@orderDone');
   Route::get('/order/cancel', 'OrderController@orderCancel');
 
-  Route::post('order/customer/create', 'OrderControllerCustomer@create');
+  Route::post('/order/customer/create', 'OrderControllerCustomer@create');
   Route::get('/order/customer/pending', 'OrderControllerCustomer@orderPending');
   Route::get('/order/customer/process', 'OrderControllerCustomer@orderProcess');
   Route::get('/order/customer/done', 'OrderControllerCustomer@orderDone');
