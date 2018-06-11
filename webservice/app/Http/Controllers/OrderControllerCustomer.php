@@ -177,8 +177,6 @@ class OrderControllerCustomer extends Controller
         ];
       }
 
-      $cartDetail = CartDetail::where('cart_id', '=', $cart->id)->update(['qty' => 0]);
-
       #Input Billing Detail
 
       $orderbillingdetail = new OrderBillingDetail;
