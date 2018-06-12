@@ -297,7 +297,7 @@ class OrderController extends Controller
 
       $this->_sendPushNotification($order->user_id, "Order Status", "Order sedang di antar oleh agen.");
 
-      return response()->json(['message' => 'Order has been on delivery.'], 201);
+      return response()->json(['message' => 'Order is on delivery.'], 201);
 
     }
 
