@@ -28,35 +28,10 @@ class OrderControllerCustomer extends Controller
     private $marginRate = .05;
     private $pph = .02;
 
-    public function orderPending(Request $request) {
-
-      $orders = Order::where('user_id', '=', $request->get('user')->id)
-      ->where('status','=',1)
-      ->get();
-
-      $result = [];
-      foreach ($orders as $order) {
-        $items = OrderDetail::Join('product', 'product.id', '=', 'order_detail.product_id')
-          ->where('order_id', '=', $order->id)
-          ->select('product.id as product_id', 'product.sku', 'product.product_name', 'order_detail.qty','product.price_for_customer','product.price_for_agen','product.img_url')
-          ->get();
-
-
-        $result[] = [
-          'order' => $orders,
-          'items' => $items,
-          'created_at' => Carbon::parse($order->created_at)->format('d M Y H:i')
-        ];
-      }
-
-      return response()->json($result, 200);
-    }
-
     public function orderProcess(Request $request) {
 
       $orders = Order::where('user_id', '=', $request->get('user')->id)
-      ->where('status','=',2)
-      ->orwhere('status','=',6)
+      ->whereIn('status',[1,2,6])
       ->get();
 
       $result = [];
