@@ -40,14 +40,13 @@ class OrderControllerCustomer extends Controller
           ->where('order_id', '=', $order->id)
           ->select('product.id as product_id', 'product.sku', 'product.product_name', 'order_detail.qty','product.price_for_customer','product.price_for_agen','product.img_url')
           ->get();
-
-
-        $result[] = [
+        
+      }
+      $result = [
           'order' => $orders,
           'items' => $items,
           'created_at' => Carbon::parse($order->created_at)->format('d M Y H:i')
         ];
-      }
 
       return response()->json($result, 200);
     }
