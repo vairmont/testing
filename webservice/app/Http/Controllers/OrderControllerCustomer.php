@@ -192,7 +192,7 @@ class OrderControllerCustomer extends Controller
       $orderbillingdetail->save();
 
       return response(['data' => [
-        'message' => 'Order created with Invoice No: '. $order->id,
+        'message' => 'OK',
         'order' => [
             'order_id' => $order->id,
             'invoice_no' => $order->invoice_no,
