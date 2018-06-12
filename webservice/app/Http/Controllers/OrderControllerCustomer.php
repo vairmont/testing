@@ -164,7 +164,8 @@ class OrderControllerCustomer extends Controller
         $orderDetail->product_id = $product->id;
         $orderDetail->category_id = $product->category_id;
         $orderDetail->qty = $cartDetail->qty;
-        $orderDetail->base_price = $product->price_for_customer;
+        $orderDetail->price_for_customer = $product->price_for_customer;
+        $orderDetail->price_for_agen = $product->price_for_agen;
         $orderDetail->save();
 
         $items[] = [
@@ -172,7 +173,8 @@ class OrderControllerCustomer extends Controller
           'sku' => $product->sku,
           'category_id' => $orderDetail->category_id,
           'qty' => $orderDetail->qty,
-          'price_for_customer' => $orderDetail->price_for_customer
+          'price_for_customer' => $orderDetail->price_for_customer,
+          'price_for_agen' => $orderDetail->price_for_agen
         ];
       }
 
@@ -184,25 +186,14 @@ class OrderControllerCustomer extends Controller
       $orderbillingdetail->order_id =  $order->id;
       $orderbillingdetail->customer_name = $request['customer_name'];
       $orderbillingdetail->customer_phone = $request['customer_phone'];
+      $orderbillingdetail->customer_address = "";
       $orderbillingdetail->lat = $request['lat'];
       $orderbillingdetail->long = $request['long'];
       $orderbillingdetail->customer_address2 = $request['customer_address2'];
       $orderbillingdetail->notes = $request['notes'];
       $orderbillingdetail->save();
 
-      return response(['data' => [
-        'message' => 'OK',
-        'order' => [
-            'order_id' => $order->id,
-            'invoice_no' => $order->invoice_no,
-            'subtotal' => $order->subtotal,
-            'tax' => $order->tax,
-            'discount' => $order->discount,
-            'total' => $order->total,
-            'items' => $items
-          ]
-        ]
-      ], 201);
+      return response()->json(['data' => [], 'message' => ['OK']]);
 
       $fcm_dealer = FCM::where('user_id', $orderbillingdetail->identifier)->select('fcm_token')->get();
 
