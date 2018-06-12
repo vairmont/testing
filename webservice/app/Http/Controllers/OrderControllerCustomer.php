@@ -83,9 +83,10 @@ class OrderControllerCustomer extends Controller
     public function orderCancel(Request $request) {
 
       $orders = Order::join('order_billing_detail', 'order_billing_detail.order_id', '=', 'order.id')
+      ->join('order_cancel', 'order_cancel.order_id', '=', 'order.id')
       ->where('user_id', '=', $request->get('user')->id)
       ->where('status', '=', 8)
-      ->select('order.*','order_billing_detail.*')
+      ->select('order.*','order_billing_detail.*', 'order_cancel.reason')
       ->get();
 
       $result = [];
