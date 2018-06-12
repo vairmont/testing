@@ -51,7 +51,7 @@ class OrderControllerCustomer extends Controller
       }
       
 
-      return response()->json($result, 200);
+      return response()->json(['data' => $result], 200);
     }
 
     public function orderDone(Request $request) {
@@ -140,7 +140,7 @@ class OrderControllerCustomer extends Controller
       $cartDetails = CartDetail::where('cart_id', '=', $cart->id)->get();
 
       $order = new Order;
-      $order->invoice_no = $cart->id;
+      $order->invoice_no = uniqid();
       $order->user_id = $cart->user_id;
 
       $order->subtotal = $cart->subtotal;
