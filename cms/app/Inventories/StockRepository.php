@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Inventories;
+use DB;
 
 class StockRepository
 {
@@ -14,6 +15,16 @@ class StockRepository
     public function findStockbyProductStoreId($id, $store_id)
     {
         $stock = Stock::where('product_id', $id)
+                        ->where('store_id', $store_id)
+                        ->first();
+            
+        return $stock;
+    }
+
+    public function getStockbyProductStoreId($id, $store_id)
+    {
+        $stock = Stock::select(DB::raw('stock.*, sum(quantity) as total_quantity'))
+                        ->where('product_id', $id)
                         ->where('store_id', $store_id)
                         ->first();
             

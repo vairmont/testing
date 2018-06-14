@@ -12,7 +12,32 @@ s    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
     <script type="text/javascript">
         $(document).ready(function() {
-            $('.js-example-basic-single').select2();
+            $('.js-example-basic-single').select2({
+                    placeholder: "Select an item"
+                });
+
+            $('.js-example-basic-single').on("change", function(){
+                var idSelected = $('#select-items option:selected').val();
+                var nameSelected = $('#select-items option:selected').text();
+                var storeId = $('select[name=store_id]').val();
+                var token = $('input[name=_token').val();
+                $.ajax({
+                    url: "processitem",
+                    type: "POST",
+                    data: {"_token": token, "id": idSelected, "name": nameSelected, "store_id": storeId},
+                    success: function(result){
+                        //append html
+                        console.log(result);
+                        $('#table-items tbody').append(result);
+                    }
+                });
+            });
+
+            function removeLine(id)
+            {
+            	console.log(id);
+                $("#item-"+id).remove();
+            }
         });
     </script>
 @endsection
@@ -23,6 +48,7 @@ s    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select
 @else
     {{ Form::open(['url' => url('addsupplier')]) }}
 @endif       
+    <input type="hidden" name="_token" value="{{ csrf_token() }}">
     <h1 class="page-header col-lg-12">New Purchase Order</h1>
       <div class="form-group col-lg-6">
    		 <label for="inputState">Pemasok</label>
@@ -63,6 +89,7 @@ s    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select
             </div>
             <table id="table-items" class="table table-striped table-bordered table-hover">
                 <thead>
+                    <th>Items</th>
                     <th>In Stock</th>
                     <th>Incoming</th>
                     <th>Quantity</th>
@@ -74,7 +101,8 @@ s    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select
                 </tbody>
             </table>
             <div class="form-group col-lg-12">
-                <select class="js-example-basic-single" name="items[]" data-items="{{ $items->toJson() }}" style="width:100%;">
+                <select class="js-example-basic-single" id="select-items" data-items="{{ $items->toJson() }}" style="width:100%;">
+                    <option></option>
                   @foreach ($items as $item)
                     <option value="{{ $item->id }}"> {{ $item->product_name }} </option>
                   @endforeach

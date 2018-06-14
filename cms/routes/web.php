@@ -25,6 +25,7 @@ Route::get('/byagent','EmployeeController@getByAgent');
 
 Route::post('/verifyagent/{id}','EmployeeController@updateVerify')->name('verify');
 
+Route::post('/processitem','InventoryController@processItem');
 Route::get('/bypurchaseorder','InventoryController@getByPurchaseorder');
 Route::get('/addpurchaseorder','InventoryController@formByPurchaseorder');
 Route::post('/addpurchaseorder','InventoryController@saveByPurchaseorder');

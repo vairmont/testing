@@ -4,20 +4,26 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Products\ItemRepository;
+use App\Products\CategoryRepository;
 use App\Inventories\SupplierRepository;
 use App\Inventories\PurchaseOrderRepository;
+use App\Inventories\StockRepository;
+use App\Inventories\StockHistoryRepository;
 use App\Stores\StoreRepository;
 
 class InventoryController extends Controller
 {
-    protected $suppliers, $purchaseOrders, $stores, $items;
+    protected $suppliers, $purchaseOrders, $stores, $items, $categories, $stocks, $stockHistories;
 
-    public function __construct(SupplierRepository $suppliers, PurchaseOrderRepository $purchaseOrders, StoreRepository $stores, ItemRepository $items)
+    public function __construct(SupplierRepository $suppliers, PurchaseOrderRepository $purchaseOrders, StockRepository $stocks,  StockHistoryRepository $stockHistories, StoreRepository $stores, ItemRepository $items, CategoryRepository $categories)
     {
         $this->suppliers = $suppliers;
         $this->purchaseOrders = $purchaseOrders;
         $this->stores = $stores;
         $this->items = $items;
+        $this->categories = $categories;
+        $this->stocks = $stocks;
+        $this->stockHistories = $stockHistories;
     }
 
     public function getByPurchaseorder(){
@@ -41,6 +47,45 @@ class InventoryController extends Controller
         }
 
         return view('inventory.form-purchaseorder', compact('purchaseOrder', 'suppliers', 'stores', 'items'))->withTitle($title);
+    }
+
+    public function processItem(Request $request){
+        $id = $request->input('id');
+        $name = $request->input('name');
+        $store_id = $request->input('store_id');
+        $stock = "-";
+        $in = "-";
+
+        $getStock = $this->stocks->getStockbyProductStoreId($id, $store_id);
+
+        if (!is_null($getStock)) {
+            $stock = $getStock->total_quantity;
+        }
+
+        $html = "<tr id='item-".$id."'>
+                    <td><input type='hidden' name='product_id[]' value='".$id."'>
+                        ".$name."
+                    </td>
+                    <td>
+                        ".$stock."
+                    </td>
+                    <td>
+                        ".$in."
+                    </td>
+                    <td>
+                        <input type='numeric' name='quantity[]'>
+                    </td>
+                    <td>
+                        <input type='numeric' name='price[]'>
+                    </td>
+                    <td class='total'>
+                    </td>
+                    <td>
+                        <a onClick='removeLine(".$id.")'>Remove</a>
+                    </td>
+                </tr>";
+
+        echo $html;
     }
 
     public function saveByPurchaseorder(Request $request, $id = "")
@@ -104,8 +149,13 @@ class InventoryController extends Controller
         return redirect('bysupplier');
     }
 
-    public function getByInventoryHistory(){
-        return view('inventory.inventoryhistory')->withTitle('by inventory history');
+    public function getByInventoryHistory(Request $req){
+        // $args = $req->only();
+        $categoryArgs['get_all'] = true;
+        $categories = $this->categories->getCategories($categoryArgs);
+        $histories = $this->stockHistories->getStockHistories();
+
+        return view('inventory.inventoryhistory', compact('categories', 'histories'))->withTitle('by inventory history');
     }
 
     public function getByInventoryValuation(){

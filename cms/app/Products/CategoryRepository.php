@@ -6,7 +6,11 @@ class CategoryRepository
 {
     public function getCategories($args=[])
     {
-        $categories = Category::paginate(20);
+        if (isset($args['get_all'])) {
+            $categories = Category::get();
+        } else {
+            $categories = Category::paginate(20);
+        }
             
         return $categories;
     }
