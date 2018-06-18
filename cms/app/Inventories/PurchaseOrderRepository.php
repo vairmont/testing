@@ -19,24 +19,55 @@ class PurchaseOrderRepository
         return $PurchaseOrder;
     }
 
-    public function createOrUpdatePurchaseOrder($id, $input)
+    public function findPurchaseOrderDetail($id)
+    {
+        $PurchaseOrder = PurchaseOrderDetails::where('purchase_order_id', $id)
+                        ->get();
+            
+        return $PurchaseOrder;
+    }
+
+    public function createOrUpdatePurchaseOrder($id, $header, $details)
     {
         if (!empty($id)) {
             $PurchaseOrder = $this->findPurchaseOrder($id);
+            $PurchaseOrderDetails = $this->findPurchaseOrderDetail($id);
+
+            foreach ($PurchaseOrderDetails as $PurchaseOrderDetail) {
+                $this->deletePurchaseOrderDetails($PurchaseOrderDetail);
+            }
         }
         
         if (!isset($PurchaseOrder)) {
-            $PurchaseOrder = PurchaseOrder::create($input);
+            $header['status'] = 'Pending';
+            $PurchaseOrder = PurchaseOrder::create($header);
         }
         else {
-            $PurchaseOrder->update($input);
+            $PurchaseOrder->update($header);
+        }
+
+        foreach ($details as $detail) {
+            $detail['purchase_order_id'] = (int)$PurchaseOrder->id;
+
+            $PurchaseOrderDetails = PurchaseOrderDetails::create($detail);
         }
 
         return $PurchaseOrder;
     }
 
+    public function statusPurchaseOrder(PurchaseOrder $PurchaseOrder, $status)
+    {
+        $PurchaseOrder->status = $status;
+        $PurchaseOrder->save();
+    }
+
     public function deletePurchaseOrder(PurchaseOrder $PurchaseOrder)
     {
         $PurchaseOrder->delete();
+    }
+
+    public function deletePurchaseOrderDetails(PurchaseOrderDetails $PurchaseOrderDetails)
+    {
+        $PurchaseOrderDetails->delete();
     }
 }

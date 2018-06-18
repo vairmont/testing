@@ -4,6 +4,14 @@
     {{$title}}
 @endsection
 
+@section('js')
+    <script type="text/javascript">
+        $(".clickable-row").click(function() {
+            window.location = $(this).data("href");
+        });
+    </script>
+@endsection
+
 @section('content')
 
 <!-- div container -->
@@ -61,14 +69,23 @@
                                 <tbody>
                                     @if (isset($purchaseOrders))
                                         @foreach ($purchaseOrders as $po)
+                                        <?php 
+                                            $href = URL::to('editpurchaseorder/'.$po->id); 
+                                            $total = 0;
+                                            foreach ($po->purchaseOrderDetails as $detail) {
+                                                $total += $detail->price * $detail->quantity;
+                                            }
+                                        ?>
+                                        <tr class='clickable-row' data-href='{{ $href }}' style="cursor: pointer;">
                                             <td>{{ $po->id }}</td>
                                             <td>{{ $po->po_date }}</td>
                                             <td>{{ $po->supplier->name }}</td>
                                             <td>{{ $po->store->store_name }}</td>
                                             <td>{{ $po->status }}</td>
-                                            <td>{{ $po->status == 'received' ? 'Received' : 'Not Received'}}</td>
+                                            <td>{{ $po->status == 'Close' ? 'Received' : 'Not Received'}}</td>
                                             <td>{{ $po->po_estimate_date }}</td>
-                                            <td>{{ $po->purchaseOrderDetails->sum('price') }}</td>
+                                            <td>Rp {{ number_format($total , 2) }}</td>
+                                        </tr>
                                         @endforeach
                                     @endif
                                 </tbody>

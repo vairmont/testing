@@ -18,4 +18,9 @@ class StockHistoryRepository
             
         return $StockHistories;
     }
+
+    public function createStockHistory($input)
+    {
+        $stockhistory = StockHistory::create($input);
+    }
 }

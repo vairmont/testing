@@ -53,13 +53,13 @@
                                     @if (isset($histories))
                                     @foreach ($histories as $history)
                                         <tr>
-                                            <td>{{ $category->created_at }}</td>
-                                            <td>{{ $category->product->product_name }}</td>
-                                            <td>{{ $category->store->store_name }}</td>
-                                            <td>{{ $category->created_by }}</td>
-                                            <td>{{ $category->reason }}</td>
-                                            <td>{{ $category->quantity }}</td>
-                                            <td>{{ $category->total_stock }}</td>
+                                            <td>{{ $history->created_at }}</td>
+                                            <td>{{ $history->product->product_name }}</td>
+                                            <td>{{ $history->store->store_name }}</td>
+                                            <td>{{ $history->created_by }}</td>
+                                            <td>{{ $history->reason }}</td>
+                                            <td>{{ $history->quantity }}</td>
+                                            <td>{{ $history->total_stock }}</td>
                                         </tr>
                                     @endforeach
                                     @endif

@@ -73,15 +73,15 @@ class InventoryController extends Controller
                         ".$in."
                     </td>
                     <td>
-                        <input type='numeric' name='quantity[]'>
+                        <input type='numeric' name='quantity[]' class='' id='qty-".$id."'>
                     </td>
                     <td>
-                        <input type='numeric' name='price[]'>
+                        <input type='numeric' name='price[]' class='item-price' id='price-".$id."'>
                     </td>
-                    <td class='total'>
+                    <td class='item-total' id='total-".$id."'>
                     </td>
                     <td>
-                        <a onClick='removeLine(".$id.")'>Remove</a>
+                        <a class='remove-line' id='remove-".$id."'>Remove</a>
                     </td>
                 </tr>";
 
@@ -90,10 +90,64 @@ class InventoryController extends Controller
 
     public function saveByPurchaseorder(Request $request, $id = "")
     {
-        $input = $request->only(['name', 'contact', 'email', 'phone', 'website', 'address_1', 'address_2', 'city', 'zipcode', 'province', 'notes']);
+        $header = $request->only(['supplier_id', 'store_id', 'po_date', 'po_estimate_date', 'notes']);
+        $product_ids = $request->only(['product_id']);
+        $quantitys = $request->only(['quantity']);
+        $prices = $request->only(['price']);
 
-        $this->purchaseOrders->createOrUpdatepurchaseOrder($id, $input);
+        $details = [];
+        for ($i = 0 ; $i <= count($product_ids) ; $i++) {
+            foreach ($product_ids['product_id'] as $key => $value) {
+                if ($key==$i) {
+                    $product_id = $value;
+                    break;
+                }
+            }
+            foreach ($quantitys['quantity'] as $key => $value) {
+                if ($key==$i) {
+                    $quantity = $value;
+                    break;
+                }
+            }
+            foreach ($prices['price'] as $key => $value) {
+                if ($key==$i) {
+                    $price = $value;
+                    break;
+                }
+            }
+            $details[] = array(
+                'product_id' => (int)$product_id,
+                'quantity' => (int)$quantity,
+                'price' => $price,
+            );
+        }
 
+        $this->purchaseOrders->createOrUpdatePurchaseOrder($id, $header, $details);
+
+        return redirect('bypurchaseorder');
+    }
+
+    public function changeStatusByPurchaseorder($id, $status)
+    {
+        $purchaseOrder = $this->purchaseOrders->findpurchaseOrder($id);
+        $edit = $this->purchaseOrders->statusPurchaseOrder($purchaseOrder, $status);
+
+        if ($status == 'Close') {
+            //insert stock, stock history
+            foreach ($purchaseOrder->purchaseOrderDetails as $detail) {
+                $input = [];
+
+                $input['product_id'] = $detail->product_id;
+                $input['store_id'] = $purchaseOrder->store_id;
+                $input['quantity'] = $detail->quantity;
+                $input['price'] = $detail->price;
+                $stock = $this->stocks->createOrUpdateStock("", $input);
+
+                unset($input['price']);
+                $input['reason'] = 'Accepted';
+                $stockHistories = $this->stockHistories->createStockHistory($input);
+            }
+        }
         return redirect('bypurchaseorder');
     }
 

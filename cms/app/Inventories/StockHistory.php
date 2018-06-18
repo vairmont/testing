@@ -14,8 +14,8 @@ class StockHistory extends Model
         return $this->belongsTo('App\Stores\Store', 'store_id', 'id');
     }
 
-    public function item()
+    public function product()
     {
-        return $this->hasOne('App\Products\Item', 'product_id', 'id');
+        return $this->hasOne('App\Products\Item', 'id', 'product_id');
     }
 }

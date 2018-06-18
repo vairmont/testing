@@ -11,7 +11,7 @@ class PurchaseOrder extends Model
 
     public function purchaseOrderDetails()
     {
-    	return $this->hasMany('App\Inventories', 'purchase_order_id', 'id');
+    	return $this->hasMany('App\Inventories\PurchaseOrderDetails', 'purchase_order_id', 'id');
     }
 
     public function store()
