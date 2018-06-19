@@ -20,13 +20,17 @@ use App\ProductCategory;
 use App\FCM;
 use App\Stock;
 use App\StockHistory;
+use App\Constant\OrderStatus;
 
 class OrderControllerPOS extends Controller
 {
     public function getOrderById(Request $request) {
-      $order = OrderDetail::Join('product', 'order_detail.product_id', '=', 'product.id')
-          ->where('order_id', '=', $request->order_id)
-          ->select(DB::raw('product.id, product.product_name, product.price_for_customer as price, product.price_for_agen'))
+      // $order = OrderDetail::where('order_detail.order_id','=',$request->order_id)
+      // ->leftjoin('product','order_detail.product_id','=','product.id')
+      // ->get();
+      $order = OrderDetail::leftJoin('product', 'order_detail.product_id', '=', 'product.id')
+          ->where('order_detail.order_id', '=', $request->order_id)
+          ->select(DB::raw('product.id, product.product_name, product.price_for_customer as price, product.price_for_agen,order_detail.qty as qty'))
           ->get();
 
       return response()->json(['data' => $order, 'message' => ['OK']]);
@@ -143,7 +147,8 @@ class OrderControllerPOS extends Controller
     public function finalizeOrder(Request $request) {
 
       $validator = Validator::make($request->all(),[
-        'order_id' => 'required|numeric|exists:order,id'
+        'order_id' => 'required|numeric|exists:order,id',
+        'store_id' => 'required'
       ]);
 
       if ($validator->fails()) {
@@ -156,20 +161,21 @@ class OrderControllerPOS extends Controller
       $orderDetail = OrderDetail::where('order_id','=',$request['order_id'])
       ->get();
 
-      foreach ($orderDetail as $key => $val) {
+      foreach ($orderDetail as $orderdetails) {
         $stock = Stock::where('store_id','=',$request['store_id'])
-                ->where('product_id','=',$val->product_id[$key])
+                ->where('product_id','=',$orderdetails->product_id)
                 ->first();
 
-        $stock->quantity -= $val->qty[$key];
+        $stock->quantity -= $orderdetails->qty;
         $stock->save();
 
         $stockhistory = new StockHistory;
-        $stockhistory->product_id = $val->product_id[$key];
+        $stockhistory->product_id = $orderdetails->product_id;
         $stockhistory->store_id = $request['store_id'];
-        $stockhistory->user_id = $request->get('user')->id;
+        $stockhistory->created_by = $request->get('user')->id;
         $stockhistory->reason = 'Terjual';
-        $stockhistory->quantity = $val->qty[$key];
+        $stockhistory->updated_by = $request->get('user')->id;
+        $stockhistory->quantity = $orderdetails->qty;
         $stockhistory->save();
 
       }
@@ -183,15 +189,19 @@ class OrderControllerPOS extends Controller
       if($order->agen_id != 0)
       {
       $order->status = OrderStatus::DELIVERY;
-      $topup = Agen::where('identifier', '=', $request->get('user')->id)
+      $topup = Agen::where('id', '=', $order->agen_id)
              ->decrement('point_kredit', $amount);
+      $order->save();
       }
       else{
       $order->status = OrderStatus::COMPLETED;
       $order->payment = $request['payment'];
       $order->save();
       }
-      return response()->json(['message' => 'Order has been completed.'], 201);
+
+      return response()->json(['data' => $order],200);
+
+      // return response()->json(['message' => 'Order has been completed.'], 201);
 
     }
 }
