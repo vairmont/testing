@@ -378,9 +378,9 @@ class OrderController extends Controller
       $commission->order_id = $order->id;
       $commission->agen_id = $order->agen_id;
       $commission->commission_pph = $commission_pph;
-      $commission->commission_netto = $commission_netto;
-      $commission->incentive = $incentive;
-      $commission->margin_penjualan = $margin;
+      $commission->commission_netto = round($commission_netto);
+      $commission->incentive = round($incentive);
+      $commission->margin_penjualan = round($margin);
       $commission->save();
 
       $this->_sendPushNotification($order->user_id, "Order Status", "Terima kasih transaksi selesai tolong berikan rating.");

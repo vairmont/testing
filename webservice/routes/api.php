@@ -80,7 +80,7 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
   Route::get('/order/customer/cancel', 'OrderControllerCustomer@orderCancel');
 
   Route::post('/order/assign-agent', 'OrderController@assignOrderAgent');
-  Route::post('/order/cancel-agent', 'OrderController@cancelOrderAgent');
+  Route::post('/order/cancel', 'OrderController@cancelOrderAgent');
   Route::post('/order/finalize', 'OrderController@finalizeOrder');
   Route::post('/order/accept', 'OrderController@acceptOrder');
 
