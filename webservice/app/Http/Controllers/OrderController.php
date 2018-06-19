@@ -268,7 +268,7 @@ class OrderController extends Controller
       $orderCancel = new OrderCancel;
       $orderCancel->order_id = $order->id;
       $orderCancel->cancel_by = $request->get('user')->id;
-      $orderCancel->agen_id = $order->agen_id;
+      // $orderCancel->agen_id = $order->agen_id;
       $orderCancel->reason = $request['reason'];
       $orderCancel->save();
 
