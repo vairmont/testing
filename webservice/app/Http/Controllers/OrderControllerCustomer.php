@@ -30,10 +30,12 @@ class OrderControllerCustomer extends Controller
 
     public function orderProcess(Request $request) {
 
-      $orders = Order::join('order_billing_detail', 'order_billing_detail.order_id', '=', 'order.id')
+      $orders = Order::join('customer','customer.identifier','=','order.user_id')
+      ->join('order_billing_detail','order_billing_detail.order_id','=','order.id')
       ->where('user_id', '=', $request->get('user')->id)
       ->whereIn('status',[1,2,6])
-      ->select('order.*','order_billing_detail.*')
+      ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.lat','order_billing_detail.long','order_billing_detail.customer_address2')
+      ->orderBy('created_at', 'asc')
       ->get();
 
       $result = [];
@@ -150,11 +152,6 @@ class OrderControllerCustomer extends Controller
       $order->status = OrderStatus::CREATED;
       $order->agen_id = $agencust->agen_id;
       $order->save();
- 
-      $cart->subtotal = 0;
-      $cart->tax = 0;
-      $cart->total = 0;
-      $cart->save();
 
       $items = [];
       foreach ($cartDetails as $cartDetail) {
@@ -179,8 +176,6 @@ class OrderControllerCustomer extends Controller
       }
 
       #Input Billing Detail
-      $cartDetail = CartDetail::where('cart_id', '=', $cart->id)->update(['qty' => 0]);
-
       $orderbillingdetail = new OrderBillingDetail;
 
       $orderbillingdetail->order_id =  $order->id;
@@ -192,6 +187,11 @@ class OrderControllerCustomer extends Controller
       $orderbillingdetail->customer_address2 = $request['customer_address2'];
       $orderbillingdetail->notes = $request['notes'];
       $orderbillingdetail->save();
+
+      // clear cart
+      $removeCartDetails = CartDetail::where('cart_id', '=', $cart->id)->delete();
+      $removeCart = $cart->delete();
+
 
       return response()->json(['data' => [], 'message' => ['OK']]);
 

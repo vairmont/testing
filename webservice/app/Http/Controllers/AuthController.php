@@ -32,7 +32,7 @@ class AuthController extends Controller
 
 				$data = User::join('role','users.role_id','=','role.id')
 			    			->join('agen', 'users.id', '=', 'agen.identifier')
-			    			->select('users.id as user_id','users.api_token', 'role.name', 'agen.name','users.store_id', 'users.phone')
+			    			->select('users.id as user_id', 'users.role_id', 'users.api_token', 'role.name as role', 'agen.name','users.store_id', 'users.phone')
 			    			->where('users.id',Auth::user()->id)
 			    			->first();
 				return response()->json(['data' => $data, 'message' => ['OK']]);
@@ -41,7 +41,7 @@ class AuthController extends Controller
 
 				$data = User::join('role','users.role_id','=','role.id')
 			    			->join('customer', 'users.id', '=', 'customer.identifier')
-			    			->select('users.id as user_id','users.api_token', 'role.name', 'customer.name', 'users.phone')
+			    			->select('users.id as user_id', 'users.role_id', 'users.api_token', 'role.name as role', 'customer.name', 'users.phone')
 			    			->where('users.id',Auth::user()->id)
 			    			->first();
 				return response()->json(['data' => $data, 'message' => ['OK']]);

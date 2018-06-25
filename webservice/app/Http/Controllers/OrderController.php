@@ -36,6 +36,7 @@ class OrderController extends Controller
         ->where('order.agen_id', '=', $agen->id)
         ->where('order.status','=',1)
         ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.lat','order_billing_detail.long','order_billing_detail.customer_address2')
+        ->orderBy('created_at', 'asc')
         ->get();
 
         $relation = "Kepala Keluarga";
@@ -47,6 +48,7 @@ class OrderController extends Controller
         ->where('order.agen_id', '=', $parent->id)
         ->where('order.status','=',1)
         ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.lat','order_billing_detail.long','order_billing_detail.customer_address2')
+        ->orderBy('created_at', 'asc')
         ->get();
 
         $relation = $parent->relation;
@@ -58,7 +60,6 @@ class OrderController extends Controller
           ->where('order_id', '=', $order->id)
           ->select('product.id as product_id', 'product.sku', 'product.product_name', 'order_detail.qty','product.price_for_customer','product.price_for_agen','product.img_url')
           ->get();
-
 
         $result[] = [
           'order' => $order,
@@ -262,7 +263,7 @@ class OrderController extends Controller
 
       $order = Order::whereId($request['order_id'])
         ->first();
-      $order->status = OrderStatus::REASSIGN;
+      $order->status = OrderStatus::CANCELLED;
       $order->save();
 
       $orderCancel = new OrderCancel;
