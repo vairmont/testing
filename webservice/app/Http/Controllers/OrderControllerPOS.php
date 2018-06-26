@@ -144,6 +144,24 @@ class OrderControllerPOS extends Controller
       ], 201);
     }
 
+    public function print(Request $request)
+    {
+      $header = "Grosir One Receipt \n\n
+                ================================ \n\n";
+      $order = Order::whereId($request['order_id'])->first();
+      $orderDetail = OrderDetail::where('order_id','=',$request['order_id'])
+      ->get();
+      $items = "" ;
+      foreach ($orderDetail as $od) {
+        $items = $items . $od->product_id . "\t\t" . $od->price_for_agen;
+      }
+
+      $footer = "Terima Kasih Telah berbelanja \n\n ===============================";
+
+      $print = $header . $items . $footer;
+      return response()->json(['data' => $print],200);
+    }
+
     public function finalizeOrder(Request $request) {
 
       $validator = Validator::make($request->all(),[
