@@ -98,6 +98,7 @@ class OrderControllerPOS extends Controller
       $cart->save();
 
       $items = [];
+
       foreach ($cartDetails as $cartDetail) {
         $product = Product::whereId($cartDetail->product_id)->first();
         $orderDetail = new OrderDetail;
@@ -127,11 +128,14 @@ class OrderControllerPOS extends Controller
       $orderbillingdetail->customer_address = "";
       $orderbillingdetail->lat = "";
       $orderbillingdetail->long = "";
+      $orderbillingdetail->notes = "";
       $orderbillingdetail->customer_address2 = "";
       $orderbillingdetail->save();
 
       $cartDetail = CartDetail::where('cart_id', '=', $cart->id)->delete();
       $cart->delete();
+
+      return $product;
       return response()->json(
         [
             'order_id' => $order->id,
