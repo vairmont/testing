@@ -64,6 +64,7 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
   Route::post('/pos/topup', 'OrderControllerPOS@topUp');
 
   Route::post('/order', 'OrderControllerPOS@getOrderById');
+  Route::post('/order/pos/print', 'OrderControllerPOS@print');
 
   Route::post('/cashier/create', 'CashierController@createCashier');
   Route::post('/cashier/get', 'CashierController@getCash');
