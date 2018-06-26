@@ -114,8 +114,8 @@ class OrderControllerPOS extends Controller
           'sku' => $product->sku,
           'category_id' => $orderDetail->category_id,
           'qty' => $orderDetail->qty,
-          'base_price' => $orderDetail->base_price,
-          'nego_price' => $orderDetail->nego_price
+          'price_for_customer' => $orderDetail->price_for_customer,
+          'price_for_agen' => $orderDetail->price_for_agen
         ];
       }
 
