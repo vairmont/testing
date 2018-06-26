@@ -105,8 +105,8 @@ class OrderControllerPOS extends Controller
         $orderDetail->product_id = $product->id;
         $orderDetail->category_id = $product->category_id;
         $orderDetail->qty = $cartDetail->qty;
-        $orderDetail->base_price = $product->price_for_customer;
-        $orderDetail->nego_price = $product->price_for_agen;
+        $orderDetail->price_for_customer = $product->price_for_customer;
+        $orderDetail->price_for_agen = $product->price_for_agen;
         $orderDetail->save();
 
         $items[] = [
