@@ -362,7 +362,7 @@ class OrderController extends Controller
 
       $incentiveDetails = OrderDetail::Join('incentive_category', 'order_detail.category_id', '=', 'incentive_category.id')
                     ->where('order_id', '=', $order->id)
-                    ->select('base_price', 'incentive_category.rate')
+                    ->select('price_for_customer', 'incentive_category.rate')
                     ->get();
 
       $incentive = 0;
