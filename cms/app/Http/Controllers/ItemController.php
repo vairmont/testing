@@ -93,7 +93,7 @@ class ItemController extends Controller
     {
         if($request->hasFile('img_url')){
             $path = $request->file('img_url')->store('image');
-        }
+        }else { $path = ""; }
           $inputItem['product_name'] = $request->product_name;
           $inputItem['category_id'] = $request->category_id;
           $inputItem['price_for_customer'] = $request->price_for_customer;
