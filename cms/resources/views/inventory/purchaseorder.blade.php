@@ -22,29 +22,37 @@
             </div>
 
             <a href="addpurchaseorder" class="btn btn-primary">+ADD PURCHASE ORDER</a>
-            <form class="form-inline"> 
-
+           
+            {{ Form::open(['url' => url('bypurchaseorder'), 'method' => 'get']) }}
                 <!-- form group -->
-                <div class="form group">
-                    <input type="date" name="">
-                    <select id="inputState" class="form-control">
-                        <option selected>All Item</option>
-                        <option>Draft</option>
-                        <option>Pending</option>
-                        <option>Close</option>
+                <div class="form-group col-md-3">
+                    <select id="status" class="form-control">
+                        <option value="" selected>All Status</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Close">Close</option>
+                        <option value="Cancel">Cancel</option>
                     </select>
-                    <select id="inputState" class="form-control">
-                        <option selected>All Supllier</option>
-                        <option>No category</option>  
-                    </select>
-                    <select id="inputState" class="form-control">
-                        <option selected>Semua Toko</option>
-                        <option>Mobile MiniGrosir</option>
-                        <option>Toko MiniGrosir</option>
-                    </select>
-                   <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
                 </div>
-              </form>
+                <div class="form-group col-md-3">
+                    <select id="supplier" class="form-control">
+                        <option value="" selected>All Supllier</option>
+                        @foreach ($suppliers as $supplier)
+                            <option value="{{ $supplier->id }}">{{ $supplier->name }}</option>  
+                        @endforeach
+                    </select>
+                </div>
+                <div class="form-group col-md-3">
+                    <select id="store" class="form-control">
+                        <option value="" selected>All Stores</option>
+                        @foreach ($stores as $store)
+                            <option value="{{ $store->id }}">{{ $store->store_name }}</option>  
+                        @endforeach
+                    </select>
+                </div>
+                <div class="form-group col-md-3">
+                    <button type="submit" class="btn btn-default">Search</button>
+                </div>
+            {{ Form::close() }}
                   
             <!-- /.row -->
             <div class="row">
@@ -89,6 +97,9 @@
                                         @endforeach
                                     @endif
                                 </tbody>
+                                <tfoot>
+                                  {{ $purchaseOrders->links() }}
+                                </tfoot>
                             </table>
                         <!-- /div 2 -->
                     </div>

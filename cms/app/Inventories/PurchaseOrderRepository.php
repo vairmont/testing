@@ -6,7 +6,21 @@ class PurchaseOrderRepository
 {
     public function getPurchaseOrders($args=[])
     {
-        $PurchaseOrders = PurchaseOrder::get();
+        $PurchaseOrders = PurchaseOrder::select('*');
+
+        if (!empty($args['supplier'])) {
+            $PurchaseOrders = $PurchaseOrders->where('supplier_id', $args['supplier']);
+        }
+
+        if (!empty($args['store'])) {
+            $PurchaseOrders = $PurchaseOrders->where('store_id', $args['store']);
+        }
+
+        if (isset($args['pages'])) {
+            $PurchaseOrders = $PurchaseOrders->paginate($args['pages']);
+        } else {
+            $PurchaseOrders = $PurchaseOrders->get();
+        } 
             
         return $PurchaseOrders;
     }

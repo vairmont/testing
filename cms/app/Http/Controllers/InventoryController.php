@@ -26,10 +26,15 @@ class InventoryController extends Controller
         $this->stockHistories = $stockHistories;
     }
 
-    public function getByPurchaseorder(){
-        $purchaseOrders = $this->purchaseOrders->getPurchaseOrders();
+    public function getByPurchaseorder(Request $req){
+        $args = $req->only(['status', 'supplier', 'store']);
+        $args['pages'] = 10;
+        
+        $purchaseOrders = $this->purchaseOrders->getPurchaseOrders($args);
+        $suppliers = $this->suppliers->getSuppliers();
+        $stores = $this->stores->getStores();
 
-        return view('inventory.purchaseorder', compact('purchaseOrders'))->withTitle('By purchase order');
+        return view('inventory.purchaseorder', compact('purchaseOrders', 'suppliers', 'stores'))->withTitle('By purchase order');
     }
 
     public function formByPurchaseorder($id="") {
@@ -204,12 +209,14 @@ class InventoryController extends Controller
     }
 
     public function getByInventoryHistory(Request $req){
-        // $args = $req->only();
+        $args = $req->only(['store_id', 'category_id']);
         $categoryArgs['get_all'] = true;
         $categories = $this->categories->getCategories($categoryArgs);
-        $histories = $this->stockHistories->getStockHistories();
+        $histories = $this->stockHistories->getStockHistories($args);
 
-        return view('inventory.inventoryhistory', compact('categories', 'histories'))->withTitle('by inventory history');
+        $stores = $this->stores->getStores();
+
+        return view('inventory.inventoryhistory', compact('categories', 'histories', 'stores', 'args'))->withTitle('by inventory history');
     }
 
     public function getByInventoryValuation(){

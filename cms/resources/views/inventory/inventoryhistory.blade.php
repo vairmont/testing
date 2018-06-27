@@ -12,25 +12,19 @@
             <div>
                 <h2>Riwayat persediaan</h2>
             </div>
-            <form class="form-inline">
-                    <div class="form-group col-3 ">
-                        <label for="inputState">Semua Toko</label>
-                        <select id="inputState" class="form-control">
-                            <option selected>Semua Toko</option>
-                            <option>Mobile MiniGrosir</option>
-                            <option>Toko MiniGrosir</option>
-                          </select>
-                      </div>
-                    <div class="form-group col-3 ">
-                            <label for="inputState">All Category</label>
-                            <select id="inputState" class="form-control">
-                              <option selected>All Category</option>
-                              @foreach ($categories as $category)
-                                <option value="{{ $category->id }}">{{ $category->name }}</option>
-                              @endforeach
-                            </select>
-                          </div>
-                  </form>
+            {{ Form::open(['url' => url('byinventoryhistory'), 'method' => 'get']) }}
+                <div class="form-group col-md-3">
+                    <select id="store_id" class="form-control" name="store_id">
+                        <option selected>Semua Toko</option>
+                          @foreach ($stores as $store)
+                            <option value="{{ $store->id }}" @if(isset($args)&&$args['store_id']==$store->id) echo "selected"; @endif>{{ $store->store_name }}</option>
+                          @endforeach
+                    </select>
+                </div>
+                <div class="form-group col-md-3">
+                    <button type="submit" class="btn btn-default">Search</button>
+                </div>
+            {{ Form::close() }}
             <!-- /.row -->
             <div class="row">
             <!-- div col -->
