@@ -115,5 +115,16 @@ class UserController extends Controller
             }
         }
     }
+
+    public function getCustomerList(Request $request){
+        $agen = Agen::where('identifier','=', $request->get('user')->id)->first();
+
+        $customer = User::Join('customer', 'users.id', '=', 'customer.identifier')
+                    ->select('customer.name', 'customer.address', 'users.phone', 'customer.lat', 'customer.long')
+                    ->where('customer.agen_id', '=', $agen->id)
+                    ->get();
+
+        return response()->json(['data' => $customer, 'message' => ['OK']]);            
+    }
 	
 }

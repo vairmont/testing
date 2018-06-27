@@ -20,36 +20,35 @@ use App\ProductCategory;
 use App\FCM;
 use App\Stock;
 use App\StockHistory;
+use App\Constant\OrderStatus;
 
 class OrderControllerPOS extends Controller
 {
     public function getOrderById(Request $request) {
-      $order = OrderDetail::Join('product', 'order_detail.product_id', '=', 'product.id')
-          ->where('order_id', '=', $request->order_id)
-          ->select(DB::raw('product.id, product.product_name, product.price_for_customer as price, product.price_for_agen'))
+      // $order = OrderDetail::where('order_detail.order_id','=',$request->order_id)
+      // ->leftjoin('product','order_detail.product_id','=','product.id')
+      // ->get();
+      $order = OrderDetail::leftJoin('product', 'order_detail.product_id', '=', 'product.id')
+          ->where('order_detail.order_id', '=', $request->order_id)
+          ->select(DB::raw('product.id, product.product_name, product.price_for_customer as price, product.price_for_agen,order_detail.qty as qty'))
           ->get();
-
-           $orderDetail = OrderDetail::where('order_id','=',$request['order_id'])
-          ->get();
-
-      foreach ($orderDetail as $key => $val) {
-        $stock = Stock::where('store_id','=',$request['store_id'])
-                ->where('product_id','=',$val->product_id[$key])
-                ->first();
-
-        $stock->quantity -= $val->qty[$key];
-        $stock->save();
-
-        $stockhistory = new StockHistory;
-        $stockhistory->product_id = $val->product_id[$key];
-        $stockhistory->store_id = $request['store_id'];
-        $stockhistory->user_id = $request->get('user')->id;
-        $stockhistory->reason = 'Terjual';
-        $stockhistory->quantity = $val->qty[$key];
-        $stockhistory->save();
 
       return response()->json(['data' => $order, 'message' => ['OK']]);
      }
+
+   public function topUp(Request $request) {
+    $amount = $request->amount;
+
+    $user = User::where('phone',$request->phone)->first();
+
+    $topup = Agen::where('identifier', '=', $user->id)
+             ->increment('point_kredit', $amount);
+
+    $poin = Agen::select('point_kredit')
+            ->where('identifier', '=', $user->id)
+            ->first();         
+
+    return response()->json(['data' => $poin, 'message' => ['OK']]);         
    }
 
     // public function index(Request $request) {
@@ -89,7 +88,6 @@ class OrderControllerPOS extends Controller
       $order->user_id = $cart->user_id;
       $order->subtotal = $cart->subtotal;
       $order->tax = $cart->tax;
-      $order->payment = "Cash";
       $order->discount = 0;
       $order->total = $cart->total;
       $order->save();
@@ -100,6 +98,7 @@ class OrderControllerPOS extends Controller
       $cart->save();
 
       $items = [];
+
       foreach ($cartDetails as $cartDetail) {
         $product = Product::whereId($cartDetail->product_id)->first();
         $orderDetail = new OrderDetail;
@@ -107,8 +106,8 @@ class OrderControllerPOS extends Controller
         $orderDetail->product_id = $product->id;
         $orderDetail->category_id = $product->category_id;
         $orderDetail->qty = $cartDetail->qty;
-        $orderDetail->base_price = $product->price_for_customer;
-        $orderDetail->nego_price = $product->price_for_agen;
+        $orderDetail->price_for_customer = $product->price_for_customer;
+        $orderDetail->price_for_agen = $product->price_for_agen;
         $orderDetail->save();
 
         $items[] = [
@@ -116,8 +115,8 @@ class OrderControllerPOS extends Controller
           'sku' => $product->sku,
           'category_id' => $orderDetail->category_id,
           'qty' => $orderDetail->qty,
-          'base_price' => $orderDetail->base_price,
-          'nego_price' => $orderDetail->nego_price
+          'price_for_customer' => $orderDetail->price_for_customer,
+          'price_for_agen' => $orderDetail->price_for_agen
         ];
       }
 
@@ -129,11 +128,14 @@ class OrderControllerPOS extends Controller
       $orderbillingdetail->customer_address = "";
       $orderbillingdetail->lat = "";
       $orderbillingdetail->long = "";
+      $orderbillingdetail->notes = "";
       $orderbillingdetail->customer_address2 = "";
       $orderbillingdetail->save();
 
       $cartDetail = CartDetail::where('cart_id', '=', $cart->id)->delete();
       $cart->delete();
+
+      return $product;
       return response()->json(
         [
             'order_id' => $order->id,
@@ -146,10 +148,29 @@ class OrderControllerPOS extends Controller
       ], 201);
     }
 
+    public function print(Request $request)
+    {
+      $header = "Grosir One Receipt \n\n
+                ================================ \n\n";
+      $order = Order::whereId($request['order_id'])->first();
+      $orderDetail = OrderDetail::where('order_id','=',$request['order_id'])
+      ->get();
+      $items = "" ;
+      foreach ($orderDetail as $od) {
+        $items = $items . $od->product_id . "\t\t" . $od->price_for_agen;
+      }
+
+      $footer = "Terima Kasih Telah berbelanja \n\n ===============================";
+
+      $print = $header . $items . $footer;
+      return response()->json(['data' => $print],200);
+    }
+
     public function finalizeOrder(Request $request) {
 
       $validator = Validator::make($request->all(),[
-        'order_id' => 'required|numeric|exists:order,id'
+        'order_id' => 'required|numeric|exists:order,id',
+        'store_id' => 'required'
       ]);
 
       if ($validator->fails()) {
@@ -162,36 +183,47 @@ class OrderControllerPOS extends Controller
       $orderDetail = OrderDetail::where('order_id','=',$request['order_id'])
       ->get();
 
-      foreach ($orderDetail as $key => $val) {
+      foreach ($orderDetail as $orderdetails) {
         $stock = Stock::where('store_id','=',$request['store_id'])
-                ->where('product_id','=',$val->product_id[$key])
+                ->where('product_id','=',$orderdetails->product_id)
                 ->first();
 
-        $stock->quantity -= $val->qty[$key];
+        $stock->quantity -= $orderdetails->qty;
         $stock->save();
 
         $stockhistory = new StockHistory;
-        $stockhistory->product_id = $val->product_id[$key];
+        $stockhistory->product_id = $orderdetails->product_id;
         $stockhistory->store_id = $request['store_id'];
-        $stockhistory->user_id = $request->get('user')->id;
+        $stockhistory->created_by = $request->get('user')->id;
         $stockhistory->reason = 'Terjual';
-        $stockhistory->quantity = $val->qty[$key];
+        $stockhistory->updated_by = $request->get('user')->id;
+        $stockhistory->quantity = $orderdetails->qty;
         $stockhistory->save();
 
       }
 
+
       #change order status
       $order = Order::whereId($request['order_id'])->first();
+
+      $amount = $order->total;
+
       if($order->agen_id != 0)
       {
-        
+      $order->status = OrderStatus::DELIVERY;
+      $topup = Agen::where('id', '=', $order->agen_id)
+             ->decrement('point_kredit', $amount);
+      $order->save();
       }
       else{
       $order->status = OrderStatus::COMPLETED;
       $order->payment = $request['payment'];
       $order->save();
       }
-      return response()->json(['message' => 'Order has been completed.'], 201);
+
+      return response()->json(['data' => $order],200);
+
+      // return response()->json(['message' => 'Order has been completed.'], 201);
 
     }
 }

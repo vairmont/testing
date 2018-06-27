@@ -68,6 +68,10 @@
             <input type="file" class="form-control" name="img_url">
             </div>
         </div>
+        <div class="form-group col-lg-6">
+            <label>Image</label>
+            <input class="form-control" placeholder="Shelf" name="shelf" value="{{ isset($item) ? $item->shelf : old('shelf') }}">
+        </div>
     </div>
     <!--DB Stock-->
     <div class="col-lg-12">

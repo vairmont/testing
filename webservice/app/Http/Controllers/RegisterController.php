@@ -33,7 +33,7 @@ class RegisterController extends Controller
 
         $val = Validator::make($request->all(), [
             'business_name' => 'unique:agen,business_name',
-            'phone' => 'unique:agen,phone'
+            'phone' => 'unique:users,phone'
         ]);
 
         if($val->fails()) {

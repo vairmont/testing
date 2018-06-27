@@ -36,6 +36,7 @@ class OrderController extends Controller
         ->where('order.agen_id', '=', $agen->id)
         ->where('order.status','=',1)
         ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.lat','order_billing_detail.long','order_billing_detail.customer_address2')
+        ->orderBy('created_at', 'asc')
         ->get();
 
         $relation = "Kepala Keluarga";
@@ -47,6 +48,7 @@ class OrderController extends Controller
         ->where('order.agen_id', '=', $parent->id)
         ->where('order.status','=',1)
         ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.lat','order_billing_detail.long','order_billing_detail.customer_address2')
+        ->orderBy('created_at', 'asc')
         ->get();
 
         $relation = $parent->relation;
@@ -58,7 +60,6 @@ class OrderController extends Controller
           ->where('order_id', '=', $order->id)
           ->select('product.id as product_id', 'product.sku', 'product.product_name', 'order_detail.qty','product.price_for_customer','product.price_for_agen','product.img_url')
           ->get();
-
 
         $result[] = [
           'order' => $order,
@@ -262,13 +263,13 @@ class OrderController extends Controller
 
       $order = Order::whereId($request['order_id'])
         ->first();
-      $order->status = OrderStatus::REASSIGN;
+      $order->status = OrderStatus::CANCELLED;
       $order->save();
 
       $orderCancel = new OrderCancel;
       $orderCancel->order_id = $order->id;
       $orderCancel->cancel_by = $request->get('user')->id;
-      $orderCancel->agen_id = $order->agen_id;
+      // $orderCancel->agen_id = $order->agen_id;
       $orderCancel->reason = $request['reason'];
       $orderCancel->save();
 
@@ -292,12 +293,12 @@ class OrderController extends Controller
 
       #change order status
       $order = Order::whereId($request['order_id'])->first();
-      $order->status = OrderStatus::DELIVERY;
+      // $order->status = OrderStatus::DELIVERY;
       $order->save();
 
       $this->_sendPushNotification($order->user_id, "Order Status", "Order sedang di antar oleh agen.");
 
-      return response()->json(['message' => 'Order has been on delivery.'], 201);
+      return response()->json(['message' => 'Order is on delivery.'], 201);
 
     }
 
@@ -333,13 +334,35 @@ class OrderController extends Controller
         ]);
       }
 
+            $latFrom = deg2rad($request->lat);
+            $lonFrom = deg2rad($request->long);
+            $earthRadius = 6371; // in km
+
+            $orderlocation = OrderBillingDetail::select('lat', 'long')
+                            ->where('order_id', $request->order_id)
+                            ->first();  
+
+            $latTo = deg2rad($orderlocation->lat);
+            $lonTo = deg2rad($orderlocation->long);
+
+            $latDelta = $latTo - $latFrom;
+            $lonDelta = $lonTo - $lonFrom;
+
+            $angle = 2 * asin(sqrt(pow(sin($latDelta / 2), 2) + cos($latFrom) * cos($latTo) * pow(sin($lonDelta / 2), 2)));
+
+            // 1.6 for convert in miles to km
+            // x2 for set exact distance
+            $distance = (float)(($angle * $earthRadius) * 2);
+
+            if($distance <= 0.5) {
+
       $order = Order::whereId($request['order_id'])->first();
       $order->status = OrderStatus::COMPLETED;
       $order->save();
 
       $incentiveDetails = OrderDetail::Join('incentive_category', 'order_detail.category_id', '=', 'incentive_category.id')
                     ->where('order_id', '=', $order->id)
-                    ->select('base_price', 'incentive_category.rate')
+                    ->select('price_for_customer', 'incentive_category.rate')
                     ->get();
 
       $incentive = 0;
@@ -356,15 +379,19 @@ class OrderController extends Controller
       $commission->order_id = $order->id;
       $commission->agen_id = $order->agen_id;
       $commission->commission_pph = $commission_pph;
-      $commission->commission_netto = $commission_netto;
-      $commission->incentive = $incentive;
-      $commission->margin_penjualan = $margin;
+      $commission->commission_netto = round($commission_netto);
+      $commission->incentive = round($incentive);
+      $commission->margin_penjualan = round($margin);
       $commission->save();
 
       $this->_sendPushNotification($order->user_id, "Order Status", "Terima kasih transaksi selesai tolong berikan rating.");
 
       return response()->json(['message' => 'Order has been completed.'], 201);
+      }
 
+      else{
+        return response()->json(['message' => 'Not Allowed']);
+      }
     }
 
     protected function _sendPushNotification($user_id, $title, $body) {
