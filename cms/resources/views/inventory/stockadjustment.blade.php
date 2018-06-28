@@ -105,7 +105,7 @@
                                         <form action="/action_page.php">
                                             <p>Purchase order date:</p>
                                             <input type="date" name="bday">
-                                          </form>
+                                        </form>
                                     </div>
                                     <div class="form-group col-lg-6">
                                         <form action="/action_page.php">

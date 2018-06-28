@@ -98,6 +98,7 @@ class OrderControllerPOS extends Controller
       $cart->save();
 
       $items = [];
+
       foreach ($cartDetails as $cartDetail) {
         $product = Product::whereId($cartDetail->product_id)->first();
         $orderDetail = new OrderDetail;
@@ -105,8 +106,8 @@ class OrderControllerPOS extends Controller
         $orderDetail->product_id = $product->id;
         $orderDetail->category_id = $product->category_id;
         $orderDetail->qty = $cartDetail->qty;
-        $orderDetail->base_price = $product->price_for_customer;
-        $orderDetail->nego_price = $product->price_for_agen;
+        $orderDetail->price_for_customer = $product->price_for_customer;
+        $orderDetail->price_for_agen = $product->price_for_agen;
         $orderDetail->save();
 
         $items[] = [
@@ -114,8 +115,8 @@ class OrderControllerPOS extends Controller
           'sku' => $product->sku,
           'category_id' => $orderDetail->category_id,
           'qty' => $orderDetail->qty,
-          'base_price' => $orderDetail->base_price,
-          'nego_price' => $orderDetail->nego_price
+          'price_for_customer' => $orderDetail->price_for_customer,
+          'price_for_agen' => $orderDetail->price_for_agen
         ];
       }
 
@@ -127,11 +128,14 @@ class OrderControllerPOS extends Controller
       $orderbillingdetail->customer_address = "";
       $orderbillingdetail->lat = "";
       $orderbillingdetail->long = "";
+      $orderbillingdetail->notes = "";
       $orderbillingdetail->customer_address2 = "";
       $orderbillingdetail->save();
 
       $cartDetail = CartDetail::where('cart_id', '=', $cart->id)->delete();
       $cart->delete();
+
+      return $product;
       return response()->json(
         [
             'order_id' => $order->id,
@@ -208,7 +212,7 @@ class OrderControllerPOS extends Controller
       {
       $order->status = OrderStatus::DELIVERY;
       $topup = Agen::where('id', '=', $order->agen_id)
-             ->decrement('point_kredit', $amount);
+             ->decrement('point_kredit', round($amount);
       $order->save();
       }
       else{
