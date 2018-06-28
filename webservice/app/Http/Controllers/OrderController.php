@@ -7,12 +7,14 @@ use App\Constant\OrderStatus;
 use Illuminate\Http\Request;
 use Validator;
 use DB;
+use Hash;
 use Carbon\Carbon;
 use App\Order;
 use App\OrderDetail;
 use App\OrderBillingDetail;
 use App\OrderCancel;
 use App\Product;
+use App\Withdraw;
 use App\Customer;
 use App\Family;
 use App\User;
@@ -26,6 +28,7 @@ class OrderController extends Controller
 
     private $marginRate = .05;
     private $pph = .02;
+
 
     public function orderPending(Request $request) {
       $agen = Agen::where('identifier','=', $request->get('user')->id)->first();
@@ -438,4 +441,36 @@ class OrderController extends Controller
         $result = curl_exec($ch);
         curl_close($ch);
       }
+
+
+    public function withdraw(Request $request)
+    {
+      if(empty($request->amount)) {
+          return response()->json(['message' => ['Nominal tidak boleh kosong']]);
+      }
+
+      if(empty($request->password)) {
+          return response()->json(['message' => ['Password tidak boleh kosong']]);
+      }  
+
+      $data = User::where('id', '=', $request->get('user')->id)->first();
+
+      if( ! Hash::check( $request->password, $data->password  ) ){
+          return response()->json(['message' => ['Password yang anda masukkan salah']]);
+      }
+
+      else{
+            $agen = Agen::where('identifier','=', $request->get('user')->id)->first();
+
+            $withdraw = [
+                'agen_id' =>$agen->id,
+                'amount' => $request->amount,
+                'status' => 'process'
+            ];
+            $create = Withdraw::create($withdraw);
+
+            return response()->json(['data' => ['withdraw_id' => $create->id], 'message' => ['OK']]);
+          }
+    }
+
 }

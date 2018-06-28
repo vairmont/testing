@@ -16,7 +16,6 @@ class WithDrawController extends Controller
         return view('agent.withdraw',['withdraw' => $withdraw])->withTitle('By withdraw'); 
     }
     
-    
     public function updateStatus(Request $request,$id){
     
         $withdraw = WithDraw::where('id','=',$id)
