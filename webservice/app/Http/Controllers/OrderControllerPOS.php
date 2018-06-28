@@ -210,7 +210,7 @@ class OrderControllerPOS extends Controller
       {
       $order->status = OrderStatus::DELIVERY;
       $topup = Agen::where('id', '=', $order->agen_id)
-             ->decrement('point_kredit', $amount);
+             ->decrement('point_kredit', round($amount);
       $order->save();
       }
       else{
