@@ -254,7 +254,7 @@ class OrderControllerCustomer extends Controller
     
     protected function _sendPushNotification($user_id, $title, $body) {
         // API access key from Google API's Console
-        define('API_ACCESS_KEY', ' ');
+        define('API_ACCESS_KEY', 'AIzaSyCni1sDxjij6zlNgkQG0oqv1CppwzflbDc');
 
         $registrationIds = array();
 
