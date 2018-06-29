@@ -63,7 +63,8 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
   Route::post('/order/pos/finalize', 'OrderControllerPOS@finalizeOrder');
   Route::post('/pos/topup', 'OrderControllerPOS@topUp');
 
-  Route::get('/order', 'OrderControllerPOS@getOrderById');
+  Route::post('/order', 'OrderControllerPOS@getOrderById');
+  Route::post('/order/pos/print', 'OrderControllerPOS@print');
 
   Route::post('/cashier/create', 'CashierController@createCashier');
   Route::post('/cashier/get', 'CashierController@getCash');
@@ -75,17 +76,18 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
   Route::get('/order/cancel', 'OrderController@orderCancel');
 
   Route::post('/order/customer/create', 'OrderControllerCustomer@create');
-  Route::get('/order/customer/pending', 'OrderControllerCustomer@orderPending');
   Route::get('/order/customer/process', 'OrderControllerCustomer@orderProcess');
   Route::get('/order/customer/done', 'OrderControllerCustomer@orderDone');
   Route::get('/order/customer/cancel', 'OrderControllerCustomer@orderCancel');
 
   Route::post('/order/assign-agent', 'OrderController@assignOrderAgent');
-  Route::post('/order/cancel-agent', 'OrderController@cancelOrderAgent');
+  Route::post('/order/cancel', 'OrderController@cancelOrderAgent');
   Route::post('/order/finalize', 'OrderController@finalizeOrder');
   Route::post('/order/accept', 'OrderController@acceptOrder');
 
   Route::get('/ranks', 'RankingController@index');
+
+  Route::post('/withdraw', 'OrderController@withdraw');  
 
   Route::get('/rating', 'RatingController@index');
   Route::post('/rating', 'RatingController@addRating');

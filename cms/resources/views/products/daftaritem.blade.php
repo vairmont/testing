@@ -6,8 +6,8 @@
 
 @section('content')
 
-    <div class="container-fluid">
-
+  
+    </table>
         <div class="">
                 <h2>Daftar Item</h1>
         </div>
@@ -80,8 +80,8 @@
                                                   <th>{{$item->description}}</th>
                                                   <th>{{$item->shelf}}</th>
                                                   <th>
-                                                    <a href="edititem/{{ $item->id }}">Edit</a>
-                                                    <a href="deleteitem/{{ $item->id }}">Delete</a>
+                                                    <a href="edititem/{{ $item->id }}" type="button" class="btn btn-info">Edit</a>
+                                                    <a href="deleteitem/{{ $item->id }}" type="button" class="btn btn-info">Delete</a>
                                                   </th>
                                                 </tr>
                                               @endforeach
@@ -98,8 +98,8 @@
             
         
 
-    </div>
-                          
+    </div>   
 
+ 
 
 @endsection

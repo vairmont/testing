@@ -7,6 +7,7 @@ use App\Constant\OrderStatus;
 use Illuminate\Http\Request;
 use Validator;
 use DB;
+use Carbon\Carbon;
 use App\Order;
 use App\OrderDetail;
 use App\OrderBillingDetail;
@@ -27,35 +28,14 @@ class OrderControllerCustomer extends Controller
     private $marginRate = .05;
     private $pph = .02;
 
-    public function orderPending(Request $request) {
-
-      $orders = Order::where('user_id', '=', $request->get('user')->id)
-      ->where('status','=',1)
-      ->get();
-
-      $result = [];
-      foreach ($orders as $order) {
-        $items = OrderDetail::Join('product', 'product.id', '=', 'order_detail.product_id')
-          ->where('order_id', '=', $order->id)
-          ->select('product.id as product_id', 'product.sku', 'product.product_name', 'order_detail.qty','product.price_for_customer','product.price_for_agen','product.img_url')
-          ->get();
-
-
-        $result[] = [
-          'order' => $orders,
-          'items' => $items,
-          'created_at' => Carbon::parse($order->created_at)->format('d M Y H:i')
-        ];
-      }
-
-      return response()->json($result, 200);
-    }
-
     public function orderProcess(Request $request) {
 
-      $orders = Order::where('user_id', '=', $request->get('user')->id)
-      ->where('status','=',2)
-      ->orwhere('status','=',6)
+      $orders = Order::join('customer','customer.identifier','=','order.user_id')
+      ->join('order_billing_detail','order_billing_detail.order_id','=','order.id')
+      ->where('user_id', '=', $request->get('user')->id)
+      ->whereIn('status',[1,2,6])
+      ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.lat','order_billing_detail.long','order_billing_detail.customer_address2')
+      ->orderBy('created_at', 'asc')
       ->get();
 
       $result = [];
@@ -65,22 +45,23 @@ class OrderControllerCustomer extends Controller
           ->select('product.id as product_id', 'product.sku', 'product.product_name', 'order_detail.qty','product.price_for_customer','product.price_for_agen','product.img_url')
           ->get();
 
-
-        $result[] = [
-          'order' => $orders,
+        $result = [
+          'order' => $order,
           'items' => $items,
           'created_at' => Carbon::parse($order->created_at)->format('d M Y H:i')
         ];
       }
+      
 
-      return response()->json($result, 200);
+      return response()->json(['data' => $result], 200);
     }
 
     public function orderDone(Request $request) {
 
-      $orders = Order::where('user_id', '=', $request->get('user')->id)
-      ->where('status','=',2)
-      ->orwhere('status','=',6)
+      $orders = Order::join('order_billing_detail', 'order_billing_detail.order_id', '=', 'order.id')
+      ->where('user_id', '=', $request->get('user')->id)
+      ->where('status', '=', 7)
+      ->select('order.*','order_billing_detail.*')
       ->get();
 
       $result = [];
@@ -103,9 +84,11 @@ class OrderControllerCustomer extends Controller
 
     public function orderCancel(Request $request) {
 
-      $orders = Order::where('user_id', '=', $request->get('user')->id)
-      ->where('status','=',2)
-      ->orwhere('status','=',6)
+      $orders = Order::join('order_billing_detail', 'order_billing_detail.order_id', '=', 'order.id')
+      ->join('order_cancel', 'order_cancel.order_id', '=', 'order.id')
+      ->where('user_id', '=', $request->get('user')->id)
+      ->where('status', '=', 8)
+      ->select('order.*','order_billing_detail.*', 'order_cancel.reason')
       ->get();
 
       $result = [];
@@ -159,7 +142,7 @@ class OrderControllerCustomer extends Controller
       $cartDetails = CartDetail::where('cart_id', '=', $cart->id)->get();
 
       $order = new Order;
-      $order->invoice_no = $cart->id;
+      $order->invoice_no = uniqid();
       $order->user_id = $cart->user_id;
 
       $order->subtotal = $cart->subtotal;
@@ -169,11 +152,6 @@ class OrderControllerCustomer extends Controller
       $order->status = OrderStatus::CREATED;
       $order->agen_id = $agencust->agen_id;
       $order->save();
- 
-      $cart->subtotal = 0;
-      $cart->tax = 0;
-      $cart->total = 0;
-      $cart->save();
 
       $items = [];
       foreach ($cartDetails as $cartDetail) {
@@ -183,7 +161,8 @@ class OrderControllerCustomer extends Controller
         $orderDetail->product_id = $product->id;
         $orderDetail->category_id = $product->category_id;
         $orderDetail->qty = $cartDetail->qty;
-        $orderDetail->base_price = $product->price_for_customer;
+        $orderDetail->price_for_customer = $product->price_for_customer;
+        $orderDetail->price_for_agen = $product->price_for_agen;
         $orderDetail->save();
 
         $items[] = [
@@ -191,37 +170,30 @@ class OrderControllerCustomer extends Controller
           'sku' => $product->sku,
           'category_id' => $orderDetail->category_id,
           'qty' => $orderDetail->qty,
-          'base_price' => $orderDetail->base_price,
-          'nego_price' => $orderDetail->nego_price
+          'price_for_customer' => $orderDetail->price_for_customer,
+          'price_for_agen' => $orderDetail->price_for_agen
         ];
       }
 
       #Input Billing Detail
-      $cartDetail = CartDetail::where('cart_id', '=', $cart->id)->update(['qty' => 0]);
-
       $orderbillingdetail = new OrderBillingDetail;
 
       $orderbillingdetail->order_id =  $order->id;
       $orderbillingdetail->customer_name = $request['customer_name'];
       $orderbillingdetail->customer_phone = $request['customer_phone'];
+      $orderbillingdetail->customer_address = "";
       $orderbillingdetail->lat = $request['lat'];
       $orderbillingdetail->long = $request['long'];
       $orderbillingdetail->customer_address2 = $request['customer_address2'];
+      $orderbillingdetail->notes = $request['notes'];
       $orderbillingdetail->save();
 
-      return response(['data' => [
-        'message' => 'Order created with Invoice No: '. $order->id,
-        'order' => [
-            'order_id' => $order->id,
-            'invoice_no' => $order->invoice_no,
-            'subtotal' => $order->subtotal,
-            'tax' => $order->tax,
-            'discount' => $order->discount,
-            'total' => $order->total,
-            'items' => $items
-          ]
-        ]
-      ], 201);
+      // clear cart
+      $removeCartDetails = CartDetail::where('cart_id', '=', $cart->id)->delete();
+      $removeCart = $cart->delete();
+
+
+      return response()->json(['data' => [], 'message' => ['OK']]);
 
       $fcm_dealer = FCM::where('user_id', $orderbillingdetail->identifier)->select('fcm_token')->get();
 
