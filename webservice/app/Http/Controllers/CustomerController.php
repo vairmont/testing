@@ -19,7 +19,8 @@ class CustomerController extends Controller
 	public function getCustomer(Request $request)
 	{
 			$customer = Customer::join('agen', 'agen.id', '=', 'customer.agen_id')
-                        ->select('customer.*', 'agen.name as agen', 'agen.photo as foto_agen', 'agen.rating as rating')
+                        ->join('users', 'users.id', '=', 'customer.identifier')
+                        ->select('customer.*', 'agen.name as agen', 'agen.photo as foto_agen', 'agen.rating as rating', 'users.phone as phone')
 						->where('customer.identifier', "=", $request->get('user')->id)
                         ->first();
 
