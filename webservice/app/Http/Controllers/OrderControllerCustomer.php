@@ -134,7 +134,7 @@ class OrderControllerCustomer extends Controller
       $agencust = Customer::where('identifier','=',$request->get('user')->id)->first();
 
       if ($cart->total == 0) {
-        return response()->json(['message' => 'There is no item to order.'], 400);
+        return response()->json(['message' => 'Keranjang anda kosong.'], 400);
       }
 
       #ROLE AGEN / CUST
@@ -148,7 +148,12 @@ class OrderControllerCustomer extends Controller
       $order->subtotal = $cart->subtotal;
       $order->tax = $cart->tax;
       $order->discount = 0;
-      $order->total = $cart->total;
+      if($cart->total < 50000) {
+        $order->total = $cart->total + 5000;
+      }
+      else {
+        $order->total = $cart->total;
+      }
       $order->status = OrderStatus::CREATED;
       $order->agen_id = $agencust->agen_id;
       $order->save();
