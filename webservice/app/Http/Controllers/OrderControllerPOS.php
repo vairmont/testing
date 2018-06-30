@@ -25,6 +25,8 @@ use App\Constant\OrderStatus;
 class OrderControllerPOS extends Controller
 {
     public function getOrderById(Request $request) {
+      // $order = OrderDetail::Join('product', 'order_detail.product_id', '=', 'product.id')
+      //     ->where('order_id', '=', $request->order_id)
       // $order = OrderDetail::where('order_detail.order_id','=',$request->order_id)
       // ->leftjoin('product','order_detail.product_id','=','product.id')
       // ->get();
