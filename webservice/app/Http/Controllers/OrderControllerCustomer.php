@@ -53,7 +53,7 @@ class OrderControllerCustomer extends Controller
       }
       
 
-      return response()->json(['data' => $result], 200);
+      return response()->json($result, 200);
     }
 
     public function orderDone(Request $request) {
