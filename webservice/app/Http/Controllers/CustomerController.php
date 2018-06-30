@@ -19,16 +19,20 @@ class CustomerController extends Controller
 	public function getCustomer(Request $request)
 	{
 			$customer = Customer::join('agen', 'agen.id', '=', 'customer.agen_id')
-                        ->select('customer.*', 'agen.name as agen', 'agen.photo as foto agen', 'agen.rating as rating')
+                        ->select('customer.*', 'agen.name as agen', 'agen.photo as foto_agen', 'agen.rating as rating')
 						->where('customer.identifier', "=", $request->get('user')->id)
-                        ->get();
+                        ->first();
 
-            // $agen = Customer::join('users', 'users.id', '=', 'customer.identifier')
-            //             ->select('users.phone as agen phone')
-            //             ->where('users.id', '=', 'agen.identifier')
-            //             ->first();
+            $ag = Agen::join('customer', 'customer.agen_id', '=', 'agen.id')
+                        ->where('agen.id','=', $customer->agen_id)
+                        ->select('agen.identifier')
+                        ->first();
 
-            return response()->json(['data' => $customer, 'message' => ['OK']]);
+            $agen = User::select('users.phone as agen_phone')
+                        ->where('users.id', '=', $ag->identifier)
+                        ->first();
+
+            return response()->json(['data' => $customer, 'agen' => $agen, 'message' => ['OK']]);
     }
        
 	Public function addCustomer (Request $request)
