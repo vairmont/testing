@@ -194,9 +194,8 @@ class OrderControllerCustomer extends Controller
       $orderbillingdetail->save();
 
       // clear cart
-      $removeCartDetails = CartDetail::where('cart_id', '=', $cart->id)->delete();
-      $removecart = Cart::where('user_id', '=', $request->get('user')->id)->delete();
-
+      CartDetail::where('cart_id',$cart->id)->delete();
+      Cart::where('id',$cart->id)->delete();
 
       return response()->json(['data' => [], 'message' => ['OK']]);
 
