@@ -44,9 +44,9 @@ class OrderControllerPOS extends Controller
     $user = User::where('phone',$request->phone)->first();
 
     $topup = Agen::where('identifier', '=', $user->id)
-             ->increment('point_kredit', $amount);
+             ->increment('wanee', $amount);
 
-    $poin = Agen::select('point_kredit')
+    $poin = Agen::select('wanee')
             ->where('identifier', '=', $user->id)
             ->first();         
 
@@ -212,7 +212,7 @@ class OrderControllerPOS extends Controller
       {
       $order->status = OrderStatus::DELIVERY;
       $topup = Agen::where('id', '=', $order->agen_id)
-             ->decrement('point_kredit', round($amount);
+             ->decrement('wanee', round($amount);
       $order->save();
       }
       else{
