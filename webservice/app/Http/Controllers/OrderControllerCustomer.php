@@ -45,7 +45,7 @@ class OrderControllerCustomer extends Controller
           ->select('product.id as product_id', 'product.sku', 'product.product_name', 'order_detail.qty','product.price_for_customer','product.price_for_agen','product.img_url')
           ->get();
 
-        $result = [
+        $result[] = [
           'order' => $order,
           'items' => $items,
           'created_at' => Carbon::parse($order->created_at)->format('d M Y H:i')
@@ -73,7 +73,7 @@ class OrderControllerCustomer extends Controller
 
 
         $result[] = [
-          'order' => $orders,
+          'order' => $order,
           'items' => $items,
           'created_at' => Carbon::parse($order->created_at)->format('d M Y H:i')
         ];
@@ -100,7 +100,7 @@ class OrderControllerCustomer extends Controller
 
 
         $result[] = [
-          'order' => $orders,
+          'order' => $order,
           'items' => $items,
           'created_at' => Carbon::parse($order->created_at)->format('d M Y H:i')
         ];
