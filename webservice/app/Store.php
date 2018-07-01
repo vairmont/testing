@@ -8,6 +8,6 @@ class Store extends Model
 {
     protected $table = "store";
     protected $fillable = [
-        'store_name','phone', 'address'
+        'store_name','phone', 'address', 'lat', 'long'
     ];
 }
