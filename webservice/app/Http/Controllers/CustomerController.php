@@ -153,7 +153,7 @@ class CustomerController extends Controller
         public function getAgen(Request $request)
         {            
             $agen = Agen::join('users', 'users.id', '=', 'agen.identifier')
-                        ->select('agen.name', 'users.phone', 'agen.address', 'agen.photo', 'agen.rating')
+                        ->select('agen.name', 'users.phone', 'agen.address', 'agen.photo', 'agen.rating', 'agen.id')
                         ->where('users.store_id', $request->store_id)
                         ->orderBy('agen.rating', 'desc')
                         ->get();
