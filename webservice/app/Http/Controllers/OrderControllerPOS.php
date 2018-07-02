@@ -214,7 +214,7 @@ class OrderControllerPOS extends Controller
       {
       $order->status = OrderStatus::DELIVERY;
       $topup = Agen::where('id', '=', $order->agen_id)
-             ->decrement('wanee', round($amount);
+             ->decrement('wanee', round($amount));
       $order->save();
       }
       else{
