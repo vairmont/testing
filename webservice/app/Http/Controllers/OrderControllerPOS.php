@@ -25,6 +25,8 @@ use App\Constant\OrderStatus;
 class OrderControllerPOS extends Controller
 {
     public function getOrderById(Request $request) {
+      // $order = OrderDetail::Join('product', 'order_detail.product_id', '=', 'product.id')
+      //     ->where('order_id', '=', $request->order_id)
       // $order = OrderDetail::where('order_detail.order_id','=',$request->order_id)
       // ->leftjoin('product','order_detail.product_id','=','product.id')
       // ->get();
@@ -42,9 +44,9 @@ class OrderControllerPOS extends Controller
     $user = User::where('phone',$request->phone)->first();
 
     $topup = Agen::where('identifier', '=', $user->id)
-             ->increment('point_kredit', $amount);
+             ->increment('wanee', $amount);
 
-    $poin = Agen::select('point_kredit')
+    $poin = Agen::select('wanee')
             ->where('identifier', '=', $user->id)
             ->first();         
 
@@ -212,7 +214,7 @@ class OrderControllerPOS extends Controller
       {
       $order->status = OrderStatus::DELIVERY;
       $topup = Agen::where('id', '=', $order->agen_id)
-             ->decrement('point_kredit', round($amount);
+             ->decrement('wanee', round($amount));
       $order->save();
       }
       else{

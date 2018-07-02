@@ -18,10 +18,22 @@ class CustomerController extends Controller
 {
 	public function getCustomer(Request $request)
 	{
-			$customer = Customer::select('name', 'phone', 'address', 'gender', 'photo')
-						->where('identifier', "=", $request->get('user')->id);
+			$customer = Customer::join('agen', 'agen.id', '=', 'customer.agen_id')
+                        ->join('users', 'users.id', '=', 'customer.identifier')
+                        ->select('customer.*', 'agen.name as agen', 'agen.photo as foto_agen', 'agen.rating as rating', 'users.phone as phone')
+						->where('customer.identifier', "=", $request->get('user')->id)
+                        ->first();
 
-            return response()->json(['data' => $customer, 'message' => ['OK']]);
+            $ag = Agen::join('customer', 'customer.agen_id', '=', 'agen.id')
+                        ->where('agen.id','=', $customer->agen_id)
+                        ->select('agen.identifier')
+                        ->first();
+
+            $agen = User::select('users.phone as agen_phone')
+                        ->where('users.id', '=', $ag->identifier)
+                        ->first();
+
+            return response()->json(['data' => $customer, 'agen' => $agen, 'message' => ['OK']]);
     }
        
 	Public function addCustomer (Request $request)
@@ -92,7 +104,7 @@ class CustomerController extends Controller
 
             $path = $request->file('photo')->store('photo_customer');
 
-            Customer::where('id', $request->customer_id)
+            Customer::where('id', $request->header('customer_id'))
             ->update([
                 'photo' => "storage/app/".$path
             ]);
@@ -141,7 +153,7 @@ class CustomerController extends Controller
         public function getAgen(Request $request)
         {            
             $agen = Agen::join('users', 'users.id', '=', 'agen.identifier')
-                        ->select('agen.name', 'users.phone', 'agen.address', 'agen.photo', 'agen.rating')
+                        ->select('agen.name', 'users.phone', 'agen.address', 'agen.photo', 'agen.rating', 'agen.id')
                         ->where('users.store_id', $request->store_id)
                         ->orderBy('agen.rating', 'desc')
                         ->get();

@@ -365,15 +365,15 @@ class OrderController extends Controller
 
       $incentiveDetails = OrderDetail::Join('incentive_category', 'order_detail.category_id', '=', 'incentive_category.id')
                     ->where('order_id', '=', $order->id)
-                    ->select('price_for_customer', 'incentive_category.rate')
+                    ->select('price_for_customer', 'incentive_category.rate', 'order_detail.qty')
                     ->get();
 
       $incentive = 0;
       $margin = 0;
 
       foreach ($incentiveDetails as $detail) {
-        $incentive += $detail->base_price * $detail->rate / 100;
-        $margin += $detail->base_price * $this->marginRate;
+        $incentive += $detail->base_price * $detail->qty * $detail->rate / 100;
+        $margin += $detail->base_price * $detail->qty * $this->marginRate;
       }
       $commission_pph = ($incentive + $margin) * $this->pph;
       $commission_netto = ($incentive + $margin) - $commission_pph;
@@ -399,7 +399,7 @@ class OrderController extends Controller
 
     protected function _sendPushNotification($user_id, $title, $body) {
         // API access key from Google API's Console
-        define('API_ACCESS_KEY', ' ');
+        define('API_ACCESS_KEY', 'AIzaSyCni1sDxjij6zlNgkQG0oqv1CppwzflbDc');
 
         $registrationIds = array();
 
