@@ -111,8 +111,8 @@ class OrderControllerCustomer extends Controller
 
     public function create(Request $request) {
      
-            $latFrom = deg2rad(-6.109521);
-            $lonFrom = deg2rad(106.779991);
+            $latFrom = deg2rad(-6.243009);
+            $lonFrom = deg2rad(106.629822);
             $earthRadius = 6371; // in km
 
             $latTo = deg2rad($request->lat);
