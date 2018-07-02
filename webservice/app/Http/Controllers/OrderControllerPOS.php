@@ -100,12 +100,11 @@ class OrderControllerPOS extends Controller
       $cart->save();
 
       $items = [];
-
       foreach ($cartDetails as $cartDetail) {
-        $product = Product::whereId($cartDetail->product_id)->first();
+        $product = Product::where('id','=',$cartDetail->product_id)->first();
         $orderDetail = new OrderDetail;
         $orderDetail->order_id = $order->id;
-        $orderDetail->product_id = $product->id;
+        $orderDetail->product_id = $cartDetail->product_id;
         $orderDetail->category_id = $product->category_id;
         $orderDetail->qty = $cartDetail->qty;
         $orderDetail->price_for_customer = $product->price_for_customer;
@@ -121,7 +120,7 @@ class OrderControllerPOS extends Controller
           'price_for_agen' => $orderDetail->price_for_agen
         ];
       }
-
+      
       $orderbillingdetail = new OrderBillingDetail;
 
       $orderbillingdetail->order_id =  $order->id;
@@ -137,7 +136,6 @@ class OrderControllerPOS extends Controller
       $cartDetail = CartDetail::where('cart_id', '=', $cart->id)->delete();
       $cart->delete();
 
-      return $product;
       return response()->json(
         [
             'order_id' => $order->id,
@@ -152,17 +150,17 @@ class OrderControllerPOS extends Controller
 
     public function print(Request $request)
     {
-      $header = "Grosir One Receipt \n\n
-                ================================ \n\n";
+      $header = "\n\n\n\n\n\n\n\n\n\n Grosir One Receipt\n\t--------------\n\n";
       $order = Order::whereId($request['order_id'])->first();
       $orderDetail = OrderDetail::where('order_id','=',$request['order_id'])
       ->get();
       $items = "" ;
       foreach ($orderDetail as $od) {
-        $items = $items . $od->product_id . "\t\t" . $od->price_for_agen;
+        $product = Product::where('id','=',$od->product_id)->first();
+        $items = $items . $product->product_name . "\t\t" . $od->price_for_customer . "\n";
       }
 
-      $footer = "Terima Kasih Telah berbelanja \n\n ===============================";
+      $footer = "\n\n\n\n\n\n Total \t = ".$order->total."\n\n\n Terima Kasih Telah berbelanja\n\n\n\n";
 
       $print = $header . $items . $footer;
       return response()->json(['data' => $print],200);
