@@ -229,7 +229,7 @@ class OrderController extends Controller
 
       $items = OrderDetail::Join('product', 'product.id', '=', 'order_detail.product_id')
         ->where('order_id', '=', $order->id)
-        ->select('product.id as product_id', 'product.sku', 'order_detail.qty', 'order_detail.base_price', 'order_detail.nego_price')
+        ->select('product.id as product_id', 'product.sku', 'order_detail.qty', 'order_detail.price_for_customer', 'order_detail.nego_price')
         ->get();
 
       #send push notif ke customer
@@ -372,9 +372,11 @@ class OrderController extends Controller
       $margin = 0;
 
       foreach ($incentiveDetails as $detail) {
-        $incentive += $detail->base_price * $detail->rate / 100;
-        $margin += $detail->base_price * $this->marginRate;
+        $incentive += $detail->price_for_customer * $detail->rate / 100;
+        $margin += $detail->price_for_customer * $this->marginRate;
       }
+
+      
       $commission_pph = ($incentive + $margin) * $this->pph;
       $commission_netto = ($incentive + $margin) - $commission_pph;
 
@@ -382,9 +384,9 @@ class OrderController extends Controller
       $commission->order_id = $order->id;
       $commission->agen_id = $order->agen_id;
       $commission->commission_pph = $commission_pph;
-      $commission->commission_netto = round($commission_netto);
-      $commission->incentive = round($incentive);
-      $commission->margin_penjualan = round($margin);
+      $commission->commission_netto = $commission_netto;
+      $commission->incentive = $incentive;
+      $commission->margin_penjualan = $margin;
       $commission->save();
 
       $this->_sendPushNotification($order->user_id, "Order Status", "Terima kasih transaksi selesai tolong berikan rating.");
