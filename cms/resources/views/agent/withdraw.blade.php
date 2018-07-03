@@ -54,10 +54,46 @@
                                                 <td>{{$withdraw->agen_id}}</td>
                                                 <td>{{$withdraw->amount}}</td>
                                                 <td>{{$withdraw->status}}</td>
-
                                                 <td>
-                                                
-                                                    
+                                                    <a href="{{ route('status', ['id' => $withdraw->id]) }}" class="btn btn-primary">here</a>                                                 
+                                                </td>
+                                                @endforeach
+                                         @endif
+                                        </tbody>
+                                        <tfoot>
+                                          
+                                        </tfoot>
+                                    </table>
+                                </div>
+                                 <!-- /.row -->
+         <div class="">
+                <h2>WithDraw Done</h2>
+        <!-- H2 -->
+        </div>
+                    <div class="row">
+                        <div class="col-lg-12">
+                                <div class="table-responsive">
+                                    <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-example">
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>ID_agen</th>
+                                                <th>Amount</th>
+                                                <th>Status</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        
+                                        <tbody>
+                                         @if(count($withdraw) > 0)
+                                            @foreach($withdraw->all() as $withdraw)
+                                           
+                                                <tr>
+                                                <td>{{$withdraw->id}}</td>
+                                                <td>{{$withdraw->agen_id}}</td>
+                                                <td>{{$withdraw->amount}}</td>
+                                                <td>{{$withdraw->status}}</td>
+                                                <td>
                                                     <a href="{{ route('status', ['id' => $withdraw->id]) }}" class="btn btn-primary">here</a>                                                 
                                                 </td>
                                                 @endforeach

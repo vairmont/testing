@@ -25,7 +25,7 @@ Route::get('/bychasier','ReportController@getByChasier');
 
 Route::get('/byagent','EmployeeController@getByAgent');
 Route::get('/bywithdraw', 'WithDrawController@getByWithDraw');
-Route::get('/bywithdraw1', 'WithDrawController@getByWithDraw');
+
 
 Route::get('/verifywithdraw/{id}','WithDrawController@updateStatus')->name('status');
 

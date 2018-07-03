@@ -9,12 +9,25 @@ class WithDrawController extends Controller
 {
     public function getByWithDraw(){
 
-        $withdraw = WithDraw::
-        select('id','agen_id','amount','status')
+        $withdraw = WithDraw::join('withdraw','withdraw.id_agen','=','agen.identifier')
+        ->select('withdraw.id as withdrawid','withdraw.agen_id as agenid','withdraw.amount as amount','withdraw.status as status')
         ->where('status','=','process')
         ->get();
-        return view('agent.withdraw',['withdraw' => $withdraw])->withTitle('By withdraw'); 
+
+        $agen = Agen::all();
+
+        
+        return view('agent.withdraw',compact('withdraw','agen'))->withTitle('By withdraw');
     }
+    public function getByWithDraw1(){
+
+        $withdraw1 = WithDraw::
+        select('id','agen_id','amount','status')
+        ->where('status','=','done')
+        ->get();
+        return view('agent.withdraw',['withdraw' => $withdraw])->withTitle('By withdraw');
+    }
+    
     
     public function updateStatus(Request $request,$id){
     

@@ -40,13 +40,11 @@
                                                 <th>Nama</th>
                                                 <th>Alamat</th>
                                                 <th>Parent</th>
-                                               
                                                 <th>Nomor telpon</th>
                                                 <th>KK</th>
                                                 <th>NIK</th>
                                                 <th>Business Name</th>
-                                                <th>Provinsi</th>
-                                                <th>Kecamatan</th>
+                                            
                                                 <th>Status</th>
                                                 <th>Action</th>
                                             </tr>
@@ -63,8 +61,7 @@
                                                 <td>{{$agent->KK}}</td>
                                                 <td>{{$agent->NIK}}</td>
                                                 <td>{{$agent->busname}}</td>
-                                                <td>{{$agent->province}}</td>
-                                                <td>{{$agent->district}}</td>
+                                                
                                                 <td>
                                                     {{$agent->status}}
                                                 </td>
