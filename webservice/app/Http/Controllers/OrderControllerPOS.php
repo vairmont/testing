@@ -179,6 +179,34 @@ class OrderControllerPOS extends Controller
         ]);
       }
 
+      #change order status
+      $order = Order::whereId($request['order_id'])->first();
+
+      $amount = $order->total;
+
+      if($order->agen_id != 0)
+      {
+        #check saldo
+        $agen = Agen::find($order->agen_id);
+        if($agen->wanee < $amount){
+          return response()->json(['data' => [], 'message' => ['Saldo anda kurang']]);
+        }
+        else
+        {
+          $order->status = OrderStatus::DELIVERY;
+          $topup = Agen::where('id', '=', $order->agen_id)
+                 ->decrement('wanee', round($amount));
+          $order->save();
+        }
+
+      }
+      else{
+      $order->status = OrderStatus::COMPLETED;
+      $order->payment = $request['payment'];
+      $order->save();
+      }
+
+
       #kurangin stock
       $orderDetail = OrderDetail::where('order_id','=',$request['order_id'])
       ->get();
@@ -202,24 +230,6 @@ class OrderControllerPOS extends Controller
 
       }
 
-
-      #change order status
-      $order = Order::whereId($request['order_id'])->first();
-
-      $amount = $order->total;
-
-      if($order->agen_id != 0)
-      {
-      $order->status = OrderStatus::DELIVERY;
-      $topup = Agen::where('id', '=', $order->agen_id)
-             ->decrement('wanee', round($amount));
-      $order->save();
-      }
-      else{
-      $order->status = OrderStatus::COMPLETED;
-      $order->payment = $request['payment'];
-      $order->save();
-      }
 
       return response()->json(['data' => $order],200);
 
