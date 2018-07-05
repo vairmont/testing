@@ -131,7 +131,10 @@ class OrderControllerCustomer extends Controller
 
       $cart = Cart::where('user_id', '=', $request->get('user')->id)->first();
 
-      $agencust = Customer::where('identifier','=',$request->get('user')->id)->first();
+      $agencust = Customer::join('agen','customer.agen_id','=','agen.id')
+      ->where('customer.identifier','=',$request->get('user')->id))
+      ->select('agen.identifier as agen_id')
+      ->first();
 
       if ($cart->total == 0) {
         return response()->json(['message' => 'Keranjang anda kosong.'], 400);
