@@ -132,8 +132,8 @@ class OrderControllerCustomer extends Controller
       $cart = Cart::where('user_id', '=', $request->get('user')->id)->first();
 
       $agencust = Customer::join('agen','customer.agen_id','=','agen.id')
-      ->where('customer.identifier','=',$request->get('user')->id))
-      ->select('agen.identifier as agen_id')
+      ->where('customer.identifier','=',$request->get('user')->id)
+      ->select('agen.identifier')
       ->first();
 
       if ($cart->total == 0) {
@@ -170,7 +170,7 @@ class OrderControllerCustomer extends Controller
         $order->total = $cart->total;
       }
       $order->status = OrderStatus::CREATED;
-      $order->agen_id = $agencust->agen_id;
+      $order->agen_id = $agencust->identifier;
       $order->save();
 
       $items = [];
