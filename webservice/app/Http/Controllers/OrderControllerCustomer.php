@@ -144,20 +144,20 @@ class OrderControllerCustomer extends Controller
 
       $cartDetails = CartDetail::where('cart_id', '=', $cart->id)->get();
 
-      //get last record
-      $record = Order::latest()->first();
-      $expNum = explode('-', $record->invoice_no);
+      // //get last record
+      // $record = Order::latest()->first();
+      // $expNum = explode('-', $record->invoice_no);
 
-      //check first day in a year
-      if ( date('l',strtotime(date('Y-01-01'))) ){
-          $nextInvoiceNumber = date('Y').'-0001';
-      } else {
-          //increase 1 with last invoice number
-          $nextInvoiceNumber = $expNum[0].'-'. $expNum[1]+1;
-      }
+      // //check first day in a year
+      // if ( date('l',strtotime(date('Y-01-01'))) ){
+      //     $nextInvoiceNumber = date('Y').'-0001';
+      // } else {
+      //     //increase 1 with last invoice number
+      //     $nextInvoiceNumber = $expNum[0].'-'. $expNum[1]+1;
+      // }
 
       $order = new Order;
-      $order->invoice_no = $nextInvoiceNumber;
+      $order->invoice_no = uniqid();
       $order->user_id = $cart->user_id;
 
       $order->subtotal = $cart->subtotal;
