@@ -51,13 +51,10 @@
                                            
                                                 <tr>
                                                 <td>{{$withdraw->id}}</td>
-                                                <td>{{$withdraw->agen_id}}</td>
+                                                <td>{{$withdraw->agenid}}</td>
                                                 <td>{{$withdraw->amount}}</td>
                                                 <td>{{$withdraw->status}}</td>
-
                                                 <td>
-                                                
-                                                    
                                                     <a href="{{ route('status', ['id' => $withdraw->id]) }}" class="btn btn-primary">here</a>                                                 
                                                 </td>
                                                 @endforeach
@@ -68,7 +65,7 @@
                                         </tfoot>
                                     </table>
                                 </div>
-                                
+                            
                                 
                         </div>
                     </div>  

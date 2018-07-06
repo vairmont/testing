@@ -12,7 +12,7 @@ class EmployeeController extends Controller
     public function getByAgent(){
 
         $agen = Agen::join('users','users.id','=','agen.identifier')
-        ->select('users.store_id as storeid','users.id as id','agen.name as name','agen.ktp_photo as NIK','users.phone as phone','agen.business_name as busname','agen.province as provice','agen.district as district','agen.parent as parent','agen.kk_photo as KK','agen.address as address','users.status as status')
+        ->select('users.store_id as storeid','users.id as id','agen.name as name','agen.ktp_photo as NIK','users.phone as phone','agen.business_name as busname','agen.parent as parent','agen.kk_photo as KK','agen.address as address','users.status as status')
         ->where('users.status','=','inactive')
         ->get();
 
