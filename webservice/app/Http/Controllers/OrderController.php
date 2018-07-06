@@ -19,6 +19,7 @@ use App\Customer;
 use App\Family;
 use App\User;
 use App\Agen;
+use App\WaneeHistory;
 use App\FCM;
 use App\Cart;
 use App\CartDetail;
