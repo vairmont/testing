@@ -412,8 +412,7 @@ class OrderController extends Controller
       }
 
       else{
-        return response()-      
->json(['message' => 'Not Allowed']);
+        return response()->json(['message' => 'Not Allowed']);
       }
     }
 
