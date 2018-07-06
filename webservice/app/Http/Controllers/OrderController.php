@@ -374,8 +374,8 @@ class OrderController extends Controller
 
       foreach ($incentiveDetails as $detail) {
 
-        $incentive += $detail->base_price * $detail->qty * $detail->rate / 100;
-        $margin += $detail->base_price * $detail->qty * $this->marginRate;
+        $incentive += $detail->price_for_customer * $detail->qty * $detail->rate / 100;
+        $margin += $detail->price_for_customer * $detail->qty * $this->marginRate;
 
       }
 
