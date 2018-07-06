@@ -187,7 +187,8 @@ class OrderControllerPOS extends Controller
       if($order->agen_id != 0)
       {
         #check saldo
-        $agen = Agen::find($order->agen_id);
+        $agen = Agen::where('agen.identifier', '=', $order->agen_id)
+                      ->first();
         if($agen->wanee < $amount){
           return response()->json(['data' => [], 'message' => ['Saldo anda kurang']]);
         }
