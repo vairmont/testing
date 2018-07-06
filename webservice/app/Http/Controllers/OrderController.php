@@ -378,7 +378,6 @@ class OrderController extends Controller
 
       }
 
-      
       $commission_pph = ($incentive + $margin) * $this->pph;
       $commission_netto = ($incentive + $margin) - $commission_pph;
 
@@ -391,13 +390,30 @@ class OrderController extends Controller
       $commission->margin_penjualan = $margin;
       $commission->save();
 
+      $agen = Agen::where('agen.identifier', '=', $request->get('user')->id)
+                    ->select('agen.wanee')
+                    ->first();
+
+      $history = new WaneeHistory;
+      $history->user_id = $request->get('user')->id;
+      $history->amount = $commission->commission_netto;
+      $history->saldo_akhir = $agen->wanee + $commission->commission_netto;
+      $history->reason = 'Komisi agen';
+      $history->save();
+
+      $komisi = Agen::where('agen.identifier', '=', $request->get('user')->id)
+                    ->update([
+                'wanee' => "wanee" + $commission->commission_netto
+            ]);
+
       $this->_sendPushNotification($order->user_id, "Order Status", "Terima kasih transaksi selesai tolong berikan rating.");
 
       return response()->json(['message' => 'Order has been completed.'], 201);
       }
 
       else{
-        return response()->json(['message' => 'Not Allowed']);
+        return response()-      
+>json(['message' => 'Not Allowed']);
       }
     }
 
