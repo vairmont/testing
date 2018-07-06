@@ -131,7 +131,10 @@ class OrderControllerCustomer extends Controller
 
       $cart = Cart::where('user_id', '=', $request->get('user')->id)->first();
 
-      $agencust = Customer::where('identifier','=',$request->get('user')->id)->first();
+      $agencust = Customer::join('agen','customer.agen_id','=','agen.id')
+      ->where('customer.identifier','=',$request->get('user')->id)
+      ->select('agen.identifier')
+      ->first();
 
       if ($cart->total == 0) {
         return response()->json(['message' => 'Keranjang anda kosong.'], 400);
@@ -140,6 +143,18 @@ class OrderControllerCustomer extends Controller
       #ROLE AGEN / CUST
 
       $cartDetails = CartDetail::where('cart_id', '=', $cart->id)->get();
+
+      // //get last record
+      // $record = Order::latest()->first();
+      // $expNum = explode('-', $record->invoice_no);
+
+      // //check first day in a year
+      // if ( date('l',strtotime(date('Y-01-01'))) ){
+      //     $nextInvoiceNumber = date('Y').'-0001';
+      // } else {
+      //     //increase 1 with last invoice number
+      //     $nextInvoiceNumber = $expNum[0].'-'. $expNum[1]+1;
+      // }
 
       $order = new Order;
       $order->invoice_no = uniqid();
@@ -155,7 +170,7 @@ class OrderControllerCustomer extends Controller
         $order->total = $cart->total;
       }
       $order->status = OrderStatus::CREATED;
-      $order->agen_id = $agencust->agen_id;
+      $order->agen_id = $agencust->identifier;
       $order->save();
 
       $items = [];
@@ -230,7 +245,7 @@ class OrderControllerCustomer extends Controller
     
     protected function _sendPushNotification($user_id, $title, $body) {
         // API access key from Google API's Console
-        define('API_ACCESS_KEY', 'AIzaSyCni1sDxjij6zlNgkQG0oqv1CppwzflbDc');
+        define('API_ACCESS_KEY', 'AIzaSyBdH8VG8-7pX0mJ3FSVo-cthDuCtJiSobY');
 
         $registrationIds = array();
 
