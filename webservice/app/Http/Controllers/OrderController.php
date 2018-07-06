@@ -404,7 +404,7 @@ class OrderController extends Controller
 
       $komisi = Agen::where('agen.identifier', '=', $request->get('user')->id)
                     ->update([
-                'wanee' => "wanee" + $commission->commission_netto
+                'wanee' => $history->saldo_akhir
             ]);
 
       $this->_sendPushNotification($order->user_id, "Order Status", "Terima kasih transaksi selesai tolong berikan rating.");
