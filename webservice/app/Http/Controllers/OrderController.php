@@ -397,8 +397,8 @@ class OrderController extends Controller
 
       $history = new WaneeHistory;
       $history->user_id = $request->get('user')->id;
-      $history->amount = $commission->commission_netto;
-      $history->saldo_akhir = $agen->wanee + $commission->commission_netto;
+      $history->amount = $commission_netto;
+      $history->saldo_akhir = $agen->wanee + $commission_netto;
       $history->reason = 'Komisi agen';
       $history->save();
 
