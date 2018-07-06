@@ -45,7 +45,7 @@ class OrderControllerCustomer extends Controller
           ->select('product.id as product_id', 'product.sku', 'product.product_name', 'order_detail.qty','product.price_for_customer','product.price_for_agen','product.img_url')
           ->get();
 
-        $result = [
+        $result[] = [
           'order' => $order,
           'items' => $items,
           'created_at' => Carbon::parse($order->created_at)->format('d M Y H:i')
@@ -53,7 +53,7 @@ class OrderControllerCustomer extends Controller
       }
       
 
-      return response()->json(['data' => $result], 200);
+      return response()->json($result, 200);
     }
 
     public function orderDone(Request $request) {
@@ -73,7 +73,7 @@ class OrderControllerCustomer extends Controller
 
 
         $result[] = [
-          'order' => $orders,
+          'order' => $order,
           'items' => $items,
           'created_at' => Carbon::parse($order->created_at)->format('d M Y H:i')
         ];
@@ -100,7 +100,7 @@ class OrderControllerCustomer extends Controller
 
 
         $result[] = [
-          'order' => $orders,
+          'order' => $order,
           'items' => $items,
           'created_at' => Carbon::parse($order->created_at)->format('d M Y H:i')
         ];
@@ -111,8 +111,8 @@ class OrderControllerCustomer extends Controller
 
     public function create(Request $request) {
      
-            $latFrom = deg2rad(-6.108829);
-            $lonFrom = deg2rad(106.171406);
+            $latFrom = deg2rad(-6.243009);
+            $lonFrom = deg2rad(106.629822);
             $earthRadius = 6371; // in km
 
             $latTo = deg2rad($request->lat);
@@ -134,7 +134,7 @@ class OrderControllerCustomer extends Controller
       $agencust = Customer::where('identifier','=',$request->get('user')->id)->first();
 
       if ($cart->total == 0) {
-        return response()->json(['message' => 'There is no item to order.'], 400);
+        return response()->json(['message' => 'Keranjang anda kosong.'], 400);
       }
 
       #ROLE AGEN / CUST
@@ -148,7 +148,12 @@ class OrderControllerCustomer extends Controller
       $order->subtotal = $cart->subtotal;
       $order->tax = $cart->tax;
       $order->discount = 0;
-      $order->total = $cart->total;
+      if($cart->total < 50000) {
+        $order->total = $cart->total + 5000;
+      }
+      else {
+        $order->total = $cart->total;
+      }
       $order->status = OrderStatus::CREATED;
       $order->agen_id = $agencust->agen_id;
       $order->save();
@@ -189,9 +194,8 @@ class OrderControllerCustomer extends Controller
       $orderbillingdetail->save();
 
       // clear cart
-      $removeCartDetails = CartDetail::where('cart_id', '=', $cart->id)->delete();
-      $removeCart = $cart->delete();
-
+      CartDetail::where('cart_id',$cart->id)->delete();
+      Cart::where('id',$cart->id)->delete();
 
       return response()->json(['data' => [], 'message' => ['OK']]);
 
@@ -226,7 +230,7 @@ class OrderControllerCustomer extends Controller
     
     protected function _sendPushNotification($user_id, $title, $body) {
         // API access key from Google API's Console
-        define('API_ACCESS_KEY', ' ');
+        define('API_ACCESS_KEY', 'AIzaSyCni1sDxjij6zlNgkQG0oqv1CppwzflbDc');
 
         $registrationIds = array();
 

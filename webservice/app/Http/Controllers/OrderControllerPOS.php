@@ -25,6 +25,8 @@ use App\Constant\OrderStatus;
 class OrderControllerPOS extends Controller
 {
     public function getOrderById(Request $request) {
+      // $order = OrderDetail::Join('product', 'order_detail.product_id', '=', 'product.id')
+      //     ->where('order_id', '=', $request->order_id)
       // $order = OrderDetail::where('order_detail.order_id','=',$request->order_id)
       // ->leftjoin('product','order_detail.product_id','=','product.id')
       // ->get();
@@ -42,9 +44,9 @@ class OrderControllerPOS extends Controller
     $user = User::where('phone',$request->phone)->first();
 
     $topup = Agen::where('identifier', '=', $user->id)
-             ->increment('point_kredit', $amount);
+             ->increment('wanee', $amount);
 
-    $poin = Agen::select('point_kredit')
+    $poin = Agen::select('wanee')
             ->where('identifier', '=', $user->id)
             ->first();         
 
@@ -98,12 +100,11 @@ class OrderControllerPOS extends Controller
       $cart->save();
 
       $items = [];
-
       foreach ($cartDetails as $cartDetail) {
-        $product = Product::whereId($cartDetail->product_id)->first();
+        $product = Product::where('id','=',$cartDetail->product_id)->first();
         $orderDetail = new OrderDetail;
         $orderDetail->order_id = $order->id;
-        $orderDetail->product_id = $product->id;
+        $orderDetail->product_id = $cartDetail->product_id;
         $orderDetail->category_id = $product->category_id;
         $orderDetail->qty = $cartDetail->qty;
         $orderDetail->price_for_customer = $product->price_for_customer;
@@ -119,7 +120,7 @@ class OrderControllerPOS extends Controller
           'price_for_agen' => $orderDetail->price_for_agen
         ];
       }
-
+      
       $orderbillingdetail = new OrderBillingDetail;
 
       $orderbillingdetail->order_id =  $order->id;
@@ -135,7 +136,6 @@ class OrderControllerPOS extends Controller
       $cartDetail = CartDetail::where('cart_id', '=', $cart->id)->delete();
       $cart->delete();
 
-      return $product;
       return response()->json(
         [
             'order_id' => $order->id,
@@ -150,17 +150,17 @@ class OrderControllerPOS extends Controller
 
     public function print(Request $request)
     {
-      $header = "Grosir One Receipt \n\n
-                ================================ \n\n";
+      $header = "\n\n\n\n\n\n\n\n\n\n Grosir One Receipt\n\t--------------\n\n";
       $order = Order::whereId($request['order_id'])->first();
       $orderDetail = OrderDetail::where('order_id','=',$request['order_id'])
       ->get();
       $items = "" ;
       foreach ($orderDetail as $od) {
-        $items = $items . $od->product_id . "\t\t" . $od->price_for_agen;
+        $product = Product::where('id','=',$od->product_id)->first();
+        $items = $items . $product->product_name . "\t\t" . $od->price_for_customer . "\n";
       }
 
-      $footer = "Terima Kasih Telah berbelanja \n\n ===============================";
+      $footer = "\n\n\n\n\n\n Total \t = ".$order->total."\n\n\n Terima Kasih Telah berbelanja\n\n\n\n";
 
       $print = $header . $items . $footer;
       return response()->json(['data' => $print],200);
@@ -212,7 +212,7 @@ class OrderControllerPOS extends Controller
       {
       $order->status = OrderStatus::DELIVERY;
       $topup = Agen::where('id', '=', $order->agen_id)
-             ->decrement('point_kredit', round($amount);
+             ->decrement('wanee', round($amount));
       $order->save();
       }
       else{
