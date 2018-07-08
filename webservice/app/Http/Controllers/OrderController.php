@@ -496,7 +496,7 @@ class OrderController extends Controller
             $history = new WaneeHistory;
             $history->user_id = $request->get('user')->id;
             $history->amount = $request->amount;
-            $history->saldo_akhir = $agen->wanee - $amount;
+            $history->saldo_akhir = $agen->wanee - $request->amount;
             $history->reason = 'Penarikan Wanee';
             $history->save();
 
