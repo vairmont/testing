@@ -12,11 +12,11 @@ use App\WaneeHistory;
 class WithdrawController extends Controller
 {
     public function index(Request $request) {
-
-          $items = WaneeHistory::where('wanee_history.user_id', '=', $request->get('user')->id)
+    	 foreach ($items as $item) {
+          $item = WaneeHistory::where('wanee_history.user_id', '=', $request->get('user')->id)
           ->select('wanee_history.*')
           ->get();
-
+      }
       return response()->json($items, 200);
     }
 }
