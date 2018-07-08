@@ -20,7 +20,7 @@ class CommissionController extends Controller {
 
   public function getCommission(Request $request) {
 
-      $commissions = Commission::Join('agen', 'agen.id', '=', 'commission.agen_id')
+      $commissions = Commission::Join('agen', 'agen.identifier', '=', 'commission.agen_id')
         ->join('order', 'order.id', '=', 'commission.order_id')
         ->where('agen.identifier', '=', $request->get('user')->id)
         ->selectRaw('commission.incentive,commission.margin_penjualan,commission.commission_netto,commission.commission_pph,order_id, invoice_no, order.created_at, order.total');
