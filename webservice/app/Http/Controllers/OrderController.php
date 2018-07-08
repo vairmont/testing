@@ -126,7 +126,7 @@ class OrderController extends Controller
       if($agen->parent == 1){
         $orders = Order::Join('customer','customer.identifier','=','order.user_id')
         ->leftJoin('order_billing_detail','order_billing_detail.order_id','=','order.id')
-        ->join('rating', 'rating.order_id', '=', 'order_detail.order_id')
+        ->leftjoin('rating', 'rating.order_id', '=', 'order.id')
         ->where('order.agen_id', '=', $request->get('user')->id)
         ->where('order.status','=',7)
         ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.lat','order_billing_detail.long','order_billing_detail.customer_address2', 'rating.rating', 'rating.notes')
@@ -138,7 +138,7 @@ class OrderController extends Controller
         $parent = Family::where('child_id','=', $request->get('user')->id)->first();
         $orders = Order::Join('customer','customer.identifier','=','order.user_id')
         ->leftJoin('order_billing_detail','order_billing_detail.order_id','=','order.id')
-        ->join('rating', 'rating.order_id', '=', 'order_detail.order_id')
+        ->leftjoin('rating', 'rating.order_id', '=', 'order.id')
         ->where('order.agen_id', '=', $parent->id)
         ->where('order.status','=',7)
         ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.lat','order_billing_detail.long','order_billing_detail.customer_address2', 'rating.rating', 'rating.notes')
