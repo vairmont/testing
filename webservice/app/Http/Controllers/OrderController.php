@@ -481,8 +481,6 @@ class OrderController extends Controller
       }
       $agen = Agen::where('identifier','=', $request->get('user')->id)->first();
       #check saldo
-        $agen = Agen::where('agen.identifier', '=', $agen->agen_id)
-                      ->first();
         if($agen->wanee < $request->amount){
           return response()->json(['data' => [], 'message' => ['Saldo anda kurang']]);
         }
@@ -495,10 +493,6 @@ class OrderController extends Controller
                 'status' => 'process'
             ];
             $create = Withdraw::create($withdraw);
-
-            $agen = Agen::where('agen.identifier', '=', $request->get('user')->id)
-                    ->select('agen.wanee')
-                    ->first();
 
             $history = new WaneeHistory;
             $history->user_id = $request->get('user')->id;
