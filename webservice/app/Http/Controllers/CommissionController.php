@@ -20,11 +20,6 @@ class CommissionController extends Controller {
 
   public function getCommission(Request $request) {
 
-    $agen = Agen::where('agen.identifier', '=', $request->get('user')->id)
-          ->select('id')
-          ->first();
-    if ($agen) {
-
       $commissions = Commission::Join('agen', 'agen.id', '=', 'commission.agen_id')
         ->join('order', 'order.id', '=', 'commission.order_id')
         ->where('agen.identifier', '=', $request->get('user')->id)
@@ -48,9 +43,7 @@ class CommissionController extends Controller {
       }
 
       return response()->json(['data' => ['commission' => $commissions, 'incentive_total' => $incentiveTotal, 'commissionPphTotal' => $commissionPphTotal, 'commissionNettoTotal' => $commissionNettoTotal, 'marginTotal' => $marginTotal]], 200);
-    }
-
-    return response()->json(['error' => 'INVALID AGENT ID'], 400);
+    
   }
 
 
