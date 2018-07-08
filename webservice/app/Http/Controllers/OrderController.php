@@ -479,6 +479,13 @@ class OrderController extends Controller
           return response()->json(['message' => ['Password yang anda masukkan salah']]);
       }
 
+      #check saldo
+        $agen = Agen::where('agen.identifier', '=', $order->agen_id)
+                      ->first();
+        if($agen->wanee < $amount){
+          return response()->json(['data' => [], 'message' => ['Saldo anda kurang']]);
+        }
+
       else{
             $agen = Agen::where('identifier','=', $request->get('user')->id)->first();
 
