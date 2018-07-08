@@ -26,9 +26,10 @@ class WithDrawController extends Controller
         $amount = Withdraw::where('id','=',$id)->first();
             
         $wanee = Agen::where('identifier','=',$amount->agen_id)->first();
-
-        $wanee->update([
-            'wanee' => round($wanee->wanee - $amount->amount)
+        
+        $saldoakhir = $wanee->wanee - $amount->amount;
+        Agen::where('identifier','=',$amount->agen_id)->update([
+            'wanee' => $saldoakhir
         ]);
     
     
@@ -41,7 +42,7 @@ class WithDrawController extends Controller
             $history = new WaneeHistory;
             $history->user_id = $amount->agen_id;
             $history->amount = $amount->amount;
-            $history->saldo_akhir = $wanee->wanee;
+            $history->saldo_akhir = $saldoakhir;
             $history->reason = 'Penarikan Wanee';
             $history->save();
 
