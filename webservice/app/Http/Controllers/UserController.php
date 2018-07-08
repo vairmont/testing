@@ -38,10 +38,9 @@ class UserController extends Controller
 	public function getProfile(Request $request)
 	{
             if($request->get('user')->role_id == 5){
-                $agen = Agen::where('identifier','=', $request->get('user')->id)->first();
 
                 $item = Rating::select('rating')
-                            ->where('agen_id', '=', $agen->id)
+                            ->where('agen_id', '=', $request->get('user')->id)
                             ->avg('rating');
 
                 $rating = number_format($item, 2, '.', '');
