@@ -25,8 +25,9 @@ class WithDrawController extends Controller
     public function updateStatus(Request $request,$id){
         $amount = Withdraw::where('id','=',$id)->first();
             
-        $wanee = Agen::select('wanee')->where('identifier','=',$amount->agen_id)
-        ->decrement('wanee',round($amount->amount));
+        $wanee = Agen::select('wanee')->where('identifier','=',$amount->agen_id)->first();
+
+        $wanee->decrement('wanee',round($amount->amount));
     
     
         $withdraw = WithDraw::where('id','=',$id)
