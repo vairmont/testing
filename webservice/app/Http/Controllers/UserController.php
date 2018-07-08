@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\User;
 use App\Agen;
+use App\Rating;
 use Hash;
 use Auth;
 use Validator;
@@ -51,7 +52,7 @@ class UserController extends Controller
 
                 $save = Agen::where('identifier','=', $request->get('user')->id)
                 ->update($rate);
-                
+
                 $data = User::join('role','users.role_id','=','role.id')
                             ->join('agen', 'users.id', '=', 'agen.identifier')
                             ->select('agen.*', 'users.phone')
