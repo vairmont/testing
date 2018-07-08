@@ -120,7 +120,7 @@ class UserController extends Controller
         $agen = Agen::where('identifier','=', $request->get('user')->id)->first();
 
         $customer = User::Join('customer', 'users.id', '=', 'customer.identifier')
-                    ->select('customer.name', 'customer.address', 'users.phone', 'customer.lat', 'customer.long')
+                    ->select('customer.name', 'customer.address', 'users.phone', 'customer.lat', 'customer.long', 'customer.photo')
                     ->where('customer.agen_id', '=', $agen->id)
                     ->get();
 

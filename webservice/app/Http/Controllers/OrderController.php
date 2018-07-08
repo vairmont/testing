@@ -128,7 +128,7 @@ class OrderController extends Controller
         ->leftJoin('order_billing_detail','order_billing_detail.order_id','=','order.id')
         ->where('order.agen_id', '=', $request->get('user')->id)
         ->where('order.status','=',7)
-        ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.lat','order_billing_detail.long','order_billing_detail.customer_address2')
+        ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.lat','order_billing_detail.long','order_billing_detail.customer_address2', 'rating.rating', 'rating.notes')
         ->get();
 
         $relation = "Kepala Keluarga";
@@ -139,7 +139,7 @@ class OrderController extends Controller
         ->leftJoin('order_billing_detail','order_billing_detail.order_id','=','order.id')
         ->where('order.agen_id', '=', $parent->id)
         ->where('order.status','=',7)
-        ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.lat','order_billing_detail.long','order_billing_detail.customer_address2')
+        ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.lat','order_billing_detail.long','order_billing_detail.customer_address2', 'rating.rating', 'rating.notes')
         ->get();
 
         $relation = $parent->relation;
@@ -150,7 +150,7 @@ class OrderController extends Controller
         $items = OrderDetail::Join('product', 'product.id', '=', 'order_detail.product_id')
           ->join('rating', 'rating.order_id', '=', 'order_detail.order_id')
           ->where('rating.order_id', '=', $order->id)
-          ->select('product.id as product_id', 'product.sku', 'product.product_name', 'order_detail.qty','product.price_for_customer','product.price_for_agen','product.img_url', 'rating.rating', 'rating.notes')
+          ->select('product.id as product_id', 'product.sku', 'product.product_name', 'order_detail.qty','product.price_for_customer','product.price_for_agen','product.img_url')
           ->get();
 
 
@@ -494,6 +494,17 @@ class OrderController extends Controller
                 'status' => 'process'
             ];
             $create = Withdraw::create($withdraw);
+
+            $agen = Agen::where('agen.identifier', '=', $request->get('user')->id)
+                    ->select('agen.wanee')
+                    ->first();
+
+            $history = new WaneeHistory;
+            $history->user_id = $request->get('user')->id;
+            $history->amount = $amount;
+            $history->saldo_akhir = $agen->wanee - $amount;
+            $history->reason = 'Penarikan Wanee';
+            $history->save();
 
             return response()->json(['data' => ['withdraw_id' => $create->id], 'message' => ['OK']]);
           }

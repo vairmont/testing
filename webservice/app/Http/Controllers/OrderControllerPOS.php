@@ -48,7 +48,18 @@ class OrderControllerPOS extends Controller
 
     $poin = Agen::select('wanee')
             ->where('identifier', '=', $user->id)
-            ->first();         
+            ->first();  
+
+    $agen = Agen::where('agen.identifier', '=', $request->get('user')->id)
+                    ->select('agen.wanee')
+                    ->first();
+
+    $history = new WaneeHistory;
+    $history->user_id = $request->get('user')->id;
+    $history->amount = $amount;
+    $history->saldo_akhir = $agen->wanee + $amount;
+    $history->reason = 'Topup Wanee';
+    $history->save();               
 
     return response()->json(['data' => $poin, 'message' => ['OK']]);         
    }
