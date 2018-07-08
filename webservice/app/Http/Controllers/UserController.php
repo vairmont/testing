@@ -37,7 +37,21 @@ class UserController extends Controller
 	public function getProfile(Request $request)
 	{
             if($request->get('user')->role_id == 5){
+                $agen = Agen::where('identifier','=', $request->get('user')->id)->first();
 
+                $item = Rating::select('rating')
+                            ->where('agen_id', '=', $agen->id)
+                            ->avg('rating');
+
+                $rating = number_format($item, 2, '.', '');
+
+                $rate = [
+                'rating' => $rating
+                ];
+
+                $save = Agen::where('identifier','=', $request->get('user')->id)
+                ->update($rate);
+                
                 $data = User::join('role','users.role_id','=','role.id')
                             ->join('agen', 'users.id', '=', 'agen.identifier')
                             ->select('agen.*', 'users.phone')
