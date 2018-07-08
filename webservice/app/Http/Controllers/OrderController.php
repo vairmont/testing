@@ -487,7 +487,7 @@ class OrderController extends Controller
       else{
             
             $withdraw = [
-                'agen_id' =>$agen->id,
+                'agen_id' =>$agen->identifier,
                 'amount' => $request->amount,
                 'status' => 'process'
             ];
