@@ -27,7 +27,9 @@ class WithDrawController extends Controller
             
         $wanee = Agen::select('wanee')->where('identifier','=',$amount->agen_id)->first();
 
-        $wanee->decrement('wanee',round($amount->amount));
+        $wanee->update([
+            'wanee' => $wanee->wanee - round($amount->amount)
+        ]);
     
     
         $withdraw = WithDraw::where('id','=',$id)
