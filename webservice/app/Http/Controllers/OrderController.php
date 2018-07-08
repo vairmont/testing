@@ -493,13 +493,6 @@ class OrderController extends Controller
             ];
             $create = Withdraw::create($withdraw);
 
-            $history = new WaneeHistory;
-            $history->user_id = $request->get('user')->id;
-            $history->amount = $request->amount;
-            $history->saldo_akhir = $agen->wanee - $request->amount;
-            $history->reason = 'Penarikan Wanee';
-            $history->save();
-
             return response()->json(['data' => ['withdraw_id' => $create->id], 'message' => ['OK']]);
           }
     }

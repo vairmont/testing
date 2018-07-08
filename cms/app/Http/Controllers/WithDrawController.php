@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Withdraw;
+use App\WaneeHistory;
 use App\Agen;
 use Illuminate\Http\Request;
 
@@ -37,6 +38,13 @@ class WithDrawController extends Controller
             'id' => $request->id
             
         ]);
+
+            $history = new WaneeHistory;
+            $history->user_id = $request->get('user')->id;
+            $history->amount = $request->amount;
+            $history->saldo_akhir = $agen->wanee - $request->amount;
+            $history->reason = 'Penarikan Wanee';
+            $history->save();
 
         return back();
     }
