@@ -483,7 +483,7 @@ class OrderController extends Controller
       #check saldo
         $agen = Agen::where('agen.identifier', '=', $agen->agen_id)
                       ->first();
-        if($agen->wanee < $amount){
+        if($agen->wanee < $request->amount){
           return response()->json(['data' => [], 'message' => ['Saldo anda kurang']]);
         }
 
