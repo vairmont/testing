@@ -36,8 +36,8 @@ class WithDrawController extends Controller
         ]);
 
             $history = new WaneeHistory;
-            $history->user_id = $request->get('user')->id;
-            $history->amount = $request->amount;
+            $history->user_id = $amount->agen_id;
+            $history->amount = $amount->amount;
             $history->saldo_akhir = $agen->wanee - $request->amount;
             $history->reason = 'Penarikan Wanee';
             $history->save();
