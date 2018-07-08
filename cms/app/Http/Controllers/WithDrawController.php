@@ -28,7 +28,7 @@ class WithDrawController extends Controller
         $wanee = Agen::where('identifier','=',$amount->agen_id)->first();
 
         $wanee->update([
-            'wanee' => $wanee->wanee - round($amount->amount)
+            'wanee' => round($wanee->wanee - $amount->amount)
         ]);
     
     
