@@ -45,7 +45,7 @@ class RatingController extends Controller
         $data['order_id'] = $request->order_id;
         $data['agen_id'] = $order->agen_id;
         $data['customer_id'] = $user_id;
-        $data['rating'] = number_format($request->value);
+        $data['rating'] = number_format($request->value, 2, '.', '');
         $data['notes'] = nl2br($request->notes);
         
         Rating::create($data);
