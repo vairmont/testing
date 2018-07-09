@@ -13,7 +13,15 @@ class WithdrawController extends Controller
 {
     public function index(Request $request) {
           $items = WaneeHistory::where('wanee_history.user_id', '=', $request->get('user')->id)
-          ->select('wanee_history.*')
+          ->select('wanee_history.amount', 'wanee_history.saldo_akhir', 'wanee_history.reason', 'wanee_history.created_at')
+          ->get();
+      
+      return response()->json($items, 200);
+    }
+
+    public function pending(Request $request) {
+          $items = Withdraw::where('withdraw.agen_id', '=', $request->get('user')->id)
+          ->select('withdraw.amount', 'withdraw.created_at')
           ->get();
       
       return response()->json($items, 200);

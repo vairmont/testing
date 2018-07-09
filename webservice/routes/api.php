@@ -88,7 +88,8 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
   Route::get('/ranks', 'RankingController@index');
 
   Route::post('/withdraw', 'OrderController@withdraw');
-  Route::get('/withdraw', 'WithdrawController@index');  
+  Route::get('/withdraw', 'WithdrawController@index');
+  Route::get('/withdraw/pending', 'WithdrawController@pending');   
 
   Route::get('/rating', 'RatingController@index');
   Route::post('/rating', 'RatingController@addRating');
