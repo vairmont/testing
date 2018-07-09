@@ -8,6 +8,7 @@ use App\Order;
 use App\Agen;
 use App\User;
 use App\WaneeHistory;
+use App\Withdraw;
 
 class WithdrawController extends Controller
 {
