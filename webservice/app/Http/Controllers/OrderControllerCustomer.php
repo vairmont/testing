@@ -61,7 +61,7 @@ class OrderControllerCustomer extends Controller
       ->join('agen', 'agen.identifier', '=', 'order.agen_id')
       ->where('order.user_id', '=', $request->get('user')->id)
       ->where('status', '=', 7)
-      ->select('order.*','order_billing_detail.*', 'agen.name as agen name', 'agen.photo as agen photo')
+      ->select('order.*','order_billing_detail.*', 'agen.name as agen_name', 'agen.photo as agen_photo')
       ->get();
 
       $result = [];
