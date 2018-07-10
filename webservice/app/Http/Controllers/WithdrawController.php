@@ -21,8 +21,9 @@ class WithdrawController extends Controller
     }
 
     public function pending(Request $request) {
-          $items = Withdraw::where('withdraw.agen_id', '=', $request->get('user')->id)
-          ->select('withdraw.amount', 'withdraw.created_at')
+          $items = Withdraw::join('agen', 'agen.identifier', '=', 'withdraw.agen_id')
+          ->where('withdraw.agen_id', '=', $request->get('user')->id)
+          ->select('withdraw.amount', 'withdraw.created_at', 'agen.wanee')
           ->where('withdraw.status', '=', 'process')
           ->get();
       
