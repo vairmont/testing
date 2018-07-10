@@ -484,6 +484,9 @@ class OrderController extends Controller
           return response()->json(['data' => [], 'message' => ['Saldo anda kurang']]);
         }
 
+        if($request->amount < 10000){
+          return response()->json(['message' => ['Penarikan Wanee minimal Rp. 10.000.']]);
+        }
       else{
             
             $withdraw = [
