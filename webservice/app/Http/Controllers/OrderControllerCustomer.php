@@ -59,10 +59,9 @@ class OrderControllerCustomer extends Controller
     public function orderDone(Request $request) {
 
       $orders = Order::join('order_billing_detail', 'order_billing_detail.order_id', '=', 'order.id')
-      ->join('agen', 'agen.identifier', '=', 'order.agen_id')
-      ->where('order.user_id', '=', $request->get('user')->id)
+      ->where('user_id', '=', $request->get('user')->id)
       ->where('status', '=', 7)
-      ->select('order.*','order_billing_detail.*', 'agen.name as agen_name', 'agen.photo as agen_photo')
+      ->select('order.*','order_billing_detail.*')
       ->get();
 
       $result = [];
