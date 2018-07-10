@@ -15,7 +15,7 @@ class WithdrawController extends Controller
     public function index(Request $request) {
           $items = WaneeHistory::where('wanee_history.user_id', '=', $request->get('user')->id)
           ->select('wanee_history.amount', 'wanee_history.saldo_akhir', 'wanee_history.reason', 'wanee_history.created_at')
-          ->orderBy('created_at', 'asc')
+          ->orderBy('created_at', 'desc')
           ->get();
       
       return response()->json($items, 200);
