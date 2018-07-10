@@ -43,7 +43,7 @@ class UserController extends Controller
                             ->where('agen_id', '=', $request->get('user')->id)
                             ->avg('rating');
 
-                $rating = number_format($item, 2, '.', '');
+                $rating = number_format($item, 1, '.', '');
 
                 $rate = [
                 'rating' => $rating
