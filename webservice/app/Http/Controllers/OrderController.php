@@ -489,6 +489,7 @@ class OrderController extends Controller
             $withdraw = [
                 'agen_id' =>$agen->identifier,
                 'amount' => $request->amount,
+                'saldo_awal' => $agen->wanee,
                 'status' => 'process'
             ];
             $create = Withdraw::create($withdraw);
