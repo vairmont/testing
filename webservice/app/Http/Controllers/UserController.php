@@ -75,7 +75,6 @@ class UserController extends Controller
     public function changePassword(Request $request) {
         
         $val = Validator::make($request->all(), [
-            'user_id' => 'required',
             'old_password' => 'required',
             'password' => 'required|min:6',
             'confirm_password' => 'required|same:password'
@@ -96,10 +95,10 @@ class UserController extends Controller
 
                 User::where('id', $request->user_id)->update($data);
 
-                return response()->json(['data' => [], 'message' => ['OK']]);
+                return response()->json(['data' => [], 'message' => ['Password berhasil diubah.']]);
             }
             else{
-                return response()->json(['data' => [], 'message' => ['Invalid Old Password']]);  
+                return response()->json(['data' => [], 'message' => ['Password lama anda salah.']]);  
             }
         }
     }
