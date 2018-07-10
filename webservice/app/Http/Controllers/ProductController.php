@@ -29,7 +29,7 @@ class ProductController extends Controller
       $products = $products->where('product.category_id', $request->category_id);
     }
     if(isset($request->keyword) && !empty($request->keyword)) {
-      $products = $products->where('product.product_name','like',$request->keyword."%");
+      $products = $products->where('product.product_name','like',"%".$request->keyword."%");
     }
     if(isset($request->sortBy) && !empty($request->sortBy) && $request->sortBy == 'Incentive Tertinggi') {
       $products = $products->orderBy('incentive_category.rate','DESC');
