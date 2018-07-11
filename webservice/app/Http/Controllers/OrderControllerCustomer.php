@@ -34,7 +34,7 @@ class OrderControllerCustomer extends Controller
       ->join('order_billing_detail','order_billing_detail.order_id','=','order.id')
       ->where('user_id', '=', $request->get('user')->id)
       ->whereIn('status',[1,2,6])
-      ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.lat','order_billing_detail.long','order_billing_detail.customer_address2')
+      ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.lat','order_billing_detail.long','order_billing_detail.customer_address2', 'order_billing_detail.notes')
       ->orderBy('created_at', 'asc')
       ->get();
 
@@ -62,7 +62,7 @@ class OrderControllerCustomer extends Controller
       ->join('agen', 'agen.identifier', '=', 'order.agen_id')
       ->where('order.user_id', '=', $request->get('user')->id)
       ->where('status', '=', 7)
-      ->select('order.*','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.lat','order_billing_detail.long','order_billing_detail.customer_address2')
+      ->select('order.*','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.lat','order_billing_detail.long','order_billing_detail.customer_address2', 'order_billing_detail.notes')
       ->get();
 
       $result = [];
