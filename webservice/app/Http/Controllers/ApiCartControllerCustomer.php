@@ -89,14 +89,14 @@ class ApiCartControllerCustomer extends Controller {
       ->select('product.id', 'product.sku', 'product.product_name', 'cart_detail.qty', 'product.price_for_customer', 'product.price_for_agen')
       ->get();
 
-    if($cartDetail->qty = 0){
+    if($cartDetail->qty == 0){
 
-      CartDetail::where('id',$cartDetail->id)->delete();
+      $cartDetail->delete();
     }
 
-    if($cart->total = 0){
+    if($cart->total == 0){
 
-      Cart::where('id',$cart->id)->delete();
+      $cart->delete();
     }
 
     $subtotal = 0;
