@@ -93,7 +93,7 @@ class UserController extends Controller
                     'password' => Hash::make($request->new_password)
                 );
 
-                User::where('id', $request->user_id)->update($data);
+                User::where('id', $request->get('user')->id)->update($data);
 
                 return response()->json(['data' => [], 'message' => ['Password berhasil diubah.']]);
             }
