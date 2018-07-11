@@ -76,7 +76,7 @@ class UserController extends Controller
         
         $val = Validator::make($request->all(), [
             'old_password' => 'required',
-            'password' => 'required|min:6',
+            'new_password' => 'required|min:6',
             'confirm_password' => 'required|same:password'
         ]);
 
@@ -90,7 +90,7 @@ class UserController extends Controller
 
             if(Hash::check($request->old_password, $user->password)){
                 $data = array(
-                    'password' => Hash::make($request->password)
+                    'password' => Hash::make($request->new_password)
                 );
 
                 User::where('id', $request->user_id)->update($data);
