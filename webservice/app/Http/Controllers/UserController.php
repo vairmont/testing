@@ -85,7 +85,7 @@ class UserController extends Controller
         } 
         else {
             $user = User::select('password')
-            ->where('id', "=", $request->user_id)
+            ->where('id', "=", $$request->get('user')->id)
             ->first();
 
             if(Hash::check($request->old_password, $user->password)){
