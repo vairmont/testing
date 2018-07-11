@@ -77,7 +77,7 @@ class UserController extends Controller
         $val = Validator::make($request->all(), [
             'old_password' => 'required',
             'new_password' => 'required|min:6',
-            'confirm_password' => 'required|same:password'
+            'confirm_password' => 'required|same:new_password'
         ]);
 
         if($val->fails()) {
