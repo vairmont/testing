@@ -27,6 +27,10 @@ class ItemController extends Controller
         $this->incentives = $incentives;
         $this->stocks = $stocks;
     }
+    public function getByAddSlider(){
+
+        return view('products.slider')->withTitle('by slider');
+    }
 
     public function getDaftarItem(Request $req) {
         $args = $req->only(['product_name', 'category_id', 'stock']);
