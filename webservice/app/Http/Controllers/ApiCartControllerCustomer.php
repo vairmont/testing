@@ -89,6 +89,16 @@ class ApiCartControllerCustomer extends Controller {
       ->select('product.id', 'product.sku', 'product.product_name', 'cart_detail.qty', 'product.price_for_customer', 'product.price_for_agen')
       ->get();
 
+    if($cartDetail->qty == 0){
+
+      $cartDetail->delete();
+    }
+
+    if($cart->total == 0){
+
+      $cart->delete();
+    }
+
     $subtotal = 0;
     foreach ($items as $item) {
       switch ($request->get('user')->role_id) {

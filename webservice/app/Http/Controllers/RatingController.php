@@ -20,7 +20,7 @@ class RatingController extends Controller
                     ->where('agen_id', '=', $agen->id)
                     ->avg('rating');
 
-        $rating = number_format($item, 2, '.', '');
+        $rating = number_format($item, 1, '.', '');
 
         $rate = [
         'rating' => $rating
@@ -38,14 +38,17 @@ class RatingController extends Controller
         return response()->json(['data' => [], 'message' => ['Rating tidak boleh kosong']]);
     }
     else {
-
+        
         $user_id = $request->get('user')->id;
         $order = Order::find($request->order_id);
-
+        $rating = Rating::where('order_id', $request->order_id)->first();
+        if ($rating != null ){
+            return response()->json(['message' => ['Anda sudah memberikan rating untuk transaksi ini.']]);
+        }
         $data['order_id'] = $request->order_id;
         $data['agen_id'] = $order->agen_id;
         $data['customer_id'] = $user_id;
-        $data['rating'] = $request->value;
+        $data['rating'] = number_format($request->value, 1, '.', '');
         $data['notes'] = nl2br($request->notes);
         
         Rating::create($data);

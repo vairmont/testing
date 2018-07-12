@@ -19,6 +19,7 @@ use App\Customer;
 use App\Family;
 use App\User;
 use App\Agen;
+use App\WaneeHistory;
 use App\FCM;
 use App\Cart;
 use App\CartDetail;
@@ -83,7 +84,7 @@ class OrderController extends Controller
         ->where('order.agen_id', '=', $request->get('user')->id)
         ->where('order.status','=',2)
         ->orWhere('order.status','=',6)
-        ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.lat','order_billing_detail.long','order_billing_detail.customer_address2')
+        ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.lat','order_billing_detail.long','order_billing_detail.customer_address2', 'order_billing_detail.notes as order_notes')
         ->get();
 
         $relation = "Kepala Keluarga";
@@ -95,7 +96,7 @@ class OrderController extends Controller
         ->where('order.agen_id', '=', $parent->id)
         ->where('order.status','=',2)
         ->orWhere('order.status','=',6)
-        ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.lat','order_billing_detail.long','order_billing_detail.customer_address2')
+        ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.lat','order_billing_detail.long','order_billing_detail.customer_address2', 'order_billing_detail.notes as order_notes')
         ->get();
 
         $relation = $parent->relation;
@@ -125,9 +126,10 @@ class OrderController extends Controller
       if($agen->parent == 1){
         $orders = Order::Join('customer','customer.identifier','=','order.user_id')
         ->leftJoin('order_billing_detail','order_billing_detail.order_id','=','order.id')
+        ->leftjoin('rating', 'rating.order_id', '=', 'order.id')
         ->where('order.agen_id', '=', $request->get('user')->id)
         ->where('order.status','=',7)
-        ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.lat','order_billing_detail.long','order_billing_detail.customer_address2')
+        ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.lat','order_billing_detail.long','order_billing_detail.customer_address2', 'order_billing_detail.notes as order_notes', 'rating.rating', 'rating.notes')
         ->get();
 
         $relation = "Kepala Keluarga";
@@ -136,9 +138,10 @@ class OrderController extends Controller
         $parent = Family::where('child_id','=', $request->get('user')->id)->first();
         $orders = Order::Join('customer','customer.identifier','=','order.user_id')
         ->leftJoin('order_billing_detail','order_billing_detail.order_id','=','order.id')
+        ->leftjoin('rating', 'rating.order_id', '=', 'order.id')
         ->where('order.agen_id', '=', $parent->id)
         ->where('order.status','=',7)
-        ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.lat','order_billing_detail.long','order_billing_detail.customer_address2')
+        ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.lat','order_billing_detail.long','order_billing_detail.customer_address2', 'order_billing_detail.notes as order_notes', 'rating.rating', 'rating.notes')
         ->get();
 
         $relation = $parent->relation;
@@ -147,9 +150,8 @@ class OrderController extends Controller
       $result = [];
       foreach ($orders as $order) {
         $items = OrderDetail::Join('product', 'product.id', '=', 'order_detail.product_id')
-          ->join('rating', 'rating.order_id', '=', 'order_detail.order_id')
-          ->where('rating.order_id', '=', $order->id)
-          ->select('product.id as product_id', 'product.sku', 'product.product_name', 'order_detail.qty','product.price_for_customer','product.price_for_agen','product.img_url', 'rating.rating', 'rating.notes')
+          ->where('order_id', '=', $order->id)
+          ->select('product.id as product_id', 'product.sku', 'product.product_name', 'order_detail.qty','product.price_for_customer','product.price_for_agen','product.img_url')
           ->get();
 
 
@@ -373,12 +375,11 @@ class OrderController extends Controller
 
       foreach ($incentiveDetails as $detail) {
 
-        $incentive += $detail->base_price * $detail->qty * $detail->rate / 100;
-        $margin += $detail->base_price * $detail->qty * $this->marginRate;
+        $incentive += $detail->price_for_customer * $detail->qty * $detail->rate / 100;
+        $margin += $detail->price_for_customer * $detail->qty * $this->marginRate;
 
       }
 
-      
       $commission_pph = ($incentive + $margin) * $this->pph;
       $commission_netto = ($incentive + $margin) - $commission_pph;
 
@@ -390,6 +391,22 @@ class OrderController extends Controller
       $commission->incentive = $incentive;
       $commission->margin_penjualan = $margin;
       $commission->save();
+
+      $agen = Agen::where('agen.identifier', '=', $request->get('user')->id)
+                    ->select('agen.wanee')
+                    ->first();
+
+      $history = new WaneeHistory;
+      $history->user_id = $request->get('user')->id;
+      $history->amount = $commission_netto;
+      $history->saldo_akhir = $agen->wanee + $commission_netto;
+      $history->reason = 'Komisi agen';
+      $history->save();
+
+      $komisi = Agen::where('agen.identifier', '=', $request->get('user')->id)
+                    ->update([
+                'wanee' => $history->saldo_akhir
+            ]);
 
       $this->_sendPushNotification($order->user_id, "Order Status", "Terima kasih transaksi selesai tolong berikan rating.");
 
@@ -462,13 +479,21 @@ class OrderController extends Controller
       if( ! Hash::check( $request->password, $data->password  ) ){
           return response()->json(['message' => ['Password yang anda masukkan salah']]);
       }
+      $agen = Agen::where('identifier','=', $request->get('user')->id)->first();
+      #check saldo
+        if($agen->wanee < $request->amount){
+          return response()->json(['data' => [], 'message' => ['Saldo anda kurang']]);
+        }
 
+        if($request->amount < 10000){
+          return response()->json(['message' => ['Penarikan minimal Rp 10.000.']]);
+        }
       else{
-            $agen = Agen::where('identifier','=', $request->get('user')->id)->first();
-
+            
             $withdraw = [
-                'agen_id' =>$agen->id,
+                'agen_id' =>$agen->identifier,
                 'amount' => $request->amount,
+                'saldo_awal' => $agen->wanee,
                 'status' => 'process'
             ];
             $create = Withdraw::create($withdraw);

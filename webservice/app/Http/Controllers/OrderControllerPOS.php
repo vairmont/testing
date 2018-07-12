@@ -48,7 +48,18 @@ class OrderControllerPOS extends Controller
 
     $poin = Agen::select('wanee')
             ->where('identifier', '=', $user->id)
-            ->first();         
+            ->first();  
+
+    $agen = Agen::where('agen.identifier', '=', $request->get('user')->id)
+                    ->select('agen.wanee')
+                    ->first();
+
+    $history = new WaneeHistory;
+    $history->user_id = $request->get('user')->id;
+    $history->amount = $amount;
+    $history->saldo_akhir = $agen->wanee + $amount;
+    $history->reason = 'Topup Wanee';
+    $history->save();               
 
     return response()->json(['data' => $poin, 'message' => ['OK']]);         
    }
@@ -187,14 +198,15 @@ class OrderControllerPOS extends Controller
       if($order->agen_id != 0)
       {
         #check saldo
-        $agen = Agen::find($order->agen_id);
+        $agen = Agen::where('agen.identifier', '=', $order->agen_id)
+                      ->first();
         if($agen->wanee < $amount){
           return response()->json(['data' => [], 'message' => ['Saldo anda kurang']]);
         }
         else
         {
           $order->status = OrderStatus::DELIVERY;
-          $topup = Agen::where('id', '=', $order->agen_id)
+          $topup = Agen::where('identifier', '=', $order->agen_id)
                  ->decrement('wanee', round($amount));
           $order->save();
         }

@@ -38,7 +38,7 @@
                                         <thead>
                                             <tr>
                                                 <th>ID</th>
-                                                <th>ID_agen</th>
+                                                <th>Nama</th>
                                                 <th>Amount</th>
                                                 <th>Status</th>
                                                 <th>Action</th>
@@ -51,7 +51,7 @@
                                            
                                                 <tr>
                                                 <td>{{$withdraw->id}}</td>
-                                                <td>{{$withdraw->agenid}}</td>
+                                                <td>{{$withdraw->name}}</td>
                                                 <td>{{$withdraw->amount}}</td>
                                                 <td>{{$withdraw->status}}</td>
                                                 <td>

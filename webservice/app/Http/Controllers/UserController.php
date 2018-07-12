@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\User;
 use App\Agen;
+use App\Rating;
 use Hash;
 use Auth;
 use Validator;
@@ -38,6 +39,19 @@ class UserController extends Controller
 	{
             if($request->get('user')->role_id == 5){
 
+                $item = Rating::select('rating')
+                            ->where('agen_id', '=', $request->get('user')->id)
+                            ->avg('rating');
+
+                $rating = number_format($item, 1, '.', '');
+
+                $rate = [
+                'rating' => $rating
+                ];
+
+                $save = Agen::where('identifier','=', $request->get('user')->id)
+                ->update($rate);
+
                 $data = User::join('role','users.role_id','=','role.id')
                             ->join('agen', 'users.id', '=', 'agen.identifier')
                             ->select('agen.*', 'users.phone')
@@ -61,10 +75,9 @@ class UserController extends Controller
     public function changePassword(Request $request) {
         
         $val = Validator::make($request->all(), [
-            'user_id' => 'required',
             'old_password' => 'required',
-            'password' => 'required|min:6',
-            'confirm_password' => 'required|same:password'
+            'new_password' => 'required|min:6',
+            'confirm_password' => 'required|same:new_password'
         ]);
 
         if($val->fails()) {
@@ -72,20 +85,20 @@ class UserController extends Controller
         } 
         else {
             $user = User::select('password')
-            ->where('id', "=", $request->user_id)
+            ->where('id', "=", $request->get('user')->id)
             ->first();
 
             if(Hash::check($request->old_password, $user->password)){
                 $data = array(
-                    'password' => Hash::make($request->password)
+                    'password' => Hash::make($request->new_password)
                 );
 
-                User::where('id', $request->user_id)->update($data);
+                User::where('id', $request->get('user')->id)->update($data);
 
-                return response()->json(['data' => [], 'message' => ['OK']]);
+                return response()->json(['data' => [], 'message' => ['Password berhasil diubah.']]);
             }
             else{
-                return response()->json(['data' => [], 'message' => ['Invalid Old Password']]);  
+                return response()->json(['data' => [], 'message' => ['Password lama anda salah.']]);  
             }
         }
     }
@@ -120,7 +133,7 @@ class UserController extends Controller
         $agen = Agen::where('identifier','=', $request->get('user')->id)->first();
 
         $customer = User::Join('customer', 'users.id', '=', 'customer.identifier')
-                    ->select('customer.name', 'customer.address', 'users.phone', 'customer.lat', 'customer.long')
+                    ->select('customer.name', 'customer.address', 'users.phone', 'customer.lat', 'customer.long', 'customer.photo')
                     ->where('customer.agen_id', '=', $agen->id)
                     ->get();
 
