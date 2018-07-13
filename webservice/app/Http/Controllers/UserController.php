@@ -35,6 +35,19 @@ class UserController extends Controller
         }
     }
 
+    public function editProfile(Request $request)
+    {
+        $data = [
+        'name' => $request->name,
+        'address' => $request->address
+        ];
+
+        $save = Customer::where('identifier', '=', $request->get('user')->id)
+        ->update($data);
+
+        return response()->json(['message' => ['OK']]);        
+    }
+
 	public function getProfile(Request $request)
 	{
             if($request->get('user')->role_id == 5){
