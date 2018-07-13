@@ -47,6 +47,7 @@ Route::get('/edititem/{id}', 'ItemController@formItem');
 Route::post('/edititem/{id}', 'ItemController@saveItem');
 Route::get('/deleteitem/{id}', 'ItemController@deleteItem');
 Route::get('/slider', 'ItemController@getByAddSlider');
+Route::post('/insert', 'ItemController@saveSlider');
 
 
 Route::get('/kategori', 'ItemController@getKategori');

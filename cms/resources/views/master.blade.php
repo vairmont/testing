@@ -316,7 +316,7 @@
                                         <a href="diskon">Diskon</a>
                                     </li>
                                     <li>
-                                        <a href="{{url('/slider')}}">Add Slider</a>
+                                        <a href="{{url('/slider')}}">Slider</a>
                                     </li>
                                 </ul>
                         </li>
