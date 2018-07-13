@@ -34,6 +34,7 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
   Route::post('/token/add', 'FCMTokenController@addToken');
 
   Route::get('/profile', 'UserController@getProfile');
+  Route::post('/profile', 'UserController@editProfile');
   Route::post('/changePassword', 'UserController@changePassword');
 
   Route::get('/products', 'ProductController@index');

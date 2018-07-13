@@ -23,6 +23,7 @@ Route::get('/bycategory','ReportController@getBycategory');
 Route::get('/byemployee','ReportController@getByEmployee');
 Route::get('/bychasier','ReportController@getByChasier');
 
+
 Route::get('/byagent','EmployeeController@getByAgent');
 Route::get('/bywithdraw', 'WithDrawController@getByWithDraw');
 
@@ -45,6 +46,9 @@ Route::post('/additem', 'ItemController@saveItem');
 Route::get('/edititem/{id}', 'ItemController@formItem');
 Route::post('/edititem/{id}', 'ItemController@saveItem');
 Route::get('/deleteitem/{id}', 'ItemController@deleteItem');
+Route::get('/slider', 'ItemController@getByAddSlider');
+Route::post('/insert', 'ItemController@saveSlider');
+
 
 Route::get('/kategori', 'ItemController@getKategori');
 Route::get('/addkategori', 'ItemController@formKategori');

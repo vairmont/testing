@@ -10,6 +10,7 @@ use App\Stores\StoreRepository;
 use App\Stores\TaxRepository;
 use App\Stores\IncentiveRepository;
 use App\Inventories\StockRepository;
+use App\Slider;
 
 use Excel;
 
@@ -27,7 +28,26 @@ class ItemController extends Controller
         $this->incentives = $incentives;
         $this->stocks = $stocks;
     }
+    public function getByAddSlider(){
 
+        return view('products.slider')->withTitle('by slider');
+    }
+    public function saveSlider(Request $request)
+    {
+        if($request->hasFile('photo')){
+            $path = $request->file('photo')->store('image');
+        }else { $path = ""; }
+        $this->validate($request,[
+            'name'=> 'required',
+            'page'=> 'required'
+        ]);
+        $slider = new Slider;
+        $slider->name = $request->input('name');
+        $slider->page = $request->input('page');
+        $slider['photo']= "storage/app/".$path;
+        $slider->save();
+        return redirect ('/slider');
+    }
     public function getDaftarItem(Request $req) {
         $args = $req->only(['product_name', 'category_id', 'stock']);
         $isExport = $req->get('is_export', 0);
