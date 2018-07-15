@@ -156,8 +156,12 @@ class OrderControllerCustomer extends Controller
       //     $nextInvoiceNumber = $expNum[0].'-'. $expNum[1]+1;
       // }
 
+      $today = date("Ymd");
+      $rand = strtoupper(substr(uniqid(sha1(time())),0,4));
+      $unique = $today . $rand;
+
       $order = new Order;
-      $order->invoice_no = uniqid();
+      $order->invoice_no = $unique();
       $order->user_id = $cart->user_id;
 
       $order->subtotal = $cart->subtotal;

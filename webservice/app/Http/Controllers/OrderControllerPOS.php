@@ -95,9 +95,13 @@ class OrderControllerPOS extends Controller
         return response()->json(['message' => 'There is no item to order.'], 400);
       }
 
+      $today = date("Ymd");
+      $rand = strtoupper(substr(uniqid(sha1(time())),0,4));
+      $unique = $today . $rand;
+
       $cartDetails = CartDetail::where('cart_id', '=', $cart->id)->get();
       $order = new Order;
-      $order->invoice_no = uniqid();
+      $order->invoice_no = $unique();
       $order->user_id = $cart->user_id;
       $order->subtotal = $cart->subtotal;
       $order->tax = $cart->tax;

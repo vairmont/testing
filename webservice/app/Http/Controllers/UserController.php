@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\User;
 use App\Agen;
+use App\Customer;
 use App\Rating;
 use Hash;
 use Auth;
