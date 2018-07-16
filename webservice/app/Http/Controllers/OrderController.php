@@ -400,7 +400,7 @@ class OrderController extends Controller
       $history->user_id = $request->get('user')->id;
       $history->amount = $commission_netto;
       $history->saldo_akhir = $agen->wanee + $commission_netto;
-      $history->reason = 'Komisi agen';
+      $history->reason = 'Komisi Agen';
       $history->save();
 
       $komisi = Agen::where('agen.identifier', '=', $request->get('user')->id)
