@@ -216,12 +216,11 @@ class OrderControllerCustomer extends Controller
       CartDetail::where('cart_id',$cart->id)->delete();
       Cart::where('id',$cart->id)->delete();
 
+      #send push notif ke agen
+      $this->_sendPushNotification($order->agen_id, "Order Baru", "Ada order baru.");
+
       return response()->json(['data' => [], 'message' => ['OK']]);
 
-      $fcm_dealer = FCM::where('user_id', $orderbillingdetail->identifier)->select('fcm_token')->get();
-
-      #send push notif ke agen
-      $this->_sendPushNotification($agencust->agen_id, "Order Baru", "Ada order baru.");
 
     }
 
