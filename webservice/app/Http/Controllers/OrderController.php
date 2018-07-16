@@ -389,7 +389,7 @@ class OrderController extends Controller
       $commission->agen_id = $order->agen_id;
       $commission->commission_pph = $commission_pph;
       if($incentiveDetails->price_for_customer < 55000){
-        $commision->commission_netto = $commission_netto + 5000
+        $commision->commission_netto = $commission_netto + 5000;
       }
       else{
       $commission->commission_netto = $commission_netto;
