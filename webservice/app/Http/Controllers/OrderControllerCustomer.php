@@ -162,7 +162,7 @@ class OrderControllerCustomer extends Controller
       $unique = $today . $rand;
 
       $order = new Order;
-      $order->invoice_no = $unique();
+      $order->invoice_no = $unique;
       $order->user_id = $cart->user_id;
 
       $order->subtotal = $cart->subtotal;
