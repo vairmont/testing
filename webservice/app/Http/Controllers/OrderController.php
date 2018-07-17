@@ -383,12 +383,15 @@ class OrderController extends Controller
       $commission_pph = ($incentive + $margin) * $this->pph;
       $commission_netto = ($incentive + $margin) - $commission_pph;
      
-
+      $prices = OrderDetail::Join('incentive_category', 'order_detail.category_id', '=', 'incentive_category.id')
+                    ->where('order_id', '=', $order->id)
+                    ->select('price_for_customer', 'incentive_category.rate', 'order_detail.qty')
+                    ->get();
       $commission = new Commission;
       $commission->order_id = $order->id;
       $commission->agen_id = $order->agen_id;
       $commission->commission_pph = $commission_pph;
-      if($incentiveDetails->price_for_customer < 55000){
+      if($prices->price_for_customer < 55000){
         $commision->commission_netto = $commission_netto + 5000;
       }
       else{
