@@ -76,7 +76,7 @@ class ChatController extends Controller
 
     protected function _sendPushNotification($user_id, $title, $body) {
         // API access key from Google API's Console
-        define('API_ACCESS_KEY', ' ');
+        define('API_ACCESS_KEY', 'AIzaSyBdH8VG8-7pX0mJ3FSVo-cthDuCtJiSobY ');
 
         $registrationIds = array();
 
