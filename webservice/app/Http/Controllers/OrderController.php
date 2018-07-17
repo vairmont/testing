@@ -390,7 +390,7 @@ class OrderController extends Controller
       $commission->commission_pph = $commission_pph;
 
       if($prices < 55000){
-        $commision->commission_netto = $commission_netto + 5000;
+        $commission->commission_netto = $commission_netto + 5000;
       }
 
       else{
