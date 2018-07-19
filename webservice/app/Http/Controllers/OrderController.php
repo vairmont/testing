@@ -323,6 +323,7 @@ class OrderController extends Controller
       $order->status = OrderStatus::ASSIGNED;
       $order->save();
 
+      $this->_sendPushNotification($order->user_id, "Order", "Order anda telah diambil oleh agen.");
       return response()->json(['message' => 'Order berhasil anda ambil.'], 201);
 
     }
