@@ -247,7 +247,7 @@ class OrderControllerPOS extends Controller
       }
 
       $this->_sendPushNotification($order->user_id, "Order Status", "Order sedang di antar oleh agen.");
-      return response()->json(['data' => $order],200);
+      return response()->json(['data' => [$order], 'message' => ['Saldo anda kurang']],200);
 
       // return response()->json(['message' => 'Order has been completed.'], 201);
 
