@@ -196,7 +196,9 @@ class OrderControllerPOS extends Controller
 
       #change order status
       $order = Order::whereId($request['order_id'])->first();
-
+      if($order->status == OrderStatus::DELIVERY ){
+          return response()->json(['data' => [], 'message' => ['Transaksi sudah pernah diproses']]);
+      }
       $amount = $order->total;
 
       if($order->agen_id != 0)
