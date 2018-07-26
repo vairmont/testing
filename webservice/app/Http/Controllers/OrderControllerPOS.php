@@ -182,7 +182,7 @@ class OrderControllerPOS extends Controller
     }
 
     public function finalizeOrder(Request $request) {
-      
+
       $validator = Validator::make($request->all(),[
         'order_id' => 'required|numeric|exists:order,id',
         'store_id' => 'required'
@@ -247,7 +247,7 @@ class OrderControllerPOS extends Controller
       }
 
       $this->_sendPushNotification($order->user_id, "Order Status", "Order sedang di antar oleh agen.");
-      return response()->json(['data' => [$order], 'message' => ['Saldo anda kurang']],200);
+      return response()->json(['data' => [$order], 'message' => ['Transaksi Berhasil']],200);
 
       // return response()->json(['message' => 'Order has been completed.'], 201);
 
