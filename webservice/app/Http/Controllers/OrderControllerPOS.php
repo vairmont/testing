@@ -182,7 +182,7 @@ class OrderControllerPOS extends Controller
     }
 
     public function finalizeOrder(Request $request) {
-
+      return $request->store_id;
       $validator = Validator::make($request->all(),[
         'order_id' => 'required|numeric|exists:order,id',
         'store_id' => 'required'
