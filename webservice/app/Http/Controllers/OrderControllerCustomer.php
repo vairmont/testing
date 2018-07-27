@@ -185,8 +185,14 @@ class OrderControllerCustomer extends Controller
         $orderDetail->product_id = $product->id;
         $orderDetail->category_id = $product->category_id;
         $orderDetail->qty = $cartDetail->qty;
+        if($cartDetail->qty >= 3){
+          $orderDetail->price_for_customer = $product->price_for_customer * 0.98;
+          $orderDetail->price_for_agen = $product->price_for_agen;
+        }
+        else{
         $orderDetail->price_for_customer = $product->price_for_customer;
         $orderDetail->price_for_agen = $product->price_for_agen;
+        }
         $orderDetail->save();
 
         $items[] = [
