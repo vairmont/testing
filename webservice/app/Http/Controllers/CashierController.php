@@ -32,10 +32,14 @@ class CashierController extends Controller {
     $cash_id = $request['cash_id'];
 
     $sales = Order::where('user_id','=',$user_id)
-                    ->where('status','=','7')
+                    ->where('type','=','sembako')
                     ->whereDate('updated_at', Carbon::now()->toDateString())
                     ->get();
 
+    $topup = Order::where('user_id', '=', $user_id)
+                    ->where('type', '=', 'Topup')
+                    ->whereDate('updated_at', Carbon::now()->toDateString())
+                    ->get();
     $salestotal = 0;
 
     foreach ($sales as $sale) { 
