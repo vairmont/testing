@@ -163,7 +163,6 @@ class OrderControllerCustomer extends Controller
       $order = new Order;
       $order->invoice_no = $unique;
       $order->user_id = $cart->user_id;
-
       $order->subtotal = $cart->subtotal;
       $order->tax = $cart->tax;
       $order->discount = 0;
