@@ -46,7 +46,7 @@ class CashierController extends Controller {
     $cash->user_id = $user_id;
     $cash->sales = $salestotal;
     $cash->cash_out = $request['cash_out'];
-    // $cash->closing_cash = ($cash->starting_cash + $salestotal)-$cash_out;
+    $cash->reason = $request->reason;
     $cash->closing_cash = $request['closing_cash'];
     $cash->save();
 
