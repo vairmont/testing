@@ -54,6 +54,20 @@ class OrderControllerPOS extends Controller
                     ->select('agen.wanee')
                     ->first();
 
+    $today = date("Ymd");
+      $rand = strtoupper(substr(uniqid(sha1(time())),0,4));
+      $unique = $today . $rand;
+
+    $order = new Order;
+    $order->status = OrderStatus::COMPLETED;
+    $order->invoice_no = $unique;
+    $order->user_id = $request->get('user')->id)->first();;
+    $order->subtotal = $amount->amount;
+    $order->discount = 0;
+    $order->type = 'Topup';
+    $order->total = $amount->amount;
+    $order->save();
+
     $history = new WaneeHistory;
     $history->user_id = $request->get('user')->id;
     $history->amount = $amount;
@@ -61,6 +75,8 @@ class OrderControllerPOS extends Controller
     $history->reason = 'Topup Wanee';
     $history->save();               
 
+    #send push notif ke agen
+      $this->_sendPushNotification($agen->identifier, "Topup Berhasil", "Wanee anda berhasil ditopup.");
     return response()->json(['data' => $poin, 'message' => ['OK']]);         
    }
 
@@ -101,6 +117,7 @@ class OrderControllerPOS extends Controller
 
       $cartDetails = CartDetail::where('cart_id', '=', $cart->id)->get();
       $order = new Order;
+      $order->status = OrderStatus::DELIVERY;
       $order->invoice_no = $unique;
       $order->user_id = $cart->user_id;
       $order->subtotal = $cart->subtotal;
