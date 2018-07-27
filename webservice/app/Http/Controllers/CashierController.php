@@ -19,6 +19,7 @@ class CashierController extends Controller {
     $cash->user_id = $user_id;
     $cash->starting_cash = $request['starting_cash'];
     $cash->sales = 0;
+    $cash->topup = 0;
     $cash->cash_out = 0;
     $cash->closing_cash = 0;
     $cash->save();
@@ -36,25 +37,30 @@ class CashierController extends Controller {
                     ->whereDate('updated_at', Carbon::now()->toDateString())
                     ->get();
 
-    $topup = Order::where('user_id', '=', $user_id)
+    $topups = Order::where('user_id', '=', $user_id)
                     ->where('type', '=', 'Topup')
                     ->whereDate('updated_at', Carbon::now()->toDateString())
                     ->get();
     $salestotal = 0;
+    $topupstotal = 0;
 
     foreach ($sales as $sale) { 
         $salestotal += $sale->total;
+    }
+    foreach ($topups as $topup) {
+        $topupstotal += $topup->total;
     }
 
     $cash = Cash::find($cash_id);
     $cash->user_id = $user_id;
     $cash->sales = $salestotal;
+    $cash->topup = $topupstotal;
     $cash->cash_out = $request['cash_out'];
     $cash->reason = $request->reason;
     $cash->closing_cash = $request['closing_cash'];
     $cash->save();
 
-    return response()->json(['data' => [], 'message' => ['OK']]);
+    return response()->json(['data' => [], $sales, $topup, 'message' => ['OK']]);
   }
 
   public function getCash(Request $request) {
