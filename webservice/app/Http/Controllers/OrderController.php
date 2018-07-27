@@ -376,11 +376,18 @@ class OrderController extends Controller
       $prices = 0;
 
       foreach ($incentiveDetails as $detail) {
-
-        $incentive += $detail->price_for_customer * $detail->qty * $detail->rate / 100;
-        $margin += $detail->price_for_customer * $detail->qty * $this->marginRate;
-        $prices += $detail->price_for_customer * $detail->qty;
-      }
+        if($detail->qty >= 3){
+          $prices += ($detail->price_for_customer * $detail->qty) - 0.98;
+          $margin += ($detail->price_for_customer * $detail->qty  - 0.98) * $this->marginRate;
+          $incentive += ($detail->price_for_customer * $detail->qty  - 0.98) * $this->marginRate * $detail->rate / 100;
+        }
+        else{
+          $prices += $detail->price_for_customer * $detail->qty;
+          $incentive += $detail->price_for_customer * $detail->qty * $detail->rate / 100;
+          $margin += $detail->price_for_customer * $detail->qty * $this->marginRate;
+        }        
+        
+       }
 
       $commission_pph = ($incentive + $margin) * $this->pph;
       $commission_netto = ($incentive + $margin) - $commission_pph;
