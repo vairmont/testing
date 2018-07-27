@@ -12,6 +12,7 @@ use App\OrderBillingDetail;
 use App\Product;
 use App\User;
 use App\Agen;
+use App\WaneeHistory;
 use App\VoucherUse;
 use App\Voucher;
 use App\Cart;
