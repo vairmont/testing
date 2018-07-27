@@ -65,7 +65,7 @@ class OrderControllerPOS extends Controller
     $order->subtotal = $amount;
     $order->discount = 0;
     $order->type = 'Topup';
-    $order->total = $amount->amount;
+    $order->total = $amount;
     $order->save();
 
     $history = new WaneeHistory;
