@@ -62,7 +62,7 @@ class OrderControllerPOS extends Controller
     $order->status = OrderStatus::COMPLETED;
     $order->invoice_no = $unique;
     $order->user_id = $request->get('user')->id;
-    $order->subtotal = $amount->amount;
+    $order->subtotal = $amount;
     $order->discount = 0;
     $order->type = 'Topup';
     $order->total = $amount->amount;
