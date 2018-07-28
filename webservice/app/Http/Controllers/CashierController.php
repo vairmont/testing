@@ -20,7 +20,6 @@ class CashierController extends Controller {
     $cash->starting_cash = $request['starting_cash'];
     $cash->sales = 0;
     $cash->topup = 0;
-    $cash->cash_out = 0;
     $cash->closing_cash = 0;
     $cash->save();
 
