@@ -20,7 +20,6 @@ class CashierController extends Controller {
     $cash->starting_cash = $request['starting_cash'];
     $cash->sales = 0;
     $cash->topup = 0;
-    $cash->cash_out = 0;
     $cash->closing_cash = 0;
     $cash->save();
 
@@ -50,7 +49,7 @@ class CashierController extends Controller {
     foreach ($topups as $topup) {
         $topupstotal += $topup->total;
     }
-    return $topupstotal;
+
     $starting = Cash::where('user_id', '=', $user_id)
     ->whereDate('updated_at', Carbon::now()->toDateString())
     ->select('starting_cash')
