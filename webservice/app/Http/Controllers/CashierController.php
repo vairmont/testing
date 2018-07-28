@@ -54,7 +54,7 @@ class CashierController extends Controller {
     ->whereDate('updated_at', Carbon::now()->toDateString())
     ->select('starting_cash')
     ->first();
-    return $starting;
+    return $starting->starting_cash;
 
     $cash = Cash::find($cash_id);
     $cash->user_id = $user_id;
