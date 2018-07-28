@@ -59,8 +59,7 @@ class OrderControllerCustomer extends Controller
     public function orderDone(Request $request) {
 
       $orders = Order::join('order_billing_detail', 'order_billing_detail.order_id', '=', 'order.id')
-      ->join('agen', 'agen.identifier', '=', 'order.agen_id')
-      ->where('order.user_id', '=', $request->get('user')->id)
+      ->where('user_id', '=', $request->get('user')->id)
       ->where('status', '=', 7)
       ->select('order.*','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.lat','order_billing_detail.long','order_billing_detail.customer_address2', 'order_billing_detail.notes as order_notes')
       ->get();
@@ -112,8 +111,8 @@ class OrderControllerCustomer extends Controller
 
     public function create(Request $request) {
      
-            $latFrom = deg2rad(-6.243009);
-            $lonFrom = deg2rad(106.629822);
+            $latFrom = deg2rad(-6.108882);
+            $lonFrom = deg2rad(106.171492);
             $earthRadius = 6371; // in km
 
             $latTo = deg2rad($request->lat);
@@ -157,10 +156,13 @@ class OrderControllerCustomer extends Controller
       //     $nextInvoiceNumber = $expNum[0].'-'. $expNum[1]+1;
       // }
 
-      $order = new Order;
-      $order->invoice_no = uniqid();
-      $order->user_id = $cart->user_id;
+      $today = date("Ymd");
+      $rand = strtoupper(substr(uniqid(sha1(time())),0,4));
+      $unique = $today . $rand;
 
+      $order = new Order;
+      $order->invoice_no = $unique;
+      $order->user_id = $cart->user_id;
       $order->subtotal = $cart->subtotal;
       $order->tax = $cart->tax;
       $order->discount = 0;
@@ -182,8 +184,14 @@ class OrderControllerCustomer extends Controller
         $orderDetail->product_id = $product->id;
         $orderDetail->category_id = $product->category_id;
         $orderDetail->qty = $cartDetail->qty;
+        if($cartDetail->qty >= 3){
+          $orderDetail->price_for_customer = $product->price_for_customer * 0.98;
+          $orderDetail->price_for_agen = $product->price_for_agen;
+        }
+        else{
         $orderDetail->price_for_customer = $product->price_for_customer;
         $orderDetail->price_for_agen = $product->price_for_agen;
+        }
         $orderDetail->save();
 
         $items[] = [
@@ -213,12 +221,11 @@ class OrderControllerCustomer extends Controller
       CartDetail::where('cart_id',$cart->id)->delete();
       Cart::where('id',$cart->id)->delete();
 
+      #send push notif ke agen
+      $this->_sendPushNotification($order->agen_id, "Order Baru", "Ada order baru.");
+
       return response()->json(['data' => [], 'message' => ['OK']]);
 
-      $fcm_dealer = FCM::where('user_id', $orderbillingdetail->identifier)->select('fcm_token')->get();
-
-      #send push notif ke agen
-      $this->_sendPushNotification($agencust->agen_id, "Order Baru", "Ada order baru.");
 
     }
 
@@ -246,7 +253,7 @@ class OrderControllerCustomer extends Controller
     
     protected function _sendPushNotification($user_id, $title, $body) {
         // API access key from Google API's Console
-        define('API_ACCESS_KEY', 'AIzaSyBdH8VG8-7pX0mJ3FSVo-cthDuCtJiSobY');
+        define('API_ACCESS_KEY', 'AAAA6cPylp8:APA91bFB5i1sBcapzkGUd23jb8V7ojwjnoonnBlX317_IeVt-jxk5_WjSNHlhVrVn882ZcTWH4Nn5KOfr6onBetNT4PoVVn7olWyA7uSCXiy1DY7KVPEdYPgtNEkMfl8nhgvcYefNcxm');
 
         $registrationIds = array();
 

@@ -34,6 +34,7 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
   Route::post('/token/add', 'FCMTokenController@addToken');
 
   Route::get('/profile', 'UserController@getProfile');
+  Route::post('/profile', 'UserController@editProfile');
   Route::post('/changePassword', 'UserController@changePassword');
 
   Route::get('/products', 'ProductController@index');
@@ -70,6 +71,7 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
   Route::post('/cashier/create', 'CashierController@createCashier');
   Route::post('/cashier/get', 'CashierController@getCash');
   Route::post('/cashier/close', 'CashierController@closingCashier');
+  Route::post('/cashier/print', 'CashierController@printClosing');
 
   Route::get('/order/pending', 'OrderController@orderPending');
   Route::get('/order/process', 'OrderController@orderProcess');

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\User;
 use App\Agen;
+use App\Customer;
 use App\Rating;
 use Hash;
 use Auth;
@@ -33,6 +34,19 @@ class UserController extends Controller
 
             return response()->json(['data' => [], 'message' => ['OK']]);
         }
+    }
+
+    public function editProfile(Request $request)
+    {
+        $data = [
+        'name' => $request->name,
+        'address' => $request->address
+        ];
+
+        $save = Customer::where('identifier', '=', $request->get('user')->id)
+        ->update($data);
+
+        return response()->json(['message' => ['OK']]);        
     }
 
 	public function getProfile(Request $request)

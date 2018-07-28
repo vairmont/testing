@@ -22,7 +22,7 @@ class ProductController extends Controller
     ->join('stock', 'product.id', '=', 'stock.product_id')
     ->where('stock.quantity', '>', 0)
     ->select(
-      DB::raw('product.id , product.product_name , product.category_id, product_category.name as category_name, product.price_for_customer as price, incentive_category.rate , product.img_url')
+      DB::raw('product.id , product.product_name , product.category_id, product_category.name as category_name, product.price_for_customer as price, incentive_category.rate , product.img_url, product.description')
       );
 
     if(isset($request->category_id) && !empty($request->category_id)) {

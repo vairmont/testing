@@ -323,6 +323,7 @@ class OrderController extends Controller
       $order->status = OrderStatus::ASSIGNED;
       $order->save();
 
+      $this->_sendPushNotification($order->user_id, "Order", "Order anda telah diambil oleh agen.");
       return response()->json(['message' => 'Order berhasil anda ambil.'], 201);
 
     }
@@ -372,23 +373,41 @@ class OrderController extends Controller
 
       $incentive = 0;
       $margin = 0;
+      $prices = 0;
 
       foreach ($incentiveDetails as $detail) {
-
-        $incentive += $detail->price_for_customer * $detail->qty * $detail->rate / 100;
-        $margin += $detail->price_for_customer * $detail->qty * $this->marginRate;
-
-      }
+        if($detail->qty >= 3){
+          $prices += ($detail->price_for_customer * $detail->qty) - 0.98;
+          $margin += ($detail->price_for_customer * $detail->qty  - 0.98) * $this->marginRate;
+          $incentive += ($detail->price_for_customer * $detail->qty  - 0.98) * $this->marginRate * $detail->rate / 100;
+        }
+        else{
+          $prices += $detail->price_for_customer * $detail->qty;
+          $incentive += $detail->price_for_customer * $detail->qty * $detail->rate / 100;
+          $margin += $detail->price_for_customer * $detail->qty * $this->marginRate;
+        }        
+        
+       }
 
       $commission_pph = ($incentive + $margin) * $this->pph;
       $commission_netto = ($incentive + $margin) - $commission_pph;
-
+      
       $commission = new Commission;
       $commission->order_id = $order->id;
       $commission->agen_id = $order->agen_id;
-      $commission->commission_pph = $commission_pph;
-      $commission->commission_netto = $commission_netto;
+      if($prices < 55000){
+      $commission->incentive = $incentive + 5000;
+      }
+      else{
       $commission->incentive = $incentive;
+      }
+      $commission->commission_pph = $commission_pph;
+      if($prices < 55000){
+        $commission->commission_netto = $commission_netto + 5000; 
+      }
+      else{     
+      $commission->commission_netto = $commission_netto;
+      }   
       $commission->margin_penjualan = $margin;
       $commission->save();
 
@@ -400,7 +419,7 @@ class OrderController extends Controller
       $history->user_id = $request->get('user')->id;
       $history->amount = $commission_netto;
       $history->saldo_akhir = $agen->wanee + $commission_netto;
-      $history->reason = 'Komisi agen';
+      $history->reason = 'Komisi Agen';
       $history->save();
 
       $komisi = Agen::where('agen.identifier', '=', $request->get('user')->id)
@@ -420,7 +439,7 @@ class OrderController extends Controller
 
     protected function _sendPushNotification($user_id, $title, $body) {
         // API access key from Google API's Console
-        define('API_ACCESS_KEY', 'AIzaSyBdH8VG8-7pX0mJ3FSVo-cthDuCtJiSobY');
+        define('API_ACCESS_KEY', 'AAAA6cPylp8:APA91bFB5i1sBcapzkGUd23jb8V7ojwjnoonnBlX317_IeVt-jxk5_WjSNHlhVrVn882ZcTWH4Nn5KOfr6onBetNT4PoVVn7olWyA7uSCXiy1DY7KVPEdYPgtNEkMfl8nhgvcYefNcxm');
 
         $registrationIds = array();
 

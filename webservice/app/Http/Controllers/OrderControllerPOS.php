@@ -12,6 +12,7 @@ use App\OrderBillingDetail;
 use App\Product;
 use App\User;
 use App\Agen;
+use App\WaneeHistory;
 use App\VoucherUse;
 use App\Voucher;
 use App\Cart;
@@ -54,6 +55,20 @@ class OrderControllerPOS extends Controller
                     ->select('agen.wanee')
                     ->first();
 
+    $today = date("Ymd");
+      $rand = strtoupper(substr(uniqid(sha1(time())),0,4));
+      $unique = $today . $rand;
+
+    $order = new Order;
+    $order->status = OrderStatus::COMPLETED;
+    $order->invoice_no = $unique;
+    $order->user_id = $request->get('user')->id;
+    $order->subtotal = $amount;
+    $order->discount = 0;
+    $order->type = 'Topup';
+    $order->total = $amount;
+    $order->save();
+
     $history = new WaneeHistory;
     $history->user_id = $request->get('user')->id;
     $history->amount = $amount;
@@ -61,6 +76,8 @@ class OrderControllerPOS extends Controller
     $history->reason = 'Topup Wanee';
     $history->save();               
 
+    #send push notif ke agen
+      $this->_sendPushNotification($agen->identifier, "Topup Berhasil", "Wanee anda berhasil ditopup.");
     return response()->json(['data' => $poin, 'message' => ['OK']]);         
    }
 
@@ -95,9 +112,14 @@ class OrderControllerPOS extends Controller
         return response()->json(['message' => 'There is no item to order.'], 400);
       }
 
+      $today = date("Ymd");
+      $rand = strtoupper(substr(uniqid(sha1(time())),0,4));
+      $unique = $today . $rand;
+
       $cartDetails = CartDetail::where('cart_id', '=', $cart->id)->get();
       $order = new Order;
-      $order->invoice_no = uniqid();
+      $order->status = OrderStatus::DELIVERY;
+      $order->invoice_no = $unique;
       $order->user_id = $cart->user_id;
       $order->subtotal = $cart->subtotal;
       $order->tax = $cart->tax;
@@ -161,19 +183,19 @@ class OrderControllerPOS extends Controller
 
     public function print(Request $request)
     {
-      $header = "\n\n\n\n\n\n\n\n\n\n Grosir One Receipt\n\t--------------\n\n";
+      $header = "\n\n\n\n\n Grosir One Receipt \n \x1b\x61\x01 --------------------\n\n";
       $order = Order::whereId($request['order_id'])->first();
       $orderDetail = OrderDetail::where('order_id','=',$request['order_id'])
       ->get();
       $items = "" ;
       foreach ($orderDetail as $od) {
         $product = Product::where('id','=',$od->product_id)->first();
-        $items = $items . $product->product_name . "\t\t" . $od->price_for_customer . "\n";
+        $items = $items . $product->alias. "\t\t x" . $od->qty . "\t\t\t". $od->price_for_customer . "\n";
       }
 
       $footer = "\n\n\n\n\n\n Total \t = ".$order->total."\n\n\n Terima Kasih Telah berbelanja\n\n\n\n";
 
-      $print = $header . $items . $footer;
+      $print = $header . "\x1b\x61\x01" . $items . $footer;
       return response()->json(['data' => $print],200);
     }
 
@@ -192,7 +214,12 @@ class OrderControllerPOS extends Controller
 
       #change order status
       $order = Order::whereId($request['order_id'])->first();
-
+      if($order->status == OrderStatus::COMPLETED){
+          return response()->json(['data' => [], 'message' => ['Transaksi sudah pernah diproses']]);
+      }
+      if($order->status == OrderStatus::DELIVERY ){
+          return response()->json(['data' => [], 'message' => ['Transaksi sudah pernah diproses']]);
+      }
       $amount = $order->total;
 
       if($order->agen_id != 0)
@@ -242,10 +269,55 @@ class OrderControllerPOS extends Controller
 
       }
 
-
-      return response()->json(['data' => $order],200);
+      $this->_sendPushNotification($order->user_id, "Order Status", "Order sedang di antar oleh agen.");
+      return response()->json(['data' => [$order], 'message' => ['Transaksi Berhasil']],200);
 
       // return response()->json(['message' => 'Order has been completed.'], 201);
 
     }
+
+    protected function _sendPushNotification($user_id, $title, $body) {
+        // API access key from Google API's Console
+        define('API_ACCESS_KEY', 'AAAA6cPylp8:APA91bFB5i1sBcapzkGUd23jb8V7ojwjnoonnBlX317_IeVt-jxk5_WjSNHlhVrVn882ZcTWH4Nn5KOfr6onBetNT4PoVVn7olWyA7uSCXiy1DY7KVPEdYPgtNEkMfl8nhgvcYefNcxm');
+
+        $registrationIds = array();
+
+        $recipients = FCM::where('user_id',$user_id)->select('fcm_token')->get();
+
+        foreach ($recipients as $recipient) {
+            array_push($registrationIds, $recipient->fcm_token);
+        }
+
+        $msg = array
+        (
+            'title' => $title,
+            'body' => $body,
+            'vibrate' => "1",
+            'sound' => 'default',
+            'badge' => "1"
+        );
+
+        $fields = array
+        (
+            'registration_ids'  => $registrationIds,
+            'notification'  => $msg,
+            'priority' => 'high'
+        );
+         
+        $headers = array
+        (
+            'Authorization: key=' . API_ACCESS_KEY,
+            'Content-Type: application/json'
+        );
+         
+        $ch = curl_init();
+        curl_setopt($ch,CURLOPT_URL, 'https://fcm.googleapis.com/fcm/send');
+        curl_setopt($ch,CURLOPT_POST, true);
+        curl_setopt($ch,CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch,CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch,CURLOPT_POSTFIELDS, json_encode($fields));
+        $result = curl_exec($ch);
+        curl_close($ch);
+      }
 }
