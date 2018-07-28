@@ -49,11 +49,6 @@ class CashierController extends Controller {
     foreach ($topups as $topup) {
         $topupstotal += $topup->total;
     }
-
-    $starting = Cash::where('user_id', '=', $user_id)
-    ->whereDate('updated_at', Carbon::now()->toDateString())
-    ->select('starting_cash')
-    ->first();
     
     $cash = Cash::find($cash_id);
     $cash->user_id = $user_id;
@@ -64,6 +59,24 @@ class CashierController extends Controller {
 
     return response()->json(['data' => [$sales, $topups, 'message' => ['OK']]]);
   }
+
+  public function printClosing(Request $request)
+    {
+      $header = "\n\n\n\n\n\n\n\n\n\n Closing Kasir\n\t--------------\n\n";
+      $cash = Cash::whereId($request['cash_id'])
+      ->get();
+
+      $items = $cash->starting_cash . "\n"
+               $cash->sales . "\n"
+               $cash->topup . "\n"
+               $cash->closing_cash . "\n" 
+      }
+
+      $footer = "\n\n\n\n\n\n Terima Kasih";
+
+      $print = $header . $items . $footer;
+      return response()->json(['data' => $print],200);
+    }
 
   public function getCash(Request $request) {
     $user_id = $request->get('user')->id;
