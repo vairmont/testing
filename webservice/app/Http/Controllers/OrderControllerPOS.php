@@ -183,19 +183,19 @@ class OrderControllerPOS extends Controller
 
     public function print(Request $request)
     {
-      $header = "\n\n\n\n\n\n\n\n\n\n Grosir One Receipt\n\t--------------\n\n";
+      $header = "\n\n\n\n\n Grosir One Receipt \n \x1b\x61\x01 --------------------\n\n";
       $order = Order::whereId($request['order_id'])->first();
       $orderDetail = OrderDetail::where('order_id','=',$request['order_id'])
       ->get();
       $items = "" ;
       foreach ($orderDetail as $od) {
         $product = Product::where('id','=',$od->product_id)->first();
-        $items = $items . $product->product_name . "\t\t" . $od->price_for_customer . "\n";
+        $items = $items . $product->alias. "\t\t x" . $od->qty . "\t\t\t". $od->price_for_customer . "\n";
       }
 
       $footer = "\n\n\n\n\n\n Total \t = ".$order->total."\n\n\n Terima Kasih Telah berbelanja\n\n\n\n";
 
-      $print = $header . $items . $footer;
+      $print = $header . "\x1b\x61\x01" . $items . $footer;
       return response()->json(['data' => $print],200);
     }
 
@@ -214,6 +214,9 @@ class OrderControllerPOS extends Controller
 
       #change order status
       $order = Order::whereId($request['order_id'])->first();
+      if($order->status == OrderStatus::COMPLETED){
+          return response()->json(['data' => [], 'message' => ['Transaksi sudah pernah diproses']]);
+      }
       if($order->status == OrderStatus::DELIVERY ){
           return response()->json(['data' => [], 'message' => ['Transaksi sudah pernah diproses']]);
       }
