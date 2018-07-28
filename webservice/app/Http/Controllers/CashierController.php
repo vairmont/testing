@@ -60,7 +60,7 @@ class CashierController extends Controller {
     $cash->closing_cash = $request['closing_cash'];
     $cash->save();
 
-    return response()->json(['data' => [], $sales, $topup, 'message' => ['OK']]);
+    return response()->json(['data' => [], $sales, $topups, 'message' => ['OK']]);
   }
 
   public function getCash(Request $request) {
