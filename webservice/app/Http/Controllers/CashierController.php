@@ -50,11 +50,12 @@ class CashierController extends Controller {
     foreach ($topups as $topup) {
         $topupstotal += $topup->total;
     }
+
+    return $salestotal;
     $starting = Cash::where('user_id', '=', $user_id)
     ->whereDate('updated_at', Carbon::now()->toDateString())
     ->select('starting_cash')
     ->first();
-    return $starting->starting_cash;
 
     $cash = Cash::find($cash_id);
     $cash->user_id = $user_id;
