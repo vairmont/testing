@@ -59,8 +59,7 @@ class CashierController extends Controller {
     $cash->user_id = $user_id;
     $cash->sales = $salestotal;
     $cash->topup = $topupstotal;
-    $cash->reason = $request->reason;
-    $cash->closing_cash = $salestotal + $topupstotal + $starting;
+    $cash->closing_cash = (int)$salestotal + $topupstotal + $starting;
     $cash->save();
 
     return response()->json(['data' => [$sales, $topups, 'message' => ['OK']]]);
