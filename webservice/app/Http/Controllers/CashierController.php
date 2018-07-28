@@ -55,13 +55,11 @@ class CashierController extends Controller {
     ->select('starting_cash')
     ->first();
 
-    $closing = $starting->starting_cash + $salestotal + $topupstotal;
-
     $cash = Cash::find($cash_id);
     $cash->user_id = $user_id;
     $cash->sales = $salestotal;
     $cash->topup = $topupstotal;
-    $cash->closing_cash = $closing;
+    $cash->closing_cash = $starting->starting_cash + $salestotal + $topupstotal;
     $cash->save();
 
     return response()->json(['data' => [$sales, $topups, 'message' => ['OK']]]);
