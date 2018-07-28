@@ -50,14 +50,17 @@ class CashierController extends Controller {
     foreach ($topups as $topup) {
         $topupstotal += $topup->total;
     }
+    $starting = Cash::where('user_id', '=', $user_id)
+    ->whereDate('updated_at', Carbon::now()->toDateString())
+    ->select('starting_cash')
+    ->first();
 
     $cash = Cash::find($cash_id);
     $cash->user_id = $user_id;
     $cash->sales = $salestotal;
     $cash->topup = $topupstotal;
-    $cash->cash_out = $request['cash_out'];
     $cash->reason = $request->reason;
-    $cash->closing_cash = $request['closing_cash'];
+    $cash->closing_cash = $salestotal + $topupstotal + $starting;
     $cash->save();
 
     return response()->json(['data' => [$sales, $topups, 'message' => ['OK']]]);
