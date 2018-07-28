@@ -15,6 +15,7 @@ class OrderStatus {
   const DELIVERY = 6;
   const REASSIGN = 1;
   const COMPLETED = 7;
+  const CASHDONE = 9;
   const CANCELLED = 8;
 
 }

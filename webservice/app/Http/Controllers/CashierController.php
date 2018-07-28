@@ -33,20 +33,26 @@ class CashierController extends Controller {
 
     $sales = Order::where('user_id','=',$user_id)
                     ->where('type','=','sembako')
+                    ->where('status','!=',9)
                     ->whereDate('updated_at', Carbon::now()->toDateString())
                     ->get();
 
     $topups = Order::where('user_id', '=', $user_id)
                     ->where('type', '=', 'Topup')
+                    ->where('status','!=',9)
                     ->whereDate('updated_at', Carbon::now()->toDateString())
                     ->get();
     $salestotal = 0;
     $topupstotal = 0;
 
     foreach ($sales as $sale) { 
+        $sales->status = OrderStatus::CASHDONE;
+        $sales->save();
         $salestotal += $sale->total;
     }
     foreach ($topups as $topup) {
+        $topup->status = OrderStatus::CASHDONE;
+        $topup->save();
         $topupstotal += $topup->total;
     }
     
@@ -57,20 +63,19 @@ class CashierController extends Controller {
     $cash->closing_cash = $cash->starting_cash + $salestotal + $topupstotal;
     $cash->save();
 
-    return response()->json(['data' => [$sales, $topups, 'message' => ['OK']]]);
+    return response()->json(['data' => [], 'message' => ['OK']]);
   }
-
+  
   public function printClosing(Request $request)
     {
-      $header = "\n\n\n\n\n\n\n\n\n\n Closing Kasir\n\t--------------\n\n";
-      $cash = Cash::whereId($request['cash_id'])
-      ->get();
+      $cash = Cash::where('id','=',$request['cash_id'])->first();
 
-      $items = $cash->starting_cash . "\n"
-               $cash->sales . "\n"
-               $cash->topup . "\n"
-               $cash->closing_cash . "\n" 
-      }
+      $header = "\n\n\n\n\n\n\n\n\n\n Closing Kasir\n\t--------------\n\n";
+
+      $items = $cash->starting_cash . "\n" .
+               $cash->sales . "\n" .
+               $cash->topup . "\n" .
+               $cash->closing_cash . "\n";
 
       $footer = "\n\n\n\n\n\n Terima Kasih";
 
