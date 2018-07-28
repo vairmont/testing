@@ -55,7 +55,7 @@ class CashierController extends Controller {
     ->select('starting_cash')
     ->first();
 
-    $closing = $starting;
+    $closing = $salestotal + $topupstotal + $starting->starting_cash;
 
     $cash = Cash::find($cash_id);
     $cash->user_id = $user_id;
