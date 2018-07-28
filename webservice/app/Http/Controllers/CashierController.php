@@ -54,12 +54,12 @@ class CashierController extends Controller {
     ->whereDate('updated_at', Carbon::now()->toDateString())
     ->select('starting_cash')
     ->first();
-
+    
     $cash = Cash::find($cash_id);
     $cash->user_id = $user_id;
     $cash->sales = $salestotal;
     $cash->topup = $topupstotal;
-    $cash->closing_cash = $starting->starting_cash + $salestotal + $topupstotal;
+    $cash->closing_cash = $cash->starting_cash + $salestotal + $topupstotal;
     $cash->save();
 
     return response()->json(['data' => [$sales, $topups, 'message' => ['OK']]]);
