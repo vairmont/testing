@@ -40,13 +40,15 @@
                         <h3 class="panel-title">Please Sign In</h3>
                     </div>
                     <div class="panel-body">
-                        <form role="form">
+         
+                        <form form class="form-horizontal" method="GET" action="{{url('/dologin')}}" >
+                        {{csrf_field()}}
                             <fieldset>
                                 <div class="form-group">
-                                    <input class="form-control" placeholder="E-mail" name="email" type="email" autofocus>
+                                    <input class="form-control" placeholder="Phone" name="phone" >
                                 </div>
                                 <div class="form-group">
-                                    <input class="form-control" placeholder="Password" name="password" type="password" value="">
+                                    <input class="form-control" placeholder="Password" name="password"  value="">
                                 </div>
                                 <div class="checkbox">
                                     <label>
@@ -54,8 +56,9 @@
                                     </label>
                                 </div>
                                 <!-- Change this to a button or input when using this as a form -->
-                                <a href="dashboard" class="btn btn-lg btn-success btn-block">Login</a>
+                                <button type="submit" class="btn btn-default">Login</button>
                             </fieldset>
+                      
                         </form>
                     </div>
                 </div>
@@ -74,7 +77,7 @@
 
     <!-- Custom Theme JavaScript -->
     <script src="../dist/js/sb-admin-2.js"></script>
-
+    
 </body>
 
 </html>

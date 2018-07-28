@@ -77,7 +77,7 @@
                                                   <th>Rp.{{ $item->cost }}</th>
                                                   <th>Rp.{{ $item->margin }}</th>
                                                   <th>{{ isset($item->stock) ? $item->stock->quantity : "0" }}</th>
-                                                  <th>{{$item->description}}</th>
+                                                  <td>{{$item->description}}</td>
                                                   <th>{{$item->shelf}}</th>
                                                   <th>
                                                     <a href="edititem/{{ $item->id }}" type="button" class="btn btn-info">Edit</a>

@@ -9,4 +9,5 @@ class DashboardController extends Controller
     public function getDashboard() {
         return view('dashboard')->withTitle('Dashboard');
     }
+ 
 }

@@ -34,6 +34,7 @@ class ItemController extends Controller
     }
     public function saveSlider(Request $request)
     {
+        
         if($request->hasFile('photo')){
             $path = $request->file('photo')->store('image');
         }else { $path = ""; }
@@ -41,12 +42,14 @@ class ItemController extends Controller
             'name'=> 'required',
             'page'=> 'required'
         ]);
+      
         $slider = new Slider;
         $slider->name = $request->input('name');
         $slider->page = $request->input('page');
         $slider['photo']= "storage/app/".$path;
         $slider->save();
         return redirect ('/slider');
+        
     }
     public function getDaftarItem(Request $req) {
         $args = $req->only(['product_name', 'category_id', 'stock']);
@@ -113,7 +116,7 @@ class ItemController extends Controller
     {
         if($request->hasFile('img_url')){
             $path = $request->file('img_url')->store('image');
-        }else { $path = ""; }
+        }else { $path=""; }
           $inputItem['product_name'] = $request->product_name;
           $inputItem['category_id'] = $request->category_id;
           $inputItem['price_for_customer'] = $request->price_for_customer;
@@ -125,7 +128,7 @@ class ItemController extends Controller
           $inputItem['description'] = $request->description;
           $inputItem['shelf'] = $request->shelf;
           $inputItem['img_url']= "storage/app/".$path;
-    
+          
           
         /*$inputItem = $request->only(['product_name', 'category_id', 'price_for_customer', 'cost', 'sku', 'incentive_id', 'store_id', 'tax_id','description','shelf']);*/
 

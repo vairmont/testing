@@ -5,10 +5,12 @@
 @endsection
 
 @section('content')
+
 <div class="row">
                 <div class="col-lg-12">
                     <h1 class="page-header">Dashboard</h1>
                 </div>
+
                 <!-- /.col-lg-12 -->
             </div>
             <!-- /.row -->
@@ -459,6 +461,7 @@
                                 </ul>
                             </div>
                         </div>
+                        
                         <!-- /.panel-heading -->
                         <div class="panel-body">
                             <ul class="chat">
@@ -543,4 +546,5 @@
                 <!-- /.col-lg-4 -->
             </div>
             <!-- /.row -->
+            
 @endsection

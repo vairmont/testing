@@ -44,7 +44,6 @@
                                                 <th>KK</th>
                                                 <th>NIK</th>
                                                 <th>Business Name</th>
-                                            
                                                 <th>Status</th>
                                                 <th>Action</th>
                                             </tr>
@@ -58,8 +57,8 @@
                                                 <td>{{$agent->address}}</td>
                                                 <td>{{$agent->parent}}</td>
                                                 <td>{{$agent->phone}}</td>
-                                                <td>{{$agent->KK}}</td>
-                                                <td>{{$agent->NIK}}</td>
+                                                <td><img src="../{{$agent->kk_photo}}"></td>
+                                                <td><img src="../{{$agent->ktp_photo}}"></td>
                                                 <td>{{$agent->busname}}</td>
                                                 
                                                 <td>

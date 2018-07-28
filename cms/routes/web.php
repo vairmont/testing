@@ -12,8 +12,11 @@
 */
 
 Route::get('/', 'AuthController@getLogin');
+Route::get('/dologin','AuthController@doLogin');
 
 Route::get('/dashboard', 'DashboardController@getDashboard');
+
+
 
 Route::get('/daftaritem', 'ItemController@getDaftarItem');
 
