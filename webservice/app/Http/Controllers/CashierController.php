@@ -6,6 +6,7 @@ use App\Cart;
 use App\CartDetail;
 use App\Cash;
 use App\Order;
+use App\Constant\OrderStatus;
 use Carbon\Carbon;
 use Validator;
 use Illuminate\Http\Request;
@@ -33,37 +34,32 @@ class CashierController extends Controller {
 
     $sales = Order::where('user_id','=',$user_id)
                     ->where('type','=','sembako')
-                    ->where('status','!=',9)
+                    ->where('status','=','7')
                     ->whereDate('updated_at', Carbon::now()->toDateString())
                     ->get();
 
     $topups = Order::where('user_id', '=', $user_id)
                     ->where('type', '=', 'Topup')
-                    ->where('status','!=',9)
+                    ->where('status','=','7')
                     ->whereDate('updated_at', Carbon::now()->toDateString())
                     ->get();
     $salestotal = 0;
     $topupstotal = 0;
 
     foreach ($sales as $sale) { 
-        $sales->status = OrderStatus::CASHDONE;
-        $sales->save();
         $salestotal += $sale->total;
     }
     foreach ($topups as $topup) {
-        $topup->status = OrderStatus::CASHDONE;
-        $topup->save();
         $topupstotal += $topup->total;
     }
-    
-    $cash = Cash::find($cash_id);
+    $cash = Cash::where('id','=',$cash_id)->first();
     $cash->user_id = $user_id;
     $cash->sales = $salestotal;
     $cash->topup = $topupstotal;
     $cash->closing_cash = $cash->starting_cash + $salestotal + $topupstotal;
     $cash->save();
 
-    return response()->json(['data' => [], 'message' => ['OK']]);
+    return response()->json(['data' => [$cash], 'message' => ['OK'], 'salestotal' => [$salestotal]]);
   }
   
   public function printClosing(Request $request)
@@ -90,6 +86,11 @@ class CashierController extends Controller {
 
     $getCash = Cash::where('id','=',$cash_id)
                 ->first();
+                
+    $cashdone = Order::where('user_id','=',$user_id)
+    ->where('status','=','7')
+    ->whereDate('updated_at', Carbon::now()->toDateString())
+    ->update(['status' => 9]);
 
     return response()->json(['data' => $getCash, 'message' => ['OK']]);
   }

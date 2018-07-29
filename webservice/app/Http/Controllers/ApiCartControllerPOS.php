@@ -31,7 +31,7 @@ class ApiCartControllerPOS extends Controller {
     $items = CartDetail::Join('product', 'cart_detail.product_id', '=', 'product.id')
       ->where('cart_detail.cart_id', '=', $cart->id)
       ->where('qty', '>', 0)
-      ->select('product.id', 'product.sku', 'product.product_name', 'cart_detail.qty', 'product.price_for_customer', 'product.price_for_agen')
+      ->select('product.id as product_id', 'product.sku', 'product.product_name', 'cart_detail.qty', 'product.price_for_customer', 'product.price_for_agen')
       ->get();
 
     return response()->json([
@@ -74,7 +74,7 @@ class ApiCartControllerPOS extends Controller {
       $cartDetail->product_id = $request['product_id'];
     }
 
-    $cartDetail->qty += $request['qty'];
+    $cartDetail->qty = $request['qty'];
     $cartDetail->save();
 
     $items = CartDetail::Join('product', 'cart_detail.product_id', '=', 'product.id')
@@ -166,7 +166,7 @@ class ApiCartControllerPOS extends Controller {
     $cart->save();
 
     $detail = CartDetail::where('cart_id', '=', $cart->id)
-      ->update(['qty' => 0]);
+      ->delete();
 
     return response()->json([
       'message' => 'Cart items has been removed.',

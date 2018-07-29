@@ -118,7 +118,7 @@ class OrderControllerPOS extends Controller
 
       $cartDetails = CartDetail::where('cart_id', '=', $cart->id)->get();
       $order = new Order;
-      $order->status = OrderStatus::DELIVERY;
+      $order->status = OrderStatus::CREATED;
       $order->invoice_no = $unique;
       $order->user_id = $cart->user_id;
       $order->subtotal = $cart->subtotal;
@@ -183,19 +183,19 @@ class OrderControllerPOS extends Controller
 
     public function print(Request $request)
     {
-      $header = "\n\n\n\n\n Grosir One Receipt \n \x1b\x61\x01 --------------------\n\n";
+      $header = "\n\n\n\n \x1b\x61\x01 Grosir One Serang \x1b\x45\x01 \n Grosir One \n -------------------\n\n";
       $order = Order::whereId($request['order_id'])->first();
       $orderDetail = OrderDetail::where('order_id','=',$request['order_id'])
       ->get();
       $items = "" ;
       foreach ($orderDetail as $od) {
         $product = Product::where('id','=',$od->product_id)->first();
-        $items = $items . $product->alias. "\t\t x" . $od->qty . "\t\t\t". $od->price_for_customer . "\n";
+        $items = $items . $product->alias. "\t\t\t\t\t\t\t x" . $od->qty . "\t\t". $od->price_for_customer . "\n";
       }
 
-      $footer = "\n\n\n\n\n\n Total \t = ".$order->total."\n\n\n Terima Kasih Telah berbelanja\n\n\n\n";
+      $footer = "\n\n\n\n\n\n \x1b\x61\x01 Total \t = ".$order->total."\n\n Harga barang sudah termasuk PPN 10% \n Barang yang sudah dibeli tidak bisa dikembalikan \n Terima Kasih Telah berbelanja\n\n\n\n";
 
-      $print = $header . "\x1b\x61\x01" . $items . $footer;
+      $print = $header . "\x1b\x61\x00" . $items . $footer;
       return response()->json(['data' => $print],200);
     }
 
@@ -214,10 +214,10 @@ class OrderControllerPOS extends Controller
 
       #change order status
       $order = Order::whereId($request['order_id'])->first();
-      if($order->status == OrderStatus::COMPLETED){
+      if($order->status == 7){
           return response()->json(['data' => [], 'message' => ['Transaksi sudah pernah diproses']]);
       }
-      if($order->status == OrderStatus::DELIVERY ){
+      if($order->status == 6 ){
           return response()->json(['data' => [], 'message' => ['Transaksi sudah pernah diproses']]);
       }
       $amount = $order->total;
@@ -241,7 +241,6 @@ class OrderControllerPOS extends Controller
       }
       else{
       $order->status = OrderStatus::COMPLETED;
-      $order->payment = $request['payment'];
       $order->save();
       }
 
