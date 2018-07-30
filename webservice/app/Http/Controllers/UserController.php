@@ -127,18 +127,17 @@ class UserController extends Controller
         else {
             $newpassword = Hash::make('123456');
 
-            $user = User::where('phone', "=", $request->phone)
-            ->whereIn('role_id',['2','3','4', '5'])->first();
+            $user = User::where('phone', "=", $request->phone)->first();
 
-                if($user != null)
-                {
-                    $user->update(['password' => Hash::make($newpassword)]);
-                    // Mail::to($request->email)->send(new ResetPassword($data));
-                    return response()->json(['data' => [], 'message' => ['OK']]);
-                }
-                else
-                {
-                    return response()->json(['data' => [], 'message' => ['Nomor HP yang anda masukkan salah']]);  
+            if($user != null)
+            {
+                $user->update(['password' => $newpassword]);
+                // Mail::to($request->email)->send(new ResetPassword($data));
+                return response()->json(['data' => [], 'message' => ['OK']]);
+            }
+            else
+            {
+                return response()->json(['data' => [], 'message' => ['Nomor HP yang anda masukkan salah']]);  
             }
         }
     }
