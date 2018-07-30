@@ -60,7 +60,6 @@ class CashierController extends Controller {
     $cash->closing_cash = $cash->starting_cash + $salestotal + $topupstotal;
     $cash->save();
 
-    return response()->json(['data' => [], 'message' => ['OK']]);
     return response()->json(['data' => [$cash], 'message' => ['OK'], 'salestotal' => [$salestotal]]);
   }
   
@@ -89,10 +88,10 @@ class CashierController extends Controller {
     $getCash = Cash::where('id','=',$cash_id)
                 ->first();
 
-                $cashdone = Order::where('user_id','=',$user_id)
-                ->where('status','=','7')
-                ->whereDate('updated_at', Carbon::now()->toDateString())
-                ->update(['status' => 9]);           
+    $cashdone = Order::where('user_id','=',$user_id)
+    ->where('status','=','7')
+    ->whereDate('updated_at', Carbon::now()->toDateString())
+    ->update(['status' => 9]);           
 
     return response()->json(['data' => $getCash, 'message' => ['OK']]);
   }
