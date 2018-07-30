@@ -339,27 +339,27 @@ class OrderController extends Controller
         ]);
       }
 
-            $latFrom = deg2rad($request->lat);
-            $lonFrom = deg2rad($request->long);
-            $earthRadius = 6371; // in km
+            // $latFrom = deg2rad($request->lat);
+            // $lonFrom = deg2rad($request->long);
+            // $earthRadius = 6371; // in km
 
-            $orderlocation = OrderBillingDetail::select('lat', 'long')
-                            ->where('order_id', $request->order_id)
-                            ->first();  
+            // $orderlocation = OrderBillingDetail::select('lat', 'long')
+            //                 ->where('order_id', $request->order_id)
+            //                 ->first();  
 
-            $latTo = deg2rad($orderlocation->lat);
-            $lonTo = deg2rad($orderlocation->long);
+            // $latTo = deg2rad($orderlocation->lat);
+            // $lonTo = deg2rad($orderlocation->long);
 
-            $latDelta = $latTo - $latFrom;
-            $lonDelta = $lonTo - $lonFrom;
+            // $latDelta = $latTo - $latFrom;
+            // $lonDelta = $lonTo - $lonFrom;
 
-            $angle = 2 * asin(sqrt(pow(sin($latDelta / 2), 2) + cos($latFrom) * cos($latTo) * pow(sin($lonDelta / 2), 2)));
+            // $angle = 2 * asin(sqrt(pow(sin($latDelta / 2), 2) + cos($latFrom) * cos($latTo) * pow(sin($lonDelta / 2), 2)));
 
-            // 1.6 for convert in miles to km
-            // x2 for set exact distance
-            $distance = (float)(($angle * $earthRadius) * 2);
+            // // 1.6 for convert in miles to km
+            // // x2 for set exact distance
+            // $distance = (float)(($angle * $earthRadius) * 2);
 
-            if($distance <= 0.5) {
+            // if($distance <= 0.5) {
 
       $order = Order::whereId($request['order_id'])->first();
       $order->status = OrderStatus::COMPLETED;
@@ -420,11 +420,7 @@ class OrderController extends Controller
 
       return response()->json(['message' => 'Order has been completed.'], 201);
       }
-
-      else{
-        return response()->json(['message' => 'Not Allowed']);
-      }
-    }
+    
 
     protected function _sendPushNotification($user_id, $title, $body) {
         // API access key from Google API's Console
