@@ -47,13 +47,9 @@ class CashierController extends Controller {
     $topupstotal = 0;
 
     foreach ($sales as $sale) { 
-        $sales->status = OrderStatus::CASHDONE;
-        $sales->save();
         $salestotal += $sale->total;
     }
     foreach ($topups as $topup) {
-        $topup->status = OrderStatus::CASHDONE;
-        $topup->save();
         $topupstotal += $topup->total;
     }
     
