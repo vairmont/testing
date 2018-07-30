@@ -82,20 +82,19 @@ class OrderController extends Controller
         $orders = Order::Join('customer','customer.identifier','=','order.user_id')
         ->leftJoin('order_billing_detail','order_billing_detail.order_id','=','order.id')
         ->where('order.agen_id', '=', $request->get('user')->id)
-        ->where('order.status','=',2)
-        ->orWhere('order.status','=',6)
+        ->whereIn('order.status',[2,6])
         ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.lat','order_billing_detail.long','order_billing_detail.customer_address2', 'order_billing_detail.notes as order_notes')
         ->get();
-
+          return $orders;
         $relation = "Kepala Keluarga";
+
       }
       else{
         $parent = Family::where('child_id','=', $request->get('user')->id)->first();
         $orders = Order::Join('customer','customer.identifier','=','order.user_id')
         ->leftJoin('order_billing_detail','order_billing_detail.order_id','=','order.id')
         ->where('order.agen_id', '=', $parent->id)
-        ->where('order.status','=',2)
-        ->orWhere('order.status','=',6)
+        ->whereIn('order.status',[2,6])
         ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.lat','order_billing_detail.long','order_billing_detail.customer_address2', 'order_billing_detail.notes as order_notes')
         ->get();
 
