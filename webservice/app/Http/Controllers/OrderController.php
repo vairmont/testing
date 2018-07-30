@@ -394,19 +394,9 @@ class OrderController extends Controller
       $commission = new Commission;
       $commission->order_id = $order->id;
       $commission->agen_id = $order->agen_id;
-      if($prices < 55000){
-      $commission->incentive = $incentive + 5000;
-      }
-      else{
       $commission->incentive = $incentive;
-      }
       $commission->commission_pph = $commission_pph;
-      if($prices < 55000){
-        $commission->commission_netto = $commission_netto + 5000; 
-      }
-      else{     
       $commission->commission_netto = $commission_netto;
-      }   
       $commission->margin_penjualan = $margin;
       $commission->save();
 
