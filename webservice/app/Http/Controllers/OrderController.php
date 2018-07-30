@@ -85,7 +85,7 @@ class OrderController extends Controller
         ->whereIn('order.status',[2,6])
         ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.lat','order_billing_detail.long','order_billing_detail.customer_address2', 'order_billing_detail.notes as order_notes')
         ->get();
-          return $orders;
+        
         $relation = "Kepala Keluarga";
 
       }
