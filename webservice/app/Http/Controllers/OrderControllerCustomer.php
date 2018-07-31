@@ -19,6 +19,7 @@ use App\User;
 use App\Agen;
 use App\Cart;
 use App\Chat;
+use App\Store;
 use App\CartDetail;
 use App\FCM;
 
@@ -111,9 +112,15 @@ class OrderControllerCustomer extends Controller
     }
 
     public function create(Request $request) {
-     
-            $latFrom = deg2rad(-6.108882);
-            $lonFrom = deg2rad(106.171492);
+            $customer = User::where('id', '=', $request->get('user')->id)->first();
+
+            $storelocation = Store::join('users', 'users.store_id', '=', 'store.id')
+                             ->select('store.lat', 'store.long')
+                             ->where('store.id', '=', $customer->store_id)
+                             ->first();  
+                             
+            $latFrom = deg2rad($storelocation->lat);
+            $lonFrom = deg2rad($storelocation->long);
             $earthRadius = 6371; // in km
 
             $latTo = deg2rad($request->lat);
