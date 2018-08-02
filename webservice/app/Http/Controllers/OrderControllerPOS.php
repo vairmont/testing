@@ -181,7 +181,7 @@ class OrderControllerPOS extends Controller
       ], 201);
     }
 
-    public function print(Request $request)
+    public function printReceipt(Request $request)
     {
       $header = "\n\n\n\n \x1b\x61\x01 Grosir One Serang \x1b\x45\x01 \n Grosir One \n -------------------\n\n";
       $order = Order::whereId($request['order_id'])->first();
