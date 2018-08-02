@@ -21,6 +21,7 @@ class ProductController extends Controller
     ->join('incentive_category', 'product.incentive_id','=', 'incentive_category.id')
     ->join('stock', 'product.id', '=', 'stock.product_id')
     ->where('stock.quantity', '>', 0)
+    ->where('stock.store_id', '=', 1)
     ->select(
       DB::raw('product.id , product.product_name , product.category_id, product_category.name as category_name, product.price_for_customer as price, incentive_category.rate , product.img_url, product.description')
       );
