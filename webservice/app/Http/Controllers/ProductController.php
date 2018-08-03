@@ -53,7 +53,7 @@ class ProductController extends Controller
 
   public function categoryIndex(Request $request)
   {
-    $products = ProductCategory::->select(
+    $products = ProductCategory::select(
       DB::raw('id, name, slug, description, photo_url')
       );
 
