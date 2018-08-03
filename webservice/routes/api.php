@@ -37,6 +37,7 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
   Route::post('/profile', 'UserController@editProfile');
   Route::post('/changePassword', 'UserController@changePassword');
 
+  Route::get('/category', 'ProductController@categoryIndex');
   Route::get('/products', 'ProductController@index');
   Route::get('/pos/products', 'ProductControllerPOS@index');
   Route::get('/searchproducts', 'ProductControllerPOS@searchProducts');

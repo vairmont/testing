@@ -8,6 +8,7 @@ use Hash;
 use Auth;
 use App\User;
 use App\Product;
+use App\ProductCategory;
 use Mockery\Exception;
 use Validator;
 use DB;
@@ -46,6 +47,17 @@ class ProductController extends Controller
     }
 
     $products = $products->orderBy('product.product_name','asc')->get();
+
+    return response()->json(['data' => $products, 'message' => ['OK']]);
+  }
+
+  public function categoryIndex(Request $request)
+  {
+    $products = ProductCategory::->select(
+      DB::raw('id, name, slug, description, photo_url')
+      );
+
+    $products = $products->orderBy('name','asc')->get();
 
     return response()->json(['data' => $products, 'message' => ['OK']]);
   }

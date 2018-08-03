@@ -8,6 +8,6 @@ class ProductCategory extends Model
 {
     protected $table = "product_category";
     protected $fillable = [
-        'name', 'slug'
+        'name', 'slug', 'description', 'photo_url'
     ];
 }
