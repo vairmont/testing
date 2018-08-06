@@ -54,7 +54,7 @@ class ProductController extends Controller
   public function categoryIndex(Request $request)
   {
     $categories = ProductCategory::select(
-      DB::raw('id, name')
+      DB::raw('id, name, slug, description, photo_url')
       )
     ->orderBy('name','asc')->get();
 
