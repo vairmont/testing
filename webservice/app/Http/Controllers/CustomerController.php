@@ -154,9 +154,13 @@ class CustomerController extends Controller
         {            
             $agen = Agen::join('users', 'users.id', '=', 'agen.identifier')
                         ->select('agen.name', 'users.phone', 'agen.address', 'agen.photo', 'agen.rating', 'agen.id')
-                        ->where('users.store_id', $request->store_id)
-                        ->orderBy('agen.rating', 'desc')
-                        ->get();
+                        ->where('users.store_id', $request->store_id);
+
+            if(isset($request->name) && !empty($request->name)) {
+                $agen = $agen->where('agen.name','like',$request->name."%");
+            }   
+
+            $agen = $agen->orderBy('agen.rating','desc')->get();            
 
             return response()->json(['data' => $agen, 'message' => ['OK']]);
         }

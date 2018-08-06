@@ -421,6 +421,9 @@ class OrderController extends Controller
       return response()->json(['message' => 'Order has been completed.'], 201);
       }
     
+    public function manualNotif(Request $request){
+       $this->_sendPushNotification($request->user_id, "Terima Kasih", "Sebagai bentuk apresiasi GrosirOne kepada anda para agen, kami telah memberikan plafon kredit sebesar Rp. 500.000 tanpa syarat dan biaya kepada agen yang telah memiliki customer. Mulai bulan September plafon kredit sebesar Rp. 1.000.000 akan dikenakan biaya administrasi Rp. 50.000 per bulan ");
+    }
 
     protected function _sendPushNotification($user_id, $title, $body) {
         // API access key from Google API's Console
