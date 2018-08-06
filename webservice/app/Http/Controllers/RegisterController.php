@@ -74,7 +74,7 @@ class RegisterController extends Controller
 		else {
 			$path = $request->file('ktp_photo')->store('photo_ktp');
 
-			Agen::where('id', $request->header('agen_id'))
+			Agen::where('id', $request->header('agenid'))
 			->update([
 				'ktp_photo' => "storage/app/".$path
 			]);
@@ -92,7 +92,7 @@ class RegisterController extends Controller
 		else {
 			$path = $request->file('kk_photo')->store('photo_kk');
 
-			Agen::where('id', $request->header('agen_id'))
+			Agen::where('id', $request->header('agenid'))
 			->update([
 				'kk_photo' => "storage/app/".$path
 			]);

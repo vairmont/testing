@@ -104,7 +104,7 @@ class CustomerController extends Controller
 
             $path = $request->file('photo')->store('photo_customer');
 
-            Customer::where('id', $request->header('customer_id'))
+            Customer::where('id', $request->header('customerid'))
             ->update([
                 'photo' => "storage/app/".$path
             ]);
