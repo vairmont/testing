@@ -53,13 +53,22 @@ class ProductController extends Controller
 
   public function categoryIndex(Request $request)
   {
-    $products = ProductCategory::select(
-      DB::raw('id, name, slug, description, photo_url')
-      );
+    $categories = ProductCategory::select(
+      DB::raw('id, name')
+      )
+    ->orderBy('name','asc')->get();
 
-    $products = $products->orderBy('name','asc')->get();
+    $result = [];
+      foreach ($categories as $category) {
+        $items = Product::where('category_id', $category->id)->count();
 
-    return response()->json(['data' => $products, 'message' => ['OK']]);
+        $result[] = [
+          'category' => $category,
+          'items' => $items,
+        ];
+      }
+
+    return response()->json(['data' =>  $result, 'message' => ['OK']]);
   }
 
   public function add(Request $request) {
