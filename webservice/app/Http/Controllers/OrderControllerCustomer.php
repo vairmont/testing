@@ -228,7 +228,7 @@ class OrderControllerCustomer extends Controller
         }
       }
       else {
-        if($distance <= 10) {
+        if($distance <= 15) {
           $cart = Cart::where('user_id', '=', $request->get('user')->id)->first();
 
     $agencust = Customer::join('agen','customer.agen_id','=','agen.id')

@@ -147,7 +147,7 @@ class CustomerController extends Controller
                     }
                 }
                 else {
-                    if($distance <= 10) {
+                    if($distance <= 15) {
                         array_push($listStores, [
                             'id' => $store->id,
                             'store_name' => $store->store_name,
