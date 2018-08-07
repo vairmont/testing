@@ -142,7 +142,7 @@ class OrderControllerCustomer extends Controller
         }
         else {
           // if > 25
-          return response()->json(['message' => 'Mohon maaf lokasi pengantaran anda terlalu jauh dari store.']);
+          return response()->json(['message' => ['Mohon maaf lokasi pengantaran anda terlalu jauh dari store.']]);
         }
       }
       else {
@@ -152,7 +152,7 @@ class OrderControllerCustomer extends Controller
         }
         else {
           // if >= 10
-          return response()->json(['message' => 'Mohon maaf lokasi pengantaran anda terlalu jauh dari store.']);
+          return response()->json(['message' => ['Mohon maaf lokasi pengantaran anda terlalu jauh dari store.']]);
         }
       }
   }
