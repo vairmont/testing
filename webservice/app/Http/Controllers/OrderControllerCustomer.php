@@ -138,25 +138,20 @@ class OrderControllerCustomer extends Controller
 
       if($storelocation->store_name == 'GrosirOne Cikupamas') {
         if($distance <= 25) {
-          return 2;
           // panggil protected function _create_order()
           $this->_create_order();
         }
         else {
-          return 3;
           // if > 25
           return response()->json(['message' => 'Mohon maaf lokasi pengantaran anda terlalu jauh dari store.']);
         }
       }
       else {
-        return 4;
         if($distance <= 10) {
-          return 5;
           // panggil protected function _create_order()
           $this->_create_order();
         }
         else {
-          return 6;
           // if >= 10
           return response()->json(['message' => 'Mohon maaf lokasi pengantaran anda terlalu jauh dari store.']);
         }
