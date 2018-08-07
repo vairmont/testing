@@ -37,6 +37,7 @@
                                     <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-example">
                                         <thead>
                                             <tr>
+                                                <th>Store ID</th>
                                                 <th>Nama</th>
                                                 <th>Alamat</th>
                                                 <th>Parent</th>
@@ -53,6 +54,7 @@
                                             @if(count($agen) > 0)
                                                 @foreach($agen as $agent)
                                                 <tr>
+                                                <td>{{$agent->storeid}}</td>
                                                 <td>{{$agent->name}}</td>
                                                 <td>{{$agent->address}}</td>
                                                 <td>{{$agent->parent}}</td>
