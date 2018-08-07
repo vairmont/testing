@@ -134,7 +134,6 @@ class OrderControllerCustomer extends Controller
       // 1.6 for convert in miles to km
       // x2 for set exact distance
       $distance = (float)(($angle * $earthRadius) * 2);
-      return $distance;
 
       if($storelocation->store_name == 'GrosirOne Cikupamas') {
         if($distance <= 25) {
