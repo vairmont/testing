@@ -137,7 +137,6 @@ class CustomerController extends Controller
                 $distance = (float)(($angle * $earthRadius) * 2);
 
                 // jika radius < 10km masuk ke list toko
-
                 if($store->store_name == 'GrosirOne Cikupamas') {
                     if($distance <= 25) {
                         array_push($listStores, [
@@ -157,6 +156,7 @@ class CustomerController extends Controller
                     }
                 }
             }
+            return response()->json(['data' => $listStores, 'message' => ['OK']]);
         }
 
         public function getAgen(Request $request)
