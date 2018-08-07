@@ -139,7 +139,7 @@ class CustomerController extends Controller
                 // jika radius < 10km masuk ke list toko
 
                 if($store->store_name == 'GrosirOne Cikupamas') {
-                    if($distance <= 20) {
+                    if($distance <= 25) {
                         array_push($listStores, [
                             'id' => $store->id,
                             'store_name' => $store->store_name,
