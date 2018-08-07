@@ -157,7 +157,7 @@ class CustomerController extends Controller
                     }
                 }
             }
-
+        }
 
         public function getAgen(Request $request)
         {            
