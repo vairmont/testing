@@ -135,6 +135,7 @@ class CustomerController extends Controller
                 // 1.6 for convert in miles to km
                 // x2 for set exact distance
                 $distance = (float)(($angle * $earthRadius) * 2);
+                return $distance;
 
                 // jika radius < 10km masuk ke list toko
 

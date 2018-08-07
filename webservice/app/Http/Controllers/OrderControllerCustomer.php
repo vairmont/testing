@@ -112,132 +112,142 @@ class OrderControllerCustomer extends Controller
     }
 
     public function create(Request $request) {
-            $customer = User::where('id', '=', $request->get('user')->id)->first();
+      $customer = User::where('id', '=', $request->get('user')->id)->first();
 
-            $storelocation = Store::join('users', 'users.store_id', '=', 'store.id')
-                             ->select('store.lat', 'store.long')
-                             ->where('store.id', '=', $customer->store_id)
-                             ->first();  
-                             
-            $latFrom = deg2rad($storelocation->lat);
-            $lonFrom = deg2rad($storelocation->long);
-            $earthRadius = 6371; // in km
 
-            $latTo = deg2rad($request->lat);
-            $lonTo = deg2rad($request->long);
+      $storelocation = Store::join('users', 'users.store_id', '=', 'store.id')
+                       ->select('store.lat', 'store.long', 'store.store_name')
+                       ->where('store.id', '=', $customer->store_id)
+                       ->first();  
+                     
+      $latFrom = deg2rad($storelocation->lat);
+      $lonFrom = deg2rad($storelocation->long);
+      $earthRadius = 6371; // in km
 
-            $latDelta = $latTo - $latFrom;
-            $lonDelta = $lonTo - $lonFrom;
+      $latTo = deg2rad($request->lat);
+      $lonTo = deg2rad($request->long);
 
-            $angle = 2 * asin(sqrt(pow(sin($latDelta / 2), 2) + cos($latFrom) * cos($latTo) * pow(sin($lonDelta / 2), 2)));
+      $latDelta = $latFrom - $latTo;
+      $lonDelta = $lonFrom - $lonTo;
 
-            // 1.6 for convert in miles to km
-            // x2 for set exact distance
-            $distance = (float)(($angle * $earthRadius) * 2);
+      $angle = 2 * asin(sqrt(pow(sin($latDelta / 2), 2) + cos($latFrom) * cos($latTo) * pow(sin($lonDelta / 2), 2)));
+      // 1.6 for convert in miles to km
+      // x2 for set exact distance
+      $distance = (float)(($angle * $earthRadius) * 2);
+      return $distance;
 
-            if($distance <= 10) {
-
-      $cart = Cart::where('user_id', '=', $request->get('user')->id)->first();
-
-      $agencust = Customer::join('agen','customer.agen_id','=','agen.id')
-      ->where('customer.identifier','=',$request->get('user')->id)
-      ->select('agen.identifier')
-      ->first();
-
-      if ($cart->total == 0) {
-        return response()->json(['message' => 'Keranjang anda kosong.'], 400);
-      }
-
-      #ROLE AGEN / CUST
-
-      $cartDetails = CartDetail::where('cart_id', '=', $cart->id)->get();
-
-      // //get last record
-      // $record = Order::latest()->first();
-      // $expNum = explode('-', $record->invoice_no);
-
-      // //check first day in a year
-      // if ( date('l',strtotime(date('Y-01-01'))) ){
-      //     $nextInvoiceNumber = date('Y').'-0001';
-      // } else {
-      //     //increase 1 with last invoice number
-      //     $nextInvoiceNumber = $expNum[0].'-'. $expNum[1]+1;
-      // }
-
-      $today = date("Ymd");
-      $rand = strtoupper(substr(uniqid(sha1(time())),0,4));
-      $unique = $today . $rand;
-
-      $order = new Order;
-      $order->invoice_no = $unique;
-      $order->user_id = $cart->user_id;
-      $order->subtotal = $cart->subtotal;
-      $order->tax = $cart->tax;
-      $order->discount = 0;
-      if($cart->total < 50000) {
-        $order->total = $cart->total + 5000;
+      if($storelocation->store_name == 'GrosirOne Cikupamas') {
+        if($distance <= 25) {
+          return 2;
+          // panggil protected function _create_order()
+          $this->_create_order();
+        }
+        else {
+          return 3;
+          // if > 25
+          return response()->json(['message' => 'Mohon maaf lokasi pengantaran anda terlalu jauh dari store.']);
+        }
       }
       else {
-        $order->total = $cart->total;
+        return 4;
+        if($distance <= 10) {
+          return 5;
+          // panggil protected function _create_order()
+          $this->_create_order();
+        }
+        else {
+          return 6;
+          // if >= 10
+          return response()->json(['message' => 'Mohon maaf lokasi pengantaran anda terlalu jauh dari store.']);
+        }
       }
-      $order->status = OrderStatus::CREATED;
-      $order->agen_id = $agencust->identifier;
-      $order->save();
+  }
 
-      $items = [];
-      foreach ($cartDetails as $cartDetail) {
-        $product = Product::whereId($cartDetail->product_id)->first();
-        $orderDetail = new OrderDetail;
-        $orderDetail->order_id = $order->id;
-        $orderDetail->product_id = $product->id;
-        $orderDetail->category_id = $product->category_id;
-        $orderDetail->qty = $cartDetail->qty;
-        // if($cartDetail->qty >= 3){
-        //   $orderDetail->price_for_customer = $product->price_for_customer * 0.98;
-        //   $orderDetail->price_for_agen = $product->price_for_agen;
-        // }
-        // else{
-        $orderDetail->price_for_customer = $product->price_for_customer;
-        $orderDetail->price_for_agen = $product->price_for_agen;
-        // }
-        $orderDetail->save();
+  protected function _create_order() {
+    $cart = Cart::where('user_id', '=', $request->get('user')->id)->first();
 
-        $items[] = [
-          'product_id' => $product->id,
-          'sku' => $product->sku,
-          'category_id' => $orderDetail->category_id,
-          'qty' => $orderDetail->qty,
-          'price_for_customer' => $orderDetail->price_for_customer,
-          'price_for_agen' => $orderDetail->price_for_agen
-        ];
-      }
+    $agencust = Customer::join('agen','customer.agen_id','=','agen.id')
+    ->where('customer.identifier','=',$request->get('user')->id)
+    ->select('agen.identifier')
+    ->first();
 
-      #Input Billing Detail
-      $orderbillingdetail = new OrderBillingDetail;
-
-      $orderbillingdetail->order_id =  $order->id;
-      $orderbillingdetail->customer_name = $request['customer_name'];
-      $orderbillingdetail->customer_phone = $request['customer_phone'];
-      $orderbillingdetail->customer_address = "";
-      $orderbillingdetail->lat = $request['lat'];
-      $orderbillingdetail->long = $request['long'];
-      $orderbillingdetail->customer_address2 = $request['customer_address2'];
-      $orderbillingdetail->notes = $request['notes'];
-      $orderbillingdetail->save();
-
-      // clear cart
-      CartDetail::where('cart_id',$cart->id)->delete();
-      Cart::where('id',$cart->id)->delete();
-
-      #send push notif ke agen
-      $this->_sendPushNotification($order->agen_id, "Order Baru", "Ada order baru.");
-
-      return response()->json(['data' => [], 'message' => ['OK']]);
-
-
+    if ($cart->total == 0) {
+      return response()->json(['message' => 'Keranjang anda kosong.'], 400);
     }
 
-    return response()->json(['message' => 'Mohon maaf lokasi pengantaran anda terlalu jauh dari store.']);
+    #ROLE AGEN / CUST
+
+    $cartDetails = CartDetail::where('cart_id', '=', $cart->id)->get();
+
+    $today = date("Ymd");
+    $rand = strtoupper(substr(uniqid(sha1(time())),0,4));
+    $unique = $today . $rand;
+
+    $order = new Order;
+    $order->invoice_no = $unique;
+    $order->user_id = $cart->user_id;
+    $order->subtotal = $cart->subtotal;
+    $order->tax = $cart->tax;
+    $order->discount = 0;
+    if($cart->total < 50000) {
+      $order->total = $cart->total + 5000;
+    }
+    else {
+      $order->total = $cart->total;
+    }
+    $order->status = OrderStatus::CREATED;
+    $order->agen_id = $agencust->identifier;
+    $order->save();
+
+    $items = [];
+    foreach ($cartDetails as $cartDetail) {
+      $product = Product::whereId($cartDetail->product_id)->first();
+      $orderDetail = new OrderDetail;
+      $orderDetail->order_id = $order->id;
+      $orderDetail->product_id = $product->id;
+      $orderDetail->category_id = $product->category_id;
+      $orderDetail->qty = $cartDetail->qty;
+      // if($cartDetail->qty >= 3){
+      //   $orderDetail->price_for_customer = $product->price_for_customer * 0.98;
+      //   $orderDetail->price_for_agen = $product->price_for_agen;
+      // }
+      // else{
+      $orderDetail->price_for_customer = $product->price_for_customer;
+      $orderDetail->price_for_agen = $product->price_for_agen;
+      // }
+      $orderDetail->save();
+
+      $items[] = [
+        'product_id' => $product->id,
+        'sku' => $product->sku,
+        'category_id' => $orderDetail->category_id,
+        'qty' => $orderDetail->qty,
+        'price_for_customer' => $orderDetail->price_for_customer,
+        'price_for_agen' => $orderDetail->price_for_agen
+      ];
+    }
+
+    #Input Billing Detail
+    $orderbillingdetail = new OrderBillingDetail;
+
+    $orderbillingdetail->order_id =  $order->id;
+    $orderbillingdetail->customer_name = $request['customer_name'];
+    $orderbillingdetail->customer_phone = $request['customer_phone'];
+    $orderbillingdetail->customer_address = "";
+    $orderbillingdetail->lat = $request['lat'];
+    $orderbillingdetail->long = $request['long'];
+    $orderbillingdetail->customer_address2 = $request['customer_address2'];
+    $orderbillingdetail->notes = $request['notes'];
+    $orderbillingdetail->save();
+
+    // clear cart
+    CartDetail::where('cart_id',$cart->id)->delete();
+    Cart::where('id',$cart->id)->delete();
+
+    #send push notif ke agen
+    $this->_sendPushNotification($order->agen_id, "Order Baru", "Ada order baru.");
+
+    return response()->json(['data' => [], 'message' => ['OK']]);
   }
 
     public function cancelOrder(Request $request) {
