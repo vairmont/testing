@@ -134,121 +134,32 @@ class OrderControllerCustomer extends Controller
       // 1.6 for convert in miles to km
       // x2 for set exact distance
       $distance = (float)(($angle * $earthRadius) * 2);
+      return $distance;
 
       if($storelocation->store_name == 'GrosirOne Cikupamas') {
         if($distance <= 25) {
-          $cart = Cart::where('user_id', '=', $request->get('user')->id)->first();
-
-    $agencust = Customer::join('agen','customer.agen_id','=','agen.id')
-    ->where('customer.identifier','=',$request->get('user')->id)
-    ->select('agen.identifier')
-    ->first();
-
-    if ($cart->total == 0) {
-      return response()->json(['message' => 'Keranjang anda kosong.'], 400);
-    }
-
-    #ROLE AGEN / CUST
-
-    $cartDetails = CartDetail::where('cart_id', '=', $cart->id)->get();
-
-    $today = date("Ymd");
-    $rand = strtoupper(substr(uniqid(sha1(time())),0,4));
-    $unique = $today . $rand;
-
-    $order = new Order;
-    $order->invoice_no = $unique;
-    $order->user_id = $cart->user_id;
-    $order->subtotal = $cart->subtotal;
-    $order->tax = $cart->tax;
-    $order->discount = 0;
-    if($cart->total < 50000) {
-      $order->total = $cart->total + 5000;
-    }
-    else {
-      $order->total = $cart->total;
-    }
-    $order->status = OrderStatus::CREATED;
-    $order->agen_id = $agencust->identifier;
-    $order->save();
-
-    $items = [];
-    foreach ($cartDetails as $cartDetail) {
-      $product = Product::whereId($cartDetail->product_id)->first();
-      $orderDetail = new OrderDetail;
-      $orderDetail->order_id = $order->id;
-      $orderDetail->product_id = $product->id;
-      $orderDetail->category_id = $product->category_id;
-      $orderDetail->qty = $cartDetail->qty;
-      // if($cartDetail->qty >= 3){
-      //   $orderDetail->price_for_customer = $product->price_for_customer * 0.98;
-      //   $orderDetail->price_for_agen = $product->price_for_agen;
-      // }
-      // else{
-      $orderDetail->price_for_customer = $product->price_for_customer;
-      $orderDetail->price_for_agen = $product->price_for_agen;
-      // }
-      $orderDetail->save();
-
-      $items[] = [
-        'product_id' => $product->id,
-        'sku' => $product->sku,
-        'category_id' => $orderDetail->category_id,
-        'qty' => $orderDetail->qty,
-        'price_for_customer' => $orderDetail->price_for_customer,
-        'price_for_agen' => $orderDetail->price_for_agen
-      ];
-    }
-
-    #Input Billing Detail
-    $orderbillingdetail = new OrderBillingDetail;
-
-    $orderbillingdetail->order_id =  $order->id;
-    $orderbillingdetail->customer_name = $request['customer_name'];
-    $orderbillingdetail->customer_phone = $request['customer_phone'];
-    $orderbillingdetail->customer_address = "";
-    $orderbillingdetail->lat = $request['lat'];
-    $orderbillingdetail->long = $request['long'];
-    $orderbillingdetail->customer_address2 = $request['customer_address2'];
-    $orderbillingdetail->notes = $request['notes'];
-    $orderbillingdetail->save();
-
-    // clear cart
-    CartDetail::where('cart_id',$cart->id)->delete();
-    Cart::where('id',$cart->id)->delete();
-
-    #send push notif ke agen
-    $this->_sendPushNotification($order->agen_id, "Order Baru", "Ada order baru.");
-
-    return response()->json(['data' => [], 'message' => ['OK']]);
-  }
-
-    public function cancelOrder(Request $request) {
-
-      $validator = Validator::make($request->all(), [
-        'order_id' => 'required|numeric|exists:order,id',
-      ]);
-
-      if ($validator->fails()) {
-        return response()->json([
-          'error' => $validator->errors()->all()
-        ], 400);
-      }
-
-      $order = Order::whereId($request['order_id'])->first();
-      $order->status = OrderStatus::CANCELLED;
-      $order->save();
-
-      return response()->json(['message' => 'Order '.$order->id .' has been succesfully cancelled'], 200);
+          // panggil protected function _create_order()
+          $this->_create_order();
         }
         else {
           // if > 25
-          return response()->json(['message' => ['Mohon maaf lokasi pengantaran anda terlalu jauh dari store.']]);
+          return response()->json(['message' => 'Mohon maaf lokasi pengantaran anda terlalu jauh dari store.']);
         }
       }
       else {
         if($distance <= 10) {
-          $cart = Cart::where('user_id', '=', $request->get('user')->id)->first();
+          // panggil protected function _create_order()
+          $this->_create_order();
+        }
+        else {
+          // if >= 10
+          return response()->json(['message' => 'Mohon maaf lokasi pengantaran anda terlalu jauh dari store.']);
+        }
+      }
+  }
+
+  protected function _create_order() {
+    $cart = Cart::where('user_id', '=', $request->get('user')->id)->first();
 
     $agencust = Customer::join('agen','customer.agen_id','=','agen.id')
     ->where('customer.identifier','=',$request->get('user')->id)
@@ -351,14 +262,7 @@ class OrderControllerCustomer extends Controller
       $order->save();
 
       return response()->json(['message' => 'Order '.$order->id .' has been succesfully cancelled'], 200);
-        }
-        else {
-          // if >= 10
-          return response()->json(['message' => ['Mohon maaf lokasi pengantaran anda terlalu jauh dari store.']]);
-        }
-      }
-  }
-
+    }
     
     protected function _sendPushNotification($user_id, $title, $body) {
         // API access key from Google API's Console
