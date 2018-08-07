@@ -157,7 +157,7 @@ class OrderControllerCustomer extends Controller
       }
   }
 
-  protected function _create_order() {
+  protected function _create_order(Request $request) {
     $cart = Cart::where('user_id', '=', $request->get('user')->id)->first();
 
     $agencust = Customer::join('agen','customer.agen_id','=','agen.id')
