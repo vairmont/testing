@@ -91,6 +91,7 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
   Route::post('/order/accept', 'OrderController@acceptOrder');
 
   Route::get('/ranks', 'RankingController@index');
+  Route::get('/promo', 'PromoController@index');
 
   Route::post('/withdraw', 'OrderController@withdraw');
   Route::get('/withdraw', 'WithdrawController@index');
