@@ -114,14 +114,14 @@ class CustomerController extends Controller
 				'password' => '',
 				'api_token' => uniqid(),
 				'role_id' => 2,
-				'store_id' => '',
+				'store_id' => 0,
 				'status' => 'inactive'
 			];
 			$save = User::create($user);
 
 			$customer = [
 				'identifier' =>$save->id,
-				'agen_id' => '',
+				'agen_id' => 0,
 				'name' => $request->name,
 				'address' => '',
                 'lat' => '',
@@ -160,12 +160,12 @@ class CustomerController extends Controller
         }
     
         else{
-            User::where('id', $request->get('user')->id)->first;
-            ->update =[
+            User::where('id', $request->get('user')->id)
+            ->update([
                 'store_id' => $request->store_id
-            ];
-            Customer::where('id', $request->get('user')->id)->first;
-            ->update = ([
+            ]);
+            Customer::where('id', $request->get('user')->id)
+            ->update([
                 'agen_id' => $request->agen_id,
                 'address' => $request->address,
                 'lat' => $request->lat,
