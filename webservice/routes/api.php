@@ -21,7 +21,7 @@ Route::post('/v1/agen/photo/upload', 'UserController@uploadPhoto');
 
 Route::post('/v1/customer', 'CustomerController@addCustomer');
 Route::post('/v1/customertes', 'CustomerController@addCustomer2');
-Route::get('/v1/customer/check', 'CustomerController@checkDataCustomer');
+Route::get('/v1/customer/check', 'CustomerController@checkCustomerData');
 Route::post('/v1/customer/photo/upload', 'CustomerController@uploadPhotoCustomer');
 
 Route::post('/v1/otp/request', 'SmsController@requestOTP');
