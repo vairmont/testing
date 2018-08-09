@@ -141,7 +141,7 @@ class CustomerController extends Controller
             return response()->json(['data' => [], 'message' => ['Lengkapi data anda untuk dapat berbelanja.']]);
         }
         else{
-            return response()->json('message' => ['OK']);
+            return response()->json(['message' => ['OK']]);
         }
     }
 
