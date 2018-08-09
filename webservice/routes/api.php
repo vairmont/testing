@@ -20,7 +20,12 @@ Route::post('/v1/register/agen/kk/upload', 'RegisterController@uploadKK');
 Route::post('/v1/agen/photo/upload', 'UserController@uploadPhoto');
 
 Route::post('/v1/customer', 'CustomerController@addCustomer');
+Route::post('/v1/customertes', 'CustomerController@addCustomer2');
+Route::get('/v1/customer/check', 'CustomerController@checkDataCustomer');
 Route::post('/v1/customer/photo/upload', 'CustomerController@uploadPhotoCustomer');
+
+Route::post('/v1/otp/request', 'SmsController@requestOTP');
+Route::post('/v1/otp/check', 'SmsController@verifyCheckCustomer');
 
 Route::post('/v1/stores', 'CustomerController@getStore');
 Route::post('/v1/agen', 'CustomerController@getAgen');
@@ -70,6 +75,8 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
   Route::post('/order', 'OrderControllerPOS@getOrderById');
   Route::post('/order/pos/print', 'OrderControllerPOS@printReceipt');
 
+  Route::post('/updatecustomer', 'CustomerController@updateCustomer');
+
   Route::post('/cashier/create', 'CashierController@createCashier');
   Route::post('/cashier/get', 'CashierController@getCash');
   Route::post('/cashier/close', 'CashierController@closingCashier');
@@ -104,7 +111,5 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
   Route::get('/customer', 'CustomerController@getCustomer');
 
   Route::get('/family', 'FamilyController@getFamily');
-  Route::post('/sms', 'SmsController@verifyRequest');
-
   Route::get('/commission', 'CommissionController@getCommission');
 });

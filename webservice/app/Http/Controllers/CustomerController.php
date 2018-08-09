@@ -35,8 +35,57 @@ class CustomerController extends Controller
 
             return response()->json(['data' => $customer, 'agen' => $agen, 'message' => ['OK']]);
     }
-       
-	Public function addCustomer (Request $request)
+    
+    public function addCustomer (Request $request)
+    {
+        if(empty($request->name)) {
+            return response()->json(['data' => [], 'message' => ['Nama tidak boleh kosong']]);
+        }   
+
+        if(empty($request->phone)) {
+            return response()->json(['data' => [], 'message' => ['Nomor HP tidak boleh kosong']]);
+        }
+
+        if(empty($request->gender)) {
+            return response()->json(['data' => [], 'message' => ['Gender tidak boleh kosong']]);
+        }
+
+        $val = Validator::make($request->all(), [
+            'phone' => 'unique:users,phone'
+
+        ]);
+
+        if($val->fails()) {
+            return response()->json(['data' => [], 'message' => $val->errors()->all()]);
+        }
+    
+        else{
+            $user =[
+                'phone' => $request->phone,
+                'password' => Hash::make('123456'),
+                'api_token' => uniqid(),
+                'role_id' => 2,
+                'store_id' => $request->store_id,
+                'status' => 'active'
+            ];
+            $save = User::create($user);
+
+            $customer = [
+                'identifier' =>$save->id,
+                'agen_id' => $request->agen_id,
+                'name' => $request->name,
+                'address' => $request->address,
+                'lat' => $request->lat,
+                'long' => $request->long,
+                'gender' => $request->gender
+                ];
+            $create = Customer::create($customer);
+
+            return response()->json(['customer_id' => $create->id, 'message' => ['OK']]);
+            }
+        }
+
+	public function addCustomer2 (Request $request)
 	{
 		if(empty($request->name)) {
             return response()->json(['data' => [], 'message' => ['Nama tidak boleh kosong']]);
@@ -50,14 +99,6 @@ class CustomerController extends Controller
             return response()->json(['data' => [], 'message' => ['Gender tidak boleh kosong']]);
         }
 
-        if(empty($request->address)) {
-            return response()->json(['data' => [], 'message' => ['Alamat rumah tidak boleh kosong']]);
-        }
-
-        if(empty($request->agen_id)) {
-            return response()->json(['data' => [], 'message' => ['Agen tidak boleh kosong']]);
-        }
-
         $val = Validator::make($request->all(), [
             'phone' => 'unique:users,phone'
 
@@ -68,30 +109,71 @@ class CustomerController extends Controller
         }
     
 		else{
-
 			$user =[
 				'phone' => $request->phone,
-				'password' => Hash::make('123456'),
+				'password' => '',
 				'api_token' => uniqid(),
 				'role_id' => 2,
-				'store_id' => $request->store_id,
-				'status' => 'active'
+				'store_id' => '',
+				'status' => 'inactive'
 			];
 			$save = User::create($user);
 
 			$customer = [
 				'identifier' =>$save->id,
-				'agen_id' => $request->agen_id,
+				'agen_id' => '',
 				'name' => $request->name,
-				'address' => $request->address,
-                'lat' => $request->lat,
-                'long' => $request->long,
+				'address' => '',
+                'lat' => '',
+                'long' => '',
 				'gender' => $request->gender
             	];
             $create = Customer::create($customer);
 
             return response()->json(['customer_id' => $create->id, 'message' => ['OK']]);
     		}
+        }
+
+    public function checkCustomerData (Request $request){
+        $data = Customer::where('identifier', $request->get('user')->id)->first();
+
+        if($data->agen_id == ''){
+            return response()->json(['data' => [], 'message' => ['Lengkapi data anda untuk dapat berbelanja.']]);
+        }
+        else{
+            return response()->json('message' => ['OK']);
+        }
+    }
+
+    public function updateCustomer (Request $request)
+    {
+        if(empty($request->agen_id)) {
+            return response()->json(['data' => [], 'message' => ['Agen harus dipilih']]);
+        }   
+
+        if(empty($request->address)) {
+            return response()->json(['data' => [], 'message' => ['Alamat wajib diisi']]);
+        }
+
+        if(empty($request->lat)) {
+            return response()->json(['data' => [], 'message' => ['Alamat Map wajib dicari']]);
+        }
+    
+        else{
+            User::where('id', $request->get('user')->id)->first;
+            ->update =[
+                'store_id' => $request->store_id
+            ];
+            Customer::where('id', $request->get('user')->id)->first;
+            ->update = ([
+                'agen_id' => $request->agen_id,
+                'address' => $request->address,
+                'lat' => $request->lat,
+                'long' => $request->long
+                ]);
+
+            return response()->json(['data' => [], 'message' => ['OK']]);
+            }
         }
 
         public function uploadPhotoCustomer(Request $request)
