@@ -98,14 +98,14 @@ class SmsController extends Controller
         $verify->delete();
 
         $password = rand(111111,999999);
-
-        $user = User::where('id', '=', $request->customer_id)
+        $cust = Customer::find($request->customer_id);
+        $user = User::where('id', '=', $cust->identifier)
                 ->update([
                   'password' => Hash::make($password),
                   'status' => 'active'
                 ]);
 
-        $tel = User::where('id', '=', $request->customer_id)
+        $tel = User::where('id', '=', $cust->identifier)
               ->select('phone')
               ->first();
 
