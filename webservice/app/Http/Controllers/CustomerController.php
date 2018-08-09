@@ -16,8 +16,9 @@ use App\Store;
 
 class CustomerController extends Controller
 {
+
 	public function getCustomer(Request $request)
-	{
+    {       
 			$customer = Customer::leftJoin('agen', 'agen.id', '=', 'customer.agen_id')
                         ->join('users', 'users.id', '=', 'customer.identifier')
                         ->select('customer.*', 'agen.name as agen', 'agen.photo as foto_agen', 'agen.rating as rating', 'users.phone as phone')
@@ -30,16 +31,17 @@ class CustomerController extends Controller
                         ->first();
 
             if($customer->agen_id != 0){
-            $agen = User::select('users.phone as agen_phone')
+                $agen = User::select('users.phone as agen_phone')
                         ->where('users.id', '=', $ag->identifier)
                         ->first();
+            }
+            else {
+                $agen = [
+                    'agen_phone' => ''                    
+                ];
+            }
 
             return response()->json(['data' => $customer, 'agen' => $agen, 'message' => ['OK']]);
-            }
-
-            else{
-                return response()->json(['data' => $customer, 'message' => ['OK']]);
-            }
     }
     
     public function addCustomer (Request $request)
@@ -140,8 +142,10 @@ class CustomerController extends Controller
     		}
         }
 
-    public function checkCustomerData(Request $request){
-        if($data->agen_id == 0){
+    public function checkData(Request $request){
+        $check = Customer::where('identifier', $request->user_id)->first();
+
+        if($check->agen_id == 0){
             return response()->json(['data' => [], 'message' => ['Lengkapi data anda untuk dapat berbelanja.']]);
         }
         else{
