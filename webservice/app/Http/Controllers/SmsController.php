@@ -30,11 +30,11 @@ class SmsController extends Controller
         $createVerifyCode = VerifyCode::create($item);
 
         // send sms to requested number
-            $userkey = "opr9im";
-            $passkey = "BROTHERSMS";
+            $userkey = "ky7049";
+            $passkey = "go2018";
             $telepon = $request->phone;
             $message = "Kode verifikasi anda adalah (".$otp."). Terima kasih telah mendaftar di GrosirOne.";
-            $url = "https://reguler.zenziva.net/apps/smsapi.php";
+            $url = "https://alpha.zenziva.net/apps/smsapi.php";
             $curlHandle = curl_init();
             curl_setopt($curlHandle, CURLOPT_URL, $url);
             curl_setopt($curlHandle, CURLOPT_POSTFIELDS, 'userkey='.$userkey.'&passkey='.$passkey.'&nohp='.$telepon.'&pesan='.urlencode($message));
@@ -78,7 +78,7 @@ class SmsController extends Controller
         $verify->delete();
 
         $user = User::join('agen', 'agen.identifier ', '=', 'users.id')
-                ->where('agen.identifier', '=', 'users.id'])
+                ->where('agen.identifier', '=', 'users.id')
                 ->update(['status' => 'active']);
 
           return response()->json(['data' => [], 'message' => ['OK']]);
@@ -107,7 +107,7 @@ class SmsController extends Controller
         $verify->delete();
 
         $user = User::join('customer', 'customer.identifier ', '=', 'users.id')
-                ->where('customer .identifier', '=', 'users.id'])
+                ->where('customer .identifier', '=', 'users.id')
                 ->update(['status' => 'active']);
 
           return response()->json(['data' => [], 'message' => ['OK']]);

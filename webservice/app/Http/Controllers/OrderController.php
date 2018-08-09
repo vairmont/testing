@@ -422,7 +422,7 @@ class OrderController extends Controller
       }
     
     public function manualNotif(Request $request){
-       $this->_sendPushNotification($request->user_id, "Terima Kasih", "Sebagai bentuk apresiasi GrosirOne kepada anda, kami telah memberikan plafon kredit sebesar Rp. 500.000 tanpa syarat dan biaya kepada agen yang telah memiliki customer untuk jangka waktu 1 bulan sejak hari ini. Mulai bulan September plafon kredit sebesar Rp. 1.000.000 akan otomatis terisi ke WANEE anda setelah memenuhi persyaratan dan ketentuan yang berlaku. ");
+       
     }
 
     protected function _sendPushNotification($user_id, $title, $body) {
