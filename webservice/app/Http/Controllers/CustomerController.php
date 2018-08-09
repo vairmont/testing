@@ -29,10 +29,11 @@ class CustomerController extends Controller
                         ->select('agen.identifier')
                         ->first();
 
+            if($customer->agen_id != 0){
             $agen = User::select('users.phone as agen_phone')
                         ->where('users.id', '=', $ag->identifier)
                         ->first();
-
+            }
             return response()->json(['data' => $customer, 'agen' => $agen, 'message' => ['OK']]);
     }
     
