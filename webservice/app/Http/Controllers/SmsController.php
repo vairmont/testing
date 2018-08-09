@@ -13,7 +13,7 @@ use App\User;
 class SmsController extends Controller
 {
 
-    public function requestOTP() {
+    public function requestOTP(Request $request) {
       $otp = rand(10000,99999);
 
       // save code to DB
@@ -99,16 +99,20 @@ class SmsController extends Controller
 
         $password = rand(111111,999999);
 
-        $user = User::where('id', '=', 'customer_id')
+        $user = User::where('id', '=', $request->customer_id)
                 ->update([
-                  'password' => Hash::make($password);
+                  'password' => Hash::make($password),
                   'status' => 'active'
                 ]);
+
+        $tel = User::where('id', '=', $request->customer_id)
+              ->select('phone')
+              ->first();
 
         // send sms
         $userkey = "ky7049";
         $passkey = "go2018";
-        $telepon = $user->phone;
+        $telepon = $tel->phone;
         $message = "Password anda adalah (".$password."). Demi keamanan akun, segera ganti password anda di tab menu profile setelah login pertama kali.";
         $url = "https://alpha.zenziva.net/apps/smsapi.php";
         $curlHandle = curl_init();
