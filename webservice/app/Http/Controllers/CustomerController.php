@@ -140,8 +140,10 @@ class CustomerController extends Controller
     		}
         }
 
-    public function checkCustomerData(Request $request){
-        if($data->agen_id == 0){
+    public function checkData(Request $request){
+        $check = Customer::where('identifier', $request->user_id)->first();
+
+        if($check->agen_id == 0){
             return response()->json(['data' => [], 'message' => ['Lengkapi data anda untuk dapat berbelanja.']]);
         }
         else{
@@ -149,7 +151,7 @@ class CustomerController extends Controller
         }
     }
 
-    public function updateCustomer(Request $request)
+    public function updateCustomer (Request $request)
     {
         if(empty($request->agen_id)) {
             return response()->json(['data' => [], 'message' => ['Agen harus dipilih']]);
