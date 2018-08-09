@@ -36,7 +36,7 @@ class CustomerController extends Controller
 
             return response()->json(['data' => $customer, 'agen' => $agen, 'message' => ['OK']]);
             }
-            
+
             else{
                 return response()->json(['data' => $customer, 'message' => ['OK']]);
             }
@@ -143,7 +143,7 @@ class CustomerController extends Controller
     public function checkCustomerData (Request $request){
         $data = Customer::where('identifier', $request->get('user')->id)->first();
 
-        if($data->agen_id == ''){
+        if($data->agen_id == 0){
             return response()->json(['data' => [], 'message' => ['Lengkapi data anda untuk dapat berbelanja.']]);
         }
         else{
