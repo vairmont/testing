@@ -33,8 +33,13 @@ class CustomerController extends Controller
             $agen = User::select('users.phone as agen_phone')
                         ->where('users.id', '=', $ag->identifier)
                         ->first();
-            }
+
             return response()->json(['data' => $customer, 'agen' => $agen, 'message' => ['OK']]);
+            }
+            
+            else{
+                return response()->json(['data' => $customer, 'message' => ['OK']]);
+            }
     }
     
     public function addCustomer (Request $request)
