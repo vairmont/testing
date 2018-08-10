@@ -27,6 +27,7 @@ Route::post('/v1/customer/photo/upload', 'CustomerController@uploadPhotoCustomer
 
 Route::post('/v1/otp/request', 'SmsController@requestOTP');
 Route::post('/v1/otp/check', 'SmsController@verifyCheckCustomer');
+Route::post('/v1/otp/check/agen', 'SmsController@verifyCheckAgen');
 
 Route::post('/v1/stores', 'CustomerController@getStore');
 Route::post('/v1/agen', 'CustomerController@getAgen');
