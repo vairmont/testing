@@ -57,7 +57,7 @@ class CustomerController extends Controller
         if(empty($request->gender)) {
             return response()->json(['data' => [], 'message' => ['Gender tidak boleh kosong']]);
         }
-        
+
         if(empty($request->agen_id)) {
             return response()->json(['data' => [], 'message' => ['Agen harus dipilih']]);
         }   
@@ -181,10 +181,11 @@ class CustomerController extends Controller
     
         else{
             User::where('id', $request->get('user')->id)
+
             ->update([
                 'store_id' => $request->store_id
             ]);
-            Customer::where('id', $request->get('user')->id)
+            Customer::where('identifier', $request->get('user')->id)
             ->update([
                 'agen_id' => $request->agen_id,
                 'address' => $request->address,
