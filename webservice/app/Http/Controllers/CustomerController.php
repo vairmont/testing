@@ -57,6 +57,18 @@ class CustomerController extends Controller
         if(empty($request->gender)) {
             return response()->json(['data' => [], 'message' => ['Gender tidak boleh kosong']]);
         }
+        
+        if(empty($request->agen_id)) {
+            return response()->json(['data' => [], 'message' => ['Agen harus dipilih']]);
+        }   
+
+        if(empty($request->address)) {
+            return response()->json(['data' => [], 'message' => ['Alamat wajib diisi']]);
+        }
+
+        if(empty($request->lat)) {
+            return response()->json(['data' => [], 'message' => ['Alamat Map wajib dicari']]);
+        }
 
         $val = Validator::make($request->all(), [
             'phone' => 'unique:users,phone'
