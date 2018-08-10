@@ -12,6 +12,7 @@
 Route::post('/v1/login', 'AuthController@doLogin');
 Route::post('/v1/logout', 'AuthController@doLogout');
 Route::post('/v1/forgotPassword', 'UserController@forgotPassword');
+Route::post('/v1/forgotPasswordtes', 'UserController@forgotPassword2');
 Route::post('/v1/changePassword', 'UserController@changePassword');
 
 Route::post('/v1/register/agen', 'RegisterController@addAgen');
