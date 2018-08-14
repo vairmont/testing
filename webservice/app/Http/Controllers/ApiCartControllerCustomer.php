@@ -89,12 +89,12 @@ class ApiCartControllerCustomer extends Controller {
       ->select('product.id', 'product.sku', 'product.product_name', 'cart_detail.qty', 'product.price_for_customer', 'product.price_for_agen')
       ->get();
 
-    if($cartDetail->qty == 0){
+    if($cartDetail->qty <= 0){
 
       $cartDetail->delete();
     }
 
-    if($cart->total == 0){
+    if($cart->total <= 0){
 
       $cart->delete();
     }
