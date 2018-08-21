@@ -68,7 +68,7 @@ class OrderControllerPOS extends Controller
     $history = new WaneeHistory;
     $history->user_id = $request->get('user')->id;
     $history->amount = $amount;
-    $history->saldo_akhir = $topup->wanee;
+    $history->saldo_akhir = $agen->wanee;
     $history->reason = 'Topup Wanee';
     $history->save();
 
