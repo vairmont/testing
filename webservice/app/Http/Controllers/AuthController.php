@@ -13,13 +13,14 @@ class AuthController extends Controller
 {
     public function doLogin(Request $request) 
     {
-    	if(empty($request->phone)) {
-            return response()->json(['data' => [], 'message' => ['Nomor Telepon tidak boleh kosong']]);
-        }
+    	$status = User::where('phone', '=', $request->phone)
+        			  ->select('status')
+        			  ->first();
 
         if(empty($request->password)) {
-            return response()->json(['data' => [], 'message' => ['Password tidak boleh kosong']]);
+        	return response()->json(['data' => $status, 'message' => ['OK']]);
         }
+
 		else {
 			$credentials = [
 				'phone' => $request->phone,
