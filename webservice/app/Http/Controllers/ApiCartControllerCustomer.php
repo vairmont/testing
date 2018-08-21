@@ -94,7 +94,7 @@ class ApiCartControllerCustomer extends Controller {
       $cartDetail->delete();
     }
 
-    if($cart->total <= 0){
+    if($cart->total = 0){
 
       $cart->delete();
     }

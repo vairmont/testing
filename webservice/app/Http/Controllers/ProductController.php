@@ -60,7 +60,11 @@ class ProductController extends Controller
 
     $result = [];
       foreach ($categories as $category) {
-        $items = Product::where('category_id', $category->id)->count();
+        $items = Product::join('stock', 'stock.product_id', '=', 'product.id')
+        ->where('product.category_id', $category->id)
+        ->where('stock.quantity' , '>' ,0)
+        ->where('stock.store_id', '=', $request->get('user')->store_id)
+        ->count();
 
         $result[] = [
           'category' => $category,
