@@ -47,10 +47,6 @@ class OrderControllerPOS extends Controller
     $topup = Agen::where('identifier', '=', $user->id)
              ->increment('wanee', $amount);
 
-    $poin = Agen::select('wanee')
-            ->where('identifier', '=', $user->id)
-            ->first();  
-
     $agen = Agen::where('agen.identifier', '=', $request->get('user')->id)
                     ->select('agen.wanee')
                     ->first();
@@ -72,13 +68,13 @@ class OrderControllerPOS extends Controller
     $history = new WaneeHistory;
     $history->user_id = $request->get('user')->id;
     $history->amount = $amount;
-    $history->saldo_akhir = $agen->wanee + $amount;
+    $history->saldo_akhir = $topup->wanee;
     $history->reason = 'Topup Wanee';
-    $history->save();               
+    $history->save();
 
     #send push notif ke agen
       $this->_sendPushNotification($agen->identifier, "Topup Berhasil", "Wanee anda berhasil ditopup.");
-    return response()->json(['data' => $poin, 'message' => ['OK']]);         
+    return response()->json(['data' => [], 'message' => ['OK']]);         
    }
 
     // public function index(Request $request) {

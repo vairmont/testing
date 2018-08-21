@@ -111,7 +111,7 @@ class ItemController extends Controller
 
         return view('products.form-item', compact('item', 'categories', 'stores', 'taxes', 'incentives'))->withTitle($title);
     }
-
+ 
     public function saveItem(Request $request, $id = "")
     {
         if($request->hasFile('img_url')){
@@ -203,9 +203,22 @@ class ItemController extends Controller
         return redirect('kategori');
     }
 
-    public function getModifier() {
-        return view('products.modifier')->withTitle('Modifier');
+    public function getModifier(Request $req) {
+        $args = $req->only(['product_name', 'category_id', 'stock']);
+        $isExport = $req->get('is_export', 0);
+        $args['pages'] = $isExport;
+
+        $categories = $this->categories->getCategories();
+        $items = $this->items->getItems($args);
+
+        if ($isExport) {
+            $this->_export_excel($items);
+        }
+
+        return view('products.modifier', compact('items', 'categories'))->withTitle('Modifier');
     }
+
+
 
     public function getAddModifier() {
         return view('products.addmodifier')->withTitle('Add Modifier');

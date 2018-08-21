@@ -71,18 +71,18 @@
                                             @if ($items)
                                               @foreach ($items as $item)
                                                 <tr>
-                                                  <th>{{$item->product_name}}</th>
-                                                  <th>{{$item->category->name}}</th>
-                                                  <th>Rp.{{ $item->price_for_customer}}</th>
-                                                  <th>Rp.{{ $item->cost }}</th>
-                                                  <th>Rp.{{ $item->margin }}</th>
-                                                  <th>{{ isset($item->stock) ? $item->stock->quantity : "0" }}</th>
+                                                  <td>{{$item->product_name}}</td>
+                                                  <td>{{$item->category->name}}</td>
+                                                  <td>Rp.{{number_format( $item->price_for_customer)}}</td>
+                                                  <td>Rp.{{number_format( $item->cost )}}</td>
+                                                  <td>Rp.{{number_format( $item->margin )}}</td>
+                                                  <td>{{ isset($item->stock) ? $item->stock->quantity : "0" }}</td>
                                                   <td>{{$item->description}}</td>
-                                                  <th>{{$item->shelf}}</th>
-                                                  <th>
+                                                  <td>{{$item->shelf}}</td>
+                                                  <td>
                                                     <a href="edititem/{{ $item->id }}" type="button" class="btn btn-info">Edit</a>
                                                     <a href="deleteitem/{{ $item->id }}" type="button" class="btn btn-info">Delete</a>
-                                                  </th>
+                                                  </td>
                                                 </tr>
                                               @endforeach
                                             @endif
