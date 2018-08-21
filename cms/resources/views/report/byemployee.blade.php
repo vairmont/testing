@@ -45,17 +45,22 @@
                                     <tr>
                                         <th>Nama</th>
                                         <th>Penjualan</th>
-                                        <th>Pengembalian uang</th>
-                                        <th>Diskon</th>
                                         <th>Pendapatan bersih</th>
-                                        <th>Nota</th>
-                                        <th>Rata-Rata penjualan</th>
+                                        <th>Jumlah Penjualan</th>
                                         <th>Pendaftaran langganan</th>
                                     </tr>
                                 </thead>
 
                                 <tbody>
-                                
+                                 @foreach ($byagen as $ba)
+                                 <tr>
+                                        <td>{{$ba->name}}</td>
+                                        <td>{{$ba->total_sales}}</td>
+                                        <td>{{$coms[$ba->agen_id]}}</td>
+                                        <td>{{$ba->total_order}}</td>
+                                        <td>{{$temp[$ba->agen_id]}}</td>
+                                    </tr>
+                                 @endforeach
                                 </tbody>
                             </table>
                         <!-- /div 2 -->
