@@ -7,14 +7,14 @@ class ItemRepository
 {
     public function getItems($args=[])
     {
-        $items = Item::select('*');
+        $items = Item::select('product.*');
 
         if (!empty($args['product_name'])) {
-            $items = $items->where('product_name', 'LIKE', '%'.$args['product_name'].'%');
+            $items = $items->where('product.product_name', 'LIKE', '%'.$args['product_name'].'%');
         }
 
         if (!empty($args['category_id']) && $args['category_id']!="all") {
-            $items = $items->where('category_id', $args['category_id']);
+            $items = $items->where('product.category_id', $args['category_id']);
         }
 
         if (!empty($args['stock']) && $args['stock']!="all") {
@@ -26,9 +26,10 @@ class ItemRepository
 
 
             if ($args['stock']=='sold') {
-                $items = $items->where('quantity', $args['stock']);
-            } else {
-                $items = $items->where('quantity', '<=', 10);
+                $items = $items->where('stock.quantity', $args['stock']);
+            }
+             else {
+                $items = $items->where('stock.quantity', '<=', 10);
             }
         }
 
