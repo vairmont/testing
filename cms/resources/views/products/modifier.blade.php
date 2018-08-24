@@ -57,6 +57,7 @@
                                                 <th>Harga Modal (Rp.)</th>
                                                 <th>Harga Diskon (Rp.)</th>
                                                 <th>Margin (Rp.)</th>
+                                                <th>in Percent (%)</th>
                                                 <th>Stock</th>
                                                 <th>Action</th>
                                             </tr>
@@ -73,6 +74,7 @@
                                                   <td><input class="form-control" name="cost" type="number" value="{{ $item->cost}}"></td>
                                                   <td><input class="form-control" name="promo_price" type="number" value="{{ $item->promo_price}}"></td>
                                                   <td>{{$item->margin}}</td>
+                                                  <td>{{ number_format( $item->margin/$item->cost*100, 2) }}</td>
                                                   <td>{{ isset($item->stock) ? $item->stock->quantity : "0" }}</td>
                                                   <td>
                                                     <button class="btn btn-primary" type="submite">Edit</button>

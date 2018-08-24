@@ -30,7 +30,7 @@ class Item extends Model
         $discount = $this->promo_price;
     	$cost = $this->cost;
 
-        if($discount > $price)
+        if($discount < $price && $discount != NULL && $discount > 0)
         {
             $margin = $discount - $cost;
         }
