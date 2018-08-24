@@ -8,15 +8,22 @@ use App\Order;
 use App\User;
 use App\Customer;
 use App\Commission;
+use App\OrderDetail;
+use App\Product;
+
 use DB;
 
 class ReportController extends Controller
 {
     public function getByItem(){
-
-
-
-        return view('report.byitem')->withTitle('By item');   
+        $totalsales = Order::join('order_detail','order.id','=','order_detail.order_id')
+        ->join('product','product.id','=','order_detail.product_id')
+        ->join('users','users.id','=','order.user_id')
+        ->select('product.sku as sku','product.product_name as name','order_detail.qty as qty','order.total as nominal','product.cost as cost','order_detail.id as id')
+        ->get();
+        
+        return view('report.byitem',compact('totalsales'))->withTitle('By withdraw');
+        
     }
     public function getByStore(){
 

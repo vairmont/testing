@@ -69,7 +69,7 @@
             </div>
         </div>
         <div class="form-group col-lg-6">
-            <label>Image</label>
+            <label>Image</lab~el>
             <input class="form-control" placeholder="Shelf" name="shelf" value="{{ isset($item) ? $item->shelf : old('shelf') }}">
         </div>
     </div>
