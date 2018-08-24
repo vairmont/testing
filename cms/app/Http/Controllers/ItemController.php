@@ -11,6 +11,7 @@ use App\Stores\TaxRepository;
 use App\Stores\IncentiveRepository;
 use App\Inventories\StockRepository;
 use App\Slider;
+use App\Product;
 
 use Excel;
 
@@ -58,11 +59,9 @@ class ItemController extends Controller
 
         $categories = $this->categories->getCategories();
         $items = $this->items->getItems($args);
-
         if ($isExport) {
             $this->_export_excel($items);
         }
-        
         return view('products.daftaritem', compact('items', 'categories'))->withTitle('Daftar Item');
     }
 
@@ -140,6 +139,16 @@ class ItemController extends Controller
         $stock = $this->stocks->createOrUpdateStock($id, $inputStock);
 
         return redirect('daftaritem');
+    }
+
+    public function editItem(Request $request, $id = "")
+    {
+        $item = Product::where('id','=',$id)
+        ->update(['cost' => $request->cost,
+                  'price_for_customer' => $request->price_for_customer,
+                  'promo_price' => $request->promo_price]);
+
+        return redirect('modifier');
     }
 
     public function deleteItem($id = "")

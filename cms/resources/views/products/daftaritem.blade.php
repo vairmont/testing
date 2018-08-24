@@ -43,7 +43,7 @@
                         <div class="form-group col-md-4">
                         <button type="submit" name="is_export" value="1" class="btn btn-default">Export</button>
                         <button type="submit" class="btn btn-default">Search</button>
-                        <button type="reset" class="btn btn-default">Clear</button>
+                        <a href="modifier" type="button" class="btn btn-info">Clear</a>
                         </div>
                 </div>
                   {{ Form::close() }}

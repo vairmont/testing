@@ -24,6 +24,9 @@
     <!-- Custom Fonts -->
     <link href="{{ asset('sbadmin/vendor/font-awesome/css/font-awesome.min.css') }}" rel="stylesheet" type="text/css">
 
+
+    <script src="{{ asset('js/sorttable.js') }}"></script>
+
   
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->

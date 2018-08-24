@@ -63,6 +63,7 @@ Route::get('/deletekategori/{id}', 'ItemController@deleteKategori');
 
 Route::get('/modifier', 'ItemController@getModifier');
 Route::get('/addmodifier', 'ItemController@getAddModifier');
+Route::post('/editmodifier/{id}', 'ItemController@editItem');
 
 Route::get('/diskon', 'ItemController@getDiskon');
 Route::get('/adddiskon', 'ItemController@formDiskon');
