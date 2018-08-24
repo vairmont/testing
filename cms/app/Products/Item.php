@@ -27,10 +27,16 @@ class Item extends Model
     public function getMarginAttribute()
     {
     	$price = $this->price_for_customer;
+        $discount = $this->promo_price;
     	$cost = $this->cost;
 
-        $margin = $price - $cost;
-
+        if($discount > $price)
+        {
+            $margin = $discount - $cost;
+        }
+        else{
+            $margin = $price - $cost;
+        }
         return $margin;
     }
 
