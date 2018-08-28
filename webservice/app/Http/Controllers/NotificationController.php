@@ -10,25 +10,12 @@ use Carbon\Carbon;
 
 class NotificationController extends Controller
 {
-    public function index(Request $request) {
+      public function index(Request $request) {
 
-          $notif = Notification::select('created_at')
+          $notif = Notification::select('name', 'description', 'photo', 'created_at')
 		           ->get();
 
-		           $result = [];
-		           foreach ($notif as $noti) {
-		           	$items = Notification::select('name', 'description', 'photo')
-		           	->whereDate('created_at', Carbon::now()->toDateString())
-		           ->get();
-
-		           }
-
-
-		           $result[] = [
-			           'notif' => $noti,
-			           'items' => $items
-			           ];
-      return response()->json(['data' => $result, 'message' => ['OK']]);
+      return response()->json(['data' => $notif, 'message' => ['OK']]);
     }
 }
 
