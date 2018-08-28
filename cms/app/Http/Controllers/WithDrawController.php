@@ -16,10 +16,7 @@ class WithDrawController extends Controller
 
         ->where('withdraw.status','=','process')
         ->get();
-        
-        $agen = Agen::all();
-        
-        return view('agent.withdraw',compact('withdraw','agen'))->withTitle('By withdraw');
+        return view('agent.withdraw',compact('withdraw'))->withTitle('By withdraw');
     }
 
     public function updateStatus(Request $request,$id){
@@ -35,10 +32,8 @@ class WithDrawController extends Controller
     
         $withdraw = WithDraw::where('id','=',$id)
         ->update([
-            'status' => 'done'
-            
+            'status' => 'done'  
         ]);
-
             $history = new WaneeHistory;
             $history->user_id = $amount->agen_id;
             $history->amount = $amount->amount;
