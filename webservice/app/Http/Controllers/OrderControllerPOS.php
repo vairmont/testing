@@ -45,10 +45,10 @@ class OrderControllerPOS extends Controller
     $user = User::where('phone',$request->phone)->first();
 
     $topup = Agen::where('identifier', '=', $user->id)
-             ->increment('wanee', $amount);
+             ->increment('plafon_kredit', $amount);
 
     $agen = Agen::where('agen.identifier', '=', $request->get('user')->id)
-                    ->select('agen.wanee')
+                    ->select('agen.plafon_kredit')
                     ->first();
 
     $today = date("Ymd");
@@ -68,12 +68,12 @@ class OrderControllerPOS extends Controller
     $history = new WaneeHistory;
     $history->user_id = $request->get('user')->id;
     $history->amount = $amount;
-    $history->saldo_akhir = $agen->wanee;
-    $history->reason = 'Topup Wanee';
+    $history->saldo_akhir = $agen->plafon_kredit;
+    $history->reason = 'Topup Plafon Kredit';
     $history->save();
 
     #send push notif ke agen
-      $this->_sendPushNotification($agen->identifier, "Topup Berhasil", "Wanee anda berhasil ditopup.");
+      $this->_sendPushNotification($agen->identifier, "Topup Berhasil", "Plafon Kredit anda berhasil ditopup.");
     return response()->json(['data' => [], 'message' => ['OK']]);         
    }
 
@@ -223,14 +223,14 @@ class OrderControllerPOS extends Controller
         #check saldo
         $agen = Agen::where('agen.identifier', '=', $order->agen_id)
                       ->first();
-        if($agen->wanee < $amount){
+        if($agen->plafon_kredit < $amount){
           return response()->json(['data' => [], 'message' => ['Saldo anda kurang']]);
         }
         else
         {
           $order->status = OrderStatus::DELIVERY;
           $topup = Agen::where('identifier', '=', $order->agen_id)
-                 ->decrement('wanee', round($amount));
+                 ->decrement('plafon_kredit', round($amount));
           $order->save();
         }
 
