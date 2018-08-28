@@ -286,10 +286,10 @@
                     <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Laporan<span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level">
                         <li>
-                            <a href="{{url('/byitem')}}">Penjualan per barang</a>
+                            <a href="{{url('/byitem')}}">Laporan Total sales</a>
                             </li>
                         <li>
-                            <a href="{{url('/bystore')}}">Penjualan per toko</a>
+                            <a href="{{url('/bystore')}}">Laporan Flow Sales</a>
                         </li>
                         <li>
                             <a href="{{url('/bycategory')}}">Penjualan per kategori</a>

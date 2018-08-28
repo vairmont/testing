@@ -10,7 +10,7 @@
         <div class="container-fluid">
         
             <div>
-                <h2>Penjualan Per Toko</h2>
+                <h2>Flow Sales</h2>
             </div>
 
                 <form class="form-inline"> 
@@ -43,15 +43,33 @@
                             <table class="table table-striped table-bordered table-hover" id="dataTables-example">
                                 <thead>
                                     <tr>
-                                        <th>Toko</th>
-                                        <th>Tanggal</th>
-                                        <th>Barang	</th>
+                                        <th>Order</th>
+                                        <th>Agen</th>
+                                        <th>Order</th>
+                                        <th>ProductName</th>
                                         <th>Quantity</th>
+                                        <th>Insentif</th>
+                                        <th>Paid by Agen</th>
+                                        <th>Paid by Customer</th>
                                     </tr>
                                 </thead>
 
                                 <tbody>
-                                
+                                @if(count($flowreport) > 0)
+                                        @foreach($flowreport as $flow)
+                                           
+                                                <tr>
+                                                  <td>{{$flow->id}}</td>
+                                                  <td>{{$flow->name}}</td>
+                                                  <td>{{$flow->invoice}}</td>
+                                                  <td>{{$flow->proname}}</td>
+                                                  <td>{{$flow->qty}}</td>
+                                                  <td>{{$flow->rate}}% (Rp {{ number_format($flow->agen_price * $flow->rate / 100) }})</td>
+                                                  <td>{{$flow->agen_price * $flow->qty}}</td>
+                                                  <td>{{$flow->customer_price * $flow->qty}}</td>
+                                                </tr>
+                                        @endforeach
+                                    @endif
                                 </tbody>
                             </table>
                         <!-- /div 2 -->
