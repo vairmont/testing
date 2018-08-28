@@ -29,8 +29,8 @@ class PromoController extends Controller
     public function recommendationIndex(Request $request) 
     {
     	$rec = OrderDetail::join('product', 'product.id', '=', 'order_detail.product_id')
-    				->select(DB::raw('SUM(order_detail.qty) as sales'), 'product.product_name', 'product.price_for_customer', 'product.img_url','product.description')
-    				->groupBy('product.product_name', 'product.price_for_customer', 'product.img_url','product.description')
+    				->select(DB::raw('SUM(order_detail.qty) as sales'), 'product.product_name', 'product.promo_price', 'product.price_for_customer', 'product.img_url', 'product.description')
+    				->groupBy('product.product_name', 'product.promo_price', 'product.price_for_customer', 'product.img_url', 'product.description')
     				->orderBy('sales', 'desc')
     				->get();
     	return response()->json(['data' => $rec, 'message' => ['OK']]);  
@@ -39,8 +39,7 @@ class PromoController extends Controller
 
     public function hotIndex(Request $request) 
     {
-    	$rec = Product::select('product.product_name', 'product.promo_price', 'product.img_url',
-    				'product.description')
+    	$rec = Product::select('product.product_name', 'product.promo_price', 'product.price_for_customer', 'product.img_url', 'product.description')
     				->where('promo_price', '>=', 0)
     				->get();
 
