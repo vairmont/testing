@@ -223,14 +223,14 @@ class OrderControllerPOS extends Controller
         #check saldo
         $agen = Agen::where('agen.identifier', '=', $order->agen_id)
                       ->first();
-        if($agen->wanee < $amount){
+        if($agen->plafon_kredit < $amount){
           return response()->json(['data' => [], 'message' => ['Saldo anda kurang']]);
         }
         else
         {
           $order->status = OrderStatus::DELIVERY;
           $topup = Agen::where('identifier', '=', $order->agen_id)
-                 ->decrement('wanee', round($amount));
+                 ->decrement('plafon_kredit', round($amount));
           $order->save();
         }
 
