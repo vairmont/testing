@@ -45,10 +45,10 @@ class OrderControllerPOS extends Controller
     $user = User::where('phone',$request->phone)->first();
 
     $topup = Agen::where('identifier', '=', $user->id)
-             ->increment('plafon_kredit', $amount);
+             ->increment('wanee', $amount);
 
     $agen = Agen::where('agen.identifier', '=', $request->get('user')->id)
-                    ->select('agen.plafon_kredit')
+                    ->select('agen.wanee')
                     ->first();
 
     $today = date("Ymd");
@@ -68,8 +68,8 @@ class OrderControllerPOS extends Controller
     $history = new WaneeHistory;
     $history->user_id = $request->get('user')->id;
     $history->amount = $amount;
-    $history->saldo_akhir = $agen->plafon_kredit;
-    $history->reason = 'Topup Plafon Kredit';
+    $history->saldo_akhir = $agen->wanee;
+    $history->reason = 'Topup Wanee';
     $history->save();
 
     #send push notif ke agen
