@@ -133,7 +133,7 @@ class ApiCartControllerPOS extends Controller {
     $price = 0;
     $price_agen = 0;
     foreach ($items as $item) {
-      if($item->promo_price <= $item->price_for_customer && $item->promo_price >= 0){
+      if($item->promo_price <= $item->price_for_customer && $item->promo_price > 0){
         $price = $item->promo_price;
         $price_agen = $item->promo_price * 0.95;
 
