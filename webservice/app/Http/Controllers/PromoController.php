@@ -8,6 +8,7 @@ use App\BannerPromo;
 use App\Slider;
 use App\OrderDetail;
 use App\Product;
+use App\Stock;
 use DB;
 
 class PromoController extends Controller
@@ -29,8 +30,11 @@ class PromoController extends Controller
     public function recommendationIndex(Request $request) 
     {
     	$rec = OrderDetail::join('product', 'product.id', '=', 'order_detail.product_id')
+                    ->join('stock', 'stock.product_id', '=', 'order_detail.product_id')
     				->select(DB::raw('SUM(order_detail.qty) as sales'), 'product.id', 'product.product_name', 
                         'product.promo_price as price', 'product.price_for_customer as regular_price', 'product.img_url', 'product.description')
+                    ->where('stock.quantity', '>', 0)
+                    ->where('stock.store_id', '=', $request->get('user')->store_id)
     				->groupBy('product.id', 'product.product_name', 'product.promo_price', 
                         'product.price_for_customer', 'product.img_url', 'product.description')
     				->orderBy('sales', 'desc')
@@ -42,7 +46,10 @@ class PromoController extends Controller
     public function hotIndex(Request $request) 
     {
     	$rec = Product::select('product.id', 'product.product_name', 'product.promo_price as price', 'product.price_for_customer as regular_price', 'product.img_url', 'product.description')
+                    ->join('stock', 'stock.product_id', '=', 'product.id')
     				->where('promo_price', '>=', 0)
+                    ->where('stock.quantity', '>', 0)
+                    ->where('stock.store_id', '=', $request->get('user')->store_id)
     				->get();
 
     	return response()->json(['data' => $rec, 'message' => ['OK']]);  

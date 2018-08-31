@@ -383,7 +383,7 @@ class OrderController extends Controller
         // else{
           $prices += $detail->price_for_customer * $detail->qty;
           $margin += $detail->price_for_customer * $detail->qty * $this->marginRate;
-          $incentive += ($detail->price_for_customer * $detail->qty * $this->marginRate) * $detail->rate / 100;
+          $incentive += $detail->price_for_customer * $detail->qty * 0.95 * $detail->rate / 100;
         // }        
         
        }

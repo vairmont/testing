@@ -7,6 +7,7 @@ use DB;
 use App\Order;
 use App\User;
 use App\Store;
+use App\Commission;
 
 class RankingController extends Controller
 {
@@ -20,6 +21,17 @@ class RankingController extends Controller
           		   ->groupBy('agen.name','store.store_name','agen.photo')
 		           ->orderBy('total_sales', 'desc')
 		           ->get();
+
+      return response()->json($store, 200);
+    }
+
+    public function akh(Request $request) {
+
+          $store = Commission::where('commission_netto', '>=', '0')
+                 ->select(DB::raw('SUM(commission_netto) as akh'), 'agen_id')
+                 ->groupBy('agen_id')
+               ->orderBy('agen_id', 'asc')
+               ->get();
 
       return response()->json($store, 200);
     }
