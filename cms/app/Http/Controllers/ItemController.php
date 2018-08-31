@@ -113,9 +113,11 @@ class ItemController extends Controller
  
     public function saveItem(Request $request, $id = "")
     {
+        // dd($request); die;
         if($request->hasFile('img_url')){
             $path = $request->file('img_url')->store('image');
-        }else { $path=""; }
+            $inputItem['img_url']= "storage/app/".$path;
+        }
           $inputItem['product_name'] = $request->product_name;
           $inputItem['category_id'] = $request->category_id;
           $inputItem['price_for_customer'] = $request->price_for_customer;
@@ -124,10 +126,8 @@ class ItemController extends Controller
           $inputItem['incentive_id'] = $request->incentive_id;
           $inputItem['store_id'] = $request->store_id;
           $inputItem['tax_id'] = $request->tax_id;
-          $inputItem['description'] = $request->description;
+          $inputItem['description'] = nl2br($request->description);
           $inputItem['shelf'] = $request->shelf;
-          $inputItem['img_url']= "storage/app/".$path;
-          
           
         /*$inputItem = $request->only(['product_name', 'category_id', 'price_for_customer', 'cost', 'sku', 'incentive_id', 'store_id', 'tax_id','description','shelf']);*/
 

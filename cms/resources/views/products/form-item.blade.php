@@ -55,46 +55,38 @@
                 @endif
             </select>
         </div>
-            <div class="form-group">
-            <label>Description</label>
-            <textarea class="form-control" rows="3" name='description' value="{{ isset($item) ? $item->description : old('description') }}"></textarea>
-            </div>
-            <div class="form-group col-lg-6">
-            <label>Shelf</label>
-            <input class="form-control" placeholder="Shelf" name="shelf" value="{{ isset($item) ? $item->shelf : old('shelf') }}">
-            </div>
-            <div class="form-group col-lg-6">
-            <label>Image</label>
-            <input type="file" class="form-control" name="img_url">
-            </div>
-        </div>
-        <div class="form-group col-lg-6">
-            <label>Image</lab~el>
-            <input class="form-control" placeholder="Shelf" name="shelf" value="{{ isset($item) ? $item->shelf : old('shelf') }}">
-        </div>
+    </div>
+    <div class="form-group col-lg-6">
+        <label>Description</label>
+        <textarea class="form-control" rows="3" name="description">{{ isset($item) ? strip_tags($item->description) : old('description') }}</textarea>
+    </div>
+    <div class="form-group col-lg-6">
+        <label>Shelf</label>
+        <input type="text" class="form-control" name="shelf" value="{{ isset($item) ? $item->shelf : old('shelf') }}">
+    </div>
+    <div class="form-group col-lg-6">
+        <label>Image</label>
+        <input type="file" class="form-control" name="img_url">
     </div>
     <!--DB Stock-->
     <div class="col-lg-12">
         <h1 class="page-header">Inventory</h1>
     </div>
-    <div class="col-lg-6">
+    <div class="col-lg-7">
         <label>Jumlah Stok</label>
         <input class="form-control" placeholder="Stok" name="quantity" value="{{ isset($item) && isset($item->stock) ? $item->stock->quantity : old('quantity') }}"> 
     </div>
-    <div class="form-group col-lg-12">
-        <div class="col-lg-6">
+    <div class="form-group col-lg-6">
             <!-- DB Store -->
             <h2>TOKO</h2>
-        </div>
-        <div class="checkbox col-lg-12">
             @if (isset($stores))
                 @foreach ($stores as $store)
                     <input type="radio" value="{{ $store->id }}" name="store_id" {{ (isset($item) && $item->store_id>0 && $store->id==$item->store_id) ? "checked" : "" }} > {{ $store->store_name }}
                 @endforeach
             @endif
-        </div>
+        
     </div>
-    <div class="form-group col-lg-12">
+    <div class="form-group col-lg-6">
         <!-- DB Tax -->
         <h2>Pajak</h2>
         @if (isset($taxes))
@@ -104,7 +96,7 @@
         @endif
     </div>
 
-    <div>
+    <div class="col-lg-12">
         <button type="submit" class="btn btn-default">Submit Button</button>
         <button type="reset" class="btn btn-default">Clear</button>
     </div>                    
