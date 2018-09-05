@@ -10,27 +10,27 @@
         <div class="container-fluid">
         
             <div>
-                <h2>Flow Sales</h2>
-            </div>
+                <h2 >Flow Sales</h2>
+            </div>  
 
-                <form class="form-inline"> 
-                            <p>
-                                    <button type="button" class="btn btn-primary">Hari ini</button>
+                           <!-- <p>
+                                    <button type="button" class="btn btn-primary" >Agen</button>
                                     <button type="button" class="btn btn-primary">Kemarin</button>
                                     <button type="button" class="btn btn-primary">Minggu ini</button>
                                     <button type="button" class="btn btn-primary">Bulan ini</button>
-                            </p>
+                            </p>-->
+                <form class="form-inline" method="GET" action="{{url('/bystore')}}"> 
                     <!-- form group -->
                     <div class="form group">
-                                <p>Purchase order date:</p>
-                                <input type="date" name="">
+                    <!--<select id="inputState" class="form-control" name="key">
+                                <option selected>GrosirOne</option>
+                                <option>GrosirOne Serang</option>
+                                <option>GrosirOne Cikupamas</option>
+                        </select>  -->       
                      
-                        <select id="inputState" class="form-control">
-                                <option selected>Semua Toko</option>
-                                <option>Mobile MiniGrosir</option>
-                                <option>Toko MiniGrosir</option>
-                        </select>
-                       <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                                               
+                            <input name="keyword" class="form-control mr-sm-2" type="text" placeholder="Nama Agen" aria-label="Search">
+                            <button type="submit" class="btn btn-default">Search</button>
                     </div>
                   </form>
                   
@@ -51,6 +51,7 @@
                                         <th>Insentif</th>
                                         <th>Paid by Agen</th>
                                         <th>Paid by Customer</th>
+                                        <th>Store</th>
                                     </tr>
                                 </thead>
 
@@ -65,8 +66,9 @@
                                                   <td>{{$flow->proname}}</td>
                                                   <td>{{$flow->qty}}</td>
                                                   <td>{{$flow->rate}}% (Rp {{ number_format($flow->agen_price * $flow->rate / 100) }})</td>
-                                                  <td>{{$flow->agen_price * $flow->qty}}</td>
-                                                  <td>{{$flow->customer_price * $flow->qty}}</td>
+                                                  <td>{{number_format($flow->agen_price * $flow->qty)}}</td>
+                                                  <td>{{number_format($flow->customer_price * $flow->qty)}}</td>
+                                                  <td>{{$flow->stoname}}</td>
                                                 </tr>
                                         @endforeach
                                     @endif
