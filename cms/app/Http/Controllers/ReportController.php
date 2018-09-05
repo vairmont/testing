@@ -25,23 +25,22 @@ class ReportController extends Controller
         return view('report.byitem',compact('totalsales'))->withTitle('By withdraw');
         
     }
-    public function getByStore(){
+    public function getByStore(Request $request){
         $flowreport = Order::join('order_detail','order.id','=','order_detail.order_id')
         ->join('product','product.id','=','order_detail.product_id')
         ->join('incentive_category','incentive_category.id','=','product.category_id')
         ->join('agen','agen.id','=','order.agen_id')
-        ->select('order_detail.qty as qty','incentive_category.rate as rate','order.invoice_no as invoice','agen.name as name','order.id as id','product.product_name as proname','order_detail.price_for_agen as agen_price','order_detail.price_for_customer as customer_price')
-        ->orderBy('order.id','asc')
-        ->get();
+        ->join('users','users.id','=','order.agen_id')
+        ->join('store','store.id','=','users.store_id')
+        ->select('store_name as stoname','order_detail.qty as qty','incentive_category.rate as rate','order.invoice_no as invoice','agen.name as name','order.id as id','product.product_name as proname','order_detail.price_for_agen as agen_price','order_detail.price_for_customer as customer_price');
 
-        
-        // $total = DB::table('product')
-        //    ->Join('order_detail', 'product.id', '=', 'order_detail.product_id')
-        //    ->sum(DB::raw('product.price_for_agen * order_detail.qty'));
-        
-           
-           
-        return view('report.bystore',compact('flowreport','total'))->withTitle('By store'); 
+        if(isset($request->keyword) && !empty($request->keyword)) {
+            $flowreport = $flowreport->where('agen.name','like',$request->keyword.'%');
+        }
+
+
+        $flowreport = $flowreport->orderBy('order.id','asc')->get();
+        return view('report.bystore',compact('flowreport','total'))->withTitle('By store');
     }
     public function getByCategory(){
 
