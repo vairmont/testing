@@ -185,7 +185,9 @@ class ApiCartControllerCustomer extends Controller {
     //   }
 
     return response()->json([
-        'data' => [], 'message' => ['OK']
+        'cart' => [
+          'message' => ['OK']
+        ],
     ], 201);
 }
 
