@@ -51,7 +51,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="index.html">CMS MiniGrosir [A]</a>
+        <a class="navbar-brand" href="{{url('/dashboard')}}">CMS MiniGrosir [A]</a>
     </div>
     <!-- /.navbar-header -->
 
@@ -280,7 +280,7 @@
                     <!-- /input-group -->
                 </li>
                 <li>
-                    <a href="index.html"><i class="fa fa-dashboard fa-fw"></i> Admin DashBoard</a>
+                    <a href="{{url('/dashboard')}}"><i class="fa fa-dashboard fa-fw"></i> Admin DashBoard</a>
                 </li>
                 <li>
                     <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Laporan<span class="fa arrow"></span></a>
@@ -686,7 +686,7 @@
                     <!-- /input-group -->
                 </li>
                 <li>
-                    <a href="index.html"><i class="fa fa-dashboard fa-fw"></i> Report DashBoard</a>
+                    <a href="{{url('/dashboard')}}"><i class="fa fa-dashboard fa-fw"></i> Report DashBoard</a>
                 </li>
               
                 <li>
@@ -993,7 +993,7 @@
                     <!-- /input-group -->
                 </li>
                 <li>
-                    <a href="index.html"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
+                    <a href="{{url('/dashboard')}}"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
                 </li>
               
                

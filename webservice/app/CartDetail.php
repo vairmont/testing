@@ -9,6 +9,6 @@ class CartDetail extends Model
     protected $table = 'cart_detail';
 
     protected $fillable = [
-    	'cart_id', 'product_id', 'qty'
+    	'cart_id', 'product_id', 'qty', 'price'
     ];
 }
