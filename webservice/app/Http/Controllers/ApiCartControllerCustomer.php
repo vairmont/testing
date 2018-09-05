@@ -81,12 +81,6 @@ class ApiCartControllerCustomer extends Controller {
           'subtotal' => $subtotal,
           'total' => $subtotal 
         ]);
-
-          return response()->json([
-              'cart' => [
-                'message' => ['OK']
-              ],
-          ], 201);
  
     }
     elseif($cart != null) {
@@ -121,21 +115,15 @@ class ApiCartControllerCustomer extends Controller {
           $cart->delete();
         }
 
-            return response()->json([
+            
+      }
+
+    }
+    return response()->json([
                 'cart' => [
                   'message' => ['OK']
                 ],
             ], 201);
-      }
-
-    }
-    else {
-          return response()->json([
-              'cart' => [
-                'message' => ['Failed add to cart']
-              ],
-          ], 201);
-    }
 }
 
   
