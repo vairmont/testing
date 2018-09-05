@@ -69,7 +69,7 @@ class ApiCartControllerCustomer extends Controller {
       $cd->qty = $request->qty;
       $cd->price = ($product->promo_price == 0) ? $product->price_for_customer : $product->promo_price;
       $cd->save();
-
+      
       $details = CartDetail::where('cart_id', $cart->id)->get();
 
       $subtotal = 0;
