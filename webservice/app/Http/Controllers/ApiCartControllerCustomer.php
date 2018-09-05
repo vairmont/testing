@@ -113,9 +113,40 @@ class ApiCartControllerCustomer extends Controller {
         if($cart->total <= 0){
 
           $cart->delete();
+        }     
+      }
+      else{
+
+        $product = Product::where('id',$request->product_id)->first();
+
+        $cd = new CartDetail;
+        $cd->cart_id = $cart->id;
+        $cd->product_id = $request->product_id;
+        $cd->qty = $request->qty;
+        $cd->price = ($product->promo_price == 0) ? $product->price_for_customer : $product->promo_price;
+        $cd->save();
+
+        $details = CartDetail::where('cart_id', $cart->id)->get();
+        $subtotal = 0;
+        foreach($details as $d) {
+          $subtotal += (int) ($d->price * $d->qty);
         }
 
-            
+        $cart = Cart::where('id',$cart->id)->first();
+
+        $cart->update([
+            'subtotal' => $subtotal,
+            'total' => $subtotal 
+          ]);
+
+        if($checkDetail->qty <= 0){
+          $checkDetail->delete();
+        }
+
+        if($cart->total <= 0){
+
+          $cart->delete();
+        }     
       }
 
     }
