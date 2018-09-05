@@ -86,7 +86,7 @@ class ApiCartControllerCustomer extends Controller {
     $items = CartDetail::Join('product', 'cart_detail.product_id', '=', 'product.id')
       ->where('cart_detail.cart_id', '=', $cart->id)
       ->where('qty', '>', 0)
-      ->select('product.id', 'product.sku', 'product.product_name', 'cart_detail.qty', 'product.price_for_customer', 'product.price_for_agen')
+      ->select('product.id', 'product.sku', 'product.product_name', 'cart_detail.qty', 'product.price_for_customer', 'product.price_for_agen', 'product.promo_price')
       ->get();
 
     if($cartDetail->qty <= 0){
@@ -100,14 +100,24 @@ class ApiCartControllerCustomer extends Controller {
     }
 
     $subtotal = 0;
+    $price = 0;
+    $price_agen = 0;
     foreach ($items as $item) {
+        if($item->promo_price > 0 && $item->promo_price < $item->price_for_customer){
+          $price = $item->promo_price;
+          $price_agen = $item->promo_price * 0.95;
+        }
+        else{
+          $price = $item->price_for_customer;
+          $price_agen = $item->price_for_customer * 0.95;
+        }
       switch ($request->get('user')->role_id) {
         case 2:
-          $subtotal += $item->price_for_customer * $item->qty;
+          $subtotal += $item->price * $item->qty;
           break;
         case 3:
         case 4:
-          $subtotal += $item->price_for_agen * $item->qty;
+          $subtotal += $item->price_agen * $item->qty;
           break;
       }
     }
@@ -122,6 +132,8 @@ class ApiCartControllerCustomer extends Controller {
         'tax' => $cart->tax,
         'total' => $cart->total,
         'items' => $items, 
+        'price' => $price,
+        'price_agen' => $price_agen,
         'message' => ['OK']
       ]
     ], 201);

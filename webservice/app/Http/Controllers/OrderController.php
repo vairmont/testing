@@ -389,7 +389,7 @@ class OrderController extends Controller
        }
 
       $commission_pph = ($incentive + $margin) * $this->pph;
-      $commission_netto = ($incentive + $margin) - $commission_pph;
+      $commission_netto = $incentive - $commission_pph;
       
       $commission = new Commission;
       $commission->order_id = $order->id;
