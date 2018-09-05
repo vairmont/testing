@@ -101,7 +101,8 @@ class OrderControllerPOS extends Controller
     // }
 
     public function create(Request $request) {
-
+      DB::beginTransaction();
+        try {  
       $cart = Cart::where('user_id', '=', $request->get('user')->id)->first();
 
       if ($cart == null) {
@@ -164,7 +165,10 @@ class OrderControllerPOS extends Controller
 
       $cartDetail = CartDetail::where('cart_id', '=', $cart->id)->delete();
       $cart->delete();
-
+      } catch(\Exception $e) {
+          DB::rollback();
+          throw $e;
+      }
       return response()->json(
         [
             'order_id' => $order->id,
@@ -201,6 +205,9 @@ class OrderControllerPOS extends Controller
         'order_id' => 'required|numeric|exists:order,id',
         'store_id' => 'required'
       ]);
+
+      DB::beginTransaction();
+        try {
 
       if ($validator->fails()) {
         return response()->json([
@@ -262,10 +269,16 @@ class OrderControllerPOS extends Controller
         $stockhistory->quantity = $orderdetails->qty;
         $stockhistory->save();
 
+        }
+      } catch(\Exception $e) {
+          DB::rollback();
+          throw $e;
       }
+      DB::commit();
 
       $this->_sendPushNotification($order->user_id, "Order Status", "Order sedang di antar oleh agen.");
       return response()->json(['data' => [$order], 'message' => ['Transaksi Berhasil']],200);
+      
 
       // return response()->json(['message' => 'Order has been completed.'], 201);
 
