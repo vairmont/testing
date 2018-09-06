@@ -264,7 +264,8 @@ class OrderController extends Controller
           'error' => $validator->errors()->all()
         ]);
       }
-
+      DB::beginTransaction();
+        try {
       $order = Order::whereId($request['order_id'])
         ->first();
       $order->status = OrderStatus::CANCELLED;
@@ -276,7 +277,11 @@ class OrderController extends Controller
       // $orderCancel->agen_id = $order->agen_id;
       $orderCancel->reason = $request['reason'];
       $orderCancel->save();
-
+      } catch(\Exception $e) {
+          DB::rollback();
+          throw $e;
+      }
+      DB::commit();
       #send push notif ke customer
       $this->_sendPushNotification($order->user_id, "Order Status", "Order di cancel oleh agen.");
 
@@ -360,7 +365,8 @@ class OrderController extends Controller
             // $distance = (float)(($angle * $earthRadius) * 2);
 
             // if($distance <= 0.5) {
-
+      DB::beginTransaction();
+        try {
       $order = Order::whereId($request['order_id'])->first();
       $order->status = OrderStatus::COMPLETED;
       $order->save();
@@ -415,6 +421,12 @@ class OrderController extends Controller
                     ->update([
                 'wanee' => $history->saldo_akhir
             ]);
+
+      } catch(\Exception $e) {
+          DB::rollback();
+          throw $e;
+      }
+      DB::commit();
 
       $this->_sendPushNotification($order->user_id, "Order Status", "Terima kasih transaksi selesai tolong berikan rating.");
 
