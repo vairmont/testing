@@ -13,26 +13,23 @@
                 <h2>Total Sales</h2>
             </div>
 
-                <form class="form-inline"> 
-                            <p>
-                                    <button type="button" class="btn btn-primary">Hari ini</button>
-                                    <button type="button" class="btn btn-primary">Kemarin</button>
-                                    <button type="button" class="btn btn-primary">Minggu ini</button>
-                                    <button type="button" class="btn btn-primary">Bulan ini</button>
-                            </p>
-                    <!-- form group -->
-                    <div class="form group">
-                                <p>Purchase order date:</p>
-                                <input type="date" name="">
-                     
-                        <select id="inputState" class="form-control">
-                                <option selected>Semua Toko</option>
-                                <option>Mobile MiniGrosir</option>
-                                <option>Toko MiniGrosir</option>
-                        </select>
-                       <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-                    </div>
-                  </form>
+                      <!--  <button type="button" class="btn btn-primary" >Hari ini</button>
+                        <button type="button" class="btn btn-primary">Kemarin</button>
+                        <button type="button" class="btn btn-primary">Minggu ini</button>
+                        <button type="button" class="btn btn-primary">Bulan ini</button>-->
+
+            <form class=" form-inline" method="GET" action="{{url('/byitem')}}"> 
+                <div class="col-lg-6 form group">
+                    <input name="keyword" class="form-control mr-sm-2" type="text" placeholder="Nama Product" aria-label="Search">
+                    <button type="submit" class="btn btn-default">Search</button>
+                </div>
+            </form>
+            <form class="form-inline" method="GET" action="{{url('/byitem')}}"> 
+                <div class="col-lg-6 form group">
+                    <input name="key" class="form-control mr-sm-2" type="text" placeholder="Nama Toko" aria-label="Search">
+                    <button type="submit" class="btn btn-default">Search</button>
+                </div>
+            </form>
                   
             <!-- /.row -->
             <div class="row">
@@ -44,11 +41,15 @@
                                 <thead>
                                     <tr>
                                         <th>ID</th>
+                                        <th>User</th>
                                         <th>SKU</th>
                                         <th>Nama Barang</th>
                                         <th>Quantity</th>
                                         <th>Nominal</th>
                                         <th>Cost</th>
+                                        <th>Store</th>
+                                        <th>Created At</th>
+                                        <th>Updated At</th>
                                     </tr>
                                 </thead>
 
@@ -58,12 +59,15 @@
                                            
                                                 <tr>
                                                   <td>{{$total->id}}</td>
+                                                  <td>{{$total->uid}}</td>
                                                   <td>{{$total->sku}}</td>
                                                   <td>{{$total->name}}</td>
                                                   <td>{{$total->qty}}</td>
-                                                  <td>{{$total->nominal}}</td>
-                                                  <td>{{$total->cost}}</td> 
-                                               
+                                                  <td>Rp.{{number_format($total->nominal)}}</td>
+                                                  <td>Rp.{{number_format($total->cost)}}</td> 
+                                                  <td>{{$total->sname}}</td>
+                                                  <td>{{$total->create}}</td>
+                                                  <td>{{$total->update}}</td>
                                                 </tr>
                                         @endforeach
                                     @endif

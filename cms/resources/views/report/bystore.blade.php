@@ -21,7 +21,7 @@
                             </p>-->
                 <form class="form-inline" method="GET" action="{{url('/bystore')}}"> 
                     <!-- form group -->
-                    <div class="form group">
+                    <div class="col-lg-4 form group">
                     <!--<select id="inputState" class="form-control" name="key">
                                 <option selected>GrosirOne</option>
                                 <option>GrosirOne Serang</option>
@@ -33,6 +33,13 @@
                             <button type="submit" class="btn btn-default">Search</button>
                     </div>
                   </form>
+                  <form class="form-inline" method="GET" action="{{url('/bystore')}}"> 
+                    <!-- form group -->
+                    <div class="col-lg-4 form group">                                 
+                            <input name="key" class="form-control mr-sm-2" type="text" placeholder="Nama Toko" aria-label="Search">
+                            <button type="submit" class="btn btn-default">Search</button>
+                    </div>
+                  </form>
                   
             <!-- /.row -->
             <div class="row">
@@ -40,7 +47,7 @@
                 <div class="col-lg-12">
                     <!-- /.div 2 -->
                     <div class="table-responsive">
-                            <table class="table table-striped table-bordered table-hover" id="dataTables-example">
+                            <table width="100%"class="table table-striped table-bordered table-hover" id="dataTables-example">
                                 <thead>
                                     <tr>
                                         <th>Order</th>
@@ -52,6 +59,8 @@
                                         <th>Paid by Agen</th>
                                         <th>Paid by Customer</th>
                                         <th>Store</th>
+                                        <th>Created At</th>
+                                        <th>Updated At</th>
                                     </tr>
                                 </thead>
 
@@ -69,6 +78,8 @@
                                                   <td>{{number_format($flow->agen_price * $flow->qty)}}</td>
                                                   <td>{{number_format($flow->customer_price * $flow->qty)}}</td>
                                                   <td>{{$flow->stoname}}</td>
+                                                  <td>{{$flow->create}}</td>
+                                                  <td>{{$flow->update}}</td>
                                                 </tr>
                                         @endforeach
                                     @endif
