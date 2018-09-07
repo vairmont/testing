@@ -223,7 +223,7 @@ class OrderControllerPOS extends Controller
       if($order->status == 6 ){
           return response()->json(['data' => [], 'message' => ['Transaksi sudah pernah diproses']]);
       }
-      $amount = $order->total;
+      $amount = $order->total * 0.95;
 
       if($order->agen_id != 0)
       {
