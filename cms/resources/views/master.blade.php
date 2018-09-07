@@ -1298,7 +1298,7 @@
                     <!-- /input-group -->
                 </li>
                 <li>
-                    <a href="index.html"><i class="fa fa-dashboard fa-fw"></i> Report DashBoard</a>
+                    <a href="{{url('/dashboard')}}"><i class="fa fa-dashboard fa-fw"></i> Report DashBoard</a>
                 </li>
                 <li>
                     <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Laporan<span class="fa arrow"></span></a>
