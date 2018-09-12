@@ -17,7 +17,6 @@ class VoucherController extends Controller
 
     	$data = Voucher::select('discount_rate','id as voucher_id','product_category', 'voucher_code')
             ->where('voucher_code','=',$request->voucher_code)
-            ->where('for','like','%'.$role->name.'%')
             ->where('quota','!=',0)
             ->Where('valid_until','>=',Carbon\Carbon::now()->format('Y-m-d'))
             ->Where('valid_from','<=',Carbon\Carbon::now()->format('Y-m-d'))
