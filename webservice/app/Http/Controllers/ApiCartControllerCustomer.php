@@ -135,8 +135,6 @@ class ApiCartControllerCustomer extends Controller {
       }
       else{
 
-        $checkDetail = CartDetail::where('product_id', $request->product_id)->first();
-        
         $product = Product::where('id',$request->product_id)->first();
 
         $cd = new CartDetail;
@@ -158,6 +156,8 @@ class ApiCartControllerCustomer extends Controller {
             'subtotal' => $subtotal,
             'total' => $subtotal 
           ]);
+
+        $checkDetail = CartDetail::where('product_id', $request->product_id)->first();
 
         if($checkDetail->qty <= 0){
           $checkDetail->delete();
