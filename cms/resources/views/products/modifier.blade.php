@@ -37,7 +37,7 @@
                                 <input class="form-control mr-sm-2" type="text" name="product_name" placeholder="Product Name" aria-label="Search">
                         </div>
                         <div class="form-group col-md-4">
-                        <button type="submit" name="is_export" value="1" class="btn btn-default">Export</button>
+                        <button type="submit" name="export" value="1" class="btn btn-default">Export</button>
                         <button type="submit" class="btn btn-default">Search</button>
                         <a href="modifier" type="button" class="btn btn-info">Clear</a>
                         </div>

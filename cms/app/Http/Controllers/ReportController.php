@@ -10,13 +10,14 @@ use App\Customer;
 use App\Commission;
 use App\OrderDetail;
 use App\Product;
+use Excel;
 
 use DB;
 
 class ReportController extends Controller
 {
     public function getByItem(Request $request){
-        
+        $role = Orderdetail::where('id',$request->id)->first();
 
         $totalsales = Order::join('order_detail','order.id','=','order_detail.order_id')
         ->join('product','product.id','=','order_detail.product_id')
@@ -38,6 +39,9 @@ class ReportController extends Controller
         
     }
     public function getByStore(Request $request){
+        $isExport = $request->get('is_export', 0);
+        $args['pages'] = $isExport;
+
         $flowreport = Order::join('order_detail','order.id','=','order_detail.order_id')
         ->join('product','product.id','=','order_detail.product_id')
         ->join('incentive_category','incentive_category.id','=','product.category_id')
@@ -52,10 +56,52 @@ class ReportController extends Controller
         if(isset($request->key) && !empty($request->key)) {
             $flowreport = $flowreport->where('store.store_name','like',$request->key.'%');
         }
-
+        if ($isExport) {
+            $this->_export_excel($flowreport);
+        }
 
         $flowreport = $flowreport->orderBy('order.id','asc')->get();
         return view('report.bystore',compact('flowreport','total'))->withTitle('By store');
+    }
+
+    private function _export_excel($flowreport) {
+        $flowreport = Order::join('order_detail','order.id','=','order_detail.order_id')
+        ->join('product','product.id','=','order_detail.product_id')
+        ->join('incentive_category','incentive_category.id','=','product.category_id')
+        ->join('agen','agen.id','=','order.agen_id')
+        ->join('users','users.id','=','order.agen_id')
+        ->join('store','store.id','=','users.store_id')
+        ->select('store_name as stoname','order_detail.qty as qty','incentive_category.rate as rate','order.invoice_no as invoice','agen.name as name','order.id as id','product.product_name as proname','order_detail.price_for_agen as agen_price','order_detail.price_for_customer as customer_price','order.created_at as create','order.updated_at as update','order.agen_id as aid')
+        ->get();
+        
+
+        $data = [];
+        foreach ($flowreport as $flow) {
+            $data[] = ([
+                'ID' => $flow->id,
+                'Agen' => $flow->name,
+                'Order' => $flow->invoice,
+                'Nama Produk' =>$flow->proname,
+                'Quantity' => $flow->qty,
+                'isentif' => $flow->rate,
+                'Paid by Agen' => $flow->agen_price * $flow->qty,
+                'Paid by Customer' => $flow->customer_price * $flow->qty,
+                'Store' => $flow->stoname, 
+                'Created At' => $flow->create, 
+                'Updated At' => $flow->update, 
+            ]);
+        }
+        
+        return Excel::create('Flow_report', function($excel) use($data) {
+            $excel->sheet('Sheetname', function($sheet) use($data) {
+                $row = 1;
+
+                $sheet->fromArray($data, null, 'A' . $row, true, true);
+
+                $sheet->getStyle("A1:" . 'G' . $row)
+                    ->getAlignment()->setWrapText(false);
+            });
+        })->export('xls');
     }
     public function getByCategory(){
 
