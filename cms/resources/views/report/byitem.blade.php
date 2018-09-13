@@ -13,8 +13,9 @@
                 <h2>Total Sales</h2>
             </div>
 
-                      <!--  <button type="button" class="btn btn-primary" >Hari ini</button>
-                        <button type="button" class="btn btn-primary">Kemarin</button>
+                        <button type="button" class="btn btn-primary" >Hari ini</button>
+                      
+                       <!-- <button type="button" class="btn btn-primary">Kemarin</button>
                         <button type="button" class="btn btn-primary">Minggu ini</button>
                         <button type="button" class="btn btn-primary">Bulan ini</button>-->
 
@@ -24,6 +25,7 @@
                     <button type="submit" class="btn btn-default">Search</button>
                 </div>
             </form>
+            
             <form class="form-inline" method="GET" action="{{url('/byitem')}}"> 
                 <div class="col-lg-6 form group">
                     <input name="key" class="form-control mr-sm-2" type="text" placeholder="Nama Toko" aria-label="Search">

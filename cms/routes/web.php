@@ -22,6 +22,7 @@ Route::get('/daftaritem', 'ItemController@getDaftarItem');
 
 Route::get('/byitem', 'ReportController@getByItem');
 Route::get('/bystore', 'ReportController@getBystore');
+
 Route::get('/bycategory','ReportController@getBycategory');
 Route::get('/byemployee','ReportController@getByEmployee');
 Route::get('/bychasier','ReportController@getByChasier');
@@ -64,6 +65,9 @@ Route::get('/deletekategori/{id}', 'ItemController@deleteKategori');
 Route::get('/modifier', 'ItemController@getModifier');
 Route::get('/addmodifier', 'ItemController@getAddModifier');
 Route::post('/editmodifier/{id}', 'ItemController@editItem');
+
+Route::get('/voucher', 'VoucherController@getVoucher');
+Route::post('/voucher/add','VoucherController@addVoucher');
 
 Route::get('/diskon', 'ItemController@getDiskon');
 Route::get('/adddiskon', 'ItemController@formDiskon');

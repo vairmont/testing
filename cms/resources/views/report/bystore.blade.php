@@ -39,8 +39,8 @@
                             <input name="key" class="form-control mr-sm-2" type="text" placeholder="Nama Toko" aria-label="Search">
                             <button type="submit" class="btn btn-default">Search</button>
                     </div>
+                    <button type="submit" name="is_export" value="1" class="btn btn-default">Export</button>
                   </form>
-                  
             <!-- /.row -->
             <div class="row">
             <!-- div col -->
@@ -50,7 +50,7 @@
                             <table width="100%"class="table table-striped table-bordered table-hover" id="dataTables-example">
                                 <thead>
                                     <tr>
-                                        <th>Order</th>
+                                        <th>ID</th>
                                         <th>Agen</th>
                                         <th>Order</th>
                                         <th>ProductName</th>
