@@ -48,17 +48,6 @@ class ApiCartControllerCustomer extends Controller {
     ], 201);
   }
   public function updateCart(Request $request) {
-    $val = Validator::make($request->all(), [
-      'product_id' => 'required|numeric|exists:product,id',
-      'qty' => 'required|numeric'
-    ]);
-
-    if ($val->fails()) {
-      return response()->json(['data' => [], 'message' => $val->errors()->all()], 400);
-    }
-    DB::beginTransaction();
-        try {
-
     $cart = Cart::where('user_id', '=', $request->get('user')->id)->first();
 
     if ($cart == null) {
@@ -112,11 +101,6 @@ class ApiCartControllerCustomer extends Controller {
 
     if($cart->total <= 0){
       $cart->delete();
-    }
-
-      } catch(\Exception $e) {
-          DB::rollback();
-          throw $e;
     }
 
     return response()->json([
