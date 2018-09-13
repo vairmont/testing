@@ -79,6 +79,7 @@ class ItemController extends Controller
                 'Toko' => $store,
                 'Persediaan' => $stock, 
             ]);
+            
         }
 
         return Excel::create('Daftar_Item', function($excel) use($data) {

@@ -22,6 +22,7 @@ Route::get('/daftaritem', 'ItemController@getDaftarItem');
 
 Route::get('/byitem', 'ReportController@getByItem');
 Route::get('/bystore', 'ReportController@getBystore');
+
 Route::get('/bycategory','ReportController@getBycategory');
 Route::get('/byemployee','ReportController@getByEmployee');
 Route::get('/bychasier','ReportController@getByChasier');

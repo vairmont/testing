@@ -10,6 +10,7 @@ namespace App\Http\Controllers;
 
 use App\Order;
 use App\Cart;
+use App\Stock;
 use App\CartDetail;
 use App\Product;
 use App\OrderBillingDetail;
@@ -63,6 +64,14 @@ class ApiCartControllerCustomer extends Controller {
 
       $product = Product::where('id',$request->product_id)->first();
 
+      $stock = Stock::where('product_id', $request->product_id)
+                ->select('stock.quantity')
+                ->first();
+
+        if($request->qty > $stock->quantity){
+          return response()->json(['message' => 'Mohon maaf, stok barang ditoko tidak mencukupi.'], 200);
+        }
+
       $cd = new CartDetail;
       $cd->cart_id = $cart->id;
       $cd->product_id = $request->product_id;
@@ -91,6 +100,15 @@ class ApiCartControllerCustomer extends Controller {
       
       if($checkDetail) {
         $qty = (int) ($checkDetail->qty + $request->qty);
+
+        $stock = Stock::where('product_id', $request->product_id)
+                ->select('stock.quantity')
+                ->first();
+       
+        if($request->qty + $qty > $stock->quantity){
+          return response()->json(['message' => 'Mohon maaf, stok barang ditoko tidak mencukupi.'], 200);
+        }
+
         $checkDetail->update(['qty' => $qty]);
 
         $details = CartDetail::where('cart_id', $cart->id)->get();
@@ -138,6 +156,8 @@ class ApiCartControllerCustomer extends Controller {
             'subtotal' => $subtotal,
             'total' => $subtotal 
           ]);
+
+        $checkDetail = CartDetail::where('product_id', $request->product_id)->first();
 
         if($checkDetail->qty <= 0){
           $checkDetail->delete();
