@@ -27,8 +27,8 @@ use App\CartDetail;
 class OrderController extends Controller
 {
 
-    private $marginRate = .05;
-    private $pph = .02;
+    private $marginRate = 0.05;
+    private $pph = 0.02;
 
 
     public function orderPending(Request $request) {
@@ -370,16 +370,15 @@ class OrderController extends Controller
       $order = Order::whereId($request['order_id'])->first();
       $order->status = OrderStatus::COMPLETED;
       $order->save();
-
-      $incentiveDetails = OrderDetail::Join('incentive_category', 'order_detail.category_id', '=', 'incentive_category.id')
+      $incentiveDetails = OrderDetail::join('product', 'product.id', '=', 'order_detail.product_id')
+                    ->join('incentive_category', 'incentive_category.id', '=', 'product.incentive_id')
                     ->where('order_id', '=', $order->id)
-                    ->select('price_for_customer', 'incentive_category.rate', 'order_detail.qty')
+                    ->select('order_detail.price_for_customer', 'incentive_category.rate', 'order_detail.qty')
                     ->get();
 
       $incentive = 0;
       $margin = 0;
       $prices = 0;
-
       foreach ($incentiveDetails as $detail) {
         // if($detail->qty >= 3){
         //   $prices += ($detail->price_for_customer * $detail->qty) - 0.98;

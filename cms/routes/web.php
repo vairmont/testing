@@ -66,6 +66,9 @@ Route::get('/modifier', 'ItemController@getModifier');
 Route::get('/addmodifier', 'ItemController@getAddModifier');
 Route::post('/editmodifier/{id}', 'ItemController@editItem');
 
+Route::get('/voucher', 'VoucherController@getVoucher');
+Route::post('/voucher/add','VoucherController@addVoucher');
+
 Route::get('/diskon', 'ItemController@getDiskon');
 Route::get('/adddiskon', 'ItemController@formDiskon');
 Route::post('/adddiskon', 'ItemController@saveDiskon');
