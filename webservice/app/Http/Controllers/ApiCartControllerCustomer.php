@@ -120,13 +120,10 @@ class ApiCartControllerCustomer extends Controller {
     }
 
     return response()->json([
-      'cart' => [
-        'subtotal' => $cart->subtotal,
-        'tax' => $cart->tax,
-        'total' => $cart->total,
-        'items' => $items
-      ]
-    ], 201);
+                'cart' => [
+                  'message' => ['OK']
+                ],
+            ], 201);
   }
   public function aupdateCart(Request $request) {
 
