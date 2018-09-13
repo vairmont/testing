@@ -36,8 +36,8 @@
                     </th>
                     <th>{{ $discount->restriction==1 ? "Yes" : "No" }}</th>
                     <th>
-                      <a href="editdiskon/{{ $discount->id }}">Edit</a>
-                      <a href="deletediskon/{{ $discount->id }}">Delete</a>
+                      <a href="editdiskon/{{ $discount->id }}" type="button" class="btn btn-primary">Edit</a>
+                      <a href="deletediskon/{{ $discount->id }}" type="button" class="btn btn-danger">Delete</a>
                     </th>
                   </tr>
                 @endforeach

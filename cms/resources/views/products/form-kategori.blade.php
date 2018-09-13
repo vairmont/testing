@@ -14,14 +14,14 @@
           {{ Form::open(['url' => url('addkategori')]) }}
       @endif
          <input type="hidden" name="_token" value="{{ csrf_token() }}">
-        <div class="form-group col-lg-6">
+        <div class="form-group col-lg-4">
            <label>Nama Kategori</label>
            <input class="form-control" name="name" placeholder="Category Name" required value="{{ isset($category) ? $category->name : old('name') }}">
          </div>
                
         <div class="form-group col-lg-12">
-          <button type="submit" class="btn btn-default">Save</button>
-          <button type="reset" class="btn btn-default">Clear</button>
+          <button type="submit" class="btn btn-success">Save</button>
+          <button type="reset" class="btn btn-danger">Clear</button>
         </div>
       {{ Form::close() }}     
     </div>

@@ -30,16 +30,16 @@
                      
                                                
                             <input name="keyword" class="form-control mr-sm-2" type="text" placeholder="Nama Agen" aria-label="Search">
-                            <button type="submit" class="btn btn-default">Search</button>
+                            <button type="submit" class="btn btn-primary">Search</button>
                     </div>
                   </form>
                   <form class="form-inline" method="GET" action="{{url('/bystore')}}"> 
                     <!-- form group -->
                     <div class="col-lg-4 form group">                                 
                             <input name="key" class="form-control mr-sm-2" type="text" placeholder="Nama Toko" aria-label="Search">
-                            <button type="submit" class="btn btn-default">Search</button>
+                            <button type="submit" class="btn btn-primary">Search</button>
                     </div>
-                    <button type="submit" name="is_export" value="1" class="btn btn-default">Export</button>
+                    <button type="submit" name="is_export" value="1" class="btn btn-success">Export</button>
                   </form>
             <!-- /.row -->
             <div class="row">
@@ -59,8 +59,7 @@
                                         <th>Paid by Agen</th>
                                         <th>Paid by Customer</th>
                                         <th>Store</th>
-                                        <th>Created At</th>
-                                        <th>Updated At</th>
+                                        <th>Tanggal</th>
                                     </tr>
                                 </thead>
 
@@ -79,7 +78,7 @@
                                                   <td>{{number_format($flow->customer_price * $flow->qty)}}</td>
                                                   <td>{{$flow->stoname}}</td>
                                                   <td>{{$flow->create}}</td>
-                                                  <td>{{$flow->update}}</td>
+                                                  
                                                 </tr>
                                         @endforeach
                                     @endif

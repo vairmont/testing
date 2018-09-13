@@ -32,8 +32,8 @@
                   <tr>
                     <th>{{ $category->name }}</th>
                     <th>
-                      <a href="editkategori/{{ $category->id }}">Edit</a>
-                      <a href="deletekategori/{{ $category->id }}">Delete</a>
+                      <a href="editkategori/{{ $category->id }}" type="button" class="btn btn-info">Edit</a>
+                      <a href="deletekategori/{{ $category->id }}" type="button" class="btn btn-danger">Delete</a>
                     </th>
                   </tr>
                 @endforeach

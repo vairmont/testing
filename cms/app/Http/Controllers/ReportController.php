@@ -17,8 +17,10 @@ use DB;
 class ReportController extends Controller
 {
     public function getByItem(Request $request){
-        $role = Orderdetail::where('id',$request->id)->first();
+        $isExport = $request->get('is_export', 0);
+        $args['pages'] = $isExport;
 
+        $role = Orderdetail::where('id',$request->id)->first();
         $totalsales = Order::join('order_detail','order.id','=','order_detail.order_id')
         ->join('product','product.id','=','order_detail.product_id')
         ->join('users','users.id','=','order.user_id')
@@ -29,14 +31,55 @@ class ReportController extends Controller
         
         if(isset($request->keyword) && !empty($request->keyword)){
             $totalsales = $totalsales->where('product.product_name','LIKE',$request->keyword.'%');
+            
         }
         if(isset($request->key) && !empty($request->key)){
             $totalsales = $totalsales->where('store.store_name','LIKE',$request->key.'%');
         }
-      
-        $totalsales = $totalsales->orderby('role.name','asc')->get();  
+        if ($isExport) {
+            $this->_export_excel2($totalsales);
+        }
+
+        $totalsales = $totalsales->orderby('order_detail.created_at','desc')->get();  
         return view('report.byitem',compact('totalsales'))->withTitle('By withdraw');
         
+    }
+    private function _export_excel2($totalsales) {
+        $totalsales = Order::join('order_detail','order.id','=','order_detail.order_id')
+        ->join('product','product.id','=','order_detail.product_id')
+        ->join('users','users.id','=','order.user_id')
+        ->join('store','store.id','=','users.store_id')
+        ->join('role','role.id','=','users.role_id') 
+        ->select('product.sku as sku','product.product_name as name','order_detail.qty as qty','order.total as nominal','product.cost as cost','order_detail.id as id','role.name as uid','store.store_name as sname','order_detail.created_at as create','order_detail.updated_at as update')
+        ->get();
+        
+        $data = [];
+        foreach ($totalsales as $total) {
+            $data[] = ([
+                'ID' => $total->id,
+                'User'=>$total->uid,
+                'SKU'=>$total->sku,
+                'Name'=>$total->name,
+                'Quantity'=>$total->qty,
+                'Nominal'=>$total->nominal,
+                'Cost'=>$total->cost,
+                'Store'=>$total->sname,
+                'Created at'=>$total->create,
+                'update at'=>$total->update
+            ]);
+        }
+        
+        
+        return Excel::create('Total_sales', function($excel) use($data) {
+            $excel->sheet('Sheetname', function($sheet) use($data) {
+                $row = 1;
+
+                $sheet->fromArray($data, null, 'A' . $row, true, true);
+
+                $sheet->getStyle("A1:" . 'G' . $row)
+                    ->getAlignment()->setWrapText(false);
+            });
+        })->export('xls');
     }
     public function getByStore(Request $request){
         $isExport = $request->get('is_export', 0);
@@ -60,7 +103,7 @@ class ReportController extends Controller
             $this->_export_excel($flowreport);
         }
 
-        $flowreport = $flowreport->orderBy('order.id','asc')->get();
+        $flowreport = $flowreport->orderBy('order.created_at','desc')->get();
         return view('report.bystore',compact('flowreport','total'))->withTitle('By store');
     }
 

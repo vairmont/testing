@@ -14,7 +14,7 @@
 
             <div class="row">
                     {{ Form::open(['url' => url('modifier'), 'method' => 'get']) }}
-                    <div class="form-group col-md-4">
+                    <div class="form-group col-md-6">
                             <label for="inputState">Category</label>
                             <select id="inputState" class="form-control" name="category_id">
                               <option value="all" selected>All Item</option>
@@ -27,19 +27,21 @@
                     </div>
             
 
-                        <div class="form-group col-md-4">
+                        <div class="form-group col-md-6">
                                 <label for="inputState">Stock Alert</label>
                                 <select id="inputState" class="form-control" name="stock">
                                   <option value="all" selected>All Item</option>
                                   <option value="low">Low Stock</option>
                                   <option value="sold">Out Of Stock</option>
                                 </select>
-                                <input class="form-control mr-sm-2" type="text" name="product_name" placeholder="Product Name" aria-label="Search">
                         </div>
-                        <div class="form-group col-md-4">
-                        <button type="submit" name="export" value="1" class="btn btn-default">Export</button>
-                        <button type="submit" class="btn btn-default">Search</button>
-                        <a href="modifier" type="button" class="btn btn-info">Clear</a>
+                        <div class="col-md-6">
+                        <input class="form-control mr-sm-2" type="text" name="product_name" placeholder="Product Name" aria-label="Search">
+                        <button type="submit" class="btn btn-primary">Search</button>
+                        <button class="btn btn-danger"type="reset" value="Reset">Clear</button>
+                        </div>
+                        <div class="col-md-6">
+                        <button type="submit" name="export" value="1" class="btn btn-success">Export</button>
                         </div>
                 </div>
                   {{ Form::close() }}

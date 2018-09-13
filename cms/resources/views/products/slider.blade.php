@@ -15,25 +15,27 @@
     <!--DB product-->
     <div class="form-group col-lg-6">
         <label>Name</label>
-        <input class="form-control" name="name" value="">
+        <input class="form-control" name="name" value="" placeholder="Nama Slider">
     </div>
     <!--DB product-->
     <div >
         <div class="form-group col-lg-6">
             <label>Page</label>
-            <input class="form-control" placeholder="" name="page" value="">
+            <input class="form-control" placeholder="Halaman Page" name="page" value="">
         </div>
     </div>        
         <div class="form-group col-lg-6">
             <label>Image</label>
-            <input type="file" class="form-control" name="photo">
+            <input type="file" class="form-control" name="photo" Placeholder="Image">
             </div>
-            
+        <div class="form-group col-lg-12">
+        <button type="submit" class="btn btn-primary">Submit Button</button>
+        <button type="reset" class="btn btn-danger">Clear</button>
         </div>
-        <div id="page-wrapper">
-        <button type="submit" class="btn btn-default">Submit Button</button>
-        <button type="reset" class="btn btn-default">Clear</button>
-         </div>             
+        
+        
+       
+                     
 </form>
 <!-- /#page-wrapper -->
 {{ Form::close() }}

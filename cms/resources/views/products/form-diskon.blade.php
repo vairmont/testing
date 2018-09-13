@@ -48,12 +48,12 @@
       </div>
       <div class="form-group col-lg-6">
       <p class="help-block">Karyawan harus memasukkan PIN yang benar agar bisa melakukan diskon</p>
+        <button type="submit" class="btn btn-primary">Save</button>
+        <button type="reset" class="btn btn-danger">Clear</button>
       </div>
     </div>
 
-   
-    <button type="submit" class="btn btn-default">Save</button>
-    <button type="reset" class="btn btn-default">Clear</button>
+.
   </div>
 {{ Form::close() }}
 

@@ -13,26 +13,27 @@
                 <h2>Total Sales</h2>
             </div>
 
-                        <button type="button" class="btn btn-primary" >Hari ini</button>
+                         <!--<button type="button" class="btn btn-primary" >Hari ini</button>
                       
-                       <!-- <button type="button" class="btn btn-primary">Kemarin</button>
+                       <button type="button" class="btn btn-primary">Kemarin</button>
                         <button type="button" class="btn btn-primary">Minggu ini</button>
                         <button type="button" class="btn btn-primary">Bulan ini</button>-->
 
             <form class=" form-inline" method="GET" action="{{url('/byitem')}}"> 
-                <div class="col-lg-6 form group">
+                <div class="col-lg-4 form group">
                     <input name="keyword" class="form-control mr-sm-2" type="text" placeholder="Nama Product" aria-label="Search">
-                    <button type="submit" class="btn btn-default">Search</button>
+                    <button type="submit" class="btn btn-primary">Search</button>
                 </div>
             </form>
             
             <form class="form-inline" method="GET" action="{{url('/byitem')}}"> 
-                <div class="col-lg-6 form group">
+                <div class="col-lg-4 form group">
                     <input name="key" class="form-control mr-sm-2" type="text" placeholder="Nama Toko" aria-label="Search">
-                    <button type="submit" class="btn btn-default">Search</button>
+                    <button type="submit" class="btn btn-primary">Search</button>
                 </div>
+                <button type="submit" name="is_export" value="1" class="btn btn-success">Export</button>
+                
             </form>
-                  
             <!-- /.row -->
             <div class="row">
             <!-- div col -->
@@ -50,8 +51,8 @@
                                         <th>Nominal</th>
                                         <th>Cost</th>
                                         <th>Store</th>
-                                        <th>Created At</th>
-                                        <th>Updated At</th>
+                                        <th>Tanggal</th>
+                                        
                                     </tr>
                                 </thead>
 
@@ -69,7 +70,6 @@
                                                   <td>Rp.{{number_format($total->cost)}}</td> 
                                                   <td>{{$total->sname}}</td>
                                                   <td>{{$total->create}}</td>
-                                                  <td>{{$total->update}}</td>
                                                 </tr>
                                         @endforeach
                                     @endif

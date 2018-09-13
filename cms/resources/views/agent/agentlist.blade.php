@@ -14,21 +14,28 @@
         </div>
 
             <div class="row">
+            <form class="form-inline" method="GET" action="{{url('/byagent')}}">
+                <div class="form-group col-lg-6">
+                    <input class="form-control mr-sm-2" type="text" name="keyword" placeholder="Nama Agen" aria-label="Search">
+                    <button type="submit" class="btn btn-primary">Search</button>
+                    <button type="reset" class="btn btn-danger">Clear</button>
+                </div>
+              
+            
+            <!--
                 <div class="form-group col-md-3">         
                     <select id="inputState" class="form-control" name="stock">
                     <option value="all" selected>Semua</option>
                     <option value="low">Verify</option>
                     <option value="sold">Reject</option>
                     </select>
-                    <input class="form-control mr-sm-2" type="text" name="" placeholder="Search" aria-label="Search">
                 </div>
-                    <div class="form-group col-md-3">
-                        <button type="submit" name="is_export" value="1" class="btn btn-default">Export</button>
-                        <button type="submit" class="btn btn-default">Search</button>
-                    </div>
+            -->      
+                    <button type="submit" name="is_export" value="1" class="btn btn-success">Export</button>
+                    
                     <!-- row -->
+                    </form>
                 </div>
-              
 
                     <!-- /.row -->
                     <div class="row">
