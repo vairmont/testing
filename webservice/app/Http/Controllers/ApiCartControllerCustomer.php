@@ -10,6 +10,7 @@ namespace App\Http\Controllers;
 
 use App\Order;
 use App\Cart;
+use DB;
 use App\Stock;
 use App\CartDetail;
 use App\Product;
@@ -46,13 +47,92 @@ class ApiCartControllerCustomer extends Controller {
       ]
     ], 201);
   }
-
   public function updateCart(Request $request) {
+    $val = Validator::make($request->all(), [
+      'product_id' => 'required|numeric|exists:product,id',
+      'qty' => 'required|numeric'
+    ]);
+
+    if ($val->fails()) {
+      return response()->json(['data' => [], 'message' => $val->errors()->all()], 400);
+    }
+    DB::beginTransaction();
+        try {
 
     $cart = Cart::where('user_id', '=', $request->get('user')->id)->first();
 
     if ($cart == null) {
+      $cart = new Cart;
+      $cart->user_id = $request->get('user')->id;
+      $cart->subtotal = 0;
+      $cart->tax = 0;
+      $cart->total = 0;
+      $cart->save();
+    }
+
+    $product = Product::where('id',$request->product_id)->first();
+
+    $stock = Stock::where('product_id', $request->product_id)
+              ->select('stock.quantity')
+              ->first();
+
+    if($request->qty > $stock->quantity){
+      return response()->json(['message' => 'Mohon maaf, stok barang ditoko tidak mencukupi.'], 200);
+    }
+
+    $cartDetail = CartDetail::where('cart_id', '=', $cart->id)
+      ->where('product_id', '=', $request['product_id'])->first();
+
+    if (!$cartDetail) {
+      $cartDetail = new CartDetail;
+      $cartDetail->cart_id = $cart->id;
+      $cartDetail->product_id = $request['product_id'];
       
+    }
+    $cartDetail->price = ($product->promo_price == 0) ? $product->price_for_customer : $product->promo_price;
+    $cartDetail->qty += $request['qty'];
+    $cartDetail->save();
+
+    $items = CartDetail::where('cart_id', $cart->id)->get();
+
+    $subtotal = 0;
+    foreach ($items as $item) {
+      $subtotal += $item->price * $item->qty;
+    }
+
+    $cart->subtotal = $subtotal;
+    $cart->total = $subtotal;
+    $cart->save();
+
+    $checkDetail = CartDetail::where('product_id', $request->product_id)->first();
+
+    if($checkDetail->qty <= 0){
+      $checkDetail->delete();
+    }
+
+    if($cart->total <= 0){
+      $cart->delete();
+    }
+
+      } catch(\Exception $e) {
+          DB::rollback();
+          throw $e;
+    }
+
+    return response()->json([
+      'cart' => [
+        'subtotal' => $cart->subtotal,
+        'tax' => $cart->tax,
+        'total' => $cart->total,
+        'items' => $items
+      ]
+    ], 201);
+  }
+  public function aupdateCart(Request $request) {
+
+    $cart = Cart::where('user_id', '=', $request->get('user')->id)->first();
+
+    if ($cart == null) {
       // utk add to cart pertama kali 
       
       $cart = new Cart;
@@ -93,7 +173,6 @@ class ApiCartControllerCustomer extends Controller {
  
     }
     elseif($cart != null) {
-
       // update cart
 
       $checkDetail = CartDetail::where('product_id', $request->product_id)->first();
@@ -117,7 +196,7 @@ class ApiCartControllerCustomer extends Controller {
           $subtotal += (int) ($d->price * $d->qty);
         }
 
-        $cart = Cart::where('id',$checkDetail->cart_id)->first();
+        $cart = Cart::find($checkDetail->cart_id);
 
         $cart->update([
             'subtotal' => $subtotal,
@@ -134,7 +213,6 @@ class ApiCartControllerCustomer extends Controller {
         }     
       }
       else{
-
         $product = Product::where('id',$request->product_id)->first();
 
         $cd = new CartDetail;
