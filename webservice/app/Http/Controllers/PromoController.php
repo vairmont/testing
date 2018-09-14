@@ -37,8 +37,15 @@ class PromoController extends Controller
                     ->where('stock.store_id', '=', $request->get('user')->store_id)
     				->groupBy('product.id', 'product.product_name', 'product.promo_price', 
                         'product.price_for_customer', 'product.img_url', 'product.description')
-    				->orderBy('sales', 'desc')
-    				->get();
+    				->orderBy('sales', 'desc');
+
+        if(isset($request->take)) {
+            $rec = $rec->take($request->take)->get();
+        }
+        else {
+            $rec = $rec->get();
+        }
+
     	return response()->json(['data' => $rec, 'message' => ['OK']]);  
     }
 
@@ -49,8 +56,14 @@ class PromoController extends Controller
                     ->join('stock', 'stock.product_id', '=', 'product.id')
     				->where('promo_price', '>=', 0)
                     ->where('stock.quantity', '>', 0)
-                    ->where('stock.store_id', '=', $request->get('user')->store_id)
-    				->get();
+                    ->where('stock.store_id', '=', $request->get('user')->store_id);
+
+        if(isset($request->take)) {
+            $rec = $rec->take($request->take)->get();
+        }
+        else {
+            $rec = $rec->get();
+        }
 
     	return response()->json(['data' => $rec, 'message' => ['OK']]);  
     }
