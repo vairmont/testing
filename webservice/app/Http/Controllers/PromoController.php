@@ -58,10 +58,10 @@ class PromoController extends Controller
                     ->where('stock.quantity', '>', 0)
                     ->where('stock.store_id', '=', $request->get('user')->store_id);
 
-        if(isset($request->take)) {
+          if(isset($request->take) && $request->take != 'all') {
             $rec = $rec->take($request->take)->get();
         }
-        else {
+        elseif(isset($request->take) && $request->take == 'all') {
             $rec = $rec->get();
         }
 
