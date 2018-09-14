@@ -39,10 +39,10 @@ class PromoController extends Controller
                         'product.price_for_customer', 'product.img_url', 'product.description')
     				->orderBy('sales', 'desc');
 
-        if(isset($request->take)) {
+        if(isset($request->take) && $request->take != 'all') {
             $rec = $rec->take($request->take)->get();
         }
-        else {
+        elseif(isset($request->take) && $request->take == 'all') {
             $rec = $rec->get();
         }
 
