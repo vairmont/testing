@@ -75,8 +75,8 @@
                                                   <td>{{$flow->invoice}}</td>
                                                   <td>{{$flow->proname}}</td>
                                                   <td>{{$flow->qty}}</td>
-                                                  <td>{{($flow->customer_price - $flow->agen_price) * $flow->qty}}</td>
-                                                  <td>{{$flow->rate * $flow->agen_price * $flow->qty /100}}</td>
+                                                  <td>{{$flow->customer_price * 0.05 * $flow->qty}}</td>
+                                                  <td>{{$flow->agen_price * 0.95 * $flow->rate * $flow->qty /100}}</td>
                                                   <td>{{number_format($flow->agen_price * $flow->qty)}}</td>
                                                   <td>{{number_format($flow->customer_price * $flow->qty)}}</td>
                                                   <td>{{$flow->stoname}}</td>
