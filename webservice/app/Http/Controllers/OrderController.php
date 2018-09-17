@@ -373,7 +373,7 @@ class OrderController extends Controller
       $incentiveDetails = OrderDetail::join('product', 'product.id', '=', 'order_detail.product_id')
                     ->join('incentive_category', 'incentive_category.id', '=', 'product.incentive_id')
                     ->where('order_id', '=', $order->id)
-                    ->select('order_detail.price_for_customer', 'incentive_category.rate', 'order_detail.qty')
+                    ->select('order_detail.price_for_customer', 'incentive_category.rate', 'order_detail.qty', 'product.promo_price')
                     ->get();
 
       $incentive = 0;
@@ -386,13 +386,12 @@ class OrderController extends Controller
         //   $incentive += ($detail->price_for_customer * $detail->qty  - 0.98) * $this->marginRate * $detail->rate / 100;
         // }
         // else{
-          $prices += $detail->price_for_customer * $detail->qty;
-          $margin += $detail->price_for_customer * $detail->qty * $this->marginRate;
-          $incentive += $detail->price_for_customer * $detail->qty * 0.95 * $detail->rate / 100;
+          $prices += (($detail->promo_price == 0) ? $detail->price_for_customer : $detail->promo_price) * $detail->qty;
+          $margin += (($detail->promo_price == 0) ? $detail->price_for_customer : $detail->promo_price) * $detail->qty * $this->marginRate;
+          $incentive += (($detail->promo_price == 0) ? $detail->price_for_customer : $detail->promo_price) * $detail->qty * 0.95 * $detail->rate / 100;
         // }        
         
        }
-
       $commission_pph = ($incentive + $margin) * $this->pph;
       $commission_netto = $incentive - $commission_pph;
       

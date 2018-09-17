@@ -546,5 +546,9 @@
                 <!-- /.col-lg-4 -->
             </div>
             <!-- /.row -->
-            
+
+    <!-- Morris Charts JavaScript -->
+    <script src="{{ asset('sbadmin/vendor/raphael/raphael.min.js') }}"></script>
+    <script src="{{ asset('sbadmin/vendor/morrisjs/morris.min.js') }}"></script>
+    <script src="{{ asset('sbadmin/data/morris-data.js') }}"></script>
 @endsection
