@@ -111,9 +111,6 @@
                         <a href="#"><i class="fa fa-gears"></i> Pengaturan<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
                             <li>
-                                <p>Pengaturan</p>
-                            </li>
-                            <li>
                                 <a href="flot.html">Umum</a>
                             </li>
                             <li>
@@ -127,9 +124,6 @@
                             </li>
                             <li>
                                 <a href="morris.html">Butki transaksi</a>
-                            </li>
-                            <li>
-                                <p>Toko dan Pengaturan POS</p>
                             </li>
                             <li>
                                 <a href="morris.html">Perangkat POS</a>

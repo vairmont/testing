@@ -6,13 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title')</title>
     <!-- Bootstrap Core CSS -->
-    <link href="{{ asset('sbadmin/vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="https://bootswatch.com/3/yeti/bootstrap.min.css" rel="stylesheet">
     <!-- MetisMenu CSS -->
     <link href="{{ asset('sbadmin/vendor/metisMenu/metisMenu.min.css') }}" rel="stylesheet">
     <!-- Custom CSS -->
     <link href="{{ asset('sbadmin/dist/css/sb-admin-2.css') }}" rel="stylesheet">
     <!-- Morris Charts CSS -->
-    <link href="{{ asset('sbadmin/vendor/morrisjs/morris.css') }}" rel="stylesheet">
     <!-- Custom Fonts -->
     <link href="{{ asset('sbadmin/vendor/font-awesome/css/font-awesome.min.css') }}" rel="stylesheet" type="text/css">  
     <script src="{{ asset('sbadmin/vendor/jquery/jquery.min.js') }}"></script>
@@ -23,6 +22,8 @@
     <!-- Custom Theme JavaScript -->
     <script src="{{ asset('sbadmin/dist/js/sb-admin-2.js') }}"></script>
     <script src="{{ asset('js/sorttable.js') }}"></script>
+
+    <link href="{{ asset('css/custom.css') }}" rel="stylesheet">
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -42,7 +43,9 @@
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="{{url('/dashboard')}}">CMS MiniGrosir [A]</a>
+          <a class="navbar-brand" href="{{url('/dashboard')}}">
+          <img src="{{asset('images/logogrosirone-3.png')}}" width="120" height="40" alt="" style="margin-top: -7px">
+        </a>
       </div> <!-- /.navbar-header -->
 
       <!-- render partial navbar top right dropdown -->
