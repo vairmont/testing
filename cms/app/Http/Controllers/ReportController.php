@@ -117,7 +117,7 @@ class ReportController extends Controller
         ->leftjoin('users','users.id','=','agen.identifier')
         ->leftjoin('store','store.id','=','users.store_id')
         ->where('order.type','=','sembako')
-        ->select('store.store_name as stoname','order_detail.qty as qty','incentive_category.rate as rate','order.invoice_no as invoice','agen.name as name','order_detail.order_id as id','product.product_name as proname','order_detail.price_for_agen as agen_price','order_detail.price_for_customer as customer_price','order.created_at as create','order.updated_at as update','order.agen_id as aid');
+        ->select('product.promo_price as promo_price','store.store_name as stoname','order_detail.qty as qty','incentive_category.rate as rate','order.invoice_no as invoice','agen.name as name','order_detail.order_id as id','product.product_name as proname','order_detail.price_for_agen as agen_price','order_detail.price_for_customer as customer_price','order.created_at as create','order.updated_at as update','order.agen_id as aid');
 
         
         if(isset($request->date) && $request->date == '1'){
