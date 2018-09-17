@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title')</title>
     <!-- Bootstrap Core CSS -->
-    <link href="https://bootswatch.com/3/yeti/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ asset('sbadmin/vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
     <!-- MetisMenu CSS -->
     <link href="{{ asset('sbadmin/vendor/metisMenu/metisMenu.min.css') }}" rel="stylesheet">
     <!-- Custom CSS -->
