@@ -11,14 +11,11 @@
         
             <div>
                 <h2 >Flow Sales</h2>
-            </div>  
-
-                           <!-- <p>
-                                    <button type="button" class="btn btn-primary" >Agen</button>
-                                    <button type="button" class="btn btn-primary">Kemarin</button>
-                                    <button type="button" class="btn btn-primary">Minggu ini</button>
-                                    <button type="button" class="btn btn-primary">Bulan ini</button>
-                            </p>-->
+            </div>
+            <div class ="col-lg-4">  
+            <a href="{{ url('/bystore') }}?date=1" class="btn btn-primary">Hari ini</a>
+            <a href="{{ url('/bystore') }}?date=2" class="btn btn-primary">Bulan ini</a>
+            </div>          
                 <form class="form-inline" method="GET" action="{{url('/bystore')}}"> 
                     <!-- form group -->
                     <div class="col-lg-4 form group">
@@ -39,7 +36,12 @@
                             <input name="key" class="form-control mr-sm-2" type="text" placeholder="Nama Toko" aria-label="Search">
                             <button type="submit" class="btn btn-primary">Search</button>
                     </div>
+                    <div class="col-lg-12">
+                <p> </p>
+                </div>
+                    <div class="col-lg-12">
                     <button type="submit" name="is_export" value="1" class="btn btn-success">Export</button>
+                    </div>
                   </form>
             <!-- /.row -->
             <div class="row">
@@ -55,6 +57,7 @@
                                         <th>Order</th>
                                         <th>ProductName</th>
                                         <th>Quantity</th>
+                                        <th>Margin</th>
                                         <th>Insentif</th>
                                         <th>Paid by Agen</th>
                                         <th>Paid by Customer</th>
@@ -66,19 +69,18 @@
                                 <tbody>
                                 @if(count($flowreport) > 0)
                                         @foreach($flowreport as $flow)
-                                           
                                                 <tr>
                                                   <td>{{$flow->id}}</td>
                                                   <td>{{$flow->name}}</td>
                                                   <td>{{$flow->invoice}}</td>
                                                   <td>{{$flow->proname}}</td>
                                                   <td>{{$flow->qty}}</td>
-                                                  <td>{{$flow->rate}}% (Rp {{ number_format($flow->agen_price * $flow->rate / 100) }})</td>
+                                                  <td>{{($flow->customer_price - $flow->agen_price) * $flow->qty}}</td>
+                                                  <td>{{$flow->rate * $flow->agen_price * $flow->qty /100}}</td>
                                                   <td>{{number_format($flow->agen_price * $flow->qty)}}</td>
                                                   <td>{{number_format($flow->customer_price * $flow->qty)}}</td>
                                                   <td>{{$flow->stoname}}</td>
                                                   <td>{{$flow->create}}</td>
-                                                  
                                                 </tr>
                                         @endforeach
                                     @endif

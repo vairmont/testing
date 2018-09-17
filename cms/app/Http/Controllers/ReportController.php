@@ -11,6 +11,8 @@ use App\Commission;
 use App\OrderDetail;
 use App\Product;
 use Excel;
+use Carbon\Carbon;
+
 
 use DB;
 
@@ -20,15 +22,38 @@ class ReportController extends Controller
         $isExport = $request->get('is_export', 0);
         $args['pages'] = $isExport;
 
-        $role = Orderdetail::where('id',$request->id)->first();
+        
+        // echo $request->date; die;
+        
         $totalsales = Order::join('order_detail','order.id','=','order_detail.order_id')
         ->join('product','product.id','=','order_detail.product_id')
         ->join('users','users.id','=','order.user_id')
         ->join('store','store.id','=','users.store_id')
         ->join('role','role.id','=','users.role_id')
-      
-        ->select('product.sku as sku','product.product_name as name','order_detail.qty as qty','order.total as nominal','product.cost as cost','order_detail.id as id','role.name as uid','store.store_name as sname','order_detail.created_at as create','order_detail.updated_at as update');
-        
+        // ->whereDate('order.created_at','=',Carbon::today()->toDateString())
+        ->select('product.sku as sku','product.product_name as name','order_detail.qty as qty','order.total as nominal','product.cost as cost','order_detail.id as id','role.name as uid','store.store_name as sname','order.created_at as create','order_detail.updated_at as update');
+
+        if(isset($request->date) && $request->date == '1'){
+            $totalsales = Order::join('order_detail','order.id','=','order_detail.order_id')
+            ->join('product','product.id','=','order_detail.product_id')
+            ->join('users','users.id','=','order.user_id')
+            ->join('store','store.id','=','users.store_id')
+            ->join('role','role.id','=','users.role_id')
+            ->select('product.sku as sku','product.product_name as name','order_detail.qty as qty','order.total as nominal','product.cost as cost','order_detail.id as id','role.name as uid','store.store_name as sname','order.created_at as create','order.updated_at as update')
+            ->whereDate('order.created_at','=',Carbon::today()->toDateString());
+
+        }
+        if(isset($request->date) && $request->date == '2'){
+            
+            $totalsales = Order::join('order_detail','order.id','=','order_detail.order_id')
+            ->join('product','product.id','=','order_detail.product_id')
+            ->join('users','users.id','=','order.user_id')
+            ->join('store','store.id','=','users.store_id')
+            ->join('role','role.id','=','users.role_id')
+            ->select('product.sku as sku','product.product_name as name','order_detail.qty as qty','order.total as nominal','product.cost as cost','order_detail.id as id','role.name as uid','store.store_name as sname','order.created_at as create','order.updated_at as update')
+            ->whereMonth('order.created_at', '=', date('m'));
+            
+        }
         if(isset($request->keyword) && !empty($request->keyword)){
             $totalsales = $totalsales->where('product.product_name','LIKE',$request->keyword.'%');
             
@@ -39,8 +64,8 @@ class ReportController extends Controller
         if ($isExport) {
             $this->_export_excel2($totalsales);
         }
-
-        $totalsales = $totalsales->orderby('order_detail.created_at','desc')->get();  
+        
+        $totalsales = $totalsales->orderby('order.created_at','desc')->get();  
         return view('report.byitem',compact('totalsales'))->withTitle('By withdraw');
         
     }
@@ -85,14 +110,40 @@ class ReportController extends Controller
         $isExport = $request->get('is_export', 0);
         $args['pages'] = $isExport;
 
-        $flowreport = Order::join('order_detail','order.id','=','order_detail.order_id')
-        ->join('product','product.id','=','order_detail.product_id')
-        ->join('incentive_category','incentive_category.id','=','product.category_id')
-        ->join('agen','agen.id','=','order.agen_id')
-        ->join('users','users.id','=','order.agen_id')
-        ->join('store','store.id','=','users.store_id')
-        ->select('store_name as stoname','order_detail.qty as qty','incentive_category.rate as rate','order.invoice_no as invoice','agen.name as name','order.id as id','product.product_name as proname','order_detail.price_for_agen as agen_price','order_detail.price_for_customer as customer_price','order.created_at as create','order.updated_at as update','order.agen_id as aid');
+        $flowreport = Order::leftjoin('order_detail','order.id','=','order_detail.order_id')
+        ->leftjoin('product','product.id','=','order_detail.product_id')
+        ->leftjoin('incentive_category','incentive_category.id','=','product.incentive_id')
+        ->leftjoin('agen','agen.identifier','=','order.agen_id')
+        ->leftjoin('users','users.id','=','agen.identifier')
+        ->leftjoin('store','store.id','=','users.store_id')
+        ->where('order.type','=','sembako')
+        ->select('store.store_name as stoname','order_detail.qty as qty','incentive_category.rate as rate','order.invoice_no as invoice','agen.name as name','order_detail.order_id as id','product.product_name as proname','order_detail.price_for_agen as agen_price','order_detail.price_for_customer as customer_price','order.created_at as create','order.updated_at as update','order.agen_id as aid');
 
+        
+        if(isset($request->date) && $request->date == '1'){
+            $flowreport = Order::leftjoin('order_detail','order.id','=','order_detail.order_id')
+            ->leftjoin('product','product.id','=','order_detail.product_id')
+            ->leftjoin('incentive_category','incentive_category.id','=','product.incentive_id')
+            ->leftjoin('agen','agen.identifier','=','order.agen_id')
+            ->leftjoin('users','users.id','=','agen.identifier')
+            ->leftjoin('store','store.id','=','users.store_id')
+            ->where('order.type','=','sembako')
+            ->select('store.store_name as stoname','order_detail.qty as qty','incentive_category.rate as rate','order.invoice_no as invoice','agen.name as name','order_detail.order_id as id','product.product_name as proname','order_detail.price_for_agen as agen_price','order_detail.price_for_customer as customer_price','order.created_at as create','order.updated_at as update','order.agen_id as aid')
+            ->whereDate('order.created_at','=',Carbon::today()->toDateString());
+
+        }
+        if(isset($request->date) && $request->date == '2'){
+            $flowreport = Order::leftjoin('order_detail','order.id','=','order_detail.order_id')
+            ->leftjoin('product','product.id','=','order_detail.product_id')
+            ->leftjoin('incentive_category','incentive_category.id','=','product.incentive_id')
+            ->leftjoin('agen','agen.identifier','=','order.agen_id')
+            ->leftjoin('users','users.id','=','agen.identifier')
+            ->leftjoin('store','store.id','=','users.store_id')
+            ->where('order.type','=','sembako')
+            ->select('store.store_name as stoname','order_detail.qty as qty','incentive_category.rate as rate','order.invoice_no as invoice','agen.name as name','order_detail.order_id as id','product.product_name as proname','order_detail.price_for_agen as agen_price','order_detail.price_for_customer as customer_price','order.created_at as create','order.updated_at as update','order.agen_id as aid')
+            ->whereMonth('order.created_at', '=', date('m'));
+
+        }
         if(isset($request->keyword) && !empty($request->keyword)) {
             $flowreport = $flowreport->where('agen.name','like',$request->keyword.'%');
         }
@@ -103,21 +154,20 @@ class ReportController extends Controller
             $this->_export_excel($flowreport);
         }
 
-        $flowreport = $flowreport->orderBy('order.created_at','desc')->get();
+        $flowreport = $flowreport->orderBy('order.id','desc')->get();
         return view('report.bystore',compact('flowreport','total'))->withTitle('By store');
     }
 
     private function _export_excel($flowreport) {
-        $flowreport = Order::join('order_detail','order.id','=','order_detail.order_id')
-        ->join('product','product.id','=','order_detail.product_id')
-        ->join('incentive_category','incentive_category.id','=','product.category_id')
-        ->join('agen','agen.id','=','order.agen_id')
-        ->join('users','users.id','=','order.agen_id')
-        ->join('store','store.id','=','users.store_id')
-        ->select('store_name as stoname','order_detail.qty as qty','incentive_category.rate as rate','order.invoice_no as invoice','agen.name as name','order.id as id','product.product_name as proname','order_detail.price_for_agen as agen_price','order_detail.price_for_customer as customer_price','order.created_at as create','order.updated_at as update','order.agen_id as aid')
+        $flowreport = Order::leftjoin('order_detail','order.id','=','order_detail.order_id')
+        ->leftjoin('product','product.id','=','order_detail.product_id')
+        ->leftjoin('incentive_category','incentive_category.id','=','product.incentive_id')
+        ->leftjoin('agen','agen.identifier','=','order.agen_id')
+        ->leftjoin('users','users.id','=','agen.identifier')
+        ->leftjoin('store','store.id','=','users.store_id')
+        ->where('order.type','=','sembako')
+        ->select('store.store_name as stoname','order_detail.qty as qty','incentive_category.rate as rate','order.invoice_no as invoice','agen.name as name','order_detail.order_id as id','product.product_name as proname','order_detail.price_for_agen as agen_price','order_detail.price_for_customer as customer_price','order.created_at as create','order.updated_at as update','order.agen_id as aid')
         ->get();
-        
-
         $data = [];
         foreach ($flowreport as $flow) {
             $data[] = ([
@@ -126,13 +176,13 @@ class ReportController extends Controller
                 'Order' => $flow->invoice,
                 'Nama Produk' =>$flow->proname,
                 'Quantity' => $flow->qty,
-                'isentif' => $flow->rate,
+                'Margin' => ($flow->customer_price - $flow->agen_price) * $flow->qty,
+                'Isentif'=> $flow->rate * $flow->agen_price * $flow->qty /100,
                 'Paid by Agen' => $flow->agen_price * $flow->qty,
                 'Paid by Customer' => $flow->customer_price * $flow->qty,
-                'Store' => $flow->stoname, 
+                'Store' => $flow->stoname,
                 'Created At' => $flow->create, 
-                'Updated At' => $flow->update, 
-            ]);
+            ]);   
         }
         
         return Excel::create('Flow_report', function($excel) use($data) {
