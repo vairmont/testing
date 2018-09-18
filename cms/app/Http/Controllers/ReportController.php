@@ -145,11 +145,11 @@ class ReportController extends Controller
 
         }
         $price = 0;
-          if($flow->promo_price == 0){
-                $price = $flow->customer_price;
+          if($flowreport->promo_price == 0){
+                $price = $flowreport->customer_price;
           }
-          if($flow->promo_price > 0){
-                $price = $flow->promo_price;
+          if($flowreport->promo_price > 0){
+                $price = $flowreport->promo_price;
           }
         if(isset($request->keyword) && !empty($request->keyword)) {
             $flowreport = $flowreport->where('agen.name','like',$request->keyword.'%');
