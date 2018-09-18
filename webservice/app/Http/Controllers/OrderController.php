@@ -27,6 +27,9 @@ use App\CartDetail;
 class OrderController extends Controller
 {
 
+  private $marginRate = 0.05;
+     private $pph = 0.02;
+
     public function orderPending(Request $request) {
       $agen = Agen::where('identifier','=', $request->get('user')->id)->first();
 
@@ -375,11 +378,6 @@ class OrderController extends Controller
       $incentive = 0;
       $margin = 0;
       $prices = 0;
-      $marginRate = 0.05;
-      $pph = 0.02;
-      if(){
-
-      }
       foreach ($incentiveDetails as $detail) {
         // if($detail->qty >= 3){
         //   $prices += ($detail->price_for_customer * $detail->qty) - 0.98;

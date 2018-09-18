@@ -29,6 +29,7 @@
                                                 <th>Invoice No.</th>
                                                 <th>Nama Pembeli</th>
                                                 <th>Nama Agen</th>
+                                                <th>Barang</th>
                                                 <th>Total</th>
                                             </tr>
                                         </thead>
@@ -41,6 +42,12 @@
                                                   <td>{{$order->invoice}}</td>
                                                   <td>{{$order->name}}</td>
                                                   <td>{{$order->aname}}</td>
+                                                  <td>
+
+                                                @foreach($barangs[$order->id] as $barang)
+                                                  {{$barang->pname}} x {{ $barang->qty }} </br> 
+                                                @endforeach  
+                                                </td>
                                                   <td>{{$order->total}}</td>
                                                   <td></td> 
                                               

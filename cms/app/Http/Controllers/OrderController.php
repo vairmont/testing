@@ -9,6 +9,7 @@ use App\Agen;
 use App\User;
 use App\Order;
 use App\OrderDetail;
+use App\OrderBillingDetail;
 use Carbon\Carbon;
 use App\WaneeHistory;
 use App\Commission;
@@ -28,6 +29,13 @@ class OrderController extends Controller
         ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.lat','order_billing_detail.long','order_billing_detail.customer_address2', 'order_billing_detail.notes as order_notes', 'order.shipment','order.invoice_no as invoice','agen.name as aname','order.total as total')
         ->get();
 
+        foreach($orders as $order) {
+       		$barangs[$order->id] = OrderDetail::join('product','product.id','=','order_detail.product_id')
+       		->where('order_detail.order_id', $order->id)
+       		->select('product.product_name as pname','order_detail.qty as qty')
+       		->get();
+        }
+
       $result = [];
       foreach ($orders as $order) {
         $items = OrderDetail::Join('product', 'product.id', '=', 'order_detail.product_id')
@@ -43,7 +51,7 @@ class OrderController extends Controller
         ];
       }
 
-      return view('shipment.shipment',compact('result','orders'))->withTitle('Shipment');
+      return view('shipment.shipment',compact('result','orders','barangs'))->withTitle('Shipment');
     }
 
     public function finalizeOrder(Request $request) {
