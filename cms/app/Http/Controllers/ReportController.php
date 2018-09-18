@@ -182,7 +182,8 @@ class ReportController extends Controller
                 'Paid by Customer' => $flow->customer_price * $flow->qty,
                 'Store' => $flow->stoname,
                 'Created At' => $flow->create, 
-            ]);   
+            ]);
+               
         }
         
         return Excel::create('Flow_report', function($excel) use($data) {
