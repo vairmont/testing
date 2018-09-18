@@ -75,7 +75,7 @@
                                                   <td>{{$flow->qty}}</td>
                                                   <td>{{$flow->rate}}% (Rp {{ number_format($flow->agen_price * $flow->rate / 100) }})</td>
                                                   <td>{{number_format($flow->agen_price * $flow->qty)}}</td>
-                                                  <td>{{number_format((($flow->promo_price == 0) ? $flow->customer_price : $flow->promo_price) * $flow->qtyi)}}</td>
+                                                  <td>{{number_format((($flow->promo_price == 0) ? $flow->price_for_customer : $flow->promo_price) * $flow->qty)}}</td>
                                                   <td>{{$flow->stoname}}</td>
                                                   <td>{{$flow->create}}</td>
                                                   
