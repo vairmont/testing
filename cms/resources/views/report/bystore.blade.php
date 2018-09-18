@@ -74,13 +74,6 @@
                                                   <td>{{$flow->invoice}}</td>
                                                   <td>{{$flow->proname}}</td>
                                                   <td>{{$flow->qty}}</td>
-                                                  $price = 0;
-                                                  if($flow->promo_price == 0){
-                                                        $price = $flow->customer_price;
-                                                  }
-                                                  if($flow->promo_price > 0){
-                                                        $price = $flow->promo_price;
-                                                  }
                                                   <td>{{number_format($price * $flow->qty * 0.05)}}</td>
                                                   <td>{{ number_format($price * $flow->qty * 0.95 * $flow->rate / 100)}}</td>
                                                   <td>{{number_format($price * $flow->qty * 0.95)}}</td>
