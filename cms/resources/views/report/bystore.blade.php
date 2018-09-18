@@ -75,8 +75,8 @@
                                                   <td>{{$flow->proname}}</td>
                                                   <td>{{$flow->qty}}</td>
                                                   <td>{{number_format((($flow->promo_price == 0) ? $flow->price_for_customer : $flow->promo_price) * $flow->qty * 0.05)}}</td>
-                                                  <td>{{$flow->rate}}% (Rp {{ number_format($flow->agen_price * $flow->rate / 100) }})</td>
-                                                  <td>{{number_format($flow->agen_price * $flow->qty)}}</td>
+                                                  <td>{{ number_format((($flow->promo_price == 0) ? $flow->price_for_customer : $flow->promo_price) * $flow->qty * 0.95 * $detail->rate / 100}})</td>
+                                                  <td>{{number_format((($flow->promo_price == 0) ? $flow->price_for_customer : $flow->promo_price) * $flow->qty * 0.95)}}</td>
                                                   <td>{{number_format((($flow->promo_price == 0) ? $flow->price_for_customer : $flow->promo_price) * $flow->qty)}}</td>
                                                   <td>{{$flow->stoname}}</td>
                                                   <td>{{$flow->create}}</td>
