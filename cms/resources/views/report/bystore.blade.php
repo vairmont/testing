@@ -74,10 +74,34 @@
                                                   <td>{{$flow->invoice}}</td>
                                                   <td>{{$flow->proname}}</td>
                                                   <td>{{$flow->qty}}</td>
-                                                  <td>{{number_format($price * $flow->qty * 0.05)}}</td>
-                                                  <td>{{ number_format($price * $flow->qty * 0.95 * $flow->rate / 100)}}</td>
-                                                  <td>{{number_format($price * $flow->qty * 0.95)}}</td>
-                                                  <td>{{number_format($price * $flow->qty)}}</td>
+                                                  <td>
+                                                    @if($flow->promo_price == 0)
+                                                        {{number_format($flow->customer_price * $flow->qty * 0.05)}}
+                                                    @else
+                                                        *{{number_format($flow->promo_price * $flow->qty * 0.05)}}
+                                                    @endif
+                                                  </td>
+                                                  <td>
+                                                  @if($flow->promo_price == 0)
+                                                        {{ number_format($flow->customer_price * $flow->qty * 0.95 * $flow->rate / 100)}}
+                                                  @else
+                                                        *{{ number_format($flow->promo_price * $flow->qty * 0.95 * $flow->rate / 100)}}
+                                                  @endif      
+                                                  </td>
+                                                  <td>
+                                                  @if($flow->promo_price == 0)
+                                                        {{ number_format($flow->customer_price * $flow->qty * 0.95)}}
+                                                  @else
+                                                        *{{ number_format($flow->promo_price * $flow->qty * 0.95)}}
+                                                  @endif  
+                                                  </td>
+                                                  <td>
+                                                  @if($flow->promo_price == 0)
+                                                        {{ number_format($flow->customer_price * $flow->qty)}}
+                                                  @else
+                                                        *{{ number_format($flow->promo_price * $flow->qty)}}
+                                                  @endif  
+                                                  </td>
                                                   <td>{{$flow->stoname}}</td>
                                                   <td>{{$flow->create}}</td>
                                                   
