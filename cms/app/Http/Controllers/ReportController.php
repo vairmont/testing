@@ -30,6 +30,7 @@ class ReportController extends Controller
         ->join('users','users.id','=','order.user_id')
         ->join('store','store.id','=','users.store_id')
         ->join('role','role.id','=','users.role_id')
+        ->whereIn('order.status',[7,9])
         // ->whereDate('order.created_at','=',Carbon::today()->toDateString())
         ->select('product.sku as sku','product.product_name as name','order_detail.qty as qty','order.total as nominal','product.cost as cost','order_detail.id as id','role.name as uid','store.store_name as sname','order.created_at as create','order_detail.updated_at as update');
 
@@ -116,6 +117,7 @@ class ReportController extends Controller
         ->leftjoin('agen','agen.identifier','=','order.agen_id')
         ->leftjoin('users','users.id','=','agen.identifier')
         ->leftjoin('store','store.id','=','users.store_id')
+        ->whereIn('order.status',[7,9])
         ->where('order.type','=','sembako')
         ->select('store.store_name as stoname','order_detail.qty as qty','incentive_category.rate as rate','order.invoice_no as invoice','agen.name as name','order_detail.order_id as id','product.product_name as proname','order_detail.price_for_agen as agen_price','order_detail.price_for_customer as customer_price','order.created_at as create','order.updated_at as update','order.agen_id as aid', 'product.promo_price');
 

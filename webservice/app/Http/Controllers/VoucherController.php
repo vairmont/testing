@@ -15,15 +15,27 @@ class VoucherController extends Controller
     {  
         $role = Role::where('id',$request->role_id)->first();
 
-    	$data = Voucher::select('discount', 'cashback', 'product_type', 'voucher_code')
+    	$data = Voucher::select('discount', 'cashback', 'product_type', 'voucher_code', 'min_purchase', 'bonus_item')
             ->where('voucher_code','=',$request->voucher_code)
             ->where('quota','!=',0)
             ->Where('valid_until','>=',Carbon\Carbon::now()->format('Y-m-d'))
             ->Where('valid_from','<=',Carbon\Carbon::now()->format('Y-m-d'))
             ->first();
 
+            if($data->discount > 0 && $data->discount < 100){
+                $discount = $data->discount / 100;
+            }
+            if($data->discount > 100){
+                $discount = $data->discount;
+            }
+            if($data->cashback > 0 && $data->cashback < 100){
+                $cashback = $data->cashback / 100;
+            }
+            if($data->cashback > 100){
+                $cashback = $data->cashback;
+            }
             if(){
-
+                
             }
 
             else

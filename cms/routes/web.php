@@ -43,7 +43,8 @@ Route::get('/bysupplier','InventoryController@getBySupplier');
 Route::get('/byinventoryhistory','InventoryController@getByInventoryHistory');
 Route::get('/byinventoryvaluation','InventoryController@getByInventoryValuation');
 
-
+Route::post('/finalize', 'OrderController@finalizeOrder');
+Route::get('/order', 'OrderController@orderProcess');
 
 Route::get('/additem', 'ItemController@formItem');
 Route::post('/additem', 'ItemController@saveItem');
