@@ -15,17 +15,17 @@ class VoucherController extends Controller
     {  
         $role = Role::where('id',$request->role_id)->first();
 
-    	$data = Voucher::select('discount_rate','id as voucher_id','product_category', 'voucher_code')
+    	$data = Voucher::select('discount', 'cashback', 'product_type', 'voucher_code')
             ->where('voucher_code','=',$request->voucher_code)
             ->where('quota','!=',0)
             ->Where('valid_until','>=',Carbon\Carbon::now()->format('Y-m-d'))
             ->Where('valid_from','<=',Carbon\Carbon::now()->format('Y-m-d'))
             ->first();
 
-            if(count($data) == 1)
-            {
-                return response()->json(['data' => $data, 'message' => ['OK']]);
+            if(){
+
             }
+
             else
             {
                 return response()->json(['data' => [], 'message' => ['Invalid Voucher Code']]);
