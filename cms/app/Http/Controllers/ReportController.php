@@ -117,7 +117,8 @@ class ReportController extends Controller
         ->leftjoin('users','users.id','=','agen.identifier')
         ->leftjoin('store','store.id','=','users.store_id')
         ->where('order.type','=','sembako')
-        ->select('product.promo_price as promo_price','store.store_name as stoname','order_detail.qty as qty','incentive_category.rate as rate','order.invoice_no as invoice','agen.name as name','order_detail.order_id as id','product.product_name as proname','order_detail.price_for_agen as agen_price','order_detail.price_for_customer as customer_price','order.created_at as create','order.updated_at as update','order.agen_id as aid', 'product.promo_price');
+        ->select('product.promo_price as promo_price','store.store_name as stoname','order_detail.qty as qty','incentive_category.rate as rate','order.invoice_no as invoice','agen.name as name','order_detail.order_id as id','product.product_name as proname','order_detail.price_for_agen as agen_price','order_detail.price_for_customer as customer_price','order.created_at as create','order.updated_at as update','order.agen_id as aid', 'product.promo_price')
+        ->get();
 
         
         if(isset($request->date) && $request->date == '1'){
@@ -130,7 +131,7 @@ class ReportController extends Controller
             ->where('order.type','=','sembako')
             ->select('store.store_name as stoname','order_detail.qty as qty','incentive_category.rate as rate','order.invoice_no as invoice','agen.name as name','order_detail.order_id as id','product.product_name as proname','order_detail.price_for_agen as agen_price','order_detail.price_for_customer as customer_price','order.created_at as create','order.updated_at as update','order.agen_id as aid', 'product.promo_price')
             ->whereDate('order.created_at','=',Carbon::today()->toDateString());
-
+            ->get();
         }
         if(isset($request->date) && $request->date == '2'){
             $flowreport = Order::leftjoin('order_detail','order.id','=','order_detail.order_id')
@@ -142,7 +143,7 @@ class ReportController extends Controller
             ->where('order.type','=','sembako')
             ->select('store.store_name as stoname','order_detail.qty as qty','incentive_category.rate as rate','order.invoice_no as invoice','agen.name as name','order_detail.order_id as id','product.product_name as proname','order_detail.price_for_agen as agen_price','order_detail.price_for_customer as customer_price','order.created_at as create','order.updated_at as update','order.agen_id as aid', 'product.promo_price')
             ->whereMonth('order.created_at', '=', date('m'));
-
+            ->get();
         }
         $price = 0;
           if($flowreport->promo_price == 0){
