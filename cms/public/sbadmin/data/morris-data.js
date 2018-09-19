@@ -1,6 +1,6 @@
 $(function() {
     $.ajax({
-            url: "http://localhost/minigrosir/webservice/public/api/v1/dashboard1",
+            url: "http://119.110.87.250/minigrosir/webservice/public/api/v1/dashboard1",
             type: 'GET',
             success: function(res) {
                 console.log(res);
