@@ -27,9 +27,8 @@ use App\CartDetail;
 class OrderController extends Controller
 {
 
-    private $marginRate = 0.05;
-    private $pph = 0.02;
-
+  private $marginRate = 0.05;
+     private $pph = 0.02;
 
     public function orderPending(Request $request) {
       $agen = Agen::where('identifier','=', $request->get('user')->id)->first();
@@ -83,7 +82,7 @@ class OrderController extends Controller
         ->leftJoin('order_billing_detail','order_billing_detail.order_id','=','order.id')
         ->where('order.agen_id', '=', $request->get('user')->id)
         ->whereIn('order.status',[2,6])
-        ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.lat','order_billing_detail.long','order_billing_detail.customer_address2', 'order_billing_detail.notes as order_notes')
+        ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.lat','order_billing_detail.long','order_billing_detail.customer_address2', 'order_billing_detail.notes as order_notes', 'order.shipment')
         ->get();
         
         $relation = "Kepala Keluarga";
@@ -95,7 +94,7 @@ class OrderController extends Controller
         ->leftJoin('order_billing_detail','order_billing_detail.order_id','=','order.id')
         ->where('order.agen_id', '=', $parent->id)
         ->whereIn('order.status',[2,6])
-        ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.lat','order_billing_detail.long','order_billing_detail.customer_address2', 'order_billing_detail.notes as order_notes')
+        ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.lat','order_billing_detail.long','order_billing_detail.customer_address2', 'order_billing_detail.notes as order_notes', 'order.shipment')
         ->get();
 
         $relation = $parent->relation;
