@@ -8,8 +8,10 @@ $(function() {
                 for (var i =0;i < res.data.query.length;i++) {
                     data = {
                             period: res.data.query[i]['period'],
-                            GrosirOne_Serang : (res.data.query[i]['store'][0]['GrosirOne Serang']) ? res.data.query[i]['store'][0]['GrosirOne Serang'] : 0,
-                            GrosirOne_Cikupamas: (res.data.query[i]['store'][1]['GrosirOne Cikupamas']) ? res.data.query[i]['store'][1]['GrosirOne Cikupamas'] : 0
+                            GrosirOne_Serang : (res.data.query[i]['store'][0]['Serang']) ? res.data.query[i]['store'][0]['Serang'] : 0,
+                            GrosirOne_Cikupamas: (res.data.query[i]['store'][1]['Cikupamas']) ? res.data.query[i]['store'][1]['Cikupamas'] : 0,
+                            GrosirOne_Panti_Asuhan_Muslimin : (res.data.query[i]['store'][2]['Panti Asuhan Muslimin']) ? res.data.query[i]['store'][2]['Panti Asuhan Muslimin'] : 0,
+                            GrosirOne_Alam_Sutera: (res.data.query[i]['store'][3]['Alam Sutera']) ? res.data.query[i]['store'][4]['Alam Sutera'] : 0
                         }
                     datas.push(data);
                     }
@@ -18,14 +20,14 @@ $(function() {
                     element: 'morris-area-chart',
                     data: datas,
                     xkey: 'period',
-                    ykeys: ['GrosirOne_Serang','GrosirOne_Cikupamas'],
-                    labels: ['GrosirOne_Serang','GrosirOne_Cikupamas'],
+                    ykeys: ['GrosirOne_Serang','GrosirOne_Cikupamas','GrosirOne_Panti_Asuhan_Muslimin','GrosirOne_Alam_Sutera'],
+                    labels: ['GrosirOne_Serang','GrosirOne_Cikupamas','GrosirOne_Panti_Asuhan_Muslimin','GrosirOne_Alam_Sutera'],
                     xLabels: 'month',
                     pointSize: 2,
-                    fillOpacity: 0.7,
+                    fillOpacity: 0.4,
                     hideHover: 'auto',
                     resize: true,
-                    lineColors: ['green', 'blue']
+                    lineColors: ['green', 'blue','red','black']
                 });
 
                 Morris.Donut({
