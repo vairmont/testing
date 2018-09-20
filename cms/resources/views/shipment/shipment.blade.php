@@ -31,6 +31,7 @@
                                                 <th>Nama Agen</th>
                                                 <th>Barang</th>
                                                 <th>Total</th>
+                                                <th>Action</th>
                                             </tr>
                                         </thead>
                                         
