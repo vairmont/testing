@@ -256,7 +256,7 @@ class OrderControllerPOS extends Controller
         $stock = Stock::where('store_id','=',$request['store_id'])
                 ->where('product_id','=',$orderdetails->product_id)
                 ->first();
-
+        $start = $stock->quantity;
         $stock->quantity -= $orderdetails->qty;
         $stock->save();
 
@@ -266,6 +266,7 @@ class OrderControllerPOS extends Controller
         $stockhistory->created_by = $request->get('user')->id;
         $stockhistory->reason = 'Terjual';
         $stockhistory->updated_by = $request->get('user')->id;
+        $stockhistory->start_stock = $start;
         $stockhistory->quantity = $orderdetails->qty;
         $stockhistory->save();
 
