@@ -1,80 +1,58 @@
 $(function() {
+    $.ajax({
+            url: "http://119.110.87.250/minigrosir/webservice/public/api/v1/dashboard1",
+            type: 'GET',
+            success: function(res) {
+                console.log(res);
+            var datas = [];
+                for (var i =0;i < res.data.query.length;i++) {
+                    data = {
+                            period: res.data.query[i]['period'],
+                            GrosirOne_Serang : (res.data.query[i]['store'][0]['Serang']) ? res.data.query[i]['store'][0]['Serang'] : 0,
+                            GrosirOne_Cikupamas: (res.data.query[i]['store'][1]['Cikupamas']) ? res.data.query[i]['store'][1]['Cikupamas'] : 0,
+                            GrosirOne_Panti_Asuhan_Muslimin : (res.data.query[i]['store'][2]['Panti Asuhan Muslimin']) ? res.data.query[i]['store'][2]['Panti Asuhan Muslimin'] : 0,
+                            GrosirOne_Alam_Sutera: (res.data.query[i]['store'][3]['Alam Sutera']) ? res.data.query[i]['store'][4]['Alam Sutera'] : 0
+                        }
+                    datas.push(data);
+                    }
+                    console.log(datas);
+                    Morris.Area({
+                    element: 'morris-area-chart',
+                    data: datas,
+                    xkey: 'period',
+                    ykeys: ['GrosirOne_Serang','GrosirOne_Cikupamas','GrosirOne_Panti_Asuhan_Muslimin','GrosirOne_Alam_Sutera'],
+                    labels: ['GrosirOne_Serang','GrosirOne_Cikupamas','GrosirOne_Panti_Asuhan_Muslimin','GrosirOne_Alam_Sutera'],
+                    xLabels: 'month',
+                    pointSize: 2,
+                    fillOpacity: 0.4,
+                    hideHover: 'auto',
+                    resize: true,
+                    lineColors: ['green', 'blue','red','black']
+                });
 
-    Morris.Area({
-        element: 'morris-area-chart',
-        data: [{
-            period: '2010 Q1',
-            iphone: 2666,
-            ipad: null,
-            itouch: 2647
-        }, {
-            period: '2010 Q2',
-            iphone: 2778,
-            ipad: 2294,
-            itouch: 2441
-        }, {
-            period: '2010 Q3',
-            iphone: 4912,
-            ipad: 1969,
-            itouch: 2501
-        }, {
-            period: '2010 Q4',
-            iphone: 3767,
-            ipad: 3597,
-            itouch: 5689
-        }, {
-            period: '2011 Q1',
-            iphone: 6810,
-            ipad: 1914,
-            itouch: 2293
-        }, {
-            period: '2011 Q2',
-            iphone: 5670,
-            ipad: 4293,
-            itouch: 1881
-        }, {
-            period: '2011 Q3',
-            iphone: 4820,
-            ipad: 3795,
-            itouch: 1588
-        }, {
-            period: '2011 Q4',
-            iphone: 15073,
-            ipad: 5967,
-            itouch: 5175
-        }, {
-            period: '2012 Q1',
-            iphone: 10687,
-            ipad: 4460,
-            itouch: 2028
-        }, {
-            period: '2012 Q2',
-            iphone: 8432,
-            ipad: 5713,
-            itouch: 1791
-        }],
-        xkey: 'period',
-        ykeys: ['iphone', 'ipad', 'itouch'],
-        labels: ['iPhone', 'iPad', 'iPod Touch'],
-        pointSize: 2,
-        hideHover: 'auto',
-        resize: true
-    });
+                Morris.Donut({
+                    element: 'morris-donut-chart',
+                    data: [{
+                        label: "Agen",
+                        value: res.data.agen
+                    }, {
+                        label: "Customer",
+                        value: res.data.customer
+                    }, {
+                        label: "InActive",
+                        value: res.data.inactive
+                    }],
+                    resize: true,
+                    colors: ['green', 'blue','red']
+                });
 
-    Morris.Donut({
-        element: 'morris-donut-chart',
-        data: [{
-            label: "Download Sales",
-            value: 12
-        }, {
-            label: "In-Store Sales",
-            value: 30
-        }, {
-            label: "Mail-Order Sales",
-            value: 20
-        }],
-        resize: true
-    });
+            }
+        });
+
+
+   
+
+    
 
     Morris.Bar({
         element: 'morris-bar-chart',
