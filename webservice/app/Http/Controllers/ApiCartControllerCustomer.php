@@ -62,6 +62,7 @@ class ApiCartControllerCustomer extends Controller {
     $product = Product::where('id',$request->product_id)->first();
 
     $stock = Stock::where('product_id', $request->product_id)
+              ->where('stock.store_id', '=', $request->get('user')->store_id)
               ->select('stock.quantity')
               ->first();
 
