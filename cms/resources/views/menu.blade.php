@@ -84,6 +84,9 @@
                         <a href="#"><i class="fa fa-group"></i> Admin<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
                             <li>
+                                <a href="{{url('/bywaneehistory')}}">History Wanee</a>
+                            </li>
+                            <li>
                                 <a href="{{url('/byagent')}}">Verifikasi Agen</a>
                             </li>
                             <li>

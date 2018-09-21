@@ -29,9 +29,10 @@ Route::get('/bychasier','ReportController@getByChasier');
 
 
 Route::get('/byagent','EmployeeController@getByAgent');
+Route::get('/bywaneehistory','EmployeeController@getBywanneHistory');
 Route::get('/bywithdraw', 'WithDrawController@getByWithDraw');
 
-
+Route::get('/verifywanee/{id}','EmployeeController@updateStatus')->name('status1');
 Route::get('/verifywithdraw/{id}','WithDrawController@updateStatus')->name('status');
 
 Route::post('/verifyagent/{id}','EmployeeController@updateVerify')->name('verify');
