@@ -15,6 +15,8 @@ Route::post('/v1/forgotPassword', 'UserController@forgotPassword');
 Route::post('/v1/forgotPasswordtes', 'UserController@forgotPassword2');
 Route::post('/v1/changePassword', 'UserController@changePassword');
 
+Route::get('/v1/dashboard1','DashboardController@getDashboard1');
+
 Route::post('/v1/register/agen', 'RegisterController@addAgen');
 Route::post('/v1/register/agen/ktp/upload', 'RegisterController@uploadKTP');
 Route::post('/v1/register/agen/kk/upload', 'RegisterController@uploadKK');

@@ -79,7 +79,7 @@
                                                   <td>{{ number_format( $item->margin/$item->cost*100, 2) }}</td>
                                                   <td>{{ isset($item->stock) ? $item->stock->quantity : "0" }}</td>
                                                   <td>
-                                                    <button class="btn btn-primary" type="submite">Edit</button>
+                                                    <button class="btn btn-primary" type="submit">Edit</button>
                                                   </td>
                                                 </tr>
                                                 {{ Form::close() }}

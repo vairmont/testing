@@ -6,153 +6,191 @@
 
 @section('content')
 
-        <div class="container">
-            <div class="row">
-              <div class="col-lg-12">
-                <form class="form-inline">
-                    
-                        <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">+Add StockAdjustment</button>
+        <div class="">
+                <h2>Stock Adjustments</h1>
+        </div>
+<!--                       <button type="button" class="btn btn-primary form-inline form-group" data-toggle="modal" data-target="#additem">
+                        Add
+                      </button> -->
+            <div class="">
+              <form class="form-inline" enctype="multipart" method="GET" action="{{url('/bystockadjustment')}}"> 
+                {{ csrf_field() }}
+                  <div class="col-md-12">
+                    <input type="text" class="form-control form-inline" name="keyword">
+                    <select class="form-control form-inline" name="store_id">
+                      <option value="">Semua</option>
+                      @foreach($store as $stores)
+                      <option value="{{$stores->id}}">{{$stores->store_name}}</option>
+                      @endforeach
+                    </select>
+                      <button type="submit" class="btn btn-primary form-inline form-group">
+                        Filter
+                      </button>
+                  </div>
+              </form>
+            </div>
+            <br>
 
-                    <div class="form-group col-3 ">
-                        <label for="inputState">Status</label>
-                        <select id="inputState" class="form-control">
-                          <option selected>All Item</option>
-                          <option>Draft</option>
-                          <option>Pending</option>
-                          <option>Partially received</option>
-                          <option>Closed</option>
-                        </select>
-                      </div>
-                    <div class="form-group col-3 ">
-                            <label for="inputState">Supplier</label>
-                            <select id="inputState" class="form-control">
-                              <option selected>All Supplier</option>
-                              <option>No Category</option>
-                            </select>
-                          </div>
-                          <div class="form-group col-3 ">
-                                <label for="inputState">Toko</label>
-                                <select id="inputState" class="form-control">
-                                  <option selected>Semua Toko</option>
-                                  <option>Mobile MiniGrosir</option>
-                                  <option>Toko MiniGrosir</option>
-                                </select>
-                                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-                              </div>
-                  </form>
-                  <div id="page-wrapper">
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <h1 class="page-header">CMS MiniGrosir</h1>
+                    <!-- Modal add -->
+                    <div class="modal fade" id="additem">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Add Stock</h4>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <form action="{{ url('/voucher/add') }}" enctype="multipart/form-data" method="POST">
+                                    {{ csrf_field() }}
+                                    <input type="hidden" name="action" value="Update Data">
+                                <div class="modal-body">
+
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">Voucher Code</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control" name="voucher_code" value="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">Voucher Code</label>
+                                            <div class="col-sm-10">
+                                                <select name="product_type" class="form-control">
+                                                  <option value="physical">Physical</option>
+                                                  <option value="digital">Digital</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">Start at End at</label>
+                                            <div class='col-md-5'>
+                                                <div class="form-group">
+                                                    <div class='input-group date' id='datetimepicker6'>
+                                                        <input type='text' name="valid_from" class="form-control" placeholder="Start Date">
+                                                        <span class="input-group-addon">
+                                                            <span class="glyphicon glyphicon-calendar"></span>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class='col-md-5'>
+                                                <div class="form-group">
+                                                    <div class='input-group date' id='datetimepicker7'>
+                                                        <input type='text' name="valid_until" class="form-control" placeholder="End Date">
+                                                        <span class="input-group-addon">
+                                                            <span class="glyphicon glyphicon-calendar"></span>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">Quota</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control" name="quota" value="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">Quota Per Account</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control" name="quota_per_account" value="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">Discount</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control" name="discount" value="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">Cashback</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control" name="cashback" value="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">Min Purchase</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control" name="min_purchase" value="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">Bonus Item</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control" name="bonus_item" value="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">Description</label>
+                                            <div class="col-sm-10">
+                                                <textarea class="form-control" name="description"></textarea>
+                                            </div>
+                                        </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <div class="col-md-8">
+                                        <button type="submit" class="btn btn-primary">Confirm</button>
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                                </form>
+                            </div>
                         </div>
-                        <!-- /.col-lg-12 -->
                     </div>
+                    <br>
                     <!-- /.row -->
                     <div class="row">
                         <div class="col-lg-12">
-                            <div class="panel panel-default">
-                              
-                                <!-- /.panel-heading -->
-                                <div class="panel-body">
-                                    <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-example">
+                                <div class="table-responsive">
+                                    <table width="100%" class="table table-striped table-bordered sortable table-hover" id="dataTables-example">
                                         <thead>
                                             <tr>
-                                                <th>Adjustment #</th>
-                                                <th>Tanggal</th>
-                                                <th>Reason</th>
-                                                <th>Toko</th>
+                                                <th>Store Name</th>
+                                                <th>Product Name</th>
+                                                <th>Cost</th>
                                                 <th>Quantity</th>
+                                                <th>Edit</th>
                                             </tr>
                                         </thead>
+                                        
                                         <tbody>
-                                       
+                                          @if($stock)
+                                             @foreach($stock as $stocks)
+                                              {{ Form::open(['url' => url('editstock/' . $stocks->id), 'method' => 'post', 'enctype' => 'multipart/form-data']) }}
+                                            <tr>
+                                                <td>{{$stocks->store_name}}</td>
+                                                <td>{{$stocks->product_name}}</td>
+                                                <td>Rp.{{number_format($stocks->cost)}},-</td>
+                                                <td><input class="form-control" name="quantity" type="number" value="{{ $stocks->quantity}}"></td>
+                                                <td><button type="button" class="btn btn-primary btn-sm"  data-toggle="modal" data-target="#edit-{{$stocks->id}}">Confirm</button></td>
+                                                <!-- modal -->
+                                                <div class="modal fade" id="edit-{{$stocks->id}}" tabindex="-1" role="dialog" aria-labelledby="editmodal" aria-hidden="true">
+                                                    <div class="modal-dialog">
+                                                      <div class="modal-content">
+                                                        <div class="modal-header">
+                                                          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                                          <h4 class="modal-title" id="editmodal">Confirmation</h4>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                          <textarea class="form-control" rows="5" name="reason" type="text" value="" placeholder="write your note here..." required=""></textarea>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                          <button type="submit" class="btn btn-primary">Save</button>
+                                                          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                        </div>
+                                                      </div><!-- /.modal-content -->
+                                                    </div><!-- /.modal-dialog -->
+                                                  </div><!-- /.modal -->
+                                            </tr>
+                                            {{ Form::close() }}
+                                            @endforeach
+                                          @endif
                                         </tbody>
+                                        <tfoot>
+                                        </tfoot>
                                     </table>
-          </div>
-    </div>
-    </div>
-    </div>
-    </div>
-    </div>
-    </div>
-    <!-- Modal -->
-    <div class="modal fade" id="myModal" role="dialog">
-            <div class="modal-dialog">
-            
-              <!-- Modal content-->
-              <div class="modal-content">
-                <div class="modal-header">
-                  <button type="button" class="close" data-dismiss="modal">&times;</button>
-                  <h4 class="modal-title">Create Option</h4>
-                </div>
-                <div class="modal-body col-lg-12">
-                        <div class="form-group col-lg-6">
-                                <label for="inputState">Received Item</label>
-                                <select id="inputState" class="form-control">
-                                        <option selected>Iventory Count</option>
-                                        <option>Loss</option>
-                                        <option>Damage</option>
-                                </select>
-                              </div>
-                              <div class="form-group col-lg-6">
-                                    <label for="inputState">Destination store</label>
-                                    <select id="inputState" class="form-control">
-                                      <option selected>Mobile MiniGrosir</option>
-                                      <option>Toko MiniGrosir</option>
-                                    </select>
-                                  </div>     
-                                  <div class="form-group col-lg-6">
-                                        <form action="/action_page.php">
-                                            <p>Purchase order date:</p>
-                                            <input type="date" name="bday">
-                                        </form>
-                                    </div>
-                                    <div class="form-group col-lg-6">
-                                        <form action="/action_page.php">
-                                            <p>Expeted On :</p>
-                                            <input type="date" name="bday">
-                                          </form>
-                                    </div>
-                                    <div class="form-group col-lg-12">
-                                        <label>Note</label>
-                                        <textarea class="form-control" rows="3"></textarea>
-                                    </div>
-                                    <div class="form-group col-lg-12">
-                                        <h2>Items</h2>
-                                    </div>
-                                    <div class="form-group col-lg-2">
-                                        <p class="help-block">In stock</p>
-                                    </div>
-                                    <div class="form-group col-lg-2">
-                                        <p class="help-block">Incoming</p>
-                                    </div>
-                                    <div class="form-group col-lg-2">
-                                        <p class="help-block">Quantity</p>
-                                    </div>
-                                    <div class="form-group col-lg-2">
-                                        <p class="help-block">Purchase cost</p>
-                                    </div>
-                                    <div class="form-group col-lg-2">
-                                        <p class="help-block">Amount</p>
-                                    </div>
-                                    <div class="form-group col-lg-12">
-                                        <label></label>
-                                        <input class="form-control" placeholder="Search">
-                                    </div>
-                                    
-                                    <div class="form-group col-lg-6">
-                                        <h3>Total</h3>
-                                    </div>       
-                </div>
-           
-               
-                <button type="submit" class="btn btn-default">Save</button>
-                <button type="reset" class="btn btn-default">Clear</button>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                </div>
-              </div>
-    </div>
-    <!-- /#wrapper -->
-
+                                </div>
+                            </div>
+                    </div>
+    </div>   
 @endsection
