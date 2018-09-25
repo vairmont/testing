@@ -99,6 +99,7 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
   Route::post('/order/assign-agent', 'OrderController@assignOrderAgent');
   Route::post('/order/cancel', 'OrderController@cancelOrderAgent');
   Route::post('/order/finalize', 'OrderController@finalizeOrder');
+  Route::post('/order/finalize/bundling', 'OrderController@finalizeOrderBundling');
   Route::post('/order/accept', 'OrderController@acceptOrder');
   Route::post('/shipment', 'ShipmentController@addShipment');
   Route::post('/agen/shipment', 'ShipmentController@updateShipmentMethod');
