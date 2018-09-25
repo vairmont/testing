@@ -55,17 +55,10 @@ class PromoController extends Controller
                     ->leftJoin('stock', 'stock.product_id', '=', 'order_detail.product_id')
                     ->select(DB::raw('SUM(order_detail.qty) as sales'), 'product.id', 'product.product_name')
                     ->where('stock.quantity', '>', 0)
-                    ->whereIn('product.id', [141, 145, 146])
+                    ->where('product.id', '=', $request->header('product_id'))
                     ->where('stock.store_id', '=', $request->get('user')->store_id)
                     ->groupBy('product.id', 'product.product_name')
                     ->orderBy('sales', 'desc');
-
-        if(isset($request->take) && $request->take != 'all') {
-            $rec = $rec->take($request->take)->get();
-        }
-        elseif(isset($request->take) && $request->take == 'all') {
-            $rec = $rec->get();
-        }
 
         return response()->json(['data' => $rec, 'message' => ['OK']]);  
     }
