@@ -12,6 +12,7 @@ use App\Stores\IncentiveRepository;
 use App\Inventories\StockRepository;
 use App\Slider;
 use App\Product;
+use Auth;
 
 use Excel;
 
@@ -147,7 +148,8 @@ class ItemController extends Controller
         $item = Product::where('id','=',$id)
         ->update(['cost' => $request->cost,
                   'price_for_customer' => $request->price_for_customer,
-                  'promo_price' => $request->promo_price]);
+                  'promo_price' => $request->promo_price,
+                  'updated_by' => Auth::user()->id]);
 
         return redirect('modifier');
     }
@@ -224,7 +226,7 @@ class ItemController extends Controller
         if ($isExport) {
             $this->_export_excel($items);
         }
-
+        
         return view('products.modifier', compact('items', 'categories'))->withTitle('Modifier');
     }
 
