@@ -241,23 +241,12 @@ class ApiCartControllerCustomer extends Controller {
   public function clearCartItems(Request $request) {
 
     $cart = Cart::where('user_id', '=', $request->get('user')->id)->first();
-    $cart->subtotal = 0;
-    $cart->tax = 0;
-    $cart->total = 0;
-    $cart->save();
-
     $detail = CartDetail::where('cart_id', '=', $cart->id)
-      ->update(['qty' => 0]);
+      ->delete();
 
-    return response()->json([
-      'message' => 'Cart items has been removed.',
-      'cart' => [
-          'subtotal' => $cart->subtotal,
-          'tax' => $cart->tax,
-          'total' => $cart->total,
-          'items' => []
-        ]
-      ], 200);
+    $cart->delete();
+
+    return response()->json(['data' => [], 'message' => ['OK']]);
   }
 
 }
