@@ -89,7 +89,7 @@
                                     <i class="fa fa-money-bill fa-5x"></i>
                                 </div> -->
                                 <div class="col-xs-12 text-right">
-                                    <div class="huge">AS{{number_format($salestoday->total_sales)}}</div>
+                                    <div class="huge">{{number_format($salestoday->total_sales)}}</div>
                                     <div>Sales Today</div>
                                 </div>
                             </div>
