@@ -62,6 +62,7 @@ class OrderControllerPOS extends Controller
     $order->subtotal = $amount;
     $order->discount = 0;
     $order->type = 'Topup';
+    $order->agen_id = $user->id;
     $order->total = $amount;
     $order->save();
 
