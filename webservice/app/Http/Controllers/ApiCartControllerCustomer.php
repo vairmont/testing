@@ -167,7 +167,11 @@ class ApiCartControllerCustomer extends Controller {
                 ->first();
        
         if($request->qty + $qty > $stock->quantity){
-          return response()->json(['message' => 'Mohon maaf, stok barang ditoko tidak mencukupi.'], 200);
+          return response()->json([
+                'cart' => [
+                  'message' => ['Mohon maaf, stok barang ditoko tidak mencukupi, hanya tersisa ' .$stock->quantity]
+                ],
+            ], 201);
         }
 
         $checkDetail->update(['qty' => $qty]);
