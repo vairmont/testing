@@ -61,7 +61,7 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
 
   Route::get('/cart', 'ApiCartController@index');
   Route::post('/cart', 'ApiCartController@updateCart');
-  Route::post('/cart/clear', 'ApiCartController@clearCartItems');
+  Route::get('/cart/clear', 'ApiCartController@clearCartItems');
   Route::post('/cart/confirm', 'ApiCartController@finalizeCart');
 
   Route::get('/cart/customer', 'ApiCartControllerCustomer@index');
@@ -99,6 +99,7 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
   Route::post('/order/assign-agent', 'OrderController@assignOrderAgent');
   Route::post('/order/cancel', 'OrderController@cancelOrderAgent');
   Route::post('/order/finalize', 'OrderController@finalizeOrder');
+  Route::post('/order/finalize/bundling', 'OrderController@finalizeOrderBundling');
   Route::post('/order/accept', 'OrderController@acceptOrder');
   Route::post('/shipment', 'ShipmentController@addShipment');
   Route::post('/agen/shipment', 'ShipmentController@updateShipmentMethod');
@@ -110,6 +111,7 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
   Route::get('/slider', 'PromoController@sliderIndex');
   Route::get('/recommendation', 'PromoController@recommendationIndex');
   Route::get('/hot', 'PromoController@hotIndex');
+  Route::get('/sold', 'PromoController@soldIndex');
 
   Route::get('/notif', 'NotificationController@index');
 

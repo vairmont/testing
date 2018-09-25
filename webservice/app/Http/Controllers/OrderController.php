@@ -372,24 +372,27 @@ class OrderController extends Controller
       $incentiveDetails = OrderDetail::join('product', 'product.id', '=', 'order_detail.product_id')
                     ->join('incentive_category', 'incentive_category.id', '=', 'product.incentive_id')
                     ->where('order_id', '=', $order->id)
-                    ->select('order_detail.price_for_customer', 'incentive_category.rate', 'order_detail.qty', 'product.promo_price')
+                    ->select('order_detail.price_for_customer', 'incentive_category.rate', 'order_detail.qty', 'product.promo_price', 'product.category_id')
                     ->get();
 
       $incentive = 0;
       $margin = 0;
       $prices = 0;
+
+          
+
       foreach ($incentiveDetails as $detail) {
-        // if($detail->qty >= 3){
-        //   $prices += ($detail->price_for_customer * $detail->qty) - 0.98;
-        //   $margin += ($detail->price_for_customer * $detail->qty  - 0.98) * $this->marginRate;
-        //   $incentive += ($detail->price_for_customer * $detail->qty  - 0.98) * $this->marginRate * $detail->rate / 100;
-        // }
-        // else{
+        if($detail->category_id == 5){
+          $prices += (($detail->promo_price == 0) ? $detail->price_for_customer : $detail->promo_price) * $detail->qty;
+          $margin += 0;
+          $incentive += (($detail->promo_price == 0) ? $detail->price_for_customer : $detail->promo_price) * $detail->qty * $detail->rate / 100;  
+          }
+
+          else{
           $prices += (($detail->promo_price == 0) ? $detail->price_for_customer : $detail->promo_price) * $detail->qty;
           $margin += (($detail->promo_price == 0) ? $detail->price_for_customer : $detail->promo_price) * $detail->qty * $this->marginRate;
-          $incentive += (($detail->promo_price == 0) ? $detail->price_for_customer : $detail->promo_price) * $detail->qty * 0.95 * $detail->rate / 100;
-        // }        
-        
+          $incentive += (($detail->promo_price == 0) ? $detail->price_for_customer : $detail->promo_price) * $detail->qty * 0.95 * $detail->rate / 100;        
+          }
        }
       $commission_pph = ($incentive + $margin) * $this->pph;
       $commission_netto = $incentive - $commission_pph;
@@ -429,7 +432,8 @@ class OrderController extends Controller
 
       return response()->json(['message' => 'Order has been completed.'], 201);
       }
-    
+   
+
     public function manualNotif(Request $request){
        
     }

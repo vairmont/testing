@@ -12,6 +12,7 @@ namespace App\Http\Controllers;
 use App\Agen;
 use App\User;
 use App\Order;
+use App\Customer;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Validator;
