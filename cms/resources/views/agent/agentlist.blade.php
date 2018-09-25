@@ -68,7 +68,7 @@
                                                 <td>{{$agent->phone}}</td>
                                                 <td><img src="../../webservice/{{$agent->KK}}" style="width: 250px;"></td>
                                                 <td><img src="../../webservice/{{$agent->NIK}}" style="width: 250px;"></td>
-                                                <td>{{$agent->busname}}</td>]
+                                                <td>{{$agent->busname}}</td>
                                                 <td>
                                                     {{$agent->status}}
                                                 </td>

@@ -6,41 +6,29 @@
 
 @section('content')
 
-    <div class="container-fluid">
-
-        <div class="">
+     <div class="container-fluid">
+            <div>
                 <h2>Wanee History</h2>
-        <!-- H2 -->
-        </div>
-        <div class="col-lg-4">
-            <a href="{{ url('/bywaneehistory') }}?date=1" class="btn btn-primary">Hari ini</a>
-            <a href="{{ url('/bywaneehistory') }}?date=2" class="btn btn-primary">Bulan ini</a>
             </div>
 
-            <div class="row">
-            <form class="form-inline" method="GET" action="">
-                <div class="form-group col-lg-6">
-                    <input class="form-control mr-sm-2" type="text" name="keyword" placeholder="Nama Agen" aria-label="Search">
-                    <button type="submit" class="btn btn-primary">Search</button>
-                    <button type="reset" class="btn btn-danger">Clear</button>
+           
+                <div class="col-lg-12">
+                    <p> </p>
                 </div>
-              
+                <!--
+                <div class="col-lg-12">
+                    <button type="submit" name="is_export" value="1" class="btn btn-primary">Export</button>
+                </div>
             
-            <!--
-                <div class="form-group col-md-3">         
-                    <select id="inputState" class="form-control" name="stock">
-                    <option value="all" selected>Semua</option>
-                    <option value="low">Verify</option>
-                    <option value="sold">Reject</option>
-                    </select>
+            <form class=" form-inline" method="GET" action="{{url('/bywaneehistory')}}">
+                <div class="col-lg-12 form group">
+                <h5>Date:</h5>
+                    <input type="date" name="dayword1" @if(isset($request->dayword1)) value="{{$request->dayword1}}" @endif>
+                    <input type="date" name="dayword2" @if(isset($request->dayword2)) value="{{$request->dayword2}}" @endif>
+                    <input type="submit" class="btn btn-primary">
                 </div>
-            -->      <div class="col-lg-1">
-                    <button type="submit" name="is_export" value="1" class="btn btn-success">Export</button>
-                    </div>
-                    <!-- row -->
-                    </form>
-                </div>
-
+            </form>
+            -->
                     <!-- /.row -->
                     <div class="row">
                         <div class="col-lg-12">
@@ -49,7 +37,9 @@
                                         <thead>
                                             <tr>
                                                 <th>Nama Agen</th>
+                                                <th>Saldo Awal</th>
                                                 <th>Amount</th>
+                                                <th>Saldo Akhir</th>
                                                 <th>Tanggal</th>
                                                 <th>Nomor telpon</th>
                                                 <th>Action</th>
@@ -61,7 +51,9 @@
                                             @foreach($history->all() as $his)
                                             <tr>
                                                 <td>{{$his->name}}</td>
+                                                <td>Rp.{{number_format($his->saldoakhir - $his->amount)}}</td>
                                                 <td>Rp.{{number_format($his->amount)}}</td>
+                                                <td>Rp.{{number_format($his->saldoakhir)}}</td>
                                                 <td>{{$his->date}}</td>
                                                 <td>{{$his->phone}}</td>
                                                 <td>
