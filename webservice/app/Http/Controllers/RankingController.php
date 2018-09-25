@@ -30,7 +30,7 @@ class RankingController extends Controller
           //   $data[] = ['store' => $st,
           //           'customer' => $customer[$st->name]];                      
           // }
-      return response()->json([$data
+      return response()->json([$store
         ]);
     }
 
