@@ -23,13 +23,13 @@ class RankingController extends Controller
 		           ->orderBy('total_sales', 'desc')
 		           ->get();
 
-          $customer = [];
-          foreach ($store as $st) {
-            $customer[$st->name] = Customer::where('agen_id', $st->agen_id)
-                                  ->count();
-            $data[] = ['store' => $st,
-                    'customer' => $customer[$st->name]];                      
-          }
+          // $customer = [];
+          // foreach ($store as $st) {
+          //   $customer[$st->name] = Customer::where('agen_id', $st->agen_id)
+          //                         ->count();
+          //   $data[] = ['store' => $st,
+          //           'customer' => $customer[$st->name]];                      
+          // }
       return response()->json([$data
         ]);
     }

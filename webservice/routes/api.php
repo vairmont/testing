@@ -111,6 +111,7 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
   Route::get('/slider', 'PromoController@sliderIndex');
   Route::get('/recommendation', 'PromoController@recommendationIndex');
   Route::get('/hot', 'PromoController@hotIndex');
+  Route::get('/sold', 'PromoController@soldIndex');
 
   Route::get('/notif', 'NotificationController@index');
 

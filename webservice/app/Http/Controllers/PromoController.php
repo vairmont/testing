@@ -49,6 +49,26 @@ class PromoController extends Controller
     	return response()->json(['data' => $rec, 'message' => ['OK']]);  
     }
 
+    public function soldIndex(Request $request) 
+    {
+        $rec = OrderDetail::leftJoin('product', 'product.id', '=', 'order_detail.product_id')
+                    ->leftJoin('stock', 'stock.product_id', '=', 'order_detail.product_id')
+                    ->select(DB::raw('SUM(order_detail.qty) as sales'), 'product.id', 'product.product_name')
+                    ->where('stock.quantity', '>', 0)
+                    ->whereIN('product.id', '=', [141, 145, 146])
+                    ->where('stock.store_id', '=', $request->get('user')->store_id)
+                    ->groupBy('product.id', 'product.product_name')
+                    ->orderBy('sales', 'desc');
+
+        if(isset($request->take) && $request->take != 'all') {
+            $rec = $rec->take($request->take)->get();
+        }
+        elseif(isset($request->take) && $request->take == 'all') {
+            $rec = $rec->get();
+        }
+
+        return response()->json(['data' => $rec, 'message' => ['OK']]);  
+    }
 
     public function hotIndex(Request $request) 
     {
