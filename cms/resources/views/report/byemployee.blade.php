@@ -47,7 +47,7 @@
                                         <th>Penjualan</th>
                                         <th>Pendapatan bersih</th>
                                         <th>Jumlah Penjualan</th>
-                                        <th>Pendaftaran langganan</th>
+                                        <th>Jumlah Customer</th>
                                     </tr>
                                 </thead>
 

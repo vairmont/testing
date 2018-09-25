@@ -79,30 +79,30 @@
                                         <td>{{$flow->qty}}</td>
                                         <td>
                                             @if($flow->promo_price == 0)
-                                            {{number_format($flow->customer_price * $flow->qty * 0.05)}}
+                                            Rp.{{number_format($flow->customer_price * $flow->qty * 0.05)}},-
                                             @else
-                                            *{{number_format($flow->promo_price * $flow->qty * 0.05)}}
+                                            <label style="color:red;">Rp.{{number_format($flow->promo_price * $flow->qty * 0.05)}},-</label>
                                             @endif
                                         </td>
                                         <td>
                                             @if($flow->promo_price == 0)
-                                            {{ number_format($flow->customer_price * $flow->qty * 0.95 * $flow->rate / 100)}}
+                                            Rp.{{ number_format($flow->customer_price * $flow->qty * 0.95 * $flow->rate / 100)}},-
                                             @else
-                                            *{{ number_format($flow->promo_price * $flow->qty * 0.95 * $flow->rate / 100)}}
+                                            <label style="color:red;">Rp.{{ number_format($flow->promo_price * $flow->qty * 0.95 * $flow->rate / 100)}},-</label>
                                             @endif      
                                         </td>
                                         <td>
                                             @if($flow->promo_price == 0)
-                                            {{ number_format($flow->customer_price * $flow->qty * 0.95)}}
+                                            Rp.{{ number_format($flow->customer_price * $flow->qty * 0.95)}},-
                                             @else
-                                            *{{ number_format($flow->promo_price * $flow->qty * 0.95)}}
+                                            <label style="color:red;">Rp.{{ number_format($flow->promo_price * $flow->qty * 0.95)}},-</label>
                                             @endif  
                                         </td>
                                         <td>
                                             @if($flow->promo_price == 0)
-                                            {{ number_format($flow->customer_price * $flow->qty)}}
+                                            Rp.{{ number_format($flow->customer_price * $flow->qty)}},-
                                             @else
-                                            *{{ number_format($flow->promo_price * $flow->qty)}}
+                                            <label style="color:red;">Rp.{{ number_format($flow->promo_price * $flow->qty)}},-</label>
                                             @endif  
                                          </td>
                                          <td>
