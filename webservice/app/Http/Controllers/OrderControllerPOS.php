@@ -47,7 +47,7 @@ class OrderControllerPOS extends Controller
     $topup = Agen::where('identifier', '=', $user->id)
              ->increment('plafon_kredit', $amount);
 
-    $agen = Agen::where('agen.identifier', '=', $request->get('user')->id)
+    $agen = Agen::where('agen.identifier', '=', $user->id)
                     ->select('agen.plafon_kredit')
                     ->first();
 
@@ -66,7 +66,7 @@ class OrderControllerPOS extends Controller
     $order->save();
 
     $history = new WaneeHistory;
-    $history->user_id = $request->get('user')->id;
+    $history->user_id = $user->id;
     $history->amount = $amount;
     $history->saldo_akhir = $agen->plafon_kredit;
     $history->reason = 'Topup Plafon Kredit';
@@ -223,9 +223,19 @@ class OrderControllerPOS extends Controller
       if($order->status == 6 ){
           return response()->json(['data' => [], 'message' => ['Transaksi sudah pernah diproses']]);
       }
-      
+
+      $prices = Order::join('order_detail', 'order_detail.order_id', '=', 'order.id')
+                ->select('order_detail.category_id')
+                ->first();
+
+      if($prices->category_id == 5){
+        $amount = $order->total;
+      }
+
+      else{
       $amount = $order->total * 0.95;
-      
+      }
+
       if($order->agen_id != 0)
       {
         #check saldo
