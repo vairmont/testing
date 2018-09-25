@@ -58,7 +58,7 @@ class PromoController extends Controller
                     ->where('product.id', '=', $request->product_id)
                     ->where('stock.store_id', '=', $request->get('user')->store_id)
                     ->groupBy('product.id', 'product.product_name')
-                    ->orderBy('sales', 'desc');
+                    ->first();
 
         return response()->json(['data' => $rec, 'message' => ['OK']]);  
     }
