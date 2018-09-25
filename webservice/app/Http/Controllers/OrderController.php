@@ -372,123 +372,27 @@ class OrderController extends Controller
       $incentiveDetails = OrderDetail::join('product', 'product.id', '=', 'order_detail.product_id')
                     ->join('incentive_category', 'incentive_category.id', '=', 'product.incentive_id')
                     ->where('order_id', '=', $order->id)
-                    ->select('order_detail.price_for_customer', 'incentive_category.rate', 'order_detail.qty', 'product.promo_price')
+                    ->select('order_detail.price_for_customer', 'incentive_category.rate', 'order_detail.qty', 'product.promo_price', 'product.category_id')
                     ->get();
 
       $incentive = 0;
       $margin = 0;
       $prices = 0;
+
+          
+
       foreach ($incentiveDetails as $detail) {
-        // if($detail->qty >= 3){
-        //   $prices += ($detail->price_for_customer * $detail->qty) - 0.98;
-        //   $margin += ($detail->price_for_customer * $detail->qty  - 0.98) * $this->marginRate;
-        //   $incentive += ($detail->price_for_customer * $detail->qty  - 0.98) * $this->marginRate * $detail->rate / 100;
-        // }
-        // else{
-          $prices += (($detail->promo_price == 0) ? $detail->price_for_customer : $detail->promo_price) * $detail->qty;
-          $margin += (($detail->promo_price == 0) ? $detail->price_for_customer : $detail->promo_price) * $detail->qty * $this->marginRate;
-          $incentive += (($detail->promo_price == 0) ? $detail->price_for_customer : $detail->promo_price) * $detail->qty * 0.95 * $detail->rate / 100;
-        // }        
-        
-       }
-      $commission_pph = ($incentive + $margin) * $this->pph;
-      $commission_netto = $incentive - $commission_pph;
-      
-      $commission = new Commission;
-      $commission->order_id = $order->id;
-      $commission->agen_id = $order->agen_id;
-      $commission->incentive = $incentive;
-      $commission->commission_pph = $commission_pph;
-      $commission->commission_netto = $commission_netto;
-      $commission->margin_penjualan = $margin;
-      $commission->save();
-
-      $agen = Agen::where('agen.identifier', '=', $request->get('user')->id)
-                    ->select('agen.wanee')
-                    ->first();
-
-      $history = new WaneeHistory;
-      $history->user_id = $request->get('user')->id;
-      $history->amount = $commission_netto;
-      $history->saldo_akhir = $agen->wanee + $commission_netto;
-      $history->reason = 'Komisi Agen';
-      $history->save();
-
-      $komisi = Agen::where('agen.identifier', '=', $request->get('user')->id)
-                    ->update([
-                'wanee' => $history->saldo_akhir
-            ]);
-
-      } catch(\Exception $e) {
-          DB::rollback();
-          throw $e;
-      }
-      DB::commit();
-
-      $this->_sendPushNotification($order->user_id, "Order Status", "Terima kasih transaksi selesai tolong berikan rating.");
-
-      return response()->json(['message' => 'Order has been completed.'], 201);
-      }
-
-    public function finalizeOrderBundling(Request $request) {
-
-      $validator = Validator::make($request->all(),[
-        'order_id' => 'required|numeric|exists:order,id'
-      ]);
-
-      if ($validator->fails()) {
-        return response()->json([
-          'error' => $validator->errors()->all()
-        ]);
-      }
-
-            // $latFrom = deg2rad($request->lat);
-            // $lonFrom = deg2rad($request->long);
-            // $earthRadius = 6371; // in km
-
-            // $orderlocation = OrderBillingDetail::select('lat', 'long')
-            //                 ->where('order_id', $request->order_id)
-            //                 ->first();  
-
-            // $latTo = deg2rad($orderlocation->lat);
-            // $lonTo = deg2rad($orderlocation->long);
-
-            // $latDelta = $latTo - $latFrom;
-            // $lonDelta = $lonTo - $lonFrom;
-
-            // $angle = 2 * asin(sqrt(pow(sin($latDelta / 2), 2) + cos($latFrom) * cos($latTo) * pow(sin($lonDelta / 2), 2)));
-
-            // // 1.6 for convert in miles to km
-            // // x2 for set exact distance
-            // $distance = (float)(($angle * $earthRadius) * 2);
-
-            // if($distance <= 0.5) {
-      DB::beginTransaction();
-        try {
-      $order = Order::whereId($request['order_id'])->first();
-      $order->status = OrderStatus::COMPLETED;
-      $order->save();
-      $incentiveDetails = OrderDetail::join('product', 'product.id', '=', 'order_detail.product_id')
-                    ->join('incentive_category', 'incentive_category.id', '=', 'product.incentive_id')
-                    ->where('order_id', '=', $order->id)
-                    ->select('order_detail.price_for_customer', 'incentive_category.rate', 'order_detail.qty', 'product.promo_price')
-                    ->get();
-
-      $incentive = 0;
-      $margin = 0;
-      $prices = 0;
-      foreach ($incentiveDetails as $detail) {
-        // if($detail->qty >= 3){
-        //   $prices += ($detail->price_for_customer * $detail->qty) - 0.98;
-        //   $margin += ($detail->price_for_customer * $detail->qty  - 0.98) * $this->marginRate;
-        //   $incentive += ($detail->price_for_customer * $detail->qty  - 0.98) * $this->marginRate * $detail->rate / 100;
-        // }
-        // else{
+        if($detail->category_id == 5){
           $prices += (($detail->promo_price == 0) ? $detail->price_for_customer : $detail->promo_price) * $detail->qty;
           $margin += 0;
-          $incentive += (($detail->promo_price == 0) ? $detail->price_for_customer : $detail->promo_price) * $detail->qty * $detail->rate / 100;
-        // }        
-        
+          $incentive += (($detail->promo_price == 0) ? $detail->price_for_customer : $detail->promo_price) * $detail->qty * $detail->rate / 100;  
+          }
+
+          else{
+          $prices += (($detail->promo_price == 0) ? $detail->price_for_customer : $detail->promo_price) * $detail->qty;
+          $margin += (($detail->promo_price == 0) ? $detail->price_for_customer : $detail->promo_price) * $detail->qty * $this->marginRate;
+          $incentive += (($detail->promo_price == 0) ? $detail->price_for_customer : $detail->promo_price) * $detail->qty * 0.95 * $detail->rate / 100;        
+          }
        }
       $commission_pph = ($incentive + $margin) * $this->pph;
       $commission_netto = $incentive - $commission_pph;
@@ -528,6 +432,7 @@ class OrderController extends Controller
 
       return response()->json(['message' => 'Order has been completed.'], 201);
       }
+   
 
     public function manualNotif(Request $request){
        

@@ -223,19 +223,9 @@ class OrderControllerPOS extends Controller
       if($order->status == 6 ){
           return response()->json(['data' => [], 'message' => ['Transaksi sudah pernah diproses']]);
       }
-
-      $prices = Order::join('order_detail', 'order_detail.order_id', '=', 'order.id')
-                ->select('order_detail.category_id')
-                ->first();
-
-      if($prices->category_id == 5){
-        $amount = $order->total;
-      }
-
-      else{
+      
       $amount = $order->total * 0.95;
-      }
-
+      
       if($order->agen_id != 0)
       {
         #check saldo
