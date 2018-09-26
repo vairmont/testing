@@ -26,12 +26,13 @@ class AuthController extends Controller
       
         if(Auth::attempt($credentials)) {
 				$data = User::join('role','users.role_id','=','role.id')
-			    			->join('agen', 'users.id', '=', 'agen.identifier')
-			    			->select('users.id as user_id', 'users.role_id', 'users.api_token', 'role.name as role', 'agen.name','users.store_id', 'users.phone')
+			    			->join('admin', 'users.id', '=', 'admin.identifier')
+			    			->select('users.id as user_id', 'users.role_id', 'users.api_token', 'role.name as role', 'admin.name','users.store_id', 'users.phone')
 			    			->where('users.id',Auth::user()->id)
 			    			->first();
 
                             session()->put('role',$data->role);
+                            session()->put('name',$data->name);
                             return redirect ('dashboard');
         }
         else {
