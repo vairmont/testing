@@ -96,8 +96,8 @@ class ReportController extends Controller
                 'SKU'=>$total->sku,
                 'Name'=>$total->name,
                 'Quantity'=>$total->qty,
-                'Nominal'=>$total->nominal,
-                'Cost'=>$total->cost,
+                'Nominal'=>number_format($total->nominal),
+                'Cost'=>number_format($total->cost),
                 'Store'=>$total->sname,
                 'Created at'=>$total->create,
                 'update at'=>$total->update
@@ -194,7 +194,7 @@ class ReportController extends Controller
 
     private function _export_excel($flowreport) {
         $flowreport = $flowreport->get();
-        
+
         $data = [];
         foreach ($flowreport as $flow) {
             $data[] = ([
@@ -203,10 +203,10 @@ class ReportController extends Controller
                 'Order' => $flow->invoice,
                 'Nama Produk' =>$flow->proname,
                 'Quantity' => $flow->qty,
-                'Margin' => ($flow->customer_price - $flow->agen_price) * $flow->qty,
-                'Isentif'=> $flow->rate * $flow->agen_price * $flow->qty /100,
-                'Paid by Agen' => $flow->agen_price * $flow->qty,
-                'Paid by Customer' => $flow->customer_price * $flow->qty,
+                'Margin' => number_format(($flow->customer_price - $flow->agen_price) * $flow->qty),
+                'Isentif'=> number_format($flow->rate * $flow->agen_price * $flow->qty /100),
+                'Paid by Agen' => number_format($flow->agen_price * $flow->qty),
+                'Paid by Customer' => number_format($flow->customer_price * $flow->qty),
                 'Store' => $flow->stoname,
                 'Created At' => $flow->create, 
             ]);
