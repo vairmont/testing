@@ -50,6 +50,7 @@
                                                 <th>Amount</th>
                                                 <th>Wanee Agen</th>
                                                 <th>No Rekening</th>
+                                                <th>Source</th>
                                                 <th>Status</th>
                                                 <th>Approver</th>
                                             </tr>
@@ -65,6 +66,7 @@
                                                 <td>{{$draw->amount}}</td>
                                                 <td>{{$draw->wanee}}</td>
                                                 <td>{{$draw->nokredit}}</td>
+                                                <td>{{$draw->source}}</td>
                                                 <td>{{$draw->status}}</td>
                                                
                                                 <td>
