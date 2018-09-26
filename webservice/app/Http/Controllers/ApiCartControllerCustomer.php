@@ -80,7 +80,7 @@ class ApiCartControllerCustomer extends Controller {
       
     }
     $cartDetail->price = ($product->promo_price == 0) ? $product->price_for_customer : $product->promo_price;
-    $cartDetail->qty += $request['qty'];
+    $cartDetail->qty = $request['qty'];
     $cartDetail->save();
 
     $items = CartDetail::where('cart_id', $cart->id)->get();
