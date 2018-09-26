@@ -185,8 +185,8 @@ class OrderControllerCustomer extends Controller
       //   $orderDetail->price_for_agen = $product->price_for_agen;
       // }
       // else{
-      $orderDetail->price_for_customer = $product->price_for_customer;
-      $orderDetail->price_for_agen = $product->price_for_agen;
+      $orderDetail->price_for_customer = ($product->promo_price == 0) ? $product->price_for_customer : $product->promo_price;
+      $orderDetail->price_for_agen = ($product->promo_price == 0) ? $product->price_for_customer : $product->promo_price;
       // }
       $orderDetail->save();
 
