@@ -13,6 +13,7 @@ use App\Cart;
 use App\CartDetail;
 use Validator;
 use Illuminate\Http\Request;
+use DB;
 
 class ApiCartControllerPOS extends Controller {
 
