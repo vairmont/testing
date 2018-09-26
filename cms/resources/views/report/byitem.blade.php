@@ -12,44 +12,36 @@
                 <h2>Total Sales</h2>
             </div>
 
-            <div class="col-lg-4">
-            <a href="{{ url('/byitem') }}?date=1" class="btn btn-primary">Hari ini</a>
-            <a href="{{ url('/byitem') }}?date=2" class="btn btn-primary">Bulan ini</a>
+            <div class="row">
+                <a href="{{ url('/byitem') }}?date=1" class="btn btn-primary">Hari ini</a>
+                <a href="{{ url('/byitem') }}?date=2" class="btn btn-primary">Bulan ini</a>
             </div>
-        
-            <form class=" form-inline" method="GET" action="{{url('/byitem')}}"> 
-                <div class="col-lg-4 form group">
-                    <input name="keyword" class="form-control mr-sm-2" type="text" placeholder="Nama Product" aria-label="Search" @if(isset($request->keyword)) value="{{$request->keyword}}" @endif>
-                    <button type="submit" class="btn btn-primary">Search</button>
-                </div>
-            </form>
-            
-            <form class="form-inline" method="GET" action="{{url('/byitem')}}"> 
-                <div class="col-lg-4 form group">
-                    <input name="key" class="form-control mr-sm-2" type="text" placeholder="Nama Toko" aria-label="Search"@if(isset($request->key)) value="{{$request->key}}" @endif>
-                    <button type="submit" class="btn btn-primary">Search</button>
-                </div>
+            <div class="row">
+            <p> </p>
+            </div>
+            <div class="row">
+                <form class="form-inline" method="GET" action="{{url('/byitem')}}"> 
+                    <div class="form-group">
+                        <input name="keyword" class="form-control mr-sm-2" type="text" placeholder="Nama Product" aria-label="Search" @if(isset($request->keyword)) value="{{$request->keyword}}" @endif>
+                    </div>
+                    <div class="form-group">
+                        <input name="key" class="form-control mr-sm-2" type="text" placeholder="Nama Toko" aria-label="Search"@if(isset($request->key)) value="{{$request->key}}" @endif>
+                    </div>
+                    
+                    <div class="form-group">
+                        <input type="date" class="form-control mr-sm-2" name="dayword1" @if(isset($request->dayword1)) value="{{$request->dayword1}}" @endif>
+                        <p class="glyphicon glyphicon-minus"></p>
+                        <input type="date" class="form-control mr-sm-2" name="dayword2" @if(isset($request->dayword2)) value="{{$request->dayword2}}" @endif>
+                    </div>
 
-                <div class="col-lg-12">
-                    <p> </p>
-                </div>
-                
-                <div class="col-lg-12">
+                    <button type="submit" class="btn btn-primary">Filter</button>
                     <button type="submit" name="is_export" value="1" class="btn btn-primary">Export</button>
-                </div>
-            </form>
-            <form class=" form-inline" method="GET" action="{{url('/byitem')}}">
-                <div class="col-lg-6 form group">
-                <h5>Date:</h5>
-                    <input type="date" name="dayword1" @if(isset($request->dayword1)) value="{{$request->dayword1}}" @endif>
-                    <input type="date" name="dayword2" @if(isset($request->dayword2)) value="{{$request->dayword2}}" @endif>
-                    <input type="submit" class="btn btn-primary">
-                </div>
-            </form>
-            <div class="col-lg-6 ">
+                </form>
+            </div>
+
+            <div class="row">
                 <h3>Total Modal :Rp.{{number_format($total1)}}</h3>
                 <h3>Total Penjualan :Rp.{{number_format($total2)}}</h3>              
-                
             </div>
             <!-- /.row -->
             <div class="row">

@@ -12,44 +12,36 @@
                 <h2 >Flow Sales</h2>
             </div>  
 
-                    <div class="col-lg-4">
+                    <div class="row">
                         <a href="{{ url('/bystore') }}?date=1" class="btn btn-primary">Hari ini</a>
                         <a href="{{ url('/bystore') }}?date=2" class="btn btn-primary">Bulan ini</a>
                     </div>
+                    <div class="row">
+                    <p> </p>
+                    </div>
 
+             <div class="row">
                 <form class="form-inline" method="GET" action="{{url('/bystore')}}"> 
-                    <!-- form group -->
-                    <div class="col-lg-4 form group">                                      
+                    <div class="form-group">
                         <input name="keyword" class="form-control mr-sm-2" type="text" placeholder="Nama Agen" aria-label="Search" @if(isset($request->keyword)) value="{{$request->keyword}}" @endif>
-                        <button type="submit" class="btn btn-primary">Search</button>
                     </div>
-                </form>
-                <form class="form-inline" method="GET" action="{{url('/bystore')}}"> 
-                    <!-- form group -->
-                    <div class="col-lg-4 form group">                                 
-                        <input name="key" class="form-control mr-sm-2" type="text" placeholder="Nama Toko" aria-label="Search" @if(isset($request->key)) value="{{$request->key}}" @endif>
-                        <button type="submit" class="btn btn-primary">Search</button>
+                    <div class="form-group">
+                        <input name="key" class="form-control mr-sm-2" type="text" placeholder="Nama Toko" aria-label="Search"@if(isset($request->key)) value="{{$request->key}}" @endif>
                     </div>
 
-                    <div class=col-lg-12>
-                        <p> </p>
+                    <div class="form-group">
+                        <input type="date" class="form-control mr-sm-2" name="dayword1" @if(isset($request->dayword1)) value="{{$request->dayword1}}" @endif>
+                        <p class="glyphicon glyphicon-minus"></p>
+                        <input type="date" class="form-control mr-sm-2" name="dayword2" @if(isset($request->dayword2)) value="{{$request->dayword2}}" @endif>
                     </div>
-                    
-                    <div class="col-lg-12">
-                        <button type="submit" name="is_export" value="1" class="btn btn-primary">Export</button>
-                    </div>
-                </form>
 
-                <form class=" form-inline" method="GET" action="{{url('/bystore')}}">
-                <div class="col-lg-6 form group">
-                   <h5>Date:</h5>
-                    <input type="date" name="dayword1" @if(isset($request->dayword1)) value="{{$request->dayword1}}" @endif>
-                    <input type="date" name="dayword2" @if(isset($request->dayword2)) value="{{$request->dayword2}}" @endif>
-                    <input type="submit" class="btn btn-primary">
-                </div>
+                    <button type="submit" class="btn btn-primary">Filter</button>
+                    <button type="submit" name="is_export" value="1" class="btn btn-primary">Export</button>
+                </form>
+            </div>
             </form>
             
-            <div class="col-lg-6 ">
+            <div class="row">
                 <h3>Total Paid By Agen  :Rp.{{ number_format($total) }}</h3>
                 <h3>Total Margin        :Rp.{{ number_format($total2) }}</h3>
                 <h3>Total Insentif      :Rp.{{ number_format($total3) }}</h3>
@@ -98,44 +90,28 @@
                                             @if($flow->promo_price == 0)
                                             Rp.{{number_format($flow->customer_price * $flow->qty * 0.05)}},-
                                             @else
-<<<<<<< HEAD
-                                            {{number_format($flow->promo_price * $flow->qty * 0.05)}}
-=======
                                             <label style="color:red;">Rp.{{number_format($flow->promo_price * $flow->qty * 0.05)}},-</label>
->>>>>>> d4c5ba0c0818585b48948d02611239a61ef8174f
                                             @endif
                                         </td>
                                         <td>
                                             @if($flow->promo_price == 0)
                                             Rp.{{ number_format($flow->customer_price * $flow->qty * 0.95 * $flow->rate / 100)}},-
                                             @else
-<<<<<<< HEAD
-                                            {{ number_format($flow->promo_price * $flow->qty * 0.95 * $flow->rate / 100)}}
-=======
                                             <label style="color:red;">Rp.{{ number_format($flow->promo_price * $flow->qty * 0.95 * $flow->rate / 100)}},-</label>
->>>>>>> d4c5ba0c0818585b48948d02611239a61ef8174f
                                             @endif      
                                         </td>
                                         <td>
                                             @if($flow->promo_price == 0)
                                             Rp.{{ number_format($flow->customer_price * $flow->qty * 0.95)}},-
                                             @else
-<<<<<<< HEAD
-                                                {{ number_format($flow->promo_price * $flow->qty * 0.95)}}
-=======
                                             <label style="color:red;">Rp.{{ number_format($flow->promo_price * $flow->qty * 0.95)}},-</label>
->>>>>>> d4c5ba0c0818585b48948d02611239a61ef8174f
                                             @endif  
                                         </td>
                                         <td>
                                             @if($flow->promo_price == 0)
                                             Rp.{{ number_format($flow->customer_price * $flow->qty)}},-
                                             @else
-<<<<<<< HEAD
-                                            {{ number_format($flow->promo_price * $flow->qty)}}
-=======
                                             <label style="color:red;">Rp.{{ number_format($flow->promo_price * $flow->qty)}},-</label>
->>>>>>> d4c5ba0c0818585b48948d02611239a61ef8174f
                                             @endif  
                                          </td>
                                          <td>

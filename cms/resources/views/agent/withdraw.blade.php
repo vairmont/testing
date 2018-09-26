@@ -64,7 +64,7 @@
                                                 <td>{{$draw->name}}</td>
                                                 <td>{{$draw->amount}}</td>
                                                 <td>{{$draw->wanee}}</td>
-                                                <td></td>
+                                                <td>{{$draw->nokredit}}</td>
                                                 <td>{{$draw->status}}</td>
                                                
                                                 <td>
