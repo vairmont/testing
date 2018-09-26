@@ -18,8 +18,6 @@ use DB;
 class ApiCartControllerPOS extends Controller {
 
   public function index(Request $request) {
-    DB::beginTransaction();
-        try {
     $cart = Cart::where('user_id', '=', $request->get('user')->id)->first();
 
     if ($cart == null) {
@@ -29,10 +27,6 @@ class ApiCartControllerPOS extends Controller {
       $cart->tax = 0;
       $cart->total = 0;
       $cart->save();
-    }
-      } catch(\Exception $e) {
-          DB::rollback();
-          throw $e;
     }
 
     $items = CartDetail::Join('product', 'cart_detail.product_id', '=', 'product.id')
@@ -61,8 +55,6 @@ class ApiCartControllerPOS extends Controller {
     if ($val->fails()) {
       return response()->json(['data' => [], 'message' => $val->errors()->all()], 400);
     }
-    DB::beginTransaction();
-        try {
 
     $cart = Cart::where('user_id', '=', $request->get('user')->id)->first();
 
@@ -102,11 +94,6 @@ class ApiCartControllerPOS extends Controller {
     $cart->total = $subtotal;
     $cart->save();
 
-      } catch(\Exception $e) {
-          DB::rollback();
-          throw $e;
-    }
-
     return response()->json([
       'cart' => [
         'subtotal' => $cart->subtotal,
@@ -130,9 +117,6 @@ class ApiCartControllerPOS extends Controller {
     if ($val->fails()) {
       return response()->json(['data' => [], 'message' => $val->errors()->all()], 400);
     }
-
-    DB::beginTransaction();
-        try {
 
     $cart = Cart::where('user_id', '=', $request->get('user')->id)->first();
 
@@ -175,11 +159,6 @@ class ApiCartControllerPOS extends Controller {
     $cart->total = $subtotal;
     $cart->save();
 
-      } catch(\Exception $e) {
-          DB::rollback();
-          throw $e;
-    }
-
     return response()->json([
       'cart' => [
         'subtotal' => $cart->subtotal,
@@ -193,9 +172,6 @@ class ApiCartControllerPOS extends Controller {
 
   public function clearCartItems(Request $request) {
 
-    DB::beginTransaction();
-        try {
-
     $cart = Cart::where('user_id', '=', $request->get('user')->id)->first();
     $cart->subtotal = 0;
     $cart->tax = 0;
@@ -204,12 +180,6 @@ class ApiCartControllerPOS extends Controller {
 
     $detail = CartDetail::where('cart_id', '=', $cart->id)
       ->delete();
-
-    } catch(\Exception $e) {
-          DB::rollback();
-          throw $e;
-    }
-
 
     return response()->json([
       'message' => 'Cart items has been removed.',
