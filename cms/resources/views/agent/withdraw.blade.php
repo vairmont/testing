@@ -52,6 +52,7 @@
                                                 <th>No Rekening</th>
                                                 <th>Source</th>
                                                 <th>Status</th>
+                                                <th>Tanggal</th>
                                                 <th>Approver</th>
                                             </tr>
                                         </thead>
@@ -68,7 +69,7 @@
                                                 <td>{{$draw->nokredit}}</td>
                                                 <td>{{$draw->source}}</td>
                                                 <td>{{$draw->status}}</td>
-                                               
+                                                <td>{{$draw->date}}</td>
                                                 <td>
                                                     <a href="{{ route('status', ['id' => $draw->id]) }}" class="btn btn-primary">Verifikasi</a>                                                 
                                                 </td>
