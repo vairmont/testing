@@ -11,7 +11,7 @@ $(function() {
                             GrosirOne_Serang : (res.data.query[i]['store'][0]['Serang']) ? res.data.query[i]['store'][0]['Serang'] : 0,
                             GrosirOne_Cikupamas: (res.data.query[i]['store'][1]['Cikupamas']) ? res.data.query[i]['store'][1]['Cikupamas'] : 0,
                             GrosirOne_Panti_Asuhan_Muslimin : (res.data.query[i]['store'][2]['Panti Asuhan Muslimin']) ? res.data.query[i]['store'][2]['Panti Asuhan Muslimin'] : 0,
-                            GrosirOne_Alam_Sutera: (res.data.query[i]['store'][3]['Alam Sutera']) ? res.data.query[i]['store'][4]['Alam Sutera'] : 0
+                            GrosirOne_Alam_Sutera: (res.data.query[i]['store'][3]['Alam Sutera']) ? res.data.query[i]['store'][3]['Alam Sutera'] : 0
                         }
                     datas.push(data);
                     }
