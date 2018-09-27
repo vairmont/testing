@@ -63,8 +63,8 @@
                                                 <tr>
                                                 <td>{{$draw->id}}</td>
                                                 <td>{{$draw->name}}</td>
-                                                <td>{{number_format($draw->amount)}}</td>
-                                                <td>{{number_format($draw->wanee)}}</td>
+                                                <td>Rp.{{number_format($draw->amount)}}</td>
+                                                <td>Rp.{{number_format($draw->wanee)}}</td>
                                                 <td>{{$draw->nokredit}}</td>
                                                 <td>{{$draw->source}}</td>
                                                 <td>{{$draw->status}}</td>
