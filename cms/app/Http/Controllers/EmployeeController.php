@@ -88,7 +88,7 @@ class EmployeeController extends Controller
         $history = WaneeHistory::join('users','users.id','=','wanee_history.user_id')
         ->join('role','role.id','=','users.role_id')
         ->join('agen','agen.identifier','=','users.id')
-        ->where('wanee_history.reason','=','Penarikan Wanee')
+        
         ->select('wanee_history.saldo_akhir as saldoakhir','wanee_history.id as id','agen.name as name','wanee_history.amount as amount','wanee_history.created_at as date','users.phone as phone');
        
         
@@ -96,7 +96,7 @@ class EmployeeController extends Controller
             $history = WaneeHistory::join('users','users.id','=','wanee_history.user_id')
             ->join('role','role.id','=','users.role_id')
             ->join('agen','agen.identifier','=','users.id')
-            ->where('wanee_history.reason','=','Penarikan Wanee')
+            
             ->select('wanee_history.id as id','agen.name as name','wanee_history.amount as amount','wanee_history.created_at as date','users.phone as phone')
             ->whereDate('wanee_history.created_at','=',Carbon::today()->toDateString());
         }
@@ -104,7 +104,7 @@ class EmployeeController extends Controller
             $history = WaneeHistory::join('users','users.id','=','wanee_history.user_id')
             ->join('role','role.id','=','users.role_id')
             ->join('agen','agen.identifier','=','users.id')
-            ->where('wanee_history.reason','=','Penarikan Wanee')
+            
             ->select('wanee_history.id as id','agen.name as name','wanee_history.amount as amount','wanee_history.created_at as date','users.phone as phone')
             ->whereMonth('wanee_history.created_at', '=', date('m'));
         }

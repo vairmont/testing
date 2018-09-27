@@ -39,7 +39,10 @@ class WithDrawController extends Controller
             $data[] = ([
                 'ID' => $draw->id,
                 'Nama' => $draw->name,
-                'Amount' => $draw->amount,
+                'Amount' => number_format($draw->amount),
+                'Wanee' => number_format($draw->wanee),
+                'No Rekening' =>$draw->nokredit,
+                'Source' => $draw->source,
                 'Status' =>$draw->status,
             ]);
         }
