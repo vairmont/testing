@@ -30,9 +30,7 @@ class WithDrawController extends Controller
         return view('agent.withdraw',compact('withdraw'))->withTitle('By withdraw');
     }
     private function _export_excel($withdraw) {
-        $withdraw = WithDraw::join('agen','agen.identifier','=','withdraw.agen_id')
-        ->select('withdraw.id as id','withdraw.agen_id as agenid','withdraw.amount as amount','withdraw.status as status','agen.wanee as wanee', 'agen.name as name')
-        ->get();
+        $withdraw = $withdraw->get();
 
         $data = [];
         foreach ($withdraw as $draw) {
