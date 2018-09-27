@@ -24,7 +24,7 @@ class ProductController extends Controller
     ->where('stock.quantity', '>', 0)
     ->where('stock.store_id', '=', $request->get('user')->store_id)
     ->select(
-      DB::raw('product.id , product.product_name , product.category_id, product_category.name as category_name, product.price_for_customer as price, incentive_category.rate , product.img_url, product.description, product.promo_price')
+      DB::raw('product.id , product.product_name , product.category_id, product_category.name as category_name, product.price_for_customer as regular_price, incentive_category.rate , product.img_url, product.description, product.promo_price as price')
       );
 
     if(isset($request->category_id) && !empty($request->category_id)) {
