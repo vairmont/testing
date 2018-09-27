@@ -30,6 +30,7 @@ class ReportController extends Controller
         ->join('users','users.id','=','order.user_id')
         ->join('store','store.id','=','users.store_id')
         ->join('role','role.id','=','users.role_id')
+        ->whereIn('order.status',[7,9])
         // ->whereDate('order.created_at','=',Carbon::today()->toDateString())
         ->select('product.sku as sku','product.product_name as name','order_detail.qty as qty','order.total as nominal','product.cost as cost','order_detail.id as id','role.name as uid','store.store_name as sname','order.created_at as create','order_detail.updated_at as update');
 
@@ -39,24 +40,26 @@ class ReportController extends Controller
             ->join('users','users.id','=','order.user_id')
             ->join('store','store.id','=','users.store_id')
             ->join('role','role.id','=','users.role_id')
+            ->whereIn('order.status',[7,9])
             ->select('product.sku as sku','product.product_name as name','order_detail.qty as qty','order.total as nominal','product.cost as cost','order_detail.id as id','role.name as uid','store.store_name as sname','order.created_at as create','order.updated_at as update')
             ->whereDate('order.created_at','=',Carbon::today()->toDateString());
-
         }
         if(isset($request->date) && $request->date == '2'){
-            
             $totalsales = Order::join('order_detail','order.id','=','order_detail.order_id')
             ->join('product','product.id','=','order_detail.product_id')
             ->join('users','users.id','=','order.user_id')
             ->join('store','store.id','=','users.store_id')
             ->join('role','role.id','=','users.role_id')
+            ->whereIn('order.status',[7,9])
             ->select('product.sku as sku','product.product_name as name','order_detail.qty as qty','order.total as nominal','product.cost as cost','order_detail.id as id','role.name as uid','store.store_name as sname','order.created_at as create','order.updated_at as update')
-            ->whereMonth('order.created_at', '=', date('m'));
+            ->whereMonth('order.created_at', '=', date('m'));  
+        }
+        if(isset($request->dayword1) && !empty($request->dayword1) && isset($request->dayword2) && !empty($request->dayword2)){
+            $totalsales = $totalsales->whereBetween('order.created_at',[$request->dayword1, Carbon::parse($request->dayword2)->addDays(1)]);
             
         }
         if(isset($request->keyword) && !empty($request->keyword)){
-            $totalsales = $totalsales->where('product.product_name','LIKE',$request->keyword.'%');
-            
+            $totalsales = $totalsales->where('product.product_name','LIKE',$request->keyword.'%'); 
         }
         if(isset($request->key) && !empty($request->key)){
             $totalsales = $totalsales->where('store.store_name','LIKE',$request->key.'%');
@@ -64,19 +67,26 @@ class ReportController extends Controller
         if ($isExport) {
             $this->_export_excel2($totalsales);
         }
+        $qry = $totalsales->get();
+
+        $total1 = 0;
+        foreach($qry as $q) {
         
-        $totalsales = $totalsales->orderby('order.created_at','desc')->get();  
-        return view('report.byitem',compact('totalsales'))->withTitle('By withdraw');
+            $total1 += ($q->cost);
+        }
+
+        $total2 = 0;
+        foreach($qry as $q) {
+        
+            $total2 += ($q->cost * $q->qty);
+        }
+        
+        $totalsales = $totalsales->orderby('order.created_at','desc')->paginate(10);  
+        return view('report.byitem',compact('totalsales', 'request','total1','total2'))->withTitle('By withdraw');
         
     }
     private function _export_excel2($totalsales) {
-        $totalsales = Order::join('order_detail','order.id','=','order_detail.order_id')
-        ->join('product','product.id','=','order_detail.product_id')
-        ->join('users','users.id','=','order.user_id')
-        ->join('store','store.id','=','users.store_id')
-        ->join('role','role.id','=','users.role_id') 
-        ->select('product.sku as sku','product.product_name as name','order_detail.qty as qty','order.total as nominal','product.cost as cost','order_detail.id as id','role.name as uid','store.store_name as sname','order_detail.created_at as create','order_detail.updated_at as update')
-        ->get();
+        $totalsales = $totalsales->get();
         
         $data = [];
         foreach ($totalsales as $total) {
@@ -86,8 +96,8 @@ class ReportController extends Controller
                 'SKU'=>$total->sku,
                 'Name'=>$total->name,
                 'Quantity'=>$total->qty,
-                'Nominal'=>$total->nominal,
-                'Cost'=>$total->cost,
+                'Nominal'=>number_format($total->nominal),
+                'Cost'=>number_format($total->cost),
                 'Store'=>$total->sname,
                 'Created at'=>$total->create,
                 'update at'=>$total->update
@@ -116,8 +126,9 @@ class ReportController extends Controller
         ->leftjoin('agen','agen.identifier','=','order.agen_id')
         ->leftjoin('users','users.id','=','agen.identifier')
         ->leftjoin('store','store.id','=','users.store_id')
+        ->whereIn('order.status',[7,9])
         ->where('order.type','=','sembako')
-        ->select('product.promo_price as promo_price','store.store_name as stoname','order_detail.qty as qty','incentive_category.rate as rate','order.invoice_no as invoice','agen.name as name','order_detail.order_id as id','product.product_name as proname','order_detail.price_for_agen as agen_price','order_detail.price_for_customer as customer_price','order.created_at as create','order.updated_at as update','order.agen_id as aid');
+        ->select('store.store_name as stoname','order_detail.qty as qty','incentive_category.rate as rate','order.invoice_no as invoice','agen.name as name','order_detail.order_id as id','product.product_name as proname','order_detail.price_for_agen as agen_price','order_detail.price_for_customer as customer_price','order.created_at as create','order.updated_at as update','order.agen_id as aid', 'product.promo_price');
 
         
         if(isset($request->date) && $request->date == '1'){
@@ -127,10 +138,10 @@ class ReportController extends Controller
             ->leftjoin('agen','agen.identifier','=','order.agen_id')
             ->leftjoin('users','users.id','=','agen.identifier')
             ->leftjoin('store','store.id','=','users.store_id')
+            ->whereIn('order.status',[7,9])
             ->where('order.type','=','sembako')
-            ->select('store.store_name as stoname','order_detail.qty as qty','incentive_category.rate as rate','order.invoice_no as invoice','agen.name as name','order_detail.order_id as id','product.product_name as proname','order_detail.price_for_agen as agen_price','order_detail.price_for_customer as customer_price','order.created_at as create','order.updated_at as update','order.agen_id as aid')
+            ->select('store.store_name as stoname','order_detail.qty as qty','incentive_category.rate as rate','order.invoice_no as invoice','agen.name as name','order_detail.order_id as id','product.product_name as proname','order_detail.price_for_agen as agen_price','order_detail.price_for_customer as customer_price','order.created_at as create','order.updated_at as update','order.agen_id as aid', 'product.promo_price')
             ->whereDate('order.created_at','=',Carbon::today()->toDateString());
-
         }
         if(isset($request->date) && $request->date == '2'){
             $flowreport = Order::leftjoin('order_detail','order.id','=','order_detail.order_id')
@@ -139,10 +150,13 @@ class ReportController extends Controller
             ->leftjoin('agen','agen.identifier','=','order.agen_id')
             ->leftjoin('users','users.id','=','agen.identifier')
             ->leftjoin('store','store.id','=','users.store_id')
+            ->whereIn('order.status',[7,9])
             ->where('order.type','=','sembako')
-            ->select('store.store_name as stoname','order_detail.qty as qty','incentive_category.rate as rate','order.invoice_no as invoice','agen.name as name','order_detail.order_id as id','product.product_name as proname','order_detail.price_for_agen as agen_price','order_detail.price_for_customer as customer_price','order.created_at as create','order.updated_at as update','order.agen_id as aid')
+            ->select('store.store_name as stoname','order_detail.qty as qty','incentive_category.rate as rate','order.invoice_no as invoice','agen.name as name','order_detail.order_id as id','product.product_name as proname','order_detail.price_for_agen as agen_price','order_detail.price_for_customer as customer_price','order.created_at as create','order.updated_at as update','order.agen_id as aid', 'product.promo_price')
             ->whereMonth('order.created_at', '=', date('m'));
-
+        }
+        if(isset($request->dayword1) && !empty($request->dayword1) && isset($request->dayword2) && !empty($request->dayword2)){
+            $flowreport = $flowreport->whereBetween('order.created_at',[$request->dayword1, Carbon::parse($request->dayword2)->addDays(1)]);
         }
         if(isset($request->keyword) && !empty($request->keyword)) {
             $flowreport = $flowreport->where('agen.name','like',$request->keyword.'%');
@@ -153,21 +167,34 @@ class ReportController extends Controller
         if ($isExport) {
             $this->_export_excel($flowreport);
         }
+        
+        $qry = $flowreport->get();
 
-        $flowreport = $flowreport->orderBy('order.id','desc')->get();
-        return view('report.bystore',compact('flowreport','total'))->withTitle('By store');
+        $total = 0;
+        foreach($qry as $q) {
+        
+            $total += ($q->promo_price == 0) ? ($q->customer_price * $q->qty * 0.95) : ($q->promo_price * $q->qty * 0.95);
+        }
+
+        $total2 = 0;
+        foreach($qry as $q){
+
+            $total2 += ($q->promo_price == 0) ? ($q->customer_price * $q->qty * 0.05) : ($q->promo_price * $q->qty * 0.05);
+        }
+        
+        $total3 =0;
+        foreach($qry as $q){
+
+            $total3 += ($q->promo_price == 0) ? ($q->customer_price * $q->qty * 0.95 * $q->rate / 100) : ($q->promo_price * $q->qty * 0.95 * $q->rate / 100); 
+        }
+
+        $flowreport = $flowreport->orderBy('order.id','desc')->paginate(10);
+        return view('report.bystore',compact('flowreport','total','request','total2','total3'))->withTitle('By store');
     }
 
     private function _export_excel($flowreport) {
-        $flowreport = Order::leftjoin('order_detail','order.id','=','order_detail.order_id')
-        ->leftjoin('product','product.id','=','order_detail.product_id')
-        ->leftjoin('incentive_category','incentive_category.id','=','product.incentive_id')
-        ->leftjoin('agen','agen.identifier','=','order.agen_id')
-        ->leftjoin('users','users.id','=','agen.identifier')
-        ->leftjoin('store','store.id','=','users.store_id')
-        ->where('order.type','=','sembako')
-        ->select('store.store_name as stoname','order_detail.qty as qty','incentive_category.rate as rate','order.invoice_no as invoice','agen.name as name','order_detail.order_id as id','product.product_name as proname','order_detail.price_for_agen as agen_price','order_detail.price_for_customer as customer_price','order.created_at as create','order.updated_at as update','order.agen_id as aid')
-        ->get();
+        $flowreport = $flowreport->get();
+
         $data = [];
         foreach ($flowreport as $flow) {
             $data[] = ([
@@ -176,13 +203,14 @@ class ReportController extends Controller
                 'Order' => $flow->invoice,
                 'Nama Produk' =>$flow->proname,
                 'Quantity' => $flow->qty,
-                'Margin' => ($flow->customer_price - $flow->agen_price) * $flow->qty,
-                'Isentif'=> $flow->rate * $flow->agen_price * $flow->qty /100,
-                'Paid by Agen' => $flow->agen_price * $flow->qty,
-                'Paid by Customer' => $flow->customer_price * $flow->qty,
+                'Margin' => number_format(($flow->customer_price - $flow->agen_price) * $flow->qty),
+                'Isentif'=> number_format($flow->rate * $flow->agen_price * $flow->qty /100),
+                'Paid by Agen' => number_format($flow->agen_price * $flow->qty),
+                'Paid by Customer' => number_format($flow->customer_price * $flow->qty),
                 'Store' => $flow->stoname,
                 'Created At' => $flow->create, 
-            ]);   
+            ]);
+               
         }
         
         return Excel::create('Flow_report', function($excel) use($data) {
@@ -222,8 +250,11 @@ class ReportController extends Controller
                     ->sum('commission_netto');
                     $coms[$agen->agen_id] = $commission;
         }
+        if(isset($request->keyword) && !empty($request->keyword)){
+            $byagen = $byagen->where('agen.name','LIKE',$request->keyword.'%');
+        }
 
-        return view('report.byemployee',compact('byagen','temp','coms'))->withTitle('by employee');
+        return view('report.byemployee',compact('byagen','temp','coms','request'))->withTitle('by employee');
     }
     public function getByChasier(){
 

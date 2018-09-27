@@ -59,8 +59,9 @@
                                                 <th>Harga Modal (Rp.)</th>
                                                 <th>Harga Diskon (Rp.)</th>
                                                 <th>Margin (Rp.)</th>
-                                                <th>in Percent (%)</th>
+                                                <th>Persentase (%)</th>
                                                 <th>Stock</th>
+                                                <th>Pengedit</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
@@ -78,8 +79,9 @@
                                                   <td>{{$item->margin}}</td>
                                                   <td>{{ number_format( $item->margin/$item->cost*100, 2) }}</td>
                                                   <td>{{ isset($item->stock) ? $item->stock->quantity : "0" }}</td>
+                                                  <td>{{ $item->updated_by }}</td>
                                                   <td>
-                                                    <button class="btn btn-primary" type="submite">Edit</button>
+                                                    <button class="btn btn-primary" type="submit">Edit</button>
                                                   </td>
                                                 </tr>
                                                 {{ Form::close() }}

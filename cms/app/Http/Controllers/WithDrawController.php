@@ -15,7 +15,7 @@ class WithDrawController extends Controller
         $args['pages'] = $isExport;
 
         $withdraw = WithDraw::join('agen','agen.identifier','=','withdraw.agen_id')
-        ->select('withdraw.id as id','withdraw.agen_id as agenid','withdraw.amount as amount','withdraw.status as status','agen.wanee as wanee', 'agen.name as name')
+        ->select('agen.source as source','agen.account_no as nokredit','agen.wanee as wanee','withdraw.id as id','withdraw.agen_id as agenid','withdraw.amount as amount','withdraw.status as status','agen.wanee as wanee', 'agen.name as name')
 
         ->where('withdraw.status','=','process');
         
@@ -30,16 +30,17 @@ class WithDrawController extends Controller
         return view('agent.withdraw',compact('withdraw'))->withTitle('By withdraw');
     }
     private function _export_excel($withdraw) {
-        $withdraw = WithDraw::join('agen','agen.identifier','=','withdraw.agen_id')
-        ->select('withdraw.id as id','withdraw.agen_id as agenid','withdraw.amount as amount','withdraw.status as status','agen.wanee as wanee', 'agen.name as name')
-        ->get();
+        $withdraw = $withdraw->get();
 
         $data = [];
         foreach ($withdraw as $draw) {
             $data[] = ([
                 'ID' => $draw->id,
                 'Nama' => $draw->name,
-                'Amount' => $draw->amount,
+                'Amount' => number_format($draw->amount),
+                'Wanee' => number_format($draw->wanee),
+                'No Rekening' =>$draw->nokredit,
+                'Source' => $draw->source,
                 'Status' =>$draw->status,
             ]);
         }

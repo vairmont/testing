@@ -66,10 +66,9 @@
                                                 <td>{{$agent->address}}</td>
                                                 <td>{{$agent->parent}}</td>
                                                 <td>{{$agent->phone}}</td>
-                                                <td><img src="../{{$agent->kk_photo}}"></td>
-                                                <td><img src="../{{$agent->ktp_photo}}"></td>
+                                                <td><a href="../../webservice/{{$agent->KK}}" target="_blank"><img src="../../webservice/{{$agent->KK}}" style="width: 50px;"></a></td>
+                                                <td><a href="../../webservice/{{$agent->NIK}}" target="_blank"><img src="../../webservice/{{$agent->NIK}}" style="width: 50px;"></a></td>
                                                 <td>{{$agent->busname}}</td>
-                                                
                                                 <td>
                                                     {{$agent->status}}
                                                 </td>

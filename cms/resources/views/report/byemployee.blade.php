@@ -7,33 +7,28 @@
 @section('content')
 
 <!-- div container -->
-        <div class="container-fluid">
-        
+<div class="container-fluid">
             <div>
-                <h2>Penjualan Oleh Karyawan</h2>
+                <h2>Penjualan oleh agen</h2>
             </div>
 
-                <form class="form-inline"> 
-                            <p>
-                                    <button type="button" class="btn btn-primary">Hari ini</button>
-                                    <button type="button" class="btn btn-primary">Kemarin</button>
-                                    <button type="button" class="btn btn-primary">Minggu ini</button>
-                                    <button type="button" class="btn btn-primary">Bulan ini</button>
-                            </p>
-                    <!-- form group -->
-                    <div class="form group">
-                                <p>Purchase order date:</p>
-                                <input type="date" name="">
-                     
-                        <select id="inputState" class="form-control">
-                                <option selected>Semua Toko</option>
-                                <option>Mobile MiniGrosir</option>
-                                <option>Toko MiniGrosir</option>
-                        </select>
-                       <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-                    </div>
-                  </form>
-                  
+            <form class=" form-inline" method="GET" action="{{url('/byemployee')}}"> 
+                <div class="col-lg-4 form group">
+                    <input name="keyword" class="form-control mr-sm-2" type="text" placeholder="Nama Agen" aria-label="Search" @if(isset($request->keyword)) value="{{$request->keyword}}" @endif>
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </div>
+            </form>
+        
+
+                <div class="col-lg-12">
+                    <p> </p>
+                </div>
+                
+                <!--<div class="col-lg-12">
+                    <button type="submit" name="is_export" value="1" class="btn btn-primary">Export</button>
+                </div>
+                -->
+            </form>
             <!-- /.row -->
             <div class="row">
             <!-- div col -->
@@ -47,7 +42,7 @@
                                         <th>Penjualan</th>
                                         <th>Pendapatan bersih</th>
                                         <th>Jumlah Penjualan</th>
-                                        <th>Pendaftaran langganan</th>
+                                        <th>Jumlah Customer</th>
                                     </tr>
                                 </thead>
 
@@ -55,8 +50,8 @@
                                  @foreach ($byagen as $ba)
                                  <tr>
                                         <td>{{$ba->name}}</td>
-                                        <td>{{$ba->total_sales}}</td>
-                                        <td>{{$coms[$ba->agen_id]}}</td>
+                                        <td>{{number_format($ba->total_sales)}}</td>
+                                        <td>{{number_format($coms[$ba->agen_id])}}</td>
                                         <td>{{$ba->total_order}}</td>
                                         <td>{{$temp[$ba->agen_id]}}</td>
                                     </tr>

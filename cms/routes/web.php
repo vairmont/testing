@@ -13,11 +13,11 @@
 
 Route::get('/', 'AuthController@getLogin');
 Route::get('/dologin','AuthController@doLogin');
+Route::get('/dologout','AuthController@doLogout');
+
+Route::group(['middleware'=>['auth']],function (){
 
 Route::get('/dashboard', 'DashboardController@getDashboard');
-
-
-
 Route::get('/daftaritem', 'ItemController@getDaftarItem');
 
 Route::get('/byitem', 'ReportController@getByItem');
@@ -29,21 +29,24 @@ Route::get('/bychasier','ReportController@getByChasier');
 
 
 Route::get('/byagent','EmployeeController@getByAgent');
+Route::get('/bywaneehistory','EmployeeController@getBywanneHistory');
 Route::get('/bywithdraw', 'WithDrawController@getByWithDraw');
 
-
+Route::get('/verifywanee/{id}','EmployeeController@updateStatus')->name('status1');
 Route::get('/verifywithdraw/{id}','WithDrawController@updateStatus')->name('status');
-
 Route::post('/verifyagent/{id}','EmployeeController@updateVerify')->name('verify');
 
 Route::get('/bypurchaseorder','InventoryController@getByPurchaseorder');
 Route::get('/bytransferorder','InventoryController@getByTransferorder');
 Route::get('/bystockadjustment','InventoryController@getByAdjustment');
+Route::post('/editstock/{id}', 'InventoryController@editStock');
+
 Route::get('/bysupplier','InventoryController@getBySupplier');
 Route::get('/byinventoryhistory','InventoryController@getByInventoryHistory');
 Route::get('/byinventoryvaluation','InventoryController@getByInventoryValuation');
 
-
+Route::post('/finalize', 'OrderController@finalizeOrder');
+Route::get('/order', 'OrderController@orderProcess');
 
 Route::get('/additem', 'ItemController@formItem');
 Route::post('/additem', 'ItemController@saveItem');
@@ -75,3 +78,4 @@ Route::post('/adddiskon', 'ItemController@saveDiskon');
 Route::get('/editdiskon/{id}', 'ItemController@formDiskon');
 Route::post('/editdiskon/{id}', 'ItemController@saveDiskon');
 Route::get('/deletediskon/{id}', 'ItemController@deleteDiskon');
+});

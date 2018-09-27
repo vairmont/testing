@@ -62,6 +62,7 @@ class ApiCartControllerCustomer extends Controller {
     $product = Product::where('id',$request->product_id)->first();
 
     $stock = Stock::where('product_id', $request->product_id)
+              ->where('stock.store_id', '=', $request->get('user')->store_id)
               ->select('stock.quantity')
               ->first();
 
@@ -79,7 +80,7 @@ class ApiCartControllerCustomer extends Controller {
       
     }
     $cartDetail->price = ($product->promo_price == 0) ? $product->price_for_customer : $product->promo_price;
-    $cartDetail->qty += $request['qty'];
+    $cartDetail->qty = $request['qty'];
     $cartDetail->save();
 
     $items = CartDetail::where('cart_id', $cart->id)->get();
@@ -166,7 +167,11 @@ class ApiCartControllerCustomer extends Controller {
                 ->first();
        
         if($request->qty + $qty > $stock->quantity){
-          return response()->json(['message' => 'Mohon maaf, stok barang ditoko tidak mencukupi.'], 200);
+          return response()->json([
+                'cart' => [
+                  'message' => ['Mohon maaf, stok barang ditoko tidak mencukupi, hanya tersisa ' .$stock->quantity]
+                ],
+            ], 201);
         }
 
         $checkDetail->update(['qty' => $qty]);
@@ -240,23 +245,12 @@ class ApiCartControllerCustomer extends Controller {
   public function clearCartItems(Request $request) {
 
     $cart = Cart::where('user_id', '=', $request->get('user')->id)->first();
-    $cart->subtotal = 0;
-    $cart->tax = 0;
-    $cart->total = 0;
-    $cart->save();
-
     $detail = CartDetail::where('cart_id', '=', $cart->id)
-      ->update(['qty' => 0]);
+      ->delete();
 
-    return response()->json([
-      'message' => 'Cart items has been removed.',
-      'cart' => [
-          'subtotal' => $cart->subtotal,
-          'tax' => $cart->tax,
-          'total' => $cart->total,
-          'items' => []
-        ]
-      ], 200);
+    $cart->delete();
+
+    return response()->json(['data' => [], 'message' => ['OK']]);
   }
 
 }

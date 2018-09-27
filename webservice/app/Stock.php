@@ -8,6 +8,6 @@ class Stock extends Model
 {
     protected $table = "stock";
     protected $fillable = [
-        'store_id','product_id', 'category_id', 'quantity', 'price'
+        'store_id','product_id', 'category_id', 'quantity', 'price', 'start_stock'
     ];
 }

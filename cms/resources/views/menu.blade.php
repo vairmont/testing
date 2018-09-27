@@ -26,6 +26,15 @@
                     </ul>
                     <!-- /.nav-second-level -->
                 </li>
+
+                <li>
+                        <a href="#"><i class="fa fa-cart-arrow-down"></i> Shipment<span class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li>
+                                <a href="{{url('/order')}}">Shipment Order</a>
+                            </li>
+                        </ul>
+                </li>
                 <li>
                         <a href="#"><i class="fa fa-cart-arrow-down"></i> Barang<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
@@ -74,6 +83,9 @@
                 <li>
                         <a href="#"><i class="fa fa-group"></i> Admin<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
+                            <li>
+                                <a href="{{url('/bywaneehistory')}}">History Wanee</a>
+                            </li>
                             <li>
                                 <a href="{{url('/byagent')}}">Verifikasi Agen</a>
                             </li>
@@ -156,6 +168,59 @@
                         <a href="{{url('/slider')}}">Slider</a>
                     </li>
                 </ul>
+                </li>
+            </ul>
+         @elseif(Auth::User()->role_id == '3')
+            <ul class="nav" id="side-menu">
+                <li>
+                    <a href="{{url('/dashboard')}}"><i class="fa fa-dashboard fa-fw"></i> Admin DashBoard</a>
+                </li>
+                <li>
+                    <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Laporan<span class="fa arrow"></span></a>
+                    <ul class="nav nav-second-level">
+                        <li>
+                            <a href="{{url('/byitem')}}">Laporan Total sales</a>
+                            </li>
+                        <li>
+                            <a href="{{url('/bystore')}}">Laporan Flow Sales</a>
+                        </li>
+                    </ul>
+                    <!-- /.nav-second-level -->
+                </li>
+
+                <li>
+                        <a href="#"><i class="fa fa-group"></i> Admin<span class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li>
+                                <a href="{{url('/bywithdraw')}}">Withdraw</a>
+                            </li>
+                        </ul>
+                    <!-- /.nav-second-level -->
+                </li>
+            </ul>
+        @elseif(Auth::User()->role_id == '4')
+            <ul class="nav" id="side-menu">
+                <li>
+                    <a href="{{url('/dashboard')}}"><i class="fa fa-dashboard fa-fw"></i> Admin DashBoard</a>
+                </li>
+                <li>
+                    <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Laporan<span class="fa arrow"></span></a>
+                    <ul class="nav nav-second-level">
+                        <li>
+                            <a href="{{url('/byitem')}}">Laporan Total sales</a>
+                            </li>
+                    </ul>
+                    <!-- /.nav-second-level -->
+                </li>
+                <li>
+                        <a href="#"><i class="fa fa-cubes"></i> Iventory Management<span class="fa arrow"></span></a>
+                    
+                        <ul class="nav nav-second-level">
+                            <li>
+                                <a href="{{url('/bystockadjustment')}}">Stock adjustments</a>
+                            </li>
+                        </ul>
+                    <!-- /.nav-second-level -->
                 </li>
             </ul>
         @endif

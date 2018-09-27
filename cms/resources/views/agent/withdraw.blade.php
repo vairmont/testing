@@ -48,6 +48,9 @@
                                                 <th>ID</th>
                                                 <th>Nama</th>
                                                 <th>Amount</th>
+                                                <th>Wanee Agen</th>
+                                                <th>No Rekening</th>
+                                                <th>Source</th>
                                                 <th>Status</th>
                                                 <th>Approver</th>
                                             </tr>
@@ -60,8 +63,12 @@
                                                 <tr>
                                                 <td>{{$draw->id}}</td>
                                                 <td>{{$draw->name}}</td>
-                                                <td>{{$draw->amount}}</td>
+                                                <td>Rp.{{number_format($draw->amount)}}</td>
+                                                <td>Rp.{{number_format($draw->wanee)}}</td>
+                                                <td>{{$draw->nokredit}}</td>
+                                                <td>{{$draw->source}}</td>
                                                 <td>{{$draw->status}}</td>
+                                               
                                                 <td>
                                                     <a href="{{ route('status', ['id' => $draw->id]) }}" class="btn btn-primary">Verifikasi</a>                                                 
                                                 </td>

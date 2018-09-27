@@ -15,6 +15,8 @@ Route::post('/v1/forgotPassword', 'UserController@forgotPassword');
 Route::post('/v1/forgotPasswordtes', 'UserController@forgotPassword2');
 Route::post('/v1/changePassword', 'UserController@changePassword');
 
+Route::get('/v1/dashboard1','DashboardController@getDashboard1');
+
 Route::post('/v1/register/agen', 'RegisterController@addAgen');
 Route::post('/v1/register/agen/ktp/upload', 'RegisterController@uploadKTP');
 Route::post('/v1/register/agen/kk/upload', 'RegisterController@uploadKK');
@@ -59,7 +61,7 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
 
   Route::get('/cart', 'ApiCartController@index');
   Route::post('/cart', 'ApiCartController@updateCart');
-  Route::post('/cart/clear', 'ApiCartController@clearCartItems');
+  Route::get('/cart/clear', 'ApiCartController@clearCartItems');
   Route::post('/cart/confirm', 'ApiCartController@finalizeCart');
 
   Route::get('/cart/customer', 'ApiCartControllerCustomer@index');
@@ -97,7 +99,11 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
   Route::post('/order/assign-agent', 'OrderController@assignOrderAgent');
   Route::post('/order/cancel', 'OrderController@cancelOrderAgent');
   Route::post('/order/finalize', 'OrderController@finalizeOrder');
+  Route::post('/order/finalize/bundling', 'OrderController@finalizeOrderBundling');
   Route::post('/order/accept', 'OrderController@acceptOrder');
+  Route::post('/shipment', 'ShipmentController@addShipment');
+  Route::post('/agen/shipment', 'ShipmentController@updateShipmentMethod');
+
 
   Route::get('/ranks', 'RankingController@index');
   Route::get('/akh', 'RankingController@akh');
@@ -105,6 +111,7 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
   Route::get('/slider', 'PromoController@sliderIndex');
   Route::get('/recommendation', 'PromoController@recommendationIndex');
   Route::get('/hot', 'PromoController@hotIndex');
+  Route::get('/sold', 'PromoController@soldIndex');
 
   Route::get('/notif', 'NotificationController@index');
 

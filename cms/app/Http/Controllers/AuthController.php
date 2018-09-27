@@ -25,47 +25,26 @@ class AuthController extends Controller
         ];
       
         if(Auth::attempt($credentials)) {
-            if(Auth::user()->role_id == 1){
-
 				$data = User::join('role','users.role_id','=','role.id')
-			    			->join('agen', 'users.id', '=', 'agen.identifier')
-			    			->select('users.id as user_id', 'users.role_id', 'users.api_token', 'role.name as role', 'agen.name','users.store_id', 'users.phone')
+			    			->join('admin', 'users.id', '=', 'admin.identifier')
+			    			->select('users.id as user_id', 'users.role_id', 'users.api_token', 'role.name as role', 'admin.name','users.store_id', 'users.phone')
 			    			->where('users.id',Auth::user()->id)
 			    			->first();
-                            return redirect ('dashboard');
-            }
-            if(Auth::user()->role_id == 8){
 
-				$data = User::join('role','users.role_id','=','role.id')
-			    			->join('agen', 'users.id', '=', 'agen.identifier')
-			    			->select('users.id as user_id', 'users.role_id', 'users.api_token', 'role.name as role', 'agen.name','users.store_id', 'users.phone')
-			    			->where('users.id',Auth::user()->id)
-			    			->first();
+                            session()->put('role',$data->role);
+                            session()->put('name',$data->name);
                             return redirect ('dashboard');
-            }
-            if(Auth::user()->role_id == 9){
-
-				$data = User::join('role','users.role_id','=','role.id')
-			    			->join('agen', 'users.id', '=', 'agen.identifier')
-			    			->select('users.id as user_id', 'users.role_id', 'users.api_token', 'role.name as role', 'agen.name','users.store_id', 'users.phone')
-			    			->where('users.id',Auth::user()->id)
-			    			->first();
-                            return redirect ('dashboard');
-            }
-            if(Auth::user()->role_id == 10){
-
-				$data = User::join('role','users.role_id','=','role.id')
-			    			->join('agen', 'users.id', '=', 'agen.identifier')
-			    			->select('users.id as user_id', 'users.role_id', 'users.api_token', 'role.name as role', 'agen.name','users.store_id', 'users.phone')
-			    			->where('users.id',Auth::user()->id)
-			    			->first();
-                            return redirect ('dashboard');
-            }
         }
         else {
             return back()->withErrors('Phone and Password did not match.');
         }
         
+    }
+    public function doLogout()
+    {
+        session()->flush();
+        Auth::logout(); // log the user out of our application
+        return redirect('/'); // redirect the user to the login screen
     }
 
 }
