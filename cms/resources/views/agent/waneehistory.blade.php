@@ -19,16 +19,15 @@
                 <div class="col-lg-12">
                     <button type="submit" name="is_export" value="1" class="btn btn-primary">Export</button>
                 </div>
-            
-            <form class=" form-inline" method="GET" action="{{url('/bywaneehistory')}}">
-                <div class="col-lg-12 form group">
-                <h5>Date:</h5>
-                    <input type="date" name="dayword1" @if(isset($request->dayword1)) value="{{$request->dayword1}}" @endif>
-                    <input type="date" name="dayword2" @if(isset($request->dayword2)) value="{{$request->dayword2}}" @endif>
-                    <input type="submit" class="btn btn-primary">
-                </div>
-            </form>
             -->
+            <form class=" form-inline" method="GET" action="{{url('/bywaneehistory')}}">
+            <div class="form-group">
+                <input name="keyword" class="form-control mr-sm-2" type="text" placeholder="Nama Agen" aria-label="Search" @if(isset($request->keyword)) value="{{$request->keyword}}" @endif>
+            </div>
+            <button type="submit" class="btn btn-primary">Search</button>
+            <button type="reset" class="btn btn-danger">Clear</button>
+            </form>
+           
                     <!-- /.row -->
                     <div class="row">
                         <div class="col-lg-12">

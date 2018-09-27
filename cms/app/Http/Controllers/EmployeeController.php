@@ -92,25 +92,8 @@ class EmployeeController extends Controller
         ->select('wanee_history.saldo_akhir as saldoakhir','wanee_history.id as id','agen.name as name','wanee_history.amount as amount','wanee_history.created_at as date','users.phone as phone');
        
         
-        if(isset($request->date) && $request->date == '1'){
-            $history = WaneeHistory::join('users','users.id','=','wanee_history.user_id')
-            ->join('role','role.id','=','users.role_id')
-            ->join('agen','agen.identifier','=','users.id')
-            
-            ->select('wanee_history.id as id','agen.name as name','wanee_history.amount as amount','wanee_history.created_at as date','users.phone as phone')
-            ->whereDate('wanee_history.created_at','=',Carbon::today()->toDateString());
-        }
-        if(isset($request->date) && $request->date == '2'){
-            $history = WaneeHistory::join('users','users.id','=','wanee_history.user_id')
-            ->join('role','role.id','=','users.role_id')
-            ->join('agen','agen.identifier','=','users.id')
-            
-            ->select('wanee_history.id as id','agen.name as name','wanee_history.amount as amount','wanee_history.created_at as date','users.phone as phone')
-            ->whereMonth('wanee_history.created_at', '=', date('m'));
-        }
         if(isset($request->dayword1) && !empty($request->dayword1) && isset($request->dayword2) && !empty($request->dayword2)){
-            $history = $history->whereBetween('wanee_history.created_at',[$request->dayword1, Carbon::parse($request->dayword2)->addDays(1)]);
-            
+            $history = $history->whereBetween('wanee_history.created_at',[$request->dayword1, Carbon::parse($request->dayword2)->addDays(1)]); 
         }
         if(isset($request->keyword) && !empty($request->keyword)){
             $history = $history->where('agen.name','LIKE',$request->keyword.'%');
