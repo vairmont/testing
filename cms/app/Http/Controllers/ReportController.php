@@ -72,7 +72,12 @@ class ReportController extends Controller
             $this->_export_excel2($totalsales);
         }
         $qry = $totalsales->get();
-        $price = ($qry->promo_price == 0) ? $qry->price_for_customer : $qry->promo_price;
+        if($totalsales->promo_price > 0){
+            $price = $totalsales->promo_price;
+        }
+        else{
+            $price = $totalsales->price_for_customer;
+        }
         $total1 = 0;
         foreach($qry as $q) {
         
