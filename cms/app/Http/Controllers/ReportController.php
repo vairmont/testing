@@ -75,7 +75,7 @@ class ReportController extends Controller
         $total1 = 0;
         foreach($qry as $q) {
         
-            $total1 += ($q->cost);
+            $total1 += ($q->cost * $q->qty);
         }
 
         $total2 = 0;
