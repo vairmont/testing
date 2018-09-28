@@ -57,7 +57,13 @@ class ReportController extends Controller
             ->select('product.sku as sku','product.product_name as name','order_detail.qty as qty','order.total as nominal','product.cost as cost','order_detail.id as id','role.name as uid','store.store_name as sname','order.created_at as create','order.updated_at as update', 'suppliers.name as supplier', 'product.price_for_customer', 'product.promo_price')
             ->whereMonth('order.created_at', '=', date('m'));  
         }
-        
+
+        if($totalsales->promo_price > 0){
+            $price = $totalsales->promo_price;
+        }
+        else{
+            $price = $totalsales->price_for_customer;
+        }
         if(isset($request->dayword1) && !empty($request->dayword1) && isset($request->dayword2) && !empty($request->dayword2)){
             $totalsales = $totalsales->whereBetween('order.created_at',[$request->dayword1, Carbon::parse($request->dayword2)->addDays(1)]);
             
@@ -71,21 +77,8 @@ class ReportController extends Controller
         if ($isExport) {
             $this->_export_excel2($totalsales);
         }
-        $qry = Order::join('order_detail','order.id','=','order_detail.order_id')
-            ->join('product','product.id','=','order_detail.product_id')
-            ->join('suppliers', 'product.suppliers_id', '=', 'suppliers.id')
-            ->join('users','users.id','=','order.user_id')
-            ->join('store','store.id','=','users.store_id')
-            ->join('role','role.id','=','users.role_id')
-            ->whereIn('order.status',[7,9])
-            ->select('product.sku as sku','product.product_name as name','order_detail.qty as qty','order.total as nominal','product.cost as cost','order_detail.id as id','role.name as uid','store.store_name as sname','order.created_at as create','order.updated_at as update', 'suppliers.name as supplier', 'product.price_for_customer', 'product.promo_price')
-            ->get();
-        if($qry->promo_price > 0){
-            $price = $qry->promo_price;
-        }
-        else{
-            $price = $qry->price_for_customer;
-        }
+        $qry = $totalsales->get();
+
         $total1 = 0;
         foreach($qry as $q) {
         
