@@ -12,7 +12,7 @@ use App\OrderDetail;
 use App\Product;
 use Excel;
 use Carbon\Carbon;
-
+use App\Supplier;
 
 use DB;
 
@@ -23,7 +23,6 @@ class ReportController extends Controller
         $args['pages'] = $isExport;
 
         
-        // echo $request->date; die;
         
         $totalsales = Order::join('order_detail','order.id','=','order_detail.order_id')
         ->join('product','product.id','=','order_detail.product_id')
@@ -69,6 +68,10 @@ class ReportController extends Controller
         }
         if ($isExport) {
             $this->_export_excel2($totalsales);
+        }
+        if(session('role') != 'Admin' && session('role') != 'Customer' && session('role') != 'Finance' && session('role') != 'Agen' && session('role') != 'Member' && session('role') != 'Stock Keeper' && session('role') != 'Approver' && session('role') != 'Storekeeper'){
+            $supplier = Supplier::where('name',session('role'))->first();
+            $totalsales = $totalsales->where('product.suppliers_id',$supplier->id);
         }
         $qry = $totalsales->get();
 
