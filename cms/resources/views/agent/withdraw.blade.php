@@ -49,6 +49,7 @@
                                                 <th>Nama</th>
                                                 <th>Amount</th>
                                                 <th>Wanee Agen</th>
+                                                <th>Plafon Kredit</th>
                                                 <th>No Rekening</th>
                                                 <th>Source</th>
                                                 <th>Status</th>
@@ -66,6 +67,7 @@
                                                 <td>{{$draw->name}}</td>
                                                 <td>Rp.{{number_format($draw->amount)}}</td>
                                                 <td>Rp.{{number_format($draw->wanee)}}</td>
+                                                <td>Rp. {{ number_format($draw->plafon) }}</td>
                                                 <td>{{$draw->nokredit}}</td>
                                                 <td>{{$draw->source}}</td>
                                                 <td>{{$draw->status}}</td>
