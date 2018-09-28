@@ -54,6 +54,7 @@
                                 <tr>
                                     <th>ID</th>
                                     <th>SKU</th>
+                                    <th>Supplier</th>
                                     <th>Nama Barang</th>
                                     <th>Quantity</th>
                                     <th>Modal</th>
@@ -69,6 +70,7 @@
                                 <tr>
                                     <td>{{$total->id}}</td>
                                     <td>{{$total->sku}}</td>
+                                    <td>{{ $total->supplier }}</td>
                                     <td>{{$total->name}}</td>
                                     <td>{{$total->qty}}</td>
                                     <td>Rp.{{number_format($total->cost)}}</td> 
