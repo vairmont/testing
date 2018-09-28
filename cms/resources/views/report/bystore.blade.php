@@ -26,6 +26,9 @@
                         <input name="keyword" class="form-control mr-sm-2" type="text" placeholder="Nama Agen" aria-label="Search" @if(isset($request->keyword)) value="{{$request->keyword}}" @endif>
                     </div>
                     <div class="form-group">
+                        <input name="keyword1" class="form-control mr-sm-2" type="text" placeholder="Nama Produk" aria-label="Search" @if(isset($request->keyword1)) value="{{$request->keyword1}}" @endif>
+                    </div>
+                    <div class="form-group">
                         <input name="key" class="form-control mr-sm-2" type="text" placeholder="Nama Toko" aria-label="Search"@if(isset($request->key)) value="{{$request->key}}" @endif>
                     </div>
 
@@ -67,6 +70,7 @@
                                     <th>Paid by Agen</th>
                                     <th>Paid by Customer</th>
                                     <th>Store</th>
+                                    <th>Source</th>
                                     <th>Tanggal</th>
                                 </tr>
                             </thead>
@@ -121,6 +125,13 @@
                                             {{$flow->stoname}}
                                             @endif
                                         </td>
+                                        <td>
+                                        @if($flow->source == NULL)
+                                        ?
+                                        @else
+                                        {{$flow->source}}
+                                        @endif
+                                        </td>
                                         <td>{{$flow->create}}</td>
                                         
                                     </tr>
@@ -128,7 +139,7 @@
                                 @endif
                             </tbody>
                             <tfoot>
-                                          {{ $flowreport->appends(['date'=>$request->date,'dayword1'=>$request->dayword1,'dayword2'=>$request->dayword2])->links() }}
+                                          {{ $flowreport->appends(['date'=>$request->date,'dayword1'=>$request->dayword1,'dayword2'=>$request->dayword2,'keyword1'=>$request->keyword1])->links() }}
                             </tfoot>
                         </table>
                         <!-- /div 2 -->

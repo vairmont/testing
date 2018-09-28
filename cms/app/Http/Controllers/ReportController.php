@@ -70,10 +70,7 @@ class ReportController extends Controller
         if ($isExport) {
             $this->_export_excel2($totalsales);
         }
-        if(session('role') != 'Admin' && session('role') != 'Customer' && session('role') != 'Finance' && session('role') != 'Agen' && session('role') != 'Member' && session('role') != 'Stock Keeper' && session('role') != 'Approver' && session('role') != 'Storekeeper'){
-            $supplier = Supplier::where('name',session('role'))->first();
-            $totalsales = $totalsales->where('product.suppliers_id',$supplier->id);
-        }
+   
         $qry = $totalsales->get();
 
         $total1 = 0;
@@ -137,9 +134,10 @@ class ReportController extends Controller
         ->leftjoin('agen','agen.identifier','=','order.agen_id')
         ->leftjoin('users','users.id','=','agen.identifier')
         ->leftjoin('store','store.id','=','users.store_id')
+        
         ->whereIn('order.status',[7,9])
         ->where('order.type','=','sembako')
-        ->select('store.store_name as stoname','order_detail.qty as qty','incentive_category.rate as rate','order.invoice_no as invoice','agen.name as name','order_detail.order_id as id','product.product_name as proname','order_detail.price_for_agen as agen_price','order_detail.price_for_customer as customer_price','order.created_at as create','order.updated_at as update','order.agen_id as aid', 'product.promo_price');
+        ->select('agen.source as source','store.store_name as stoname','order_detail.qty as qty','incentive_category.rate as rate','order.invoice_no as invoice','agen.name as name','order_detail.order_id as id','product.product_name as proname','order_detail.price_for_agen as agen_price','order_detail.price_for_customer as customer_price','order.created_at as create','order.updated_at as update','order.agen_id as aid', 'product.promo_price');
 
         
         if(isset($request->date) && $request->date == '1'){
@@ -174,6 +172,9 @@ class ReportController extends Controller
         }
         if(isset($request->key) && !empty($request->key)) {
             $flowreport = $flowreport->where('store.store_name','like',$request->key.'%');
+        }
+        if(isset($request->keyword1) && !empty($request->keyword1)) {
+            $flowreport = $flowreport->where('product.product_name','like',$request->keyword1.'%');
         }
         if ($isExport) {
             $this->_export_excel($flowreport);
@@ -219,6 +220,7 @@ class ReportController extends Controller
                 'Paid by Agen' => number_format($flow->agen_price * $flow->qty),
                 'Paid by Customer' => number_format($flow->customer_price * $flow->qty),
                 'Store' => $flow->stoname,
+                'Source'=> $flow->source,
                 'Created At' => $flow->create, 
             ]);
                

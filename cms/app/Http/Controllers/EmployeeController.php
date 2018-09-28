@@ -88,21 +88,36 @@ class EmployeeController extends Controller
         $history = WaneeHistory::join('users','users.id','=','wanee_history.user_id')
         ->join('role','role.id','=','users.role_id')
         ->join('agen','agen.identifier','=','users.id')
-        
         ->select('wanee_history.saldo_akhir as saldoakhir','wanee_history.id as id','agen.name as name','wanee_history.amount as amount','wanee_history.created_at as date','users.phone as phone');
-       
-        
-        if(isset($request->dayword1) && !empty($request->dayword1) && isset($request->dayword2) && !empty($request->dayword2)){
-            $history = $history->whereBetween('wanee_history.created_at',[$request->dayword1, Carbon::parse($request->dayword2)->addDays(1)]); 
+    
+        if(isset($request->date) && $request->date == '1'){
+            $history = WaneeHistory::join('users','users.id','=','wanee_history.user_id')
+            ->join('role','role.id','=','users.role_id')
+            ->join('agen','agen.identifier','=','users.id')
+            ->select('wanee_history.saldo_akhir as saldoakhir','wanee_history.id as id','agen.name as name','wanee_history.amount as amount','wanee_history.created_at as date','users.phone as phone')
+            ->whereDate('wanee_history.created_at','=',Carbon::today()->toDateString());
         }
-        if(isset($request->keyword) && !empty($request->keyword)){
-            $history = $history->where('agen.name','LIKE',$request->keyword.'%');
-        }
-        if ($isExport) {
-            $this->_export_excel2($history);
+        if(isset($request->date) && $request->date == '2'){
+            $history = WaneeHistory::join('users','users.id','=','wanee_history.user_id')
+            ->join('role','role.id','=','users.role_id')
+            ->join('agen','agen.identifier','=','users.id')
+            ->select('wanee_history.saldo_akhir as saldoakhir','wanee_history.id as id','agen.name as name','wanee_history.amount as amount','wanee_history.created_at as date','users.phone as phone')
+            ->whereMonth('wanee_history.created_at', '=', date('m'));
         }
 
-        $history = $history->orderby('agen.name','asc')->get();  
+        if(isset($request->dayword1) && !empty($request->dayword1) && isset($request->dayword2) && !empty($request->dayword2)){
+            $history = $history->whereBetween('wanee_history.created_at',[$request->dayword1, Carbon::parse($request->dayword2)->addDays(1)]);
+            
+        }
+        if(isset($request->keyword) && !empty($request->keyword)){
+            $history = $history->where('agen.name','LIKE',$request->keyword.'%'); 
+        }
+        if(isset($request->key) && !empty($request->key)){
+            $history = $history->where('store.store_name','LIKE',$request->key.'%');
+        }
+      
+
+        $history = $history->orderby('wanee_history.created_at','asc')->get();  
         return view('agent.waneehistory',compact('history','request'))->withTitle('by Wanee History');
     }
     
@@ -116,7 +131,7 @@ class EmployeeController extends Controller
         
         $history = WaneeHistory::where('id','=',$id)
         ->update([
-            'reason' => 'Withdraw',
+            'reason' => 'Pending',
         ]);
 
         return back();
@@ -141,6 +156,170 @@ class EmployeeController extends Controller
         }
         
         return Excel::create('Wanee_history', function($excel) use($data) {
+            $excel->sheet('Sheetname', function($sheet) use($data) {
+                $row = 1;
+
+                $sheet->fromArray($data, null, 'A' . $row, true, true);
+
+                $sheet->getStyle("A1:" . 'G' . $row)
+                    ->getAlignment()->setWrapText(false);
+            });
+        })->export('xls');
+    }
+    public function getByWaneePending(Request $request){
+        $isExport = $request->get('is_export', 0);
+        $args['pages'] = $isExport;    
+
+        $history = WaneeHistory::join('users','users.id','=','wanee_history.user_id')
+        ->join('role','role.id','=','users.role_id')
+        ->join('agen','agen.identifier','=','users.id')
+        ->where('wanee_history.reason','=','Pending')
+        ->select('wanee_history.saldo_akhir as saldoakhir','wanee_history.id as id','agen.name as name','wanee_history.amount as amount','wanee_history.created_at as date','users.phone as phone');
+    
+        if(isset($request->date) && $request->date == '1'){
+            $history = WaneeHistory::join('users','users.id','=','wanee_history.user_id')
+            ->join('role','role.id','=','users.role_id')
+            ->join('agen','agen.identifier','=','users.id')
+            ->where('wanee_history.reason','=','Pending')
+            ->select('wanee_history.saldo_akhir as saldoakhir','wanee_history.id as id','agen.name as name','wanee_history.amount as amount','wanee_history.created_at as date','users.phone as phone')
+            ->whereDate('wanee_history.created_at','=',Carbon::today()->toDateString());
+        }
+        if(isset($request->date) && $request->date == '2'){
+            $history = WaneeHistory::join('users','users.id','=','wanee_history.user_id')
+            ->join('role','role.id','=','users.role_id')
+            ->join('agen','agen.identifier','=','users.id')
+            ->where('wanee_history.reason','=','Pending')
+            ->select('wanee_history.saldo_akhir as saldoakhir','wanee_history.id as id','agen.name as name','wanee_history.amount as amount','wanee_history.created_at as date','users.phone as phone')
+            ->whereMonth('wanee_history.created_at', '=', date('m'));
+        }
+
+        if(isset($request->dayword1) && !empty($request->dayword1) && isset($request->dayword2) && !empty($request->dayword2)){
+            $history = $history->whereBetween('wanee_history.created_at',[$request->dayword1, Carbon::parse($request->dayword2)->addDays(1)]);
+            
+        }
+        if(isset($request->keyword) && !empty($request->keyword)){
+            $history = $history->where('agen.name','LIKE',$request->keyword.'%'); 
+        }
+        $history = $history->orderby('wanee_history.created_at','asc')->get();  
+        return view('agent.waneepending',compact('history','request'))->withTitle('by Wanee History');
+    }
+    
+    public function updateStatus1(Request $request,$id){
+        $history = WaneeHistory::join('users','users.id','=','wanee_history.user_id')
+        ->join('role','role.id','=','users.role_id')
+        ->join('agen','agen.identifier','=','users.id')
+        ->select('agen.name as name','wanee_history.amount as amount','wanee_history.created_at as date','users.phone as phone')
+        ->get();
+        
+        $history = WaneeHistory::where('id','=',$id)
+        ->update([
+            'reason' => 'Withdraw',
+        ]);
+
+        return back();
+    }
+    private function _export_excel1($history) {
+        $history = WaneeHistory::join('users','users.id','=','wanee_history.user_id')
+        ->join('role','role.id','=','users.role_id')
+        ->join('agen','agen.identifier','=','users.id')
+        ->where('wanee_history.reason','=','Penarikan Wanee')
+        ->select('wanee_history.id as id','agen.name as name','wanee_history.amount as amount','wanee_history.created_at as date','users.phone as phone')
+        ->get();
+
+        $data = [];
+        foreach ($history as $his) {
+            $data[] = ([
+                'ID' => $his->name,
+                'Amount' => $his->amount,
+                'Tanggal' => $his->date,
+                'Telepon' =>$his->phone,
+            ]);
+            
+        }
+        
+        return Excel::create('Wanee_history', function($excel) use($data) {
+            $excel->sheet('Sheetname', function($sheet) use($data) {
+                $row = 1;
+
+                $sheet->fromArray($data, null, 'A' . $row, true, true);
+
+                $sheet->getStyle("A1:" . 'G' . $row)
+                    ->getAlignment()->setWrapText(false);
+            });
+        })->export('xls');
+    }
+    public function getByWaneeApprove(Request $request){
+        $isExport = $request->get('is_export', 0);
+        $args['pages'] = $isExport;    
+
+        $history = WaneeHistory::join('users','users.id','=','wanee_history.user_id')
+        ->join('role','role.id','=','users.role_id')
+        ->join('agen','agen.identifier','=','users.id')
+        ->where('wanee_history.reason','=','Withdraw')
+        ->select('wanee_history.saldo_akhir as saldoakhir','wanee_history.id as id','agen.name as name','wanee_history.amount as amount','wanee_history.created_at as date','users.phone as phone');
+    
+        if(isset($request->date) && $request->date == '1'){
+            $history = WaneeHistory::join('users','users.id','=','wanee_history.user_id')
+            ->join('role','role.id','=','users.role_id')
+            ->join('agen','agen.identifier','=','users.id')
+            ->where('wanee_history.reason','=','Withdraw')
+            ->select('wanee_history.saldo_akhir as saldoakhir','wanee_history.id as id','agen.name as name','wanee_history.amount as amount','wanee_history.created_at as date','users.phone as phone')
+            ->whereDate('wanee_history.created_at','=',Carbon::today()->toDateString());
+        }
+        if(isset($request->date) && $request->date == '2'){
+            $history = WaneeHistory::join('users','users.id','=','wanee_history.user_id')
+            ->join('role','role.id','=','users.role_id')
+            ->join('agen','agen.identifier','=','users.id')
+            ->where('wanee_history.reason','=','Withdraw')
+            ->select('wanee_history.saldo_akhir as saldoakhir','wanee_history.id as id','agen.name as name','wanee_history.amount as amount','wanee_history.created_at as date','users.phone as phone')
+            ->whereMonth('wanee_history.created_at', '=', date('m'));
+        }
+
+        if(isset($request->dayword1) && !empty($request->dayword1) && isset($request->dayword2) && !empty($request->dayword2)){
+            $history = $history->whereBetween('wanee_history.created_at',[$request->dayword1, Carbon::parse($request->dayword2)->addDays(1)]);
+            
+        }
+        if(isset($request->keyword) && !empty($request->keyword)){
+            $history = $history->where('agen.name','LIKE',$request->keyword.'%'); 
+        }
+        $history = $history->orderby('wanee_history.created_at','asc')->get();  
+        return view('agent.waneeapprove',compact('history','request'))->withTitle('by Wanee History');
+    }
+    
+    public function updateStatus2(Request $request,$id){
+        $history = WaneeHistory::join('users','users.id','=','wanee_history.user_id')
+        ->join('role','role.id','=','users.role_id')
+        ->join('agen','agen.identifier','=','users.id')
+        
+        ->select('agen.name as name','wanee_history.amount as amount','wanee_history.created_at as date','users.phone as phone')
+        ->get();
+        
+        $history = WaneeHistory::where('id','=',$id)
+        ->update([
+            'reason' => 'Pending',
+        ]);
+
+        return back();
+    }
+    private function _export_excel3($history) {
+        $history = WaneeHistory::join('users','users.id','=','wanee_history.user_id')
+        ->join('role','role.id','=','users.role_id')
+        ->join('agen','agen.identifier','=','users.id')
+        ->where('wanee_history.reason','=','Penarikan Wanee')
+        ->select('wanee_history.id as id','agen.name as name','wanee_history.amount as amount','wanee_history.created_at as date','users.phone as phone')
+        ->get();
+
+        $data = [];
+        foreach ($history as $his) {
+            $data[] = ([
+                'ID' => $his->name,
+                'Amount' => $his->amount,
+                'Tanggal' => $his->date,
+                'Telepon' =>$his->phone,
+            ]);
+        }
+        
+        return Excel::create('Wanee_history_approved', function($excel) use($data) {
             $excel->sheet('Sheetname', function($sheet) use($data) {
                 $row = 1;
 

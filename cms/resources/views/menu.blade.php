@@ -87,6 +87,15 @@
                                 <a href="{{url('/bywaneehistory')}}">History Wanee</a>
                             </li>
                             <li>
+                            <li>
+                                <a href="{{url('/bywaneepending')}}">Wanee Pending</a>
+                            </li>
+                            <li>
+                                <a href="{{url('/bywaneeapprove')}}">History Approve</a>
+                            </li>
+                            <p>-----------------------------------------------------------</p>
+                            </li>
+                            <li>
                                 <a href="{{url('/byagent')}}">Verifikasi Agen</a>
                             </li>
                             <li>
@@ -115,6 +124,15 @@
                             </li>
                             <li>
                                 <a href="morris.html">Notifikasi</a>
+                            </li>
+                        </ul>
+                    <!-- /.nav-second-level -->
+                </li>
+                <li>
+                        <a href="#"><i class="fa fa-group"></i> Supply<span class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li>
+                                <a href="{{url('/bysupply')}}">Supply Sales</a>
                             </li>
                         </ul>
                     <!-- /.nav-second-level -->
@@ -201,7 +219,7 @@
         @elseif(Auth::User()->role_id == '4')
             <ul class="nav" id="side-menu">
                 <li>
-                    <a href="{{url('/dashboard')}}"><i class="fa fa-dashboard fa-fw"></i> Admin DashBoard</a>
+                    <a href="{{url('/dashboard')}}"><i class="fa fa-dashboard fa-fw"></i> DashBoard</a>
                 </li>
                 <li>
                     <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Laporan<span class="fa arrow"></span></a>

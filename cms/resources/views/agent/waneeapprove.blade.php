@@ -8,19 +8,19 @@
 
      <div class="container-fluid">
             <div>
-                <h2>Wanee History</h2>
+                <h2>Wanee Approve</h2>
             </div>
                 <div class="col-lg-12">
                     <p> </p>
                 </div>
                     <div class="row">
-                        <a href="{{ url('/bywaneehistory') }}?date=1" class="btn btn-primary">Hari ini</a>
-                        <a href="{{ url('/bywaneehistory') }}?date=2" class="btn btn-primary">Bulan ini</a>
+                        <a href="{{ url('/bywaneeapprove') }}?date=1" class="btn btn-primary">Hari ini</a>
+                        <a href="{{ url('/bywaneeapprove') }}?date=2" class="btn btn-primary">Bulan ini</a>
                     </div>
                     <div class="row">
                     <p> </p>
                     </div>
-                <form class=" form-inline" method="GET" action="{{url('/bywaneehistory')}}">
+                <form class=" form-inline" method="GET" action="{{url('/bywaneeapprove')}}">
                         <div class="form-group">
                             <input name="keyword" class="form-control mr-sm-2" type="text" placeholder="Nama Agen" aria-label="Search" @if(isset($request->keyword)) value="{{$request->keyword}}" @endif>
                         </div>
@@ -61,8 +61,7 @@
                                                 <td>{{$his->date}}</td>
                                                 <td>{{$his->phone}}</td>
                                                 <td>
-                                                <a href="{{ route('status1', ['id' => $his->id]) }}" class="btn btn-primary">Verifikasi</a>
-                                                
+                                                <a href="{{ route('status4', ['id' => $his->id]) }}" class="btn btn-primary">Cancel</a>
                                                 </td>
                                             </tr>
                                             @endforeach

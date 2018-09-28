@@ -9,18 +9,18 @@
 <!-- div container -->
         <div class="container-fluid">
             <div>
-                <h2>Total Sales</h2>
+                <h2>Supplier Sales</h2>
             </div>
 
             <div class="row">
-                <a href="{{ url('/byitem') }}?date=1" class="btn btn-primary">Hari ini</a>
-                <a href="{{ url('/byitem') }}?date=2" class="btn btn-primary">Bulan ini</a>
+                <a href="{{ url('/bysupply') }}?date=1" class="btn btn-primary">Hari ini</a>
+                <a href="{{ url('/bysupply') }}?date=2" class="btn btn-primary">Bulan ini</a>
             </div>
             <div class="row">
             <p> </p>
             </div>
             <div class="row">
-                <form class="form-inline" method="GET" action="{{url('/byitem')}}"> 
+                <form class="form-inline" method="GET" action="{{url('/bysupply')}}"> 
                     <div class="form-group">
                         <input name="keyword" class="form-control mr-sm-2" type="text" placeholder="Nama Product" aria-label="Search" @if(isset($request->keyword)) value="{{$request->keyword}}" @endif>
                     </div>
@@ -40,8 +40,7 @@
             </div>
 
             <div class="row">
-                <h3>Total Modal :Rp.{{number_format($total1)}}</h3>
-                <h3>Total Penjualan :Rp.{{number_format($total2)}}</h3>              
+                <h3>Total Modal :Rp.{{number_format($total1)}}</h3>       
             </div>
             <!-- /.row -->
             <div class="row">
@@ -58,7 +57,7 @@
                                     <th>Nama Barang</th>
                                     <th>Quantity</th>
                                     <th>Modal</th>
-                                    <th>Penjualan</th>
+                                    
                                     <th>Store</th>
                                     <th>Tanggal</th>
                                 </tr>
@@ -74,7 +73,7 @@
                                     <td>{{$total->name}}</td>
                                     <td>{{$total->qty}}</td>
                                     <td>Rp.{{number_format($total->cost)}}</td> 
-                                    <td>Rp.{{number_format($total->cost * $total->qty)}}</td>
+                                    
                                     <td>{{$total->sname}}</td>
                                     <td>{{$total->create}}</td>
                                 </tr>
