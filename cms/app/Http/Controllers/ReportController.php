@@ -79,7 +79,7 @@ class ReportController extends Controller
         }
 
         $total2 = 0;
-        foreach($qry as $q) {
+        foreach($qry as $q) {    
         if($qry->promo_price > 0){
             $price = $qry->promo_price;
         }
