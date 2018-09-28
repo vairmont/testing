@@ -15,7 +15,7 @@ class WithDrawController extends Controller
         $args['pages'] = $isExport;
 
         $withdraw = WithDraw::join('agen','agen.identifier','=','withdraw.agen_id')
-        ->select('withdraw.created_at as date','agen.source as source','agen.account_no as nokredit','agen.wanee as wanee','withdraw.id as id','withdraw.agen_id as agenid','withdraw.amount as amount','withdraw.status as status','agen.wanee as wanee', 'agen.name as name', 'agen.plafon_kredit as plafon')
+        ->select('withdraw.created_at as date','agen.source as source','agen.account_no as nokredit','agen.wanee as wanee','withdraw.id as id','withdraw.agen_id as agenid','withdraw.amount as amount','withdraw.status as status','agen.wanee as wanee', 'agen.name as name', 'agen.plafon_kredit as plafon', 'agen.bank as bank')
 
         ->where('withdraw.status','=','process');
         
