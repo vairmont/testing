@@ -58,12 +58,6 @@ class ReportController extends Controller
             ->whereMonth('order.created_at', '=', date('m'));  
         }
 
-        if($totalsales->promo_price > 0){
-            $price = $totalsales->promo_price;
-        }
-        else{
-            $price = $totalsales->price_for_customer;
-        }
         if(isset($request->dayword1) && !empty($request->dayword1) && isset($request->dayword2) && !empty($request->dayword2)){
             $totalsales = $totalsales->whereBetween('order.created_at',[$request->dayword1, Carbon::parse($request->dayword2)->addDays(1)]);
             
@@ -81,13 +75,17 @@ class ReportController extends Controller
 
         $total1 = 0;
         foreach($qry as $q) {
-        
             $total1 += ($q->cost * $q->qty);
         }
 
         $total2 = 0;
         foreach($qry as $q) {
-        
+        if($qry->promo_price > 0){
+            $price = $qry->promo_price;
+        }
+        else{
+            $price = $qry->price_for_customer;
+        }
             $total2 += ($price * $q->qty);
         }
         
