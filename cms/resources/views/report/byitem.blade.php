@@ -41,7 +41,8 @@
 
             <div class="row">
                 <h3>Total Modal :Rp.{{number_format($total1)}}</h3>
-                <h3>Total Penjualan :Rp.{{number_format($total2)}}</h3>              
+                <h3>Total Penjualan :Rp.{{number_format($total2)}}</h3>
+                <h3>Total Margin G1 :Rp.{{number_format($total3)}}</h3>              
             </div>
             <!-- /.row -->
             <div class="row">

@@ -88,6 +88,8 @@ class ReportController extends Controller
         }
             $total2 += ($price * $q->qty);
         }
+
+        $total3 = $total2 - $total1;
         
         $totalsales = $totalsales->orderby('order.created_at','desc')->paginate(10);  
         return view('report.byitem',compact('totalsales', 'request','total1','total2'))->withTitle('By withdraw');
