@@ -81,10 +81,10 @@ class ReportController extends Controller
         $total2 = 0;
         foreach($qry as $q) {    
         if($qry->promo_price > 0){
-            $price = $qry->promo_price;
+            $price = $q->promo_price;
         }
         else{
-            $price = $qry->price_for_customer;
+            $price = $q->price_for_customer;
         }
             $total2 += ($price * $q->qty);
         }
