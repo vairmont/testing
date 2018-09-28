@@ -32,7 +32,7 @@ class ReportController extends Controller
         ->join('role','role.id','=','users.role_id')
         ->whereIn('order.status',[7,9])
         // ->whereDate('order.created_at','=',Carbon::today()->toDateString())
-        ->select('product.sku as sku','product.product_name as name','order_detail.qty as qty','order.total as nominal','product.cost as cost','order_detail.id as id','role.name as uid','store.store_name as sname','order.created_at as create','order_detail.updated_at as update', 'suppliers.name as supplier');
+        ->select('product.sku as sku','product.product_name as name','order_detail.qty as qty','order.total as nominal','product.cost as cost','order_detail.id as id','role.name as uid','store.store_name as sname','order.created_at as create','order_detail.updated_at as update', 'suppliers.name as supplier', 'product.price_for_customer', 'product.promo_price');
 
         if(isset($request->date) && $request->date == '1'){
             $totalsales = Order::join('order_detail','order.id','=','order_detail.order_id')
@@ -42,7 +42,7 @@ class ReportController extends Controller
             ->join('store','store.id','=','users.store_id')
             ->join('role','role.id','=','users.role_id')
             ->whereIn('order.status',[7,9])
-            ->select('product.sku as sku','product.product_name as name','order_detail.qty as qty','order.total as nominal','product.cost as cost','order_detail.id as id','role.name as uid','store.store_name as sname','order.created_at as create','order.updated_at as update', 'suppliers.name as supplier')
+            ->select('product.sku as sku','product.product_name as name','order_detail.qty as qty','order.total as nominal','product.cost as cost','order_detail.id as id','role.name as uid','store.store_name as sname','order.created_at as create','order.updated_at as update', 'suppliers.name as supplier', 'product.price_for_customer', 'product.promo_price')
             ->whereDate('order.created_at','=',Carbon::today()->toDateString());
         }
         if(isset($request->date) && $request->date == '2'){
@@ -53,9 +53,10 @@ class ReportController extends Controller
             ->join('store','store.id','=','users.store_id')
             ->join('role','role.id','=','users.role_id')
             ->whereIn('order.status',[7,9])
-            ->select('product.sku as sku','product.product_name as name','order_detail.qty as qty','order.total as nominal','product.cost as cost','order_detail.id as id','role.name as uid','store.store_name as sname','order.created_at as create','order.updated_at as update', 'suppliers.name as supplier')
+            ->select('product.sku as sku','product.product_name as name','order_detail.qty as qty','order.total as nominal','product.cost as cost','order_detail.id as id','role.name as uid','store.store_name as sname','order.created_at as create','order.updated_at as update', 'suppliers.name as supplier', 'product.price_for_customer', 'product.promo_price')
             ->whereMonth('order.created_at', '=', date('m'));  
         }
+
         if(isset($request->dayword1) && !empty($request->dayword1) && isset($request->dayword2) && !empty($request->dayword2)){
             $totalsales = $totalsales->whereBetween('order.created_at',[$request->dayword1, Carbon::parse($request->dayword2)->addDays(1)]);
             
@@ -77,14 +78,18 @@ class ReportController extends Controller
 
         $total1 = 0;
         foreach($qry as $q) {
-        
             $total1 += ($q->cost * $q->qty);
         }
 
         $total2 = 0;
-        foreach($qry as $q) {
-        
-            $total2 += ($q->cost * $q->qty);
+        foreach($qry as $q) {    
+        if($q->promo_price > 0){
+            $price = $q->promo_price;
+        }
+        else{
+            $price = $q->price_for_customer;
+        }
+            $total2 += ($price * $q->qty);
         }
         
         $totalsales = $totalsales->orderby('order.created_at','desc')->paginate(10);  
