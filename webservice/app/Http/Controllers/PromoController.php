@@ -67,7 +67,7 @@ class PromoController extends Controller
     {
     	$rec = Product::select('product.id', 'product.product_name', 'product.promo_price as price', 'product.price_for_customer as regular_price', 'product.img_url', 'product.description')
                     ->join('stock', 'stock.product_id', '=', 'product.id')
-    				->where('promo_price', '>=', 0)
+    				->where('promo_price', '>', 0)
                     ->where('stock.quantity', '>', 0)
                     ->where('stock.store_id', '=', $request->get('user')->store_id);
 
