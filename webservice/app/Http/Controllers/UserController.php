@@ -117,7 +117,7 @@ class UserController extends Controller
         }
     }
 
-    public function forgotPassword(Request $request) {
+    public function forgotPassword2(Request $request) {
         $val = Validator::make($request->all(), [
             'phone' => 'required'
         ]);
@@ -142,7 +142,7 @@ class UserController extends Controller
         }
     }
 
-    public function forgotPassword2(Request $request) {
+    public function forgotPassword(Request $request) {
         $val = Validator::make($request->all(), [
             'phone' => 'required'
         ]);
