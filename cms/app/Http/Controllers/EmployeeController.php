@@ -118,7 +118,7 @@ class EmployeeController extends Controller
         }
       
 
-        $history = $history->orderby('wanee_history.id','asc')->get();  
+        $history = $history->orderby('wanee_history.created_at','asc')->get();  
         
         return view('agent.waneehistory',compact('history','request'))->withTitle('by Wanee History');
     }

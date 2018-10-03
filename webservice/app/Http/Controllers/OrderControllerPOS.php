@@ -56,7 +56,7 @@ class OrderControllerPOS extends Controller
       $unique = $today . $rand;
 
     $order = new Order;
-    $order->status = OrderStatus::COMPLETED;
+    $order->status = 9;
     $order->invoice_no = $unique;
     $order->user_id = $request->get('user')->id;
     $order->subtotal = $amount;
