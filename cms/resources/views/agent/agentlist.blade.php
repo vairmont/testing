@@ -21,7 +21,6 @@
                     <button type="reset" class="btn btn-danger">Clear</button>
                 </div>
               
-            
             <!--
                 <div class="form-group col-md-3">         
                     <select id="inputState" class="form-control" name="stock">
@@ -36,7 +35,11 @@
                     <!-- row -->
                     </form>
                 </div>
-
+                @if(session()->has('message'))
+                <div class="alert alert-success">
+                    {{ session()->get('message') }}
+                </div>
+                @endif
                     <!-- /.row -->
                     <div class="row">
                         <div class="col-lg-12">

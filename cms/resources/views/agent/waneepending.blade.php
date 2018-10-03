@@ -32,7 +32,11 @@
                         <button type="submit" class="btn btn-primary">Search</button>
                         <button type="reset" class="btn btn-danger">Clear</button>
                 </form>
-           
+                @if(session()->has('message'))
+                <div class="alert alert-success">
+                    {{ session()->get('message') }}
+                </div>
+            @endif
                     <!-- /.row -->
                     <div class="row">
                         <div class="col-lg-12">

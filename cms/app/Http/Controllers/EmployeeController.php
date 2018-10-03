@@ -79,7 +79,8 @@ class EmployeeController extends Controller
             'store_id' => $request->store_id
         ]);
 
-        return back();
+        return redirect()->back()->with('message', 'Verifikasi Sukses...!');
+
 
     }
     public function getBywanneHistory(Request $request){
@@ -89,7 +90,7 @@ class EmployeeController extends Controller
         $history = WaneeHistory::join('users','users.id','=','wanee_history.user_id')
         ->join('role','role.id','=','users.role_id')
         ->join('agen','agen.identifier','=','users.id')
-        ->whereIn('reason',['Komisi Agen','Topup Plafon Kredit'])
+        ->where('reason','=','Topup Plafon Kredit')
         ->select('wanee_history.saldo_akhir as saldoakhir','wanee_history.id as id','agen.name as name','wanee_history.amount as amount','wanee_history.created_at as date','users.phone as phone');
         if(isset($request->date) && $request->date == '1'){
             $history = WaneeHistory::join('users','users.id','=','wanee_history.user_id')
@@ -129,7 +130,6 @@ class EmployeeController extends Controller
             $wanee->update([
                 'reason' => 'Pending'
             ]);
-
             array_push($id, $val);
         }
 
@@ -142,6 +142,7 @@ class EmployeeController extends Controller
 
         $pdf = PDF::loadView('pdf.waneehistory',compact('his'));
         return $pdf->download('waneehistory.pdf');
+        
     }
     private function _export_excel2($history) {
         $history = WaneeHistory::join('users','users.id','=','wanee_history.user_id')
@@ -222,7 +223,8 @@ class EmployeeController extends Controller
 
             array_push($id, $val);
         }
-       return back();
+       return redirect()->back()->with('message', 'Verifikasi Sukses...!');
+
     }
     private function _export_excel1($history) {
         $history = WaneeHistory::join('users','users.id','=','wanee_history.user_id')
@@ -303,7 +305,7 @@ class EmployeeController extends Controller
 
             array_push($id, $val);
         }
-        return back();
+        return redirect()->back()->with('message', 'Verifikasi Sukses...!');
     }
     private function _export_excel3($history) {
         $history = WaneeHistory::join('users','users.id','=','wanee_history.user_id')
