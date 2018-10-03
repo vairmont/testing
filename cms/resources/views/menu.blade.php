@@ -84,14 +84,14 @@
                         <a href="#"><i class="fa fa-group"></i> Admin<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
                             <li>
-                                <a href="{{url('/bywaneehistory')}}">History Wanee</a>
+                                <a href="{{url('/bywaneehistory')}}">View Wanee</a>
                             </li>
-                            <li>
+                            
                             <li>
                                 <a href="{{url('/bywaneepending')}}">Wanee Pending</a>
                             </li>
                             <li>
-                                <a href="{{url('/bywaneeapprove')}}">History Approve</a>
+                                <a href="{{url('/bywaneeapprove')}}">Wanee Approved</a>
                             </li>
                             <p>-----------------------------------------------------------</p>
                             </li>

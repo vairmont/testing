@@ -20,14 +20,15 @@
             <p> </p>
             </div>
             <div class="row">
-                <form class="form-inline" method="GET" action="{{url('/bysupply')}}"> 
+                <form class="form-inline" method="GET" action="{{url('/bysupply')}}">
+        
                     <div class="form-group">
                         <input name="keyword" class="form-control mr-sm-2" type="text" placeholder="Nama Product" aria-label="Search" @if(isset($request->keyword)) value="{{$request->keyword}}" @endif>
                     </div>
                     <div class="form-group">
                         <input name="key" class="form-control mr-sm-2" type="text" placeholder="Nama Toko" aria-label="Search"@if(isset($request->key)) value="{{$request->key}}" @endif>
                     </div>
-                    
+                  
                     <div class="form-group">
                         <input type="date" class="form-control mr-sm-2" name="dayword1" @if(isset($request->dayword1)) value="{{$request->dayword1}}" @endif>
                         <p class="glyphicon glyphicon-minus"></p>
@@ -40,7 +41,7 @@
             </div>
 
             <div class="row">
-                <h3>Total Modal :Rp.{{number_format($total1)}}</h3>       
+                <h3>Total Modal :Rp.{{ number_format($total1)}}</h3>       
             </div>
             <!-- /.row -->
             <div class="row">
@@ -48,7 +49,7 @@
                 <div class="col-lg-12">
                     <!-- /.div 2 -->
                     <div class="table-responsive">
-                        <table class="table table-striped table-bordered table-hover" id="dataTables-example">
+                        <table class="sortable table table-striped table-bordered table-hover" id="dataTables-example">
                             <thead>
                                 <tr>
                                     <th>ID</th>
@@ -81,7 +82,7 @@
                               @endif
                             </tbody>
                             <tfoot>
-                                          {{ $totalsales->appends(['date'=>$request->date,'dayword1'=>$request->dayword1,'dayword2'=>$request->dayword2])->links() }}
+                                    {{ $totalsales->appends($_GET)->links() }}
                             </tfoot>
                         </table>
                         <!-- /div 2 -->

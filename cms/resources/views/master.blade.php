@@ -22,6 +22,7 @@
     <!-- Custom Theme JavaScript -->
     <script src="{{ asset('sbadmin/dist/js/sb-admin-2.js') }}"></script>
     <script src="{{ asset('js/sorttable.js') }}"></script>
+    
 
     <link href="{{ asset('css/custom.css') }}" rel="stylesheet">
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->

@@ -56,9 +56,9 @@ class SupplierController extends Controller
         }
 
         if(isset($request->dayword1) && !empty($request->dayword1) && isset($request->dayword2) && !empty($request->dayword2)){
-            $totalsales = $totalsales->whereBetween('order.created_at',[$request->dayword1, Carbon::parse($request->dayword2)->addDays(1)]);
-            
+            $totalsales = $totalsales->whereBetween('order.created_at',[$request->dayword1, Carbon::parse($request->dayword2)->addDays(1)]);        
         }
+    
         if(isset($request->keyword) && !empty($request->keyword)){
             $totalsales = $totalsales->where('product.product_name','LIKE',$request->keyword.'%'); 
         }
@@ -76,22 +76,41 @@ class SupplierController extends Controller
 
         $total1 = 0;
         foreach($qry as $q) {
-            $total1 += ($q->cost * $q->qty);
+            $total1 += ($q->cost);
         }
 
-        $total2 = 0;
-        foreach($qry as $q) {    
-        if($q->promo_price > 0){
-            $price = $q->promo_price;
-        }
-        else{
-            $price = $q->price_for_customer;
-        }
-            $total2 += ($price * $q->qty);
-        }
         
         $totalsales = $totalsales->orderby('order.created_at','desc')->paginate(10);  
         return view('supplier.suppliersales',compact('totalsales', 'request','total1','total2'))->withTitle('By withdraw');
         
     }
+    private function _export_excel2($totalsales) {
+        $totalsales = $totalsales->get();
+        
+        $data = [];
+        foreach ($totalsales as $total) {
+            $data[] = ([
+                'ID' => $total->id,
+                'User'=>$total->uid,
+                'SKU'=>$total->sku,
+                'Name'=>$total->name,
+                'Quantity'=>$total->qty,
+                'Modal'=>number_format($total->cost),
+                'Store'=>$total->sname,
+                'Created at'=>$total->create,
+                'update at'=>$total->update
+            ]);
+        }
+        return Excel::create('Sales_supplier', function($excel) use($data) {
+            $excel->sheet('Sheetname', function($sheet) use($data) {
+                $row = 1;
+
+                $sheet->fromArray($data, null, 'A' . $row, true, true);
+
+                $sheet->getStyle("A1:" . 'G' . $row)
+                    ->getAlignment()->setWrapText(false);
+            });
+        })->export('xls');
+    }    
+
 }

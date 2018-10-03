@@ -9,6 +9,7 @@ use App\Stores\store;
 use Excel;
 use App\WaneeHistory;
 use Carbon\Carbon;
+use PDF;
 
 
 class EmployeeController extends Controller
@@ -88,8 +89,8 @@ class EmployeeController extends Controller
         $history = WaneeHistory::join('users','users.id','=','wanee_history.user_id')
         ->join('role','role.id','=','users.role_id')
         ->join('agen','agen.identifier','=','users.id')
+        ->whereIn('reason',['Komisi Agen','Topup Plafon Kredit'])
         ->select('wanee_history.saldo_akhir as saldoakhir','wanee_history.id as id','agen.name as name','wanee_history.amount as amount','wanee_history.created_at as date','users.phone as phone');
-    
         if(isset($request->date) && $request->date == '1'){
             $history = WaneeHistory::join('users','users.id','=','wanee_history.user_id')
             ->join('role','role.id','=','users.role_id')
@@ -117,24 +118,30 @@ class EmployeeController extends Controller
         }
       
 
-        $history = $history->orderby('wanee_history.created_at','asc')->get();  
+        $history = $history->orderby('wanee_history.id','asc')->get();  
+        
         return view('agent.waneehistory',compact('history','request'))->withTitle('by Wanee History');
     }
-    
-    public function updateStatus(Request $request,$id){
-        $history = WaneeHistory::join('users','users.id','=','wanee_history.user_id')
+    public function updateCheck(Request $request){
+        $id = [];
+        foreach($request->checkbox as $val) {
+            $wanee = WaneeHistory::find($val);
+            $wanee->update([
+                'reason' => 'Pending'
+            ]);
+
+            array_push($id, $val);
+        }
+
+        $his = WaneeHistory::join('users','users.id','=','wanee_history.user_id')
         ->join('role','role.id','=','users.role_id')
         ->join('agen','agen.identifier','=','users.id')
-        ->where('wanee_history.reason','=','Penarikan Wanee')
-        ->select('agen.name as name','wanee_history.amount as amount','wanee_history.created_at as date','users.phone as phone')
+        ->select('wanee_history.saldo_akhir as saldoakhir','wanee_history.id as id','agen.name as name','wanee_history.amount as amount','wanee_history.created_at as date','users.phone as phone')
+        ->whereIn('wanee_history.id',$id)
         ->get();
-        
-        $history = WaneeHistory::where('id','=',$id)
-        ->update([
-            'reason' => 'Pending',
-        ]);
 
-        return back();
+        $pdf = PDF::loadView('pdf.waneehistory',compact('his'));
+        return $pdf->download('waneehistory.pdf');
     }
     private function _export_excel2($history) {
         $history = WaneeHistory::join('users','users.id','=','wanee_history.user_id')
@@ -204,19 +211,18 @@ class EmployeeController extends Controller
         return view('agent.waneepending',compact('history','request'))->withTitle('by Wanee History');
     }
     
-    public function updateStatus1(Request $request,$id){
-        $history = WaneeHistory::join('users','users.id','=','wanee_history.user_id')
-        ->join('role','role.id','=','users.role_id')
-        ->join('agen','agen.identifier','=','users.id')
-        ->select('agen.name as name','wanee_history.amount as amount','wanee_history.created_at as date','users.phone as phone')
-        ->get();
+    public function updateStatus1(Request $request){
         
-        $history = WaneeHistory::where('id','=',$id)
-        ->update([
-            'reason' => 'Withdraw',
-        ]);
+        $id = [];
+        foreach($request->checkbox as $val) {
+            $wanee = WaneeHistory::find($val);
+            $wanee->update([
+                'reason' => 'Withdraw'
+            ]);
 
-        return back();
+            array_push($id, $val);
+        }
+       return back();
     }
     private function _export_excel1($history) {
         $history = WaneeHistory::join('users','users.id','=','wanee_history.user_id')
@@ -286,19 +292,17 @@ class EmployeeController extends Controller
         return view('agent.waneeapprove',compact('history','request'))->withTitle('by Wanee History');
     }
     
-    public function updateStatus2(Request $request,$id){
-        $history = WaneeHistory::join('users','users.id','=','wanee_history.user_id')
-        ->join('role','role.id','=','users.role_id')
-        ->join('agen','agen.identifier','=','users.id')
+    public function updateStatus2(Request $request){
         
-        ->select('agen.name as name','wanee_history.amount as amount','wanee_history.created_at as date','users.phone as phone')
-        ->get();
-        
-        $history = WaneeHistory::where('id','=',$id)
-        ->update([
-            'reason' => 'Pending',
-        ]);
+        $id = [];
+        foreach($request->checkbox as $val) {
+            $wanee = WaneeHistory::find($val);
+            $wanee->update([
+                'reason' => 'Pending'
+            ]);
 
+            array_push($id, $val);
+        }
         return back();
     }
     private function _export_excel3($history) {

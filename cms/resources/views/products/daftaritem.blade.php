@@ -55,7 +55,7 @@
                     <div class="row">
                         <div class="col-lg-12">
                                 <div class="table-responsive">
-                                    <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-example">
+                                    <table width="100%" class="sortable table table-striped table-bordered table-hover" id="dataTables-example">
                                         <thead>
                                             <tr>
                                                 <th>Nama Barang</th>

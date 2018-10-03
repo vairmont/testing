@@ -57,7 +57,7 @@
                 <div class="col-lg-12">
                     <!-- /.div 2 -->
                     <div class="table-responsive">
-                        <table width="100%"class="table table-striped table-bordered table-hover" id="dataTables-example">
+                        <table width="100%"class="sortable table table-striped table-bordered table-hover" id="dataTables-example">
                             <thead>
                                 <tr>
                                     <th>ID</th>
@@ -139,8 +139,8 @@
                                 @endif
                             </tbody>
                             <tfoot>
-                                          {{ $flowreport->appends(['date'=>$request->date,'dayword1'=>$request->dayword1,'dayword2'=>$request->dayword2,'keyword1'=>$request->keyword1])->links() }}
-                            </tfoot>
+                                    {{ $flowreport->appends($_GET)->links() }}
+                                </tfoot>
                         </table>
                         <!-- /div 2 -->
                     </div>

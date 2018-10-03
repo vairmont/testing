@@ -75,18 +75,12 @@ class ReportController extends Controller
 
         $total1 = 0;
         foreach($qry as $q) {
-            $total1 += ($q->cost * $q->qty);
+            $total1 += ($q->cost);
         }
 
         $total2 = 0;
         foreach($qry as $q) {    
-        if($q->promo_price > 0){
-            $price = $q->promo_price;
-        }
-        else{
-            $price = $q->price_for_customer;
-        }
-            $total2 += ($price * $q->qty);
+            $total2 += ($q->cost * $q->qty);
         }
         
         $totalsales = $totalsales->orderby('order.created_at','desc')->paginate(10);  
@@ -104,14 +98,15 @@ class ReportController extends Controller
                 'SKU'=>$total->sku,
                 'Name'=>$total->name,
                 'Quantity'=>$total->qty,
-                'Nominal'=>number_format($total->nominal),
-                'Cost'=>number_format($total->cost),
+                'Modal'=>number_format($total->cost),
+                'Penjualan'=>number_format($total->cost * $total->qty),
                 'Store'=>$total->sname,
                 'Created at'=>$total->create,
                 'update at'=>$total->update
             ]);
         }
-        
+
+
         
         return Excel::create('Total_sales', function($excel) use($data) {
             $excel->sheet('Sheetname', function($sheet) use($data) {

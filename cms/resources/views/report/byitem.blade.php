@@ -50,7 +50,7 @@
                 <div class="col-lg-12">
                     <!-- /.div 2 -->
                     <div class="table-responsive">
-                        <table class="table table-striped table-bordered table-hover" id="dataTables-example">
+                        <table class=" sortable table table-striped table-bordered table-hover" id="dataTables-example">
                             <thead>
                                 <tr>
                                     <th>ID</th>
@@ -83,8 +83,9 @@
                               @endif
                             </tbody>
                             <tfoot>
-                                          {{ $totalsales->appends(['date'=>$request->date,'dayword1'=>$request->dayword1,'dayword2'=>$request->dayword2])->links() }}
-                            </tfoot>
+                            {{--  {{ $totalsales->appends(['keyword' => $request->keyword,'key' => $request->key,'date' => $request->date,'dayword1' => $request->dayword1,'dayword2' => $request->dayword2])->links() }}  --}}
+                                {{ $totalsales->appends($_GET)->links() }}
+                        </tfoot>
                         </table>
                         <!-- /div 2 -->
                     </div>

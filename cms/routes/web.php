@@ -36,8 +36,9 @@ Route::get('/bywaneeapprove','EmployeeController@getByWaneeApprove');
 Route::get('/bywithdraw', 'WithDrawController@getByWithDraw');
 
 Route::get('/verifywanee/{id}','EmployeeController@updateStatus')->name('status1');
-Route::get('/verifywanee3/{id}','EmployeeController@updateStatus1')->name('status3');
-Route::get('/verifywanee4/{id}','EmployeeController@updateStatus2')->name('status4');
+Route::post('/verifycheckbox','EmployeeController@updateCheck')->name('check1');
+Route::post('/verifywanee3','EmployeeController@updateStatus1')->name('status3');
+Route::post('/verifywanee4','EmployeeController@updateStatus2')->name('status4');
 
 
 Route::get('/verifywanee2/{id}','EmployeeController@updateStatus')->name('status2');
