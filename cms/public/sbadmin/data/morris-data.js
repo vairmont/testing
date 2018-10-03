@@ -27,6 +27,7 @@ $(function() {
                     fillOpacity: 0.4,
                     hideHover: 'auto',
                     resize: true,
+                    behaveLikeLine: true,
                     lineColors: ['green', 'blue','red','black']
                 });
 
