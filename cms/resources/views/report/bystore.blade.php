@@ -65,7 +65,7 @@
                                     <th>Order</th>
                                     <th>ProductName</th>
                                     <th>Quantity</th>
-                                    <th>Margin</th>                                
+                                    <th>Margin</th>                    
                                     <th>Insentif</th>
                                     <th>Paid by Agen</th>
                                     <th>Paid by Customer</th>
@@ -91,34 +91,22 @@
                                         <td>{{$flow->proname}}</td>
                                         <td>{{$flow->qty}}</td>
                                         <td>
-                                            @if($flow->promo_price == 0)
-                                            Rp.{{number_format($flow->customer_price * $flow->qty * 0.05)}},-
+                                            @if($flow->source == NULL)
+                                            Rp.0
                                             @else
-                                            <label style="color:red;">Rp.{{number_format($flow->promo_price * $flow->qty * 0.05)}},-</label>
+                                            Rp.{{number_format($flow->customer_price * $flow->qty * 0.05)}}
                                             @endif
                                         </td>
                                         <td>
-                                            @if($flow->promo_price == 0)
-                                            Rp.{{ number_format($flow->customer_price * $flow->qty * 0.95 * $flow->rate / 100)}},-
+                                            @if($flow->source == NULL)
+                                            Rp.0
                                             @else
-                                            <label style="color:red;">Rp.{{ number_format($flow->promo_price * $flow->qty * 0.95 * $flow->rate / 100)}},-</label>
-                                            @endif      
+                                            Rp.{{ number_format($flow->customer_price * $flow->qty * 0.95 * $flow->rate / 100)}}
+                                            @endif
                                         </td>
+                                        <td>Rp.{{ number_format($flow->customer_price * $flow->qty * 0.95)}}</td>
+                                        <td>Rp.{{ number_format($flow->customer_price * $flow->qty)}}</td>
                                         <td>
-                                            @if($flow->promo_price == 0)
-                                            Rp.{{ number_format($flow->customer_price * $flow->qty * 0.95)}},-
-                                            @else
-                                            <label style="color:red;">Rp.{{ number_format($flow->promo_price * $flow->qty * 0.95)}},-</label>
-                                            @endif  
-                                        </td>
-                                        <td>
-                                            @if($flow->promo_price == 0)
-                                            Rp.{{ number_format($flow->customer_price * $flow->qty)}},-
-                                            @else
-                                            <label style="color:red;">Rp.{{ number_format($flow->promo_price * $flow->qty)}},-</label>
-                                            @endif  
-                                         </td>
-                                         <td>
                                             @if($flow->stoname == NULL)
                                             Serang
                                             @else
@@ -127,7 +115,7 @@
                                         </td>
                                         <td>
                                         @if($flow->source == NULL)
-                                        ?
+                                        Kasir
                                         @else
                                         {{$flow->source}}
                                         @endif

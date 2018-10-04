@@ -210,15 +210,14 @@ class ReportController extends Controller
                 'Order' => $flow->invoice,
                 'Nama Produk' =>$flow->proname,
                 'Quantity' => $flow->qty,
-                'Margin' => number_format(($flow->customer_price - $flow->agen_price) * $flow->qty),
-                'Isentif'=> number_format($flow->rate * $flow->agen_price * $flow->qty /100),
+                'Margin' => ($flow->source == NULL) ? 0 : number_format(($flow->customer_price - $flow->agen_price) * $flow->qty),
+                'Isentif'=> ($flow->source == NULL) ? 0 : number_format($flow->rate * $flow->agen_price * $flow->qty /100),
                 'Paid by Agen' => number_format($flow->agen_price * $flow->qty),
                 'Paid by Customer' => number_format($flow->customer_price * $flow->qty),
-                'Store' => $flow->stoname,
-                'Source'=> $flow->source,
+                'Store' => ($flow->source == NULL) ? Serang : $flow->stoname,
+                'Source'=> ($flow->source == NULL) ? Kasir : $flow->source,
                 'Created At' => $flow->create, 
             ]);
-               
         }
         
         return Excel::create('Flow_report', function($excel) use($data) {
