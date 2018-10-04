@@ -214,8 +214,8 @@ class ReportController extends Controller
                 'Isentif'=> ($flow->source == NULL) ? 0 : number_format($flow->rate * $flow->agen_price * $flow->qty /100),
                 'Paid by Agen' => number_format($flow->agen_price * $flow->qty),
                 'Paid by Customer' => number_format($flow->customer_price * $flow->qty),
-                'Store' => ($flow->source == NULL) ? Serang : $flow->stoname,
-                'Source'=> ($flow->source == NULL) ? Kasir : $flow->source,
+                'Store' => ($flow->source == NULL) ? "Serang" : $flow->stoname,
+                'Source'=> ($flow->source == NULL) ? "Kasir" : $flow->source,
                 'Created At' => $flow->create, 
             ]);
         }
