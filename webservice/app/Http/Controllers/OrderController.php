@@ -436,7 +436,7 @@ class OrderController extends Controller
    
       public function purchaseDone(Request $request) {
 
-      $orders = Order::join('order_billing_detail', 'order_billing_detail.order_id', '=', 'order.id')
+      $orders = Order::leftJoin('order_billing_detail', 'order_billing_detail.order_id', '=', 'order.id')
       ->join('agen', 'agen.identifier', '=', 'order.agen_id')
       ->where('user_id', '=', $request->get('user')->id)
       ->where('status', '=', 7)
