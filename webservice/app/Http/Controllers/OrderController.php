@@ -527,6 +527,14 @@ class OrderController extends Controller
           $topup = Agen::where('agen.identifier','=',$request->get('user')->id)
                  ->decrement('plafon_kredit', round($subtotal));
         }
+
+    $history = new WaneeHistory;
+    $history->user_id = $request->get('user')->id;
+    $history->amount = $subtotal;
+    $history->saldo_akhir = $agen->plafon_kredit;
+    $history->reason = 'Belanja Paket';
+    $history->save();
+
     #Input Billing Detail
     $orderbillingdetail = new OrderBillingDetail;
 
