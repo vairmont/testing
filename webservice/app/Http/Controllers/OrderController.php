@@ -489,7 +489,7 @@ class OrderController extends Controller
     $order->tax = 0;
     $order->discount = 0;
     $order->total = 0;
-    $order->status = OrderStatus::CREATED;
+    $order->status = OrderStatus::COMPLETED;
     $order->agen_id = $agencust->identifier;
     $order->shipment = 'courier';
     $order->payment = 'transfer';
