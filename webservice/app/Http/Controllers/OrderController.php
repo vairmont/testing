@@ -16,6 +16,7 @@ use App\OrderCancel;
 use App\Product;
 use App\Withdraw;
 use App\Customer;
+use App\Store;
 use App\Family;
 use App\User;
 use App\Agen;
@@ -433,6 +434,121 @@ class OrderController extends Controller
       return response()->json(['message' => 'Order has been completed.'], 201);
       }
    
+      public function purchaseDone(Request $request) {
+
+      $orders = Order::join('order_billing_detail', 'order_billing_detail.order_id', '=', 'order.id')
+      ->join('agen', 'agen.identifier', '=', 'order.agen_id')
+      ->where('user_id', '=', $request->get('user')->id)
+      ->whereIn('status', [1,6,7])
+      ->orderBy('order.created_at', 'desc')
+      ->select('order.id', 'order.invoice_no as invoice', 'order.created_at as date', 'order.payment as payment', 'order.status as status', 'order.total as total', 'order_billing_detail.notes as notes')
+      ->get();
+
+      $result = [];
+      foreach ($orders as $order) {
+        $items = OrderDetail::Join('product', 'product.id', '=', 'order_detail.product_id')
+          ->where('order_id', '=', $order->id)
+          ->select('product.id as product_id', 'product.sku', 'product.product_name', 'order_detail.qty','product.price_for_agen','product.img_url', 'product.promo_price')
+          ->get();
+
+        $result[] = [
+          'order' => $order,
+          'items' => $items,
+          'created_at' => Carbon::parse($order->date)->format('d M Y H:i')
+        ];
+      }
+
+      return response()->json($result, 200);
+    }
+
+      public function purchase(Request $request) {
+       DB::beginTransaction();
+      try {
+
+      $customer = User::where('id', '=', $request->get('user')->id)->first();
+
+      $storelocation = Store::join('users', 'users.store_id', '=', 'store.id')
+                       ->select('store.lat', 'store.long', 'store.store_name')
+                       ->where('store.id', '=', $customer->store_id)
+                       ->first();  
+
+    $agencust = Agen::where('agen.identifier','=',$request->get('user')->id)
+    ->select('agen.identifier as identifier', 'agen.name', 'agen.address')
+    ->first();
+
+    #ROLE AGEN / CUST
+
+    $today = date("Ymd");
+    $rand = strtoupper(substr(uniqid(sha1(time())),0,4));
+    $unique = $today . $rand;
+
+    $order = new Order;
+    $order->invoice_no = $unique;
+    $order->user_id = $agencust->identifier;
+    $order->subtotal = 0;
+    $order->tax = 0;
+    $order->discount = 0;
+    $order->total = 0;
+    $order->status = OrderStatus::CREATED;
+    $order->agen_id = $agencust->identifier;
+    $order->shipment = 'courier';
+    $order->payment = 'transfer';
+    $order->save();
+
+    $product = Product::where('id',$request->product_id)->first();
+
+      $orderDetail = new OrderDetail;
+      $orderDetail->order_id = $order->id;
+      $orderDetail->product_id = $request->product_id;
+      $orderDetail->category_id = $product->category_id;
+      $orderDetail->qty = $request->qty;
+      $orderDetail->price_for_customer = (($product->promo_price == 0) ? $product->price_for_customer : $product->promo_price);
+      $orderDetail->price_for_agen = (($product->promo_price == 0) ? $product->price_for_customer : $product->promo_price) * 0.95;
+      $orderDetail->save();
+
+      $details = OrderDetail::where('order_id', $order->id)->get();
+
+      $subtotal = 0;
+      foreach($details as $d) {
+        $subtotal += (int) ($d->price_for_customer * 0.95 * $d->qty);
+      }
+      $updateOrder = Order::where('id', $order->id)->update([
+          'subtotal' => $subtotal,
+          'total' => $subtotal 
+        ]);
+
+    $agen = Agen::where('agen.identifier', '=', $request->get('user')->id)
+                      ->first();
+        if($agen->plafon_kredit < $subtotal){
+          return response()->json(['data' => [], 'message' => ['Saldo anda kurang']]);
+        }
+        else
+        {
+          $topup = Agen::where('agen.identifier','=',$request->get('user')->id)
+                 ->decrement('plafon_kredit', round($subtotal));
+        }
+    #Input Billing Detail
+    $orderbillingdetail = new OrderBillingDetail;
+
+    $orderbillingdetail->order_id =  $order->id;
+    $orderbillingdetail->customer_name = $agencust->name;
+    $orderbillingdetail->customer_phone = $request->get('user')->phone;
+    $orderbillingdetail->customer_address = $agencust->address;
+    $orderbillingdetail->customer_address2 = $agencust->address;
+    $orderbillingdetail->lat = $storelocation->lat;
+    $orderbillingdetail->long = $storelocation->long;
+    $orderbillingdetail->notes = $request->notes;
+    $orderbillingdetail->save();
+    
+    } catch(\Exception $e) {
+          DB::rollback();
+          throw $e;
+      }
+      DB::commit();
+
+    return response()->json(['data' => [], 'message' => ['OK']]);
+        
+  }
 
     public function manualNotif(Request $request){
        
