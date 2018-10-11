@@ -18,9 +18,9 @@ class ProductController extends Controller
 
 	public function index(Request $request)
 	{
-    $products = Product::Join('product_category', 'product.category_id','=','product_category.id')
-    ->join('incentive_category', 'product.incentive_id','=', 'incentive_category.id')
-    ->join('stock', 'product.id', '=', 'stock.product_id')
+    $products = Product::join('product_category', 'product.category_id','=','product_category.id')
+    ->leftJoin('incentive_category', 'product.incentive_id','=', 'incentive_category.id')
+    ->leftJoin('stock', 'product.id', '=', 'stock.product_id')
     ->where('stock.quantity', '>', 0)
     ->where('stock.store_id', '=', $request->get('user')->store_id)
     ->select(
