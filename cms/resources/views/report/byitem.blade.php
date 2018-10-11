@@ -9,7 +9,7 @@
 <!-- div container -->
         <div class="container-fluid">
             <div>
-                <h2>Total Sales</h2>
+                <h2>Laporan Pembelian</h2>
             </div>
 
             <div class="row">
@@ -40,9 +40,9 @@
             </div>
 
             <div class="row">
-                <h3>Total Modal :Rp.{{number_format($total1)}}</h3>
-                <h3>Total Penjualan :Rp.{{number_format($total2)}}</h3>
-                <h3>Total Margin G1 :Rp.{{number_format($total2 - $total1)}}</h3>              
+                
+                <h3>Total Pembelian :Rp.{{number_format($total2)}}</h3>
+                
             </div>
             <!-- /.row -->
             <div class="row">
@@ -58,8 +58,8 @@
                                     <th>Supplier</th>
                                     <th>Nama Barang</th>
                                     <th>Quantity</th>
-                                    <th>Modal</th>
-                                    <th>Penjualan</th>
+                                    <th>Harga satuan</th>
+                                    <th>Total Pembelian</th>
                                     <th>Store</th>
                                     <th>Tanggal</th>
                                 </tr>

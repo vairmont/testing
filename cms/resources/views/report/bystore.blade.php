@@ -94,7 +94,7 @@
                                             @if($flow->source == NULL)
                                             Rp.0
                                             @else
-                                            Rp.{{number_format($flow->customer_price * $flow->qty * 0.05)}}
+                                            Rp.{{ number_format($flow->customer_price * $flow->qty * 0.05)}}
                                             @endif
                                         </td>
                                         <td>

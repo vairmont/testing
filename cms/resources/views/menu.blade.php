@@ -9,7 +9,7 @@
                     <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Laporan<span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level">
                         <li>
-                            <a href="{{url('/byitem')}}">Laporan Total sales</a>
+                            <a href="{{ url('/byitem')}}">Laporan Pembelian</a>
                             </li>
                         <li>
                             <a href="{{url('/bystore')}}">Laporan Flow Sales</a>
@@ -19,9 +19,6 @@
                         </li>
                         <li>
                             <a href="{{url('/byemployee')}}">Penjualan oleh karyawan</a>
-                        </li>
-                        <li>
-                            <a href="{{url('/bychasier')}}">Penjualan oleh Kasir</a>
                         </li>
                     </ul>
                     <!-- /.nav-second-level -->

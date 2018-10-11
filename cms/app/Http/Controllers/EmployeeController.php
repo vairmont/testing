@@ -34,7 +34,8 @@ class EmployeeController extends Controller
        
         $agen = $agen->orderby('agen.name','asc')->get();
           
-        return view('agent.agentlist',compact('agen', 'stores'))->withTitle('by Agent List');
+        return view('agent.agentlist',compact('agen', 'stores'))->withTitle('by Agent List')->with('message', 'Verifikasi Sukses...!');
+
     }
     private function _export_excel($agen) {
         $agen = Agen::join('users','users.id','=','agen.identifier')
@@ -140,7 +141,22 @@ class EmployeeController extends Controller
         ->whereIn('wanee_history.id',$id)
         ->get();
 
-        $pdf = PDF::loadView('pdf.waneehistory',compact('his'));
+        $qry = $his;
+        
+        $total1=0;
+        foreach($qry as $q) {
+            $total1 += ($q->saldoakhir);
+        }
+        $total2=0;
+        foreach($qry as $q) {
+            $total2 += ($q->amount);
+        }
+        $total3=0;
+        foreach($qry as $q) {
+            $total3 += ($q->saldoakhir - $q->amount);
+        }
+
+        $pdf = PDF::loadView('pdf.waneehistory',compact('his','total1','total2','total3','qry'));
         return $pdf->download('waneehistory.pdf');
         
     }
