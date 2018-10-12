@@ -24,8 +24,6 @@ class ReportController extends Controller
         $isExport = $request->get('is_export', 0);
         $args['pages'] = $isExport;
 
-        
-        
         $totalsales = Order::join('order_detail','order.id','=','order_detail.order_id')
         ->join('product','product.id','=','order_detail.product_id')
         ->join('suppliers', 'product.suppliers_id', '=', 'suppliers.id')
@@ -100,10 +98,10 @@ class ReportController extends Controller
                 'Supplier'=>$total->supplier,
                 'Nama Barang'=>$total->name,
                 'Quantity'=>$total->qty,
-                'Harga satuan'=>number_format($total->cost),
-                'Penjualan'=>number_format($total->cost * $total->qty),
+                'Harga Satuan'=>number_format($total->cost),
+                'Total Pembelian'=>number_format($total->cost * $total->qty),
                 'Store'=>$total->sname,
-                'Created at'=>$total->create,
+                'Tanggal'=>$total->create,
             ]);
                 
         }
