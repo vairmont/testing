@@ -220,7 +220,7 @@ class ReportController extends Controller
                 'Paid by Customer' => number_format($flow->customer_price * $flow->qty),
                 'Store' => ($flow->source == NULL) ? "Serang" : $flow->stoname,
                 'Source'=> ($flow->source == NULL) ? "Kasir" : $flow->source,
-                'Created At' => $flow->create, 
+                'Tanggal' => $flow->create, 
             ]);
         }
         
