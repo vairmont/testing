@@ -9,7 +9,7 @@
 <!-- div container -->
         <div class="container-fluid">
             <div>
-                <h2 >Flow Sales</h2>
+                <h2 >Laporan Penjualan</h2>
             </div>  
 
                     <div class="row">
