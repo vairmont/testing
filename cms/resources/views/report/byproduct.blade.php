@@ -10,12 +10,12 @@
 
         <div class="container-fluid">
             <div>
-                <h2>Penjualan Per Kategori</h2>
+                <h2>Penjualan Per Product</h2>
             </div>
 
             <!-- /.row -->
             <div class="row">
-                    <form class="form-inline" method="GET" action="{{url('/bycategory')}}"> 
+                    <form class="form-inline" method="GET"> 
                         <button type="submit" name="is_export" value="1" class="btn btn-primary">Export</button>
                     </form>
             <!-- div col -->
@@ -25,20 +25,20 @@
                         <table class=" sortable table table-striped table-bordered table-hover" id="dataTables-example">
                             <thead>
                                 <tr>
-                                    <th>Kategori</th>
+                                    <th>Nama</th>
                                     <th>Quantity</th>
-                                    <th>Total</th>
+                                    <th>Modal</th>
                                 </tr>
                             </thead>
 
                             <tbody>
-                                @foreach($categories as $c)
+                            @foreach($products as $p)
                                 <tr>
-                                    <td><a href="{{ url('/byproduct', $c->name) }}" style="color: green;">{{ $c->name}}</a></td>
-                                    <td>{{ number_format($bycat[$c->name]->qty) }}</td>
-                                    <td>{{ number_format($bycat[$c->name]->modal) }}</td>
+                                    <td>{{ $p->product_name}}</a></td>
+                                    <td>{{ number_format($byprod[$p->product_name]->qty) }}</td>
+                                    <td>{{ number_format($byprod[$p->product_name]->modal) }}</td>
                                 </tr>
-                                @endforeach
+                            @endforeach
                             </tbody>
                                 <tfoot>
                 
