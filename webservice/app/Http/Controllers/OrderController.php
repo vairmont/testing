@@ -385,8 +385,8 @@ class OrderController extends Controller
       foreach ($incentiveDetails as $detail) {
         if($detail->category_id == 5){
           $prices += (($detail->promo_price == 0) ? $detail->price_for_customer : $detail->promo_price) * $detail->qty;
-          $margin += 0;
-          $incentive += (($detail->promo_price == 0) ? $detail->price_for_customer : $detail->promo_price) * $detail->qty * $detail->rate / 100;  
+          $margin += (($detail->promo_price == 0) ? $detail->price_for_customer : $detail->promo_price) * $detail->qty * $this->marginRate;
+          $incentive += (($detail->promo_price == 0) ? $detail->price_for_customer : $detail->promo_price) * $detail->qty * 0.95 * $detail->rate / 100;     
           }
 
           else{

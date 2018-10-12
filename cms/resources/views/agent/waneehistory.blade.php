@@ -8,7 +8,7 @@
 
      <div class="container-fluid">
             <div>
-                <h2>View Wanee</h2>
+                <h2>History Plafon Kredit</h2>
             </div>
                 <div class="col-lg-12">
                     <p> </p>
