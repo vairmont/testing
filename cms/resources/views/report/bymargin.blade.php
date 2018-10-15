@@ -17,7 +17,9 @@
             </div>
             <div class="row">
                 <form class="form-inline" method="GET" action="{{url('/bymargin')}}"> 
-                   
+                    <div class="form-group">
+                        <input name="keyword" class="form-control mr-sm-2" type="text" placeholder="Nama Product" aria-label="Search" @if(isset($request->keyword)) value="{{$request->keyword}}" @endif>
+                    </div>
                     <div class="form-group">
                         <input type="date" class="form-control mr-sm-2" name="dayword1" @if(isset($request->dayword1)) value="{{$request->dayword1}}" @endif>
                         <p class="glyphicon glyphicon-minus"></p>

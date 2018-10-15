@@ -26,7 +26,7 @@
                             <thead>
                                 <tr>
                                     <th>Kategori</th>
-                                    <th>Quantity</th>
+                                    <th>Barang terjual</th>
                                     <th>Total</th>
                                 </tr>
                             </thead>
@@ -36,7 +36,7 @@
                                 <tr>
                                     <td><a href="{{ url('/byproduct', $c->name) }}" style="color: green;">{{ $c->name}}</a></td>
                                     <td>{{ number_format($bycat[$c->name]->qty) }}</td>
-                                    <td>{{ number_format($bycat[$c->name]->modal) }}</td>
+                                    <td>Rp.{{ number_format($bycat[$c->name]->modal) }}</td>
                                 </tr>
                                 @endforeach
                             </tbody>
