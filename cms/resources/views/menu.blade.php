@@ -12,7 +12,10 @@
                             <a href="{{ url('/byitem')}}">Laporan Pembelian</a>
                             </li>
                         <li>
-                            <a href="{{url('/bystore')}}">Laporan Flow Sales</a>
+                            <a href="{{url('/bystore')}}">Laporan  Penjualan</a>
+                        </li>
+                        <li>
+                            <a href="{{url('/bymargin')}}">Laporan  Margin G1</a>
                         </li>
                         <li>
                             <a href="{{url('/bycategory')}}">Penjualan per kategori</a>

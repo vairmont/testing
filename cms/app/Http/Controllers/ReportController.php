@@ -348,5 +348,64 @@ class ReportController extends Controller
 
         return view('report.byemployee',compact('byagen','temp','coms','request'))->withTitle('by employee');
     }
-   
+   public function getByMargin(Request $request){
+    $isExport = $request->get('is_export', 0);
+    $args['pages'] = $isExport;
+
+    $margin = Order::leftjoin('order_detail','order.id','=','order_detail.order_id')
+    ->join('product','product.id','=','order_detail.product_id')
+    ->join('incentive_category','incentive_category.id','=','product.incentive_id')
+    ->join('agen','agen.identifier','=','order.agen_id')
+    ->join('users','users.id','=','agen.identifier')
+    ->join('store','store.id','=','users.store_id')
+    ->whereIn('order.status',[7,9])
+    ->select('agen.source as source','product.cost as cost','store.store_name as stoname','order_detail.qty as qty','incentive_category.rate as rate','order.invoice_no as invoice','agen.name as name','order_detail.order_id as id','product.product_name as proname','order_detail.price_for_agen as agen_price','order_detail.price_for_customer as customer_price','order.created_at as create','order.updated_at as update','order.agen_id as aid', 'product.promo_price');
+    
+    if(isset($request->dayword1) && !empty($request->dayword1) && isset($request->dayword2) && !empty($request->dayword2)){
+        $margin = $margin->whereBetween('order.created_at',[$request->dayword1, Carbon::parse($request->dayword2)->addDays(1)]);
+    }   
+    if ($isExport) {
+        $this->_export_excelMargin($margin);
+    }
+    
+        $margin = $margin->orderby('order.created_at','desc')->paginate(10);  
+        return view('report.bymargin',compact('margin'))->withTitle('Margin');
+   }
+   private function _export_excelMargin($margin) {
+    $margin = Order::leftjoin('order_detail','order.id','=','order_detail.order_id')
+    ->join('product','product.id','=','order_detail.product_id')
+    ->join('incentive_category','incentive_category.id','=','product.incentive_id')
+    ->join('agen','agen.identifier','=','order.agen_id')
+    ->join('users','users.id','=','agen.identifier')
+    ->join('store','store.id','=','users.store_id')
+    ->whereIn('order.status',[7,9])
+    ->select('agen.source as source','product.cost as cost','store.store_name as stoname','order_detail.qty as qty','incentive_category.rate as rate','order.invoice_no as invoice','agen.name as name','order_detail.order_id as id','product.product_name as proname','order_detail.price_for_agen as agen_price','order_detail.price_for_customer as customer_price','order.created_at as create','order.updated_at as update','order.agen_id as aid', 'product.promo_price')
+    ->get();
+
+    $data = [];
+    foreach ($margin as $mar) {
+        $data[] = ([
+            'Tanggal'=> $mar->create,
+            'Produk' => $mar->proname ,
+            'Quantity' => $mar->qty,
+            'Sales G1' => number_format($mar->customer_price * $mar->qty * 0.95),
+            'HPP' => number_format($mar->cost * $mar->qty),
+            'GrosirOne Margin' => number_format(($mar->customer_price * $mar->qty * 0.95)-($mar->cost * $mar->qty)),
+            'Insentif agen' =>number_format($mar->customer_price * $mar->qty * 0.95 * $mar->rate / 100),
+            'Net Margin' =>number_format((($mar->customer_price * $mar->qty * 0.95)-($mar->cost * $mar->qty))-(($mar->customer_price * $mar->qty * 0.95 * $mar->rate / 100))),
+        ]);
+    }
+
+    
+    return Excel::create('Margin_report', function($excel) use($data) {
+        $excel->sheet('Sheetname', function($sheet) use($data) {
+            $row = 1;
+
+            $sheet->fromArray($data, null, 'A' . $row, true, true);
+
+            $sheet->getStyle("A1:" . 'G' . $row)
+                ->getAlignment()->setWrapText(false);
+        });
+    })->export('xls');
+}
 }
