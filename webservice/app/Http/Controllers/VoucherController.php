@@ -23,13 +23,13 @@ class VoucherController extends Controller
             ->first();
 
             if($data->discount > 0 && $data->discount < 100){
-                $discount = $data->discount / 100;
+                $discountrate = $data->discount / 100;
             }
             if($data->discount > 100){
                 $discount = $data->discount;
             }
             if($data->cashback > 0 && $data->cashback < 100){
-                $cashback = $data->cashback / 100;
+                $cashbackrate = $data->cashback / 100;
             }
             if($data->cashback > 100){
                 $cashback = $data->cashback;
