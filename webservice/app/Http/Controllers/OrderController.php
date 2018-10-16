@@ -439,7 +439,7 @@ class OrderController extends Controller
       $orders = Order::leftJoin('order_billing_detail', 'order_billing_detail.order_id', '=', 'order.id')
       ->join('agen', 'agen.identifier', '=', 'order.agen_id')
       ->where('user_id', '=', $request->get('user')->id)
-      ->where('status', '=', 7)
+      ->whereIN('status', [1,6,7])
       ->orderBy('order.created_at', 'desc')
       ->select('order.id', 'order.invoice_no as invoice', 'order.created_at as date', 'order.payment as payment', 'order.status as status', 'order.total as total', 'order_billing_detail.notes as notes')
       ->get();
