@@ -40,7 +40,7 @@
                                 <tr>
                                     <td>{{ $p->product_name}}</a></td>
                                     <td>{{ number_format($byprod[$p->product_name]->qty) }}</td>
-                                    <td>{{ number_format($byprod[$p->product_name]->modal) }}</td>
+                                    <td>Rp.{{ number_format($byprod[$p->product_name]->modal) }}</td>
                                 </tr>
                             @endforeach
                             </tbody>

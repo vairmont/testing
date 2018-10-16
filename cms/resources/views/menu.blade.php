@@ -66,23 +66,24 @@
                     
                         <ul class="nav nav-second-level">
                             <li>
-                                <a href="{{url('/bypurchaseorder')}}">Purchase orders</a>
-                            </li>
-                            <li>
-                                <a href="{{url('/bytransferorder')}}">Transfer orders</a>
-                            </li>
-                            <li>
                                 <a href="{{url('/bystockadjustment')}}">Stock adjustments</a>
                             </li>
                             <li>
                                 <a href="{{url('/bysupplier')}}">Suppliers</a>
                             </li>
+                            {{-- <li>
+                                <a href="{{url('/bypurchaseorder')}}">Purchase orders</a>
+                            </li>
+                            <li>
+                                <a href="{{url('/bytransferorder')}}">Transfer orders</a>
+                            </li>
+                          
                             <li>
                                 <a href="{{url('/byinventoryhistory')}}">Inventory history</a>
                             </li>
                             <li>
                                 <a href="{{url('/byinventoryvaluation')}}">Inventory valuation</a>
-                            </li>
+                            </li> --}}
                         </ul>
                     <!-- /.nav-second-level -->
                 </li>
@@ -123,18 +124,6 @@
                     <!-- /.nav-second-level -->
                 </li>
                 <li>
-                        <a href="#"><i class="fa fa-male"></i> Pelanggan<span class="fa arrow"></span></a>
-                        <ul class="nav nav-second-level">
-                            <li>
-                                <a href="flot.html">Basis Pelanggan</a>
-                            </li>
-                            <li>
-                                <a href="morris.html">Notifikasi</a>
-                            </li>
-                        </ul>
-                    <!-- /.nav-second-level -->
-                </li>
-                <li>
                         <a href="#"><i class="fa fa-group"></i> Supply<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
                             <li>
@@ -143,7 +132,7 @@
                         </ul>
                     <!-- /.nav-second-level -->
                 </li>
-                <li>
+               {{-- <li>
                         <a href="#"><i class="fa fa-gears"></i> Pengaturan<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
                             <li>
@@ -166,7 +155,7 @@
                             </li>
                         </ul>
                     <!-- /.nav-second-level -->
-                </li>
+                </li> --}}
             </ul>
         @elseif(Auth::User()->role_id == '8')
             <ul class="nav" id="side-menu">
