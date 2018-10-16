@@ -31,7 +31,13 @@
                         <a href="#"><i class="fa fa-cart-arrow-down"></i> Shipment<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
                             <li>
-                                <a href="{{url('/order')}}">Shipment Order</a>
+                                <a href="{{url('/order')}}">New Order</a>
+                            </li>
+                            <li>
+                                <a href="{{url('/delivery')}}">Delivery Order</a>
+                            </li>
+                            <li>
+                                <a href="{{url('/done')}}">Finished Order</a>
                             </li>
                         </ul>
                 </li>

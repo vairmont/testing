@@ -489,7 +489,7 @@ class OrderController extends Controller
     $order->tax = 0;
     $order->discount = 0;
     $order->total = 0;
-    $order->status = OrderStatus::COMPLETED;
+    $order->status = OrderStatus::CREATED;
     $order->agen_id = $agencust->identifier;
     $order->shipment = 'courier';
     $order->payment = 'transfer';
@@ -517,23 +517,23 @@ class OrderController extends Controller
           'total' => $subtotal 
         ]);
 
-    $agen = Agen::where('agen.identifier', '=', $request->get('user')->id)
-                      ->first();
-        if($agen->plafon_kredit < $subtotal){
-          return response()->json(['data' => [], 'message' => ['Saldo anda kurang']]);
-        }
-        else
-        {
-          $topup = Agen::where('agen.identifier','=',$request->get('user')->id)
-                 ->decrement('plafon_kredit', round($subtotal));
-        }
+    // $agen = Agen::where('agen.identifier', '=', $request->get('user')->id)
+    //                   ->first();
+    //     if($agen->plafon_kredit < $subtotal){
+    //       return response()->json(['data' => [], 'message' => ['Saldo anda kurang']]);
+    //     }
+    //     else
+    //     {
+    //       $topup = Agen::where('agen.identifier','=',$request->get('user')->id)
+    //              ->decrement('plafon_kredit', round($subtotal));
+    //     }
 
-    $history = new WaneeHistory;
-    $history->user_id = $request->get('user')->id;
-    $history->amount = $subtotal;
-    $history->saldo_akhir = $agen->plafon_kredit;
-    $history->reason = 'Belanja Paket';
-    $history->save();
+    // $history = new WaneeHistory;
+    // $history->user_id = $request->get('user')->id;
+    // $history->amount = $subtotal;
+    // $history->saldo_akhir = $agen->plafon_kredit;
+    // $history->reason = 'Belanja Paket';
+    // $history->save();
 
     #Input Billing Detail
     $orderbillingdetail = new OrderBillingDetail;
