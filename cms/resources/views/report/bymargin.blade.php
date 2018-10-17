@@ -44,6 +44,7 @@
                                     <th>Tanggal</th>
                                     <th>Product</th>
                                     <th>Quantity</th>
+                                    <th>Toko</th>
                                     <th>Sales G1</th>
                                     <th>HPP</th>
                                     <th>GrosirOne Margin</th>
@@ -60,6 +61,7 @@
                                     <td>{{$mar->create }}</td>
                                     <td>{{ $mar->proname }}</td>
                                     <td>{{ $mar->qty }}</td>
+                                    <td>{{ $mar->stoname }}</td>
                                     <td>Rp.{{ number_format($mar->customer_price * $mar->qty * 0.95) }}</td>
                                     <td>Rp.{{ number_format($mar->cost * $mar->qty) }}</td>
                                     <td>Rp.{{ number_format(($mar->customer_price * $mar->qty * 0.95)-($mar->cost * $mar->qty)) }}</td>
