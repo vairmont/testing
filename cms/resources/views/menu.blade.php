@@ -91,7 +91,7 @@
                         <a href="#"><i class="fa fa-group"></i> Admin<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
                             <li>
-                                <a href="{{url('/bywaneehistory')}}">View Wanee</a>
+                                <a href="{{url('/bywaneehistory')}}">Show Wanee</a>
                             </li>
                             
                             <li>

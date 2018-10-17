@@ -60,8 +60,8 @@
                                             <tr>
                                                 <th>Nama Barang</th>
                                                 <th>Kategori</th>
-                                                <th>Harga</th>
-                                                <th>Biaya</th>
+                                                <th>Sales</th>
+                                                <th>HPP</th>
                                                 <th>Margin</th>
                                                 <th>Persediaan</th>
                                                 <th>Description</th>

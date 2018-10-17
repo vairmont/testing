@@ -117,6 +117,8 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
 
   Route::get('/notif', 'NotificationController@index');
 
+  Route::post('/voucher', 'VoucherController@checkVoucher');
+
   Route::post('/withdraw', 'OrderController@withdraw');
   Route::get('/withdraw', 'WithdrawController@index');
   Route::get('/withdraw/pending', 'WithdrawController@pending');   
