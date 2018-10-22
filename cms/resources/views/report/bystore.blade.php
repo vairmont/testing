@@ -69,6 +69,7 @@
                                     <th>Insentif</th>
                                     <th>Paid by Agen</th>
                                     <th>Paid by Customer</th>
+                                    <th>Discount invoice</th>
                                     <th>Store</th>
                                     <th>Source</th>
                                     <th>Tanggal</th>
@@ -106,6 +107,9 @@
                                         </td>
                                         <td>Rp.{{ number_format($flow->customer_price * $flow->qty * 0.95)}}</td>
                                         <td>Rp.{{ number_format($flow->customer_price * $flow->qty)}}</td>
+                                        <td>
+                                            {{ $flow->discount }}
+                                        </td>
                                         <td>
                                             @if($flow->stoname == NULL)
                                             Serang
