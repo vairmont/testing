@@ -103,6 +103,12 @@
                                             </div>
                                         </div>
                                         <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">Max Purchase</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control" name="max_purchase" value="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
                                             <label class="col-sm-2 col-form-label">Bonus Item</label>
                                             <div class="col-sm-10">
                                                 <input type="text" class="form-control" name="bonus_item" value="">
