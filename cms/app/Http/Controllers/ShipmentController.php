@@ -17,7 +17,7 @@ use App\Commission;
 use App\Stores\store;
 use Excel;
 
-class OrderController extends Controller
+class ShipmentController extends Controller
 {
 
      public function orderProcess(Request $request) {

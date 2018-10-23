@@ -9,25 +9,17 @@
 <!-- div container -->
         <div class="container-fluid">
             <div>
-                <h2>Laporan Pembelian</h2>
+                <h2>Laporan Margin G1</h2>
             </div>
 
-            <div class="row">
-                <a href="{{ url('/byitem') }}?date=1" class="btn btn-primary">Hari ini</a>
-                <a href="{{ url('/byitem') }}?date=2" class="btn btn-primary">Bulan ini</a>
-            </div>
             <div class="row">
             <p> </p>
             </div>
             <div class="row">
-                <form class="form-inline" method="GET" action="{{url('/byitem')}}"> 
+                <form class="form-inline" method="GET" action="{{url('/bymargin')}}"> 
                     <div class="form-group">
                         <input name="keyword" class="form-control mr-sm-2" type="text" placeholder="Nama Product" aria-label="Search" @if(isset($request->keyword)) value="{{$request->keyword}}" @endif>
                     </div>
-                    <div class="form-group">
-                        <input name="key" class="form-control mr-sm-2" type="text" placeholder="Nama Toko" aria-label="Search"@if(isset($request->key)) value="{{$request->key}}" @endif>
-                    </div>
-                    
                     <div class="form-group">
                         <input type="date" class="form-control mr-sm-2" name="dayword1" @if(isset($request->dayword1)) value="{{$request->dayword1}}" @endif>
                         <p class="glyphicon glyphicon-minus"></p>
@@ -39,11 +31,7 @@
                 </form>
             </div>
 
-            <div class="row">
-                
-                <h3>Total Pembelian :Rp.{{number_format($total2)}}</h3>
-                
-            </div>
+         
             <!-- /.row -->
             <div class="row">
             <!-- div col -->
@@ -53,38 +41,38 @@
                         <table class=" sortable table table-striped table-bordered table-hover" id="dataTables-example">
                             <thead>
                                 <tr>
-                                    <th>ID</th>
-                                    <th>SKU</th>
-                                    <th>Supplier</th>
-                                    <th>Nama Barang</th>
-                                    <th>Quantity</th>
-                                    <th>Harga satuan</th>
-                                    <th>Total Pembelian</th>
-                                    <th>Store</th>
                                     <th>Tanggal</th>
+                                    <th>Product</th>
+                                    <th>Quantity</th>
+                                    <th>Toko</th>
+                                    <th>Sales G1</th>
+                                    <th>HPP</th>
+                                    <th>GrosirOne Margin</th>
+                                    <th>Insentif agen</th>
+                                    <th>Net Margin</th>
+                                    
                                 </tr>
                             </thead>
 
                             <tbody>
-                            @if(count($totalsales) > 0)
-                                @foreach($totalsales as $total)           
+                                @if(count($margin) > 0)
+                                    @foreach($margin as $mar)
                                 <tr>
-                                    <td>{{$total->id}}</td>
-                                    <td>{{$total->sku}}</td>
-                                    <td>{{ $total->supplier }}</td>
-                                    <td>{{$total->name}}</td>
-                                    <td>{{$total->qty}}</td>
-                                    <td>Rp.{{number_format($total->cost)}}</td> 
-                                    <td>Rp.{{number_format($total->cost * $total->qty)}}</td>
-                                    <td>{{$total->sname}}</td>
-                                    <td>{{$total->create}}</td>
+                                    <td>{{$mar->create }}</td>
+                                    <td>{{ $mar->proname }}</td>
+                                    <td>{{ $mar->qty }}</td>
+                                    <td>{{ $mar->stoname }}</td>
+                                    <td>Rp.{{ number_format($mar->customer_price * $mar->qty * 0.95) }}</td>
+                                    <td>Rp.{{ number_format($mar->cost * $mar->qty) }}</td>
+                                    <td>Rp.{{ number_format(($mar->customer_price * $mar->qty * 0.95)-($mar->cost * $mar->qty)) }}</td>
+                                    <td>Rp.{{ number_format($mar->customer_price * $mar->qty * 0.95 * $mar->rate / 100)}}</td>
+                                    <td>Rp.{{ number_format((($mar->customer_price * $mar->qty * 0.95)-($mar->cost * $mar->qty))-(($mar->customer_price * $mar->qty * 0.95 * $mar->rate / 100)))}}</td>
                                 </tr>
-                                @endforeach
-                              @endif
+                                    @endforeach
+                                @endif   
                             </tbody>
                             <tfoot>
-                            {{--  {{ $totalsales->appends(['keyword' => $request->keyword,'key' => $request->key,'date' => $request->date,'dayword1' => $request->dayword1,'dayword2' => $request->dayword2])->links() }}  --}}
-                                {{ $totalsales->appends($_GET)->links() }}
+                                    {{ $margin->appends($_GET)->links() }}
                         </tfoot>
                         </table>
                         <!-- /div 2 -->

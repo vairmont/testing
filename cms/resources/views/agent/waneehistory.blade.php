@@ -8,7 +8,7 @@
 
      <div class="container-fluid">
             <div>
-                <h2>View Wanee</h2>
+                <h2>History Plafon Kredit</h2>
             </div>
                 <div class="col-lg-12">
                     <p> </p>
@@ -33,6 +33,7 @@
                         <button type="submit" class="btn btn-primary">Search</button>
                         <button type="reset" class="btn btn-danger">Clear</button>
                         
+                   
                 </form>
                 @if(session()->has('message'))
                 <div class="alert alert-success">
@@ -48,11 +49,11 @@
                                             <tr>
                                                 <th>Checker</th> 
                                                 <th>Nama Agen</th>
+                                                <th>Tanggal</th>
+                                                <th>Nomor telpon</th>
                                                 <th>Saldo Awal</th>
                                                 <th>Amount</th>
                                                 <th>Saldo Akhir</th>
-                                                <th>Tanggal</th>
-                                                <th>Nomor telpon</th>
                                                 
                                             </tr>
                                         </thead>
@@ -68,12 +69,11 @@
                                                 <input type="checkbox" name="checkbox[]" value="{{ $his->id }}">
                                                 </td>
                                                 <td>{{$his->name}}</td>
-                                                <td>Rp.{{number_format($his->saldoakhir - $his->amount)}}</td>
-                                                <td>Rp.{{number_format($his->amount)}}</td>
-                                                <td>Rp.{{number_format($his->saldoakhir)}}</td>
                                                 <td>{{$his->date}}</td>
                                                 <td>{{$his->phone}}</td>
-                                                                                        
+                                                <td>Rp.{{number_format($his->saldoakhir - $his->amount)}}</td>
+                                                <td>Rp.{{number_format($his->amount)}}</td>
+                                                <td>Rp.{{number_format($his->saldoakhir)}}</td>                                       
                                                 
                                             </tr>
                                             @endforeach

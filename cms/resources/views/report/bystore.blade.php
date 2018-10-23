@@ -9,7 +9,7 @@
 <!-- div container -->
         <div class="container-fluid">
             <div>
-                <h2 >Flow Sales</h2>
+                <h2 >Laporan Penjualan</h2>
             </div>  
 
                     <div class="row">
@@ -69,6 +69,7 @@
                                     <th>Insentif</th>
                                     <th>Paid by Agen</th>
                                     <th>Paid by Customer</th>
+                                    <th>Discount invoice</th>
                                     <th>Store</th>
                                     <th>Source</th>
                                     <th>Tanggal</th>
@@ -94,7 +95,7 @@
                                             @if($flow->source == NULL)
                                             Rp.0
                                             @else
-                                            Rp.{{number_format($flow->customer_price * $flow->qty * 0.05)}}
+                                            Rp.{{ number_format($flow->customer_price * $flow->qty * 0.05)}}
                                             @endif
                                         </td>
                                         <td>
@@ -106,6 +107,9 @@
                                         </td>
                                         <td>Rp.{{ number_format($flow->customer_price * $flow->qty * 0.95)}}</td>
                                         <td>Rp.{{ number_format($flow->customer_price * $flow->qty)}}</td>
+                                        <td>
+                                            {{ $flow->discount }}
+                                        </td>
                                         <td>
                                             @if($flow->stoname == NULL)
                                             Serang

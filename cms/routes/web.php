@@ -22,10 +22,11 @@ Route::get('/daftaritem', 'ItemController@getDaftarItem');
 
 Route::get('/byitem', 'ReportController@getByItem');
 Route::get('/bystore', 'ReportController@getBystore');
+Route::get('/bymargin','ReportController@getByMargin');
 
 Route::get('/bycategory','ReportController@getBycategory');
+Route::get('/byproduct/{category}','ReportController@getByProduct');
 Route::get('/byemployee','ReportController@getByEmployee');
-Route::get('/bychasier','ReportController@getByChasier');
 
 Route::get('/bysupply', 'SupplierController@getBySupplier');
 
@@ -65,6 +66,13 @@ Route::get('/deleteitem/{id}', 'ItemController@deleteItem');
 Route::get('/slider', 'ItemController@getByAddSlider');
 Route::post('/insert', 'ItemController@saveSlider');
 
+Route::get('/finalize', 'ShipmentController@finalizeOrder')->name('finalize');
+Route::get('/delivery', 'ShipmentController@orderDeliver');
+Route::get('/done', 'ShipmentController@orderFinished');
+Route::get('/delete/{id}', 'ShipmentController@deleteOrder')->name('delete');
+Route::get('/deliver', 'ShipmentController@deliverOrder')->name('delivery');
+Route::get('/invoice/{id}', 'ShipmentController@invoice')->name('invoice');
+Route::get('/order', 'ShipmentController@orderProcess');
 
 Route::get('/kategori', 'ItemController@getKategori');
 Route::get('/addkategori', 'ItemController@formKategori');

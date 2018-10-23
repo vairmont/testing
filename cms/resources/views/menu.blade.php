@@ -9,19 +9,19 @@
                     <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Laporan<span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level">
                         <li>
-                            <a href="{{url('/byitem')}}">Laporan Total sales</a>
+                            <a href="{{ url('/byitem')}}">Laporan Pembelian</a>
                             </li>
                         <li>
-                            <a href="{{url('/bystore')}}">Laporan Flow Sales</a>
+                            <a href="{{url('/bystore')}}">Laporan  Penjualan</a>
+                        </li>
+                        <li>
+                            <a href="{{url('/bymargin')}}">Laporan  Margin G1</a>
                         </li>
                         <li>
                             <a href="{{url('/bycategory')}}">Penjualan per kategori</a>
                         </li>
                         <li>
                             <a href="{{url('/byemployee')}}">Penjualan oleh karyawan</a>
-                        </li>
-                        <li>
-                            <a href="{{url('/bychasier')}}">Penjualan oleh Kasir</a>
                         </li>
                     </ul>
                     <!-- /.nav-second-level -->
@@ -31,7 +31,13 @@
                         <a href="#"><i class="fa fa-cart-arrow-down"></i> Shipment<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
                             <li>
-                                <a href="{{url('/order')}}">Shipment Order</a>
+                                <a href="{{url('/order')}}">New Order</a>
+                            </li>
+                            <li>
+                                <a href="{{url('/delivery')}}">Delivery Order</a>
+                            </li>
+                            <li>
+                                <a href="{{url('/done')}}">Finished Order</a>
                             </li>
                         </ul>
                 </li>
@@ -60,23 +66,24 @@
                     
                         <ul class="nav nav-second-level">
                             <li>
-                                <a href="{{url('/bypurchaseorder')}}">Purchase orders</a>
-                            </li>
-                            <li>
-                                <a href="{{url('/bytransferorder')}}">Transfer orders</a>
-                            </li>
-                            <li>
                                 <a href="{{url('/bystockadjustment')}}">Stock adjustments</a>
                             </li>
                             <li>
                                 <a href="{{url('/bysupplier')}}">Suppliers</a>
                             </li>
+                            {{-- <li>
+                                <a href="{{url('/bypurchaseorder')}}">Purchase orders</a>
+                            </li>
+                            <li>
+                                <a href="{{url('/bytransferorder')}}">Transfer orders</a>
+                            </li>
+                          
                             <li>
                                 <a href="{{url('/byinventoryhistory')}}">Inventory history</a>
                             </li>
                             <li>
                                 <a href="{{url('/byinventoryvaluation')}}">Inventory valuation</a>
-                            </li>
+                            </li> --}}
                         </ul>
                     <!-- /.nav-second-level -->
                 </li>
@@ -84,7 +91,7 @@
                         <a href="#"><i class="fa fa-group"></i> Admin<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
                             <li>
-                                <a href="{{url('/bywaneehistory')}}">View Wanee</a>
+                                <a href="{{url('/bywaneehistory')}}">Show Wanee</a>
                             </li>
                             
                             <li>
@@ -117,18 +124,6 @@
                     <!-- /.nav-second-level -->
                 </li>
                 <li>
-                        <a href="#"><i class="fa fa-male"></i> Pelanggan<span class="fa arrow"></span></a>
-                        <ul class="nav nav-second-level">
-                            <li>
-                                <a href="flot.html">Basis Pelanggan</a>
-                            </li>
-                            <li>
-                                <a href="morris.html">Notifikasi</a>
-                            </li>
-                        </ul>
-                    <!-- /.nav-second-level -->
-                </li>
-                <li>
                         <a href="#"><i class="fa fa-group"></i> Supply<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
                             <li>
@@ -137,7 +132,7 @@
                         </ul>
                     <!-- /.nav-second-level -->
                 </li>
-                <li>
+               {{-- <li>
                         <a href="#"><i class="fa fa-gears"></i> Pengaturan<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
                             <li>
@@ -160,7 +155,7 @@
                             </li>
                         </ul>
                     <!-- /.nav-second-level -->
-                </li>
+                </li> --}}
             </ul>
         @elseif(Auth::User()->role_id == '8')
             <ul class="nav" id="side-menu">
