@@ -148,7 +148,113 @@ class OrderControllerCustomer extends Controller
       return response()->json(['message' => 'Keranjang anda kosong.'], 400);
     }
 
-    #ROLE AGEN / CUST
+    #Voucher Discount
+    if ($request->voucher_code != '' && $request->discount != 0) {
+      $cartDetails = CartDetail::where('cart_id', '=', $cart->id)->get();
+
+      $today = date("Ymd");
+      $rand = strtoupper(substr(uniqid(sha1(time())),0,4));
+      $unique = $today . $rand;
+
+      $order = new Order;
+      $order->invoice_no = $unique;
+      $order->user_id = $cart->user_id;
+      $order->voucher_code = $request->voucher_code;
+      $order->subtotal = $cart->subtotal;
+      $order->tax = $cart->tax;
+      $order->discount = $request->discount;
+      if($cart->total < 50000) {
+        $order->total = $cart->total + 5000;
+      }
+      else {
+        $order->total = $cart->total - $request->discount;
+      }
+      $order->status = OrderStatus::CREATED;
+      $order->agen_id = $agencust->identifier;
+      $order->save();
+
+      $items = [];
+      foreach ($cartDetails as $cartDetail) {
+        $product = Product::whereId($cartDetail->product_id)->first();
+        $orderDetail = new OrderDetail;
+        $orderDetail->order_id = $order->id;
+        $orderDetail->product_id = $product->id;
+        $orderDetail->category_id = $product->category_id;
+        $orderDetail->qty = $cartDetail->qty;
+        // if($cartDetail->qty >= 3){
+        //   $orderDetail->price_for_customer = $product->price_for_customer * 0.98;
+        //   $orderDetail->price_for_agen = $product->price_for_agen;
+        // }
+        // else{
+        $orderDetail->price_for_customer = ($product->promo_price == 0) ? $product->price_for_customer : $product->promo_price;
+        $orderDetail->price_for_agen = ($product->promo_price == 0) ? $product->price_for_customer : $product->promo_price;
+        // }
+        $orderDetail->save();
+
+        $items[] = [
+          'product_id' => $product->id,
+          'sku' => $product->sku,
+          'category_id' => $orderDetail->category_id,
+          'qty' => $orderDetail->qty,
+          'price_for_customer' => $orderDetail->price_for_customer,
+          'price_for_agen' => $orderDetail->price_for_agen
+        ];
+      }
+    }
+
+    #Voucher DiscountRate
+    if ($request->voucher_code != '' && $request->discountrate != 0) {
+      $cartDetails = CartDetail::where('cart_id', '=', $cart->id)->get();
+
+      $today = date("Ymd");
+      $rand = strtoupper(substr(uniqid(sha1(time())),0,4));
+      $unique = $today . $rand;
+
+      $order = new Order;
+      $order->invoice_no = $unique;
+      $order->user_id = $cart->user_id;
+      $order->voucher_code = $request->voucher_code;
+      $order->subtotal = $cart->subtotal;
+      $order->tax = $cart->tax;
+      $order->discount = $cart->total * $request->discountrate;
+      if($cart->total < 50000) {
+        $order->total = $cart->total + 5000;
+      }
+      else {
+        $order->total = $cart->total - ($cart->total * $request->discountrate);
+      }
+      $order->status = OrderStatus::CREATED;
+      $order->agen_id = $agencust->identifier;
+      $order->save();
+
+      $items = [];
+      foreach ($cartDetails as $cartDetail) {
+        $product = Product::whereId($cartDetail->product_id)->first();
+        $orderDetail = new OrderDetail;
+        $orderDetail->order_id = $order->id;
+        $orderDetail->product_id = $product->id;
+        $orderDetail->category_id = $product->category_id;
+        $orderDetail->qty = $cartDetail->qty;
+        // if($cartDetail->qty >= 3){
+        //   $orderDetail->price_for_customer = $product->price_for_customer * 0.98;
+        //   $orderDetail->price_for_agen = $product->price_for_agen;
+        // }
+        // else{
+        $orderDetail->price_for_customer = ($product->promo_price == 0) ? $product->price_for_customer : $product->promo_price;
+        $orderDetail->price_for_agen = ($product->promo_price == 0) ? $product->price_for_customer : $product->promo_price;
+        // }
+        $orderDetail->save();
+
+        $items[] = [
+          'product_id' => $product->id,
+          'sku' => $product->sku,
+          'category_id' => $orderDetail->category_id,
+          'qty' => $orderDetail->qty,
+          'price_for_customer' => $orderDetail->price_for_customer,
+          'price_for_agen' => $orderDetail->price_for_agen
+        ];
+      }
+    }
 
     $cartDetails = CartDetail::where('cart_id', '=', $cart->id)->get();
 
@@ -240,58 +346,169 @@ class OrderControllerCustomer extends Controller
       return response()->json(['message' => 'Keranjang anda kosong.'], 400);
     }
 
-    #ROLE AGEN / CUST
+    #Voucher Discount
+    if ($request->voucher_code != '' && $request->discount != 0) {
+      $cartDetails = CartDetail::where('cart_id', '=', $cart->id)->get();
 
-    $cartDetails = CartDetail::where('cart_id', '=', $cart->id)->get();
+      $today = date("Ymd");
+      $rand = strtoupper(substr(uniqid(sha1(time())),0,4));
+      $unique = $today . $rand;
 
-    $today = date("Ymd");
-    $rand = strtoupper(substr(uniqid(sha1(time())),0,4));
-    $unique = $today . $rand;
+      $order = new Order;
+      $order->invoice_no = $unique;
+      $order->user_id = $cart->user_id;
+      $order->voucher_code = $request->voucher_code;
+      $order->subtotal = $cart->subtotal;
+      $order->tax = $cart->tax;
+      $order->discount = $request->discount;
+      if($cart->total < 50000) {
+        $order->total = $cart->total + 5000;
+      }
+      else {
+        $order->total = $cart->total - $request->discount;
+      }
 
-    $order = new Order;
-    $order->invoice_no = $unique;
-    $order->user_id = $cart->user_id;
-    $order->subtotal = $cart->subtotal;
-    $order->tax = $cart->tax;
-    $order->discount = 0;
-    if($cart->total < 50000) {
-      $order->total = $cart->total + 5000;
+      $order->status = OrderStatus::CREATED;
+      $order->agen_id = $agencust->identifier;
+      $order->save();
+
+      $items = [];
+      foreach ($cartDetails as $cartDetail) {
+        $product = Product::whereId($cartDetail->product_id)->first();
+        $orderDetail = new OrderDetail;
+        $orderDetail->order_id = $order->id;
+        $orderDetail->product_id = $product->id;
+        $orderDetail->category_id = $product->category_id;
+        $orderDetail->qty = $cartDetail->qty;
+        // if($cartDetail->qty >= 3){
+        //   $orderDetail->price_for_customer = $product->price_for_customer * 0.98;
+        //   $orderDetail->price_for_agen = $product->price_for_agen;
+        // }
+        // else{
+        $orderDetail->price_for_customer = ($product->promo_price == 0) ? $product->price_for_customer : $product->promo_price;
+        $orderDetail->price_for_agen = ($product->promo_price == 0) ? $product->price_for_customer : $product->promo_price;
+        // }
+        $orderDetail->save();
+
+        $items[] = [
+          'product_id' => $product->id,
+          'sku' => $product->sku,
+          'category_id' => $orderDetail->category_id,
+          'qty' => $orderDetail->qty,
+          'price_for_customer' => $orderDetail->price_for_customer,
+          'price_for_agen' => $orderDetail->price_for_agen
+        ];
+      }
     }
-    else {
-      $order->total = $cart->total;
+
+    #Voucher DiscountRate
+    if ($request->voucher_code != '' && $request->discountrate != 0) {
+      $cartDetails = CartDetail::where('cart_id', '=', $cart->id)->get();
+
+      $today = date("Ymd");
+      $rand = strtoupper(substr(uniqid(sha1(time())),0,4));
+      $unique = $today . $rand;
+
+      $order = new Order;
+      $order->invoice_no = $unique;
+      $order->user_id = $cart->user_id;
+      $order->voucher_code = $request->voucher_code;
+      $order->subtotal = $cart->subtotal;
+      $order->tax = $cart->tax;
+      $order->discount = $cart->total * $request->discountrate;
+      if($cart->total < 50000) {
+        $order->total = $cart->total + 5000;
+      }
+      else {
+        $order->total = $cart->total - ($cart->total * $request->discountrate);
+      }
+      $order->status = OrderStatus::CREATED;
+      $order->agen_id = $agencust->identifier;
+      $order->save();
+
+      $items = [];
+      foreach ($cartDetails as $cartDetail) {
+        $product = Product::whereId($cartDetail->product_id)->first();
+        $orderDetail = new OrderDetail;
+        $orderDetail->order_id = $order->id;
+        $orderDetail->product_id = $product->id;
+        $orderDetail->category_id = $product->category_id;
+        $orderDetail->qty = $cartDetail->qty;
+        // if($cartDetail->qty >= 3){
+        //   $orderDetail->price_for_customer = $product->price_for_customer * 0.98;
+        //   $orderDetail->price_for_agen = $product->price_for_agen;
+        // }
+        // else{
+        $orderDetail->price_for_customer = ($product->promo_price == 0) ? $product->price_for_customer : $product->promo_price;
+        $orderDetail->price_for_agen = ($product->promo_price == 0) ? $product->price_for_customer : $product->promo_price;
+        // }
+        $orderDetail->save();
+
+        $items[] = [
+          'product_id' => $product->id,
+          'sku' => $product->sku,
+          'category_id' => $orderDetail->category_id,
+          'qty' => $orderDetail->qty,
+          'price_for_customer' => $orderDetail->price_for_customer,
+          'price_for_agen' => $orderDetail->price_for_agen
+        ];
+      }
     }
-    $order->status = OrderStatus::CREATED;
-    $order->agen_id = $agencust->identifier;
-    $order->save();
 
-    $items = [];
-    foreach ($cartDetails as $cartDetail) {
-      $product = Product::whereId($cartDetail->product_id)->first();
-      $orderDetail = new OrderDetail;
-      $orderDetail->order_id = $order->id;
-      $orderDetail->product_id = $product->id;
-      $orderDetail->category_id = $product->category_id;
-      $orderDetail->qty = $cartDetail->qty;
-      // if($cartDetail->qty >= 3){
-      //   $orderDetail->price_for_customer = $product->price_for_customer * 0.98;
-      //   $orderDetail->price_for_agen = $product->price_for_agen;
-      // }
-      // else{
-      $orderDetail->price_for_customer = ($product->promo_price == 0) ? $product->price_for_customer : $product->promo_price;
-      $orderDetail->price_for_agen = ($product->promo_price == 0) ? $product->price_for_customer : $product->promo_price * 0.95;
-      // }
-      $orderDetail->save();
+    if ($request->voucher_code == '') {
+      #ROLE AGEN / CUST
 
-      $items[] = [
-        'product_id' => $product->id,
-        'sku' => $product->sku,
-        'category_id' => $orderDetail->category_id,
-        'qty' => $orderDetail->qty,
-        'price_for_customer' => $orderDetail->price_for_customer,
-        'price_for_agen' => $orderDetail->price_for_agen
-      ];
-    }
+      $cartDetails = CartDetail::where('cart_id', '=', $cart->id)->get();
 
+      $today = date("Ymd");
+      $rand = strtoupper(substr(uniqid(sha1(time())),0,4));
+      $unique = $today . $rand;
+
+      $order = new Order;
+      $order->invoice_no = $unique;
+      $order->user_id = $cart->user_id;
+      $order->subtotal = $cart->subtotal;
+      $order->tax = $cart->tax;
+      $order->discount = 0;
+      if($cart->total < 50000) {
+        $order->total = $cart->total + 5000;
+      }
+      else {
+        $order->total = $cart->total;
+      }
+
+      $order->status = OrderStatus::CREATED;
+      $order->agen_id = $agencust->identifier;
+      $order->save();
+
+      $items = [];
+      foreach ($cartDetails as $cartDetail) {
+        $product = Product::whereId($cartDetail->product_id)->first();
+        $orderDetail = new OrderDetail;
+        $orderDetail->order_id = $order->id;
+        $orderDetail->product_id = $product->id;
+        $orderDetail->category_id = $product->category_id;
+        $orderDetail->qty = $cartDetail->qty;
+        // if($cartDetail->qty >= 3){
+        //   $orderDetail->price_for_customer = $product->price_for_customer * 0.98;
+        //   $orderDetail->price_for_agen = $product->price_for_agen;
+        // }
+        // else{
+        $orderDetail->price_for_customer = ($product->promo_price == 0) ? $product->price_for_customer : $product->promo_price;
+        $orderDetail->price_for_agen = ($product->promo_price == 0) ? $product->price_for_customer : $product->promo_price * 0.95;
+        // }
+        $orderDetail->save();
+
+        $items[] = [
+          'product_id' => $product->id,
+          'sku' => $product->sku,
+          'category_id' => $orderDetail->category_id,
+          'qty' => $orderDetail->qty,
+          'price_for_customer' => $orderDetail->price_for_customer,
+          'price_for_agen' => $orderDetail->price_for_agen
+        ];
+      }
+    }  
     #Input Billing Detail
     $orderbillingdetail = new OrderBillingDetail;
 
