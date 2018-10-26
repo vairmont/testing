@@ -332,21 +332,21 @@ class ReportController extends Controller
                    ->join('agen', 'agen.identifier', '=', 'users.id')
                    ->join('store', 'store.id', '=', 'users.store_id')
                    ->where('order.status', '7')
-                   ->select(DB::raw('SUM(total) as total_sales , COUNT(order.id) as total_order'), 'agen.name', 'store.store_name', 'agen.photo','order.agen_id') 
-                   ->groupBy('agen.name','store.store_name','agen.photo','order.agen_id')
+                   ->select(DB::raw('SUM(total) as total_sales , COUNT(order.id) as total_order'), 'agen.name', 'store.store_name', 'agen.photo','agen.identifier','agen.id as aid') 
+                   ->groupBy('agen.name','store.store_name','agen.photo','agen.identifier','agen.id')
                    ->orderBy('total_sales', 'desc')
                    ->get();
 
         foreach ($byagen as $agen) {
-                    $customer = Customer::where('agen_id','=',$agen->agen_id)
+                    $customer = Customer::where('agen_id','=',$agen->aid)
                     ->count();
-                    $temp[$agen->agen_id] = $customer;
+                    $temp[$agen->aid] = $customer;
         }
 
         foreach ($byagen as $agen) {
-                    $commission = Commission::where('agen_id','=',$agen->agen_id)
+                    $commission = Commission::where('agen_id','=',$agen->identifier)
                     ->sum('commission_netto');
-                    $coms[$agen->agen_id] = $commission;
+                    $coms[$agen->identifier] = $commission;
         }
         if(isset($request->keyword) && !empty($request->keyword)){
             $byagen = $byagen->where('agen.name','LIKE',$request->keyword.'%');

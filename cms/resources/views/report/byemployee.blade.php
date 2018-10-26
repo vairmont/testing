@@ -51,9 +51,9 @@
                                  <tr>
                                         <td>{{$ba->name}}</td>
                                         <td>{{number_format($ba->total_sales)}}</td>
-                                        <td>{{number_format($coms[$ba->agen_id])}}</td>
+                                        <td>{{number_format($coms[$ba->identifier])}}</td>
                                         <td>{{$ba->total_order}}</td>
-                                        <td>{{$temp[$ba->agen_id]}}</td>
+                                        <td>{{$temp[$ba->aid]}}</td>
                                     </tr>
                                  @endforeach
                                 </tbody>
