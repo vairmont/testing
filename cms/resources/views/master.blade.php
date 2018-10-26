@@ -23,6 +23,11 @@
     <script src="{{ asset('sbadmin/dist/js/sb-admin-2.js') }}"></script>
     <script src="{{ asset('js/sorttable.js') }}"></script>
     
+    <!-- Bower Datetime picker -->
+    <script type="text/javascript" src="{{ asset('../bower_components/moment/min/moment.min.js') }}"></script>
+
+    <script type="text/javascript" src="{{ asset('../bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js') }}"></script>
+    <link rel="stylesheet" href="{{ asset('../bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css') }}" />    
 
     <link href="{{ asset('css/custom.css') }}" rel="stylesheet">
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->

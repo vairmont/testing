@@ -28,6 +28,7 @@ class VoucherController extends Controller
 	    	$data['discount'] = $request->discount;
 	    	$data['cashback'] = $request->cashback;
 	    	$data['min_purchase'] = $request->min_purchase;
+	    	$data['max_purchase'] = $request->max_purchase;
 	    	$data['bonus_item'] = $request->bonus_item;
 	    	$data['description'] = $request->description;
 
