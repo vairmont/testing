@@ -199,12 +199,6 @@ class ReportController extends Controller
     }
 
     private function _export_excel($flowreport) {
-        //  if($flowreport[0]->source == NULL) {
-        //      echo "NULL"; die;
-        //  }
-        //  else {
-        //      echo $flowreport[0]->proname . ' ' . $flowreport[0]->customer_price. ' '. $flowreport[0]->agen_price . ' ' . $flowreport[0]->qty; die;
-        //  }
 
         $data = [];
         foreach ($flowreport as $flow) {
@@ -299,6 +293,7 @@ class ReportController extends Controller
             $products = $products->where('product.product_name','like',$request->keyword.'%');
         }
         $products = $products->get();
+
         foreach($products as $product){
             $byprod[$product->product_name] = OrderDetail::where('product_id', $product->id)
             ->select(DB::raw(
@@ -327,7 +322,10 @@ class ReportController extends Controller
         return view('report.byproduct',compact('products','byprod','request'))->withTitle('By product');
     }
 
-    public function getByEmployee(){
+    public function getByEmployee(Request $request){
+        $isExport = $request->get('is_export', 0);
+        $args['pages'] = $isExport;
+
         $byagen = User::Join('order', 'order.agen_id', '=', 'users.id')
                    ->join('agen', 'agen.identifier', '=', 'users.id')
                    ->join('store', 'store.id', '=', 'users.store_id')
@@ -349,8 +347,33 @@ class ReportController extends Controller
                     $coms[$agen->identifier] = $commission;
         }
         if(isset($request->keyword) && !empty($request->keyword)){
-            $byagen = $byagen->where('agen.name','LIKE',$request->keyword.'%');
+            $byagen = $byagen->where('agen.name','LIKE',$request->keyword);
+        
         }
+        if ($isExport) {
+       
+        $data = [];
+    foreach ($byagen as $ba) {
+        $data[] = ([
+            'Nama'=> $ba->name,
+            'Penjualan' => number_format($ba->total_sales),
+            'Pendapatan Bersih' => number_format($coms[$ba->identifier]),
+            'Jumlah Penjualan' => number_format($ba->total_order),
+            'Jumlah Customer' => number_format($temp[$ba->aid]),
+        ]);
+    }
+    
+    return Excel::create('Agen_report', function($excel) use($data) {
+        $excel->sheet('Sheetname', function($sheet) use($data) {
+            $row = 1;
+
+            $sheet->fromArray($data, null, 'A' . $row, true, true);
+
+            $sheet->getStyle("A1:" . 'G' . $row)
+                ->getAlignment()->setWrapText(false);
+        });
+    })->export('xls');
+    }
 
         return view('report.byemployee',compact('byagen','temp','coms','request'))->withTitle('by employee');
     }
@@ -407,17 +430,5 @@ class ReportController extends Controller
         $margin = $margin->orderby('order.created_at','desc')->paginate(10);  
         return view('report.bymargin',compact('margin','request'))->withTitle('Margin');
    }
-   private function _export_excelMargin($margin) {
-    $margin = Order::leftjoin('order_detail','order.id','=','order_detail.order_id')
-    ->join('product','product.id','=','order_detail.product_id')
-    ->join('incentive_category','incentive_category.id','=','product.incentive_id')
-    ->join('agen','agen.identifier','=','order.agen_id')
-    ->join('users','users.id','=','agen.identifier')
-    ->join('store','store.id','=','users.store_id')
-    ->whereIn('order.status',[7,9])
-    ->select('agen.source as source','product.cost as cost','store.store_name as stoname','order_detail.qty as qty','incentive_category.rate as rate','order.invoice_no as invoice','agen.name as name','order_detail.order_id as id','product.product_name as proname','order_detail.price_for_agen as agen_price','order_detail.price_for_customer as customer_price','order.created_at as create','order.updated_at as update','order.agen_id as aid', 'product.promo_price')
-    ->get();
 
-    
-}
 }
