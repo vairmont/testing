@@ -62,8 +62,28 @@ class WithDrawController extends Controller
         $amount = Withdraw::where('id','=',$id)->first();
             
         $wanee = Agen::where('identifier','=',$amount->agen_id)->first();
+        $dif = 0;
         
-        $saldoakhir = $wanee->wanee - $amount->amount;
+        if($wanee->plafon_kredit < 1000000){
+            #wanee pindah ke plafon kredit sejumlah kurangnya plafon dari 1juta;
+            #update wanee history
+            $dif = 1000000 - $wanee->plafon_kredit;
+            
+            $plafon = $wanee->plafon_kredit + $dif;
+            $difwanee = $wanee->wanee - $dif;
+            
+            Agen::where('identifier','=',$amount->agen_id)->update([
+                'plafon_kredit' => $plafon,
+                'wanee' => $difwanee
+            ]);
+            $history = new WaneeHistory;
+            $history->user_id = $amount->agen_id;
+            $history->amount = $dif;
+            $history->saldo_akhir = $difwanee;
+            $history->reason = 'Pemindahan dana dari Wanee ke plafon';
+            $history->save();
+        }
+        $saldoakhir = $wanee->wanee - $dif - $amount->amount;
         Agen::where('identifier','=',$amount->agen_id)->update([
             'wanee' => $saldoakhir
         ]);
