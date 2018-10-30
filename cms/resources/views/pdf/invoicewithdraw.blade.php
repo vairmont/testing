@@ -7,7 +7,7 @@
     <title>Document</title>
 </head>
 <body>
-<h2 style="text-align:right;">INVOICE</h2>
+
     <h3>PT. MITRA GROSIR NUSANTARA</h3>
     <div class="col-lg-6">
         <p> Jl.Boulevard Gading Serpong Pakulonan Barat,Kelapa dua,
@@ -24,6 +24,7 @@
     <table border="1" width="100%" cellpadding='0' cellspacing='0'>
         <thead>
             <tr>
+            	<th>Tanggal Pengajuan<th>
                 <th>Nama</th>
                 <th>Amount</th>
                 <th>No.Rek</th>
@@ -32,6 +33,20 @@
         </thead>    
         <tbody>
             <tr style="text-align: top">
+             	<td>{{$draw->date}}<br>
+                  <br>
+                  <br>
+                  <br>
+                  <br>
+                  <br>
+                  <br>
+                  <br>
+                  <br>
+                  <br>
+                  <br>
+                  </td>
+                  
+                  
                   <td>{{$draw->name}}<br>
                   <br>
                   <br>
@@ -84,13 +99,6 @@
                 @endforeach
         </tbody>
     </table> 
-    <p style="border:1px solid #333; padding:5px;">Rekening<br>
-        Account :566 80 000 9518<br>
-        A.n PT.MITRA GROSIR NUSANTARA<br>
-        BANK OCBC NISP
-        </p>
-    <p>Dokumen ini Sah<br>
-       Telah ditandatangani secara elektronik 
-    </p>
+  
 </body>
 </html>
