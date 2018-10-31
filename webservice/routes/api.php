@@ -58,6 +58,7 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
 
   Route::post('/digital', 'DigitalProductController@checkOp');
   Route::post('/digital/create', 'DigitalProductController@create');
+  Route::get('/digital/notification', 'DigitalProductController@notification');
 
   Route::get('/chat', 'ChatController@chatList');
   Route::post('/chat', 'ChatController@orderChat');

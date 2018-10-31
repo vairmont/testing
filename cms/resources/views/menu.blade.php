@@ -108,8 +108,9 @@
                             <li>
                                 <a href="{{url('/bywithdraw')}}">Withdraw</a>
                             </li>
-                        
-                
+                            <li>
+                                  <a href="{{ url('/bywithdrawdone')}}">View Withdraw</a>
+                            </li>
                         </ul>
                     <!-- /.nav-second-level -->
                 </li>
