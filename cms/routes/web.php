@@ -35,6 +35,7 @@ Route::get('/bywaneehistory','EmployeeController@getBywanneHistory');
 Route::get('/bywaneepending','EmployeeController@getByWaneePending');
 Route::get('/bywaneeapprove','EmployeeController@getByWaneeApprove');
 Route::get('/bywithdraw', 'WithDrawController@getByWithDraw');
+Route::get('/bywithdrawdone', 'WithDrawController@getByWithDrawDone');
 
 Route::get('/verifywanee/{id}','EmployeeController@updateStatus')->name('status1');
 Route::post('/verifycheckbox','EmployeeController@updateCheck')->name('check1');

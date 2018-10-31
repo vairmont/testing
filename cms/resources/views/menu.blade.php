@@ -18,10 +18,10 @@
                             <a href="{{url('/bymargin')}}">Laporan  Margin G1</a>
                         </li>
                         <li>
-                            <a href="{{url('/bycategory')}}">Penjualan per kategori</a>
+                            <a href="{{url('/byemployee')}}">Laporan Penjualan Agen</a>
                         </li>
                         <li>
-                            <a href="{{url('/byemployee')}}">Penjualan oleh karyawan</a>
+                            <a href="{{url('/bycategory')}}">Laporan Penjualan kategori</a>
                         </li>
                     </ul>
                     <!-- /.nav-second-level -->
@@ -108,8 +108,9 @@
                             <li>
                                 <a href="{{url('/bywithdraw')}}">Withdraw</a>
                             </li>
-                        
-                
+                            <li>
+                                  <a href="{{ url('/bywithdrawdone')}}">View Withdraw</a>
+                            </li>
                         </ul>
                     <!-- /.nav-second-level -->
                 </li>
