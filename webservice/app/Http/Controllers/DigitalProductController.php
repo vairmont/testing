@@ -157,6 +157,7 @@ class DigitalProductController extends Controller {
         curl_close($ch);
 
         $res = json_decode($output,true);
+        return $res;
     #send push notif ke agen
     //$this->_sendPushNotification($order->agen_id, "Pulsa", "Customer Membeli Pulsa.");
 
