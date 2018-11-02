@@ -439,7 +439,7 @@ class OrderController extends Controller
       $orders = Order::leftJoin('order_billing_detail', 'order_billing_detail.order_id', '=', 'order.id')
       ->join('agen', 'agen.identifier', '=', 'order.agen_id')
       ->where('user_id', '=', $request->get('user')->id)
-      ->where('status', '=', 7)
+      ->whereIN('status', [1,6,7])
       ->orderBy('order.created_at', 'desc')
       ->select('order.id', 'order.invoice_no as invoice', 'order.created_at as date', 'order.payment as payment', 'order.status as status', 'order.total as total', 'order_billing_detail.notes as notes')
       ->get();
@@ -503,14 +503,14 @@ class OrderController extends Controller
       $orderDetail->category_id = $product->category_id;
       $orderDetail->qty = $request->qty;
       $orderDetail->price_for_customer = (($product->promo_price == 0) ? $product->price_for_customer : $product->promo_price);
-      $orderDetail->price_for_agen = (($product->promo_price == 0) ? $product->price_for_customer : $product->promo_price) * 0.95;
+      $orderDetail->price_for_agen = (($product->promo_price == 0) ? $product->price_for_customer : $product->promo_price) * 0.93;
       $orderDetail->save();
 
       $details = OrderDetail::where('order_id', $order->id)->get();
 
       $subtotal = 0;
       foreach($details as $d) {
-        $subtotal += (int) ($d->price_for_customer * 0.95 * $d->qty);
+        $subtotal += (int) ($d->price_for_customer * 0.93 * $d->qty);
       }
       $updateOrder = Order::where('id', $order->id)->update([
           'subtotal' => $subtotal,

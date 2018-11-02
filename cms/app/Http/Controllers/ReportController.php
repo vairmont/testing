@@ -130,7 +130,7 @@ class ReportController extends Controller
         
         ->whereIn('order.status',[7,9])
         ->where('order.type','=','sembako')
-        ->select('agen.source as source','store.store_name as stoname','order_detail.qty as qty','incentive_category.rate as rate','order.invoice_no as invoice','agen.name as name','order_detail.order_id as id','product.product_name as proname','order_detail.price_for_agen as agen_price','order_detail.price_for_customer as customer_price','order.created_at as create','order.updated_at as update','order.agen_id as aid', 'product.promo_price');
+        ->select('order.discount as discount','agen.source as source','store.store_name as stoname','order_detail.qty as qty','incentive_category.rate as rate','order.invoice_no as invoice','agen.name as name','order_detail.order_id as id','product.product_name as proname','order_detail.price_for_agen as agen_price','order_detail.price_for_customer as customer_price','order.created_at as create','order.updated_at as update','order.agen_id as aid', 'product.promo_price');
 
         
         if(isset($request->date) && $request->date == '1'){
@@ -199,12 +199,6 @@ class ReportController extends Controller
     }
 
     private function _export_excel($flowreport) {
-        //  if($flowreport[0]->source == NULL) {
-        //      echo "NULL"; die;
-        //  }
-        //  else {
-        //      echo $flowreport[0]->proname . ' ' . $flowreport[0]->customer_price. ' '. $flowreport[0]->agen_price . ' ' . $flowreport[0]->qty; die;
-        //  }
 
         $data = [];
         foreach ($flowreport as $flow) {
@@ -218,6 +212,7 @@ class ReportController extends Controller
                 'Isentif'=> ($flow->source == NULL) ? 0 : number_format($flow->customer_price * $flow->qty * 0.95 * $flow->rate / 100),
                 'Paid by Agen' => number_format($flow->customer_price * $flow->qty * 0.95),
                 'Paid by Customer' => number_format($flow->customer_price * $flow->qty),
+                'Discount' => number_format($flow->discount),
                 'Store' => ($flow->source == NULL) ? "Serang" : $flow->stoname,
                 'Source'=> ($flow->source == NULL) ? "Kasir" : $flow->source,
                 'Tanggal' => $flow->create, 
@@ -292,7 +287,12 @@ class ReportController extends Controller
         $args['pages'] = $isExport;
 
         $category = ProductCategory::where('name', $category)->first();
-        $products = Product::where('category_id',$category->id)->get();
+        $products = Product::where('category_id',$category->id);
+
+        if(isset($request->keyword) && !empty($request->keyword)) {
+            $products = $products->where('product.product_name','like',$request->keyword.'%');
+        }
+        $products = $products->get();
 
         foreach($products as $product){
             $byprod[$product->product_name] = OrderDetail::where('product_id', $product->id)
@@ -306,6 +306,7 @@ class ReportController extends Controller
                 'Total' => number_format($byprod[$product->product_name]->modal),
             ]);
         }
+        
         if ($isExport) {
             return Excel::create('Product_report', function($excel) use($data) {
                 $excel->sheet('Sheetname', function($sheet) use($data) {
@@ -318,33 +319,61 @@ class ReportController extends Controller
                 });
             })->export('xls');
         }
-        return view('report.byproduct',compact('products','byprod'))->withTitle('By product');
+        return view('report.byproduct',compact('products','byprod','request'))->withTitle('By product');
     }
 
-    public function getByEmployee(){
+    public function getByEmployee(Request $request){
+        $isExport = $request->get('is_export', 0);
+        $args['pages'] = $isExport;
+
         $byagen = User::Join('order', 'order.agen_id', '=', 'users.id')
                    ->join('agen', 'agen.identifier', '=', 'users.id')
                    ->join('store', 'store.id', '=', 'users.store_id')
                    ->where('order.status', '7')
-                   ->select(DB::raw('SUM(total) as total_sales , COUNT(order.id) as total_order'), 'agen.name', 'store.store_name', 'agen.photo','order.agen_id') 
-                   ->groupBy('agen.name','store.store_name','agen.photo','order.agen_id')
+                   ->select(DB::raw('SUM(total) as total_sales , COUNT(order.id) as total_order'), 'agen.name', 'store.store_name', 'agen.photo','agen.identifier','agen.id as aid') 
+                   ->groupBy('agen.name','store.store_name','agen.photo','agen.identifier','agen.id')
                    ->orderBy('total_sales', 'desc')
                    ->get();
 
         foreach ($byagen as $agen) {
-                    $customer = Customer::where('agen_id','=',$agen->agen_id)
+                    $customer = Customer::where('agen_id','=',$agen->aid)
                     ->count();
-                    $temp[$agen->agen_id] = $customer;
+                    $temp[$agen->aid] = $customer;
         }
 
         foreach ($byagen as $agen) {
-                    $commission = Commission::where('agen_id','=',$agen->agen_id)
+                    $commission = Commission::where('agen_id','=',$agen->identifier)
                     ->sum('commission_netto');
-                    $coms[$agen->agen_id] = $commission;
+                    $coms[$agen->identifier] = $commission;
         }
         if(isset($request->keyword) && !empty($request->keyword)){
-            $byagen = $byagen->where('agen.name','LIKE',$request->keyword.'%');
+            $byagen = $byagen->where('agen.name','LIKE',$request->keyword);
+        
         }
+        if ($isExport) {
+       
+        $data = [];
+    foreach ($byagen as $ba) {
+        $data[] = ([
+            'Nama'=> $ba->name,
+            'Penjualan' => number_format($ba->total_sales),
+            'Pendapatan Bersih' => number_format($coms[$ba->identifier]),
+            'Jumlah Penjualan' => number_format($ba->total_order),
+            'Jumlah Customer' => number_format($temp[$ba->aid]),
+        ]);
+    }
+    
+    return Excel::create('Agen_report', function($excel) use($data) {
+        $excel->sheet('Sheetname', function($sheet) use($data) {
+            $row = 1;
+
+            $sheet->fromArray($data, null, 'A' . $row, true, true);
+
+            $sheet->getStyle("A1:" . 'G' . $row)
+                ->getAlignment()->setWrapText(false);
+        });
+    })->export('xls');
+    }
 
         return view('report.byemployee',compact('byagen','temp','coms','request'))->withTitle('by employee');
     }
@@ -359,35 +388,24 @@ class ReportController extends Controller
     ->join('users','users.id','=','agen.identifier')
     ->join('store','store.id','=','users.store_id')
     ->whereIn('order.status',[7,9])
-    ->select('agen.source as source','product.cost as cost','store.store_name as stoname','order_detail.qty as qty','incentive_category.rate as rate','order.invoice_no as invoice','agen.name as name','order_detail.order_id as id','product.product_name as proname','order_detail.price_for_agen as agen_price','order_detail.price_for_customer as customer_price','order.created_at as create','order.updated_at as update','order.agen_id as aid', 'product.promo_price');
-    
+    ->select('store.store_name as stoname','agen.source as source','product.cost as cost','store.store_name as stoname','order_detail.qty as qty','incentive_category.rate as rate','order.invoice_no as invoice','agen.name as name','order_detail.order_id as id','product.product_name as proname','order_detail.price_for_agen as agen_price','order_detail.price_for_customer as customer_price','order.created_at as create','order.updated_at as update','order.agen_id as aid', 'product.promo_price');
+
+    if(isset($request->keyword) && !empty($request->keyword)) {
+        $margin = $margin->where('product.product_name','like',$request->keyword.'%');
+    }
     if(isset($request->dayword1) && !empty($request->dayword1) && isset($request->dayword2) && !empty($request->dayword2)){
         $margin = $margin->whereBetween('order.created_at',[$request->dayword1, Carbon::parse($request->dayword2)->addDays(1)]);
-    }   
+        } 
+        $m = $margin->get();  
     if ($isExport) {
-        $this->_export_excelMargin($margin);
-    }
-    
-        $margin = $margin->orderby('order.created_at','desc')->paginate(10);  
-        return view('report.bymargin',compact('margin'))->withTitle('Margin');
-   }
-   private function _export_excelMargin($margin) {
-    $margin = Order::leftjoin('order_detail','order.id','=','order_detail.order_id')
-    ->join('product','product.id','=','order_detail.product_id')
-    ->join('incentive_category','incentive_category.id','=','product.incentive_id')
-    ->join('agen','agen.identifier','=','order.agen_id')
-    ->join('users','users.id','=','agen.identifier')
-    ->join('store','store.id','=','users.store_id')
-    ->whereIn('order.status',[7,9])
-    ->select('agen.source as source','product.cost as cost','store.store_name as stoname','order_detail.qty as qty','incentive_category.rate as rate','order.invoice_no as invoice','agen.name as name','order_detail.order_id as id','product.product_name as proname','order_detail.price_for_agen as agen_price','order_detail.price_for_customer as customer_price','order.created_at as create','order.updated_at as update','order.agen_id as aid', 'product.promo_price')
-    ->get();
-
-    $data = [];
-    foreach ($margin as $mar) {
+       
+        $data = [];
+    foreach ($m as $mar) {
         $data[] = ([
             'Tanggal'=> $mar->create,
             'Produk' => $mar->proname ,
             'Quantity' => $mar->qty,
+            'Toko' => $mar->stoname,
             'Sales G1' => number_format($mar->customer_price * $mar->qty * 0.95),
             'HPP' => number_format($mar->cost * $mar->qty),
             'GrosirOne Margin' => number_format(($mar->customer_price * $mar->qty * 0.95)-($mar->cost * $mar->qty)),
@@ -407,5 +425,10 @@ class ReportController extends Controller
                 ->getAlignment()->setWrapText(false);
         });
     })->export('xls');
-}
+    }
+    
+        $margin = $margin->orderby('order.created_at','desc')->paginate(10);  
+        return view('report.bymargin',compact('margin','request'))->withTitle('Margin');
+   }
+
 }

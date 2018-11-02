@@ -56,6 +56,10 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
   Route::patch('/product/{id}', 'ProductController@edit');
   Route::delete('/product/{id}', 'ProductController@remove');
 
+  Route::post('/digital', 'DigitalProductController@checkOp');
+  Route::post('/digital/create', 'DigitalProductController@create');
+  Route::get('/digital/notification', 'DigitalProductController@notification');
+
   Route::get('/chat', 'ChatController@chatList');
   Route::post('/chat', 'ChatController@orderChat');
 
@@ -116,6 +120,8 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
   Route::get('/sold', 'PromoController@soldIndex');
 
   Route::get('/notif', 'NotificationController@index');
+
+  Route::post('/voucher', 'VoucherController@checkVoucher');
 
   Route::post('/withdraw', 'OrderController@withdraw');
   Route::get('/withdraw', 'WithdrawController@index');
