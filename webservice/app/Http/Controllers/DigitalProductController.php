@@ -67,6 +67,7 @@ class DigitalProductController extends Controller {
         $order->total = $price;
         }
         $order->subtotal = $price;
+        $order->status = 0;
         $order->status_payment = "done";
         $order->payment_method = "wallet";
         $order->save();
@@ -165,8 +166,7 @@ class DigitalProductController extends Controller {
 
   public function notification(Request $request){
       #updatestatus
-    return $request;
-      $order = OrderDigital::where('invoice_no','=',$request->sn)->update(['status' => $request->statuscode]);
+      $order = OrderDigital::where('invoice_no','=',$request->clientid)->update(['status' => $request->statuscode]);
 
   }
 }
