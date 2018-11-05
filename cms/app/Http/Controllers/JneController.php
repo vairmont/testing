@@ -23,7 +23,7 @@ class JneController extends Controller
         ->join('customer','customer.identifier','=','order.user_id')
         ->leftjoin('address','address.id','=','order.address_id')
         ->where('order.status','=','1')
-        ->select('order.airway_bill as bill','order_detail.id as oid','order.id as id','order.invoice_no as invoice','customer.name as name','address.address as address','product.product_name as proname','order_detail.qty as qty','order.total as total');
+        ->select('users.phone as phone','order.airway_bill as bill','order_detail.id as oid','order.id as id','order.invoice_no as invoice','customer.name as name','address.address as address','product.product_name as proname','order_detail.qty as qty','order.total as total');
         
         $jne = $jne->orderby('order.id','asc')->get();  
         return view('jne.jne',compact('jne'))->withTitle('By jne');
@@ -34,7 +34,7 @@ class JneController extends Controller
             ->join('customer','customer.identifier','=','order.user_id')
             ->Join('agen','agen.identifier','=','order.agen_id')
             ->leftJoin('address','address.id','=','order.address_id')
-            ->select('order.id as id','order.invoice_no as invoice','customer.name as name','address.address as address','order.total as total','order.airway_bill as bill')
+            ->select('users.phone as phone','order.id as id','order.invoice_no as invoice','customer.name as name','address.address as address','order.total as total','order.airway_bill as bill')
             ->where('order.invoice_no',$id)
             ->first();
         
