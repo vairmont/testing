@@ -16,6 +16,7 @@ Route::post('/v1/forgotPasswordtes', 'UserController@forgotPassword2');
 Route::post('/v1/changePassword', 'UserController@changePassword');
 
 Route::get('/v1/dashboard1','DashboardController@getDashboard1');
+Route::get('/v1/digital/notification', 'DigitalProductController@notification');
 
 Route::post('/v1/register/agen', 'RegisterController@addAgen');
 Route::post('/v1/register/agen/ktp/upload', 'RegisterController@uploadKTP');
@@ -58,7 +59,6 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
 
   Route::post('/digital', 'DigitalProductController@checkOp');
   Route::post('/digital/create', 'DigitalProductController@create');
-  Route::get('/digital/notification', 'DigitalProductController@notification');
 
   Route::get('/chat', 'ChatController@chatList');
   Route::post('/chat', 'ChatController@orderChat');
