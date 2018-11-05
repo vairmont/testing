@@ -37,6 +37,9 @@ Route::get('/bywaneeapprove','EmployeeController@getByWaneeApprove');
 Route::get('/bywithdraw', 'WithDrawController@getByWithDraw');
 Route::get('/bywithdrawdone', 'WithDrawController@getByWithDrawDone');
 
+Route::get('/byjne','JneController@getByJne');
+Route::get('/verifyjne/{id}','JneController@updateStatus')->name('statusjne');
+
 Route::get('/verifywanee/{id}','EmployeeController@updateStatus')->name('status1');
 Route::post('/verifycheckbox','EmployeeController@updateCheck')->name('check1');
 Route::post('/verifywanee3','EmployeeController@updateStatus1')->name('status3');
@@ -46,6 +49,7 @@ Route::post('/verifywanee4','EmployeeController@updateStatus2')->name('status4')
 Route::get('/verifywanee2/{id}','EmployeeController@updateStatus')->name('status2');
 Route::get('/verifywithdraw/{id}','WithDrawController@updateStatus')->name('status');
 Route::post('/verifyagent/{id}','EmployeeController@updateVerify')->name('verify');
+
 
 Route::get('/bypurchaseorder','InventoryController@getByPurchaseorder');
 Route::get('/bytransferorder','InventoryController@getByTransferorder');

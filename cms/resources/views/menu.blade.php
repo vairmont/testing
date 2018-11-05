@@ -133,6 +133,15 @@
                         </ul>
                     <!-- /.nav-second-level -->
                 </li>
+                <li>
+                    <a href="#"><i class="fa fa-group"></i> JNE<span class="fa arrow"></span></a>
+                    <ul class="nav nav-second-level">
+                        <li>
+                            <a href="{{url('/byjne')}}">JNE</a>
+                        </li>
+                    </ul>
+                <!-- /.nav-second-level -->
+            </li>
                {{-- <li>
                         <a href="#"><i class="fa fa-gears"></i> Pengaturan<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
