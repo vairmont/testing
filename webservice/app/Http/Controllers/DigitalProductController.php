@@ -159,27 +159,32 @@ class DigitalProductController extends Controller {
         curl_close($ch);
 
         $res = json_decode($output,true);
-        return $res;
     #send push notif ke agen
     //$this->_sendPushNotification($order->agen_id, "Pulsa", "Customer Membeli Pulsa.");
 
-    return response()->json(['data' => [], 'message' => $res['msg']]);
+    return response()->json(['data' => [$res], 'message' => $res['msg']]);
   }
 
   public function notification(Request $request){
       #updatestatus
-      // $order = OrderDigital::where('invoice_no','=',$request->clientid)->update(['status' => $request->statuscode]);
+      $order = OrderDigital::where('invoice_no','=',$request->clientid)->update(['status' => $request->statuscode]);
 
-      // $reversal = new Reversal;
-      // $reversal->server_id = $request->serverid;
-      // $reversal->client_id = $request->clientid;
-      // $reversal->status_code = $request->statuscode;
-      // $reversal->kp = $request->kp;
-      // $reversal->msisdn = $request->msisdn;
-      // $reversal->sn = $request->sn;
-      // $reversal->msg = $request->msg;
-      // $reversal->save();
-    // return $request->sn;
-      return response()->json(['data' => [$request->msisdn], 'message' => ['OK']]);
+      // $userkey = "ky7049";
+      // $passkey = "go2018";
+      // $telepon = '08121957740';
+      // $message = $order;
+      // $url = "https://alpha.zenziva.net/apps/smsapi.php";
+      // $curlHandle = curl_init();
+      // curl_setopt($curlHandle, CURLOPT_URL, $url);
+      // curl_setopt($curlHandle, CURLOPT_POSTFIELDS, 'userkey='.$userkey.'&passkey='.$passkey.'&nohp='.$telepon.'&pesan='.urlencode($message));
+      // curl_setopt($curlHandle, CURLOPT_HEADER, 0);
+      // curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, 1);
+      // curl_setopt($curlHandle, CURLOPT_SSL_VERIFYHOST, 2);
+      // curl_setopt($curlHandle, CURLOPT_SSL_VERIFYPEER, 0);
+      // curl_setopt($curlHandle, CURLOPT_TIMEOUT,30);
+      // curl_setopt($curlHandle, CURLOPT_POST, 1);
+      // $results = curl_exec($curlHandle);
+      // curl_close($curlHandle);
+      return response()->json(['data' => [], 'message' => 'OK']);
   }
 }
