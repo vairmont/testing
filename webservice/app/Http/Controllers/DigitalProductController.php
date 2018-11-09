@@ -6,6 +6,7 @@ use Validator;
 use App\Prefix;
 use App\Operator;
 use App\User;
+use App\Reversal;
 use App\DigitalProduct;
 use App\OrderDigital;
 use App\Agen;
@@ -158,6 +159,7 @@ class DigitalProductController extends Controller {
         curl_close($ch);
 
         $res = json_decode($output,true);
+        return $res;
     #send push notif ke agen
     //$this->_sendPushNotification($order->agen_id, "Pulsa", "Customer Membeli Pulsa.");
 
@@ -166,7 +168,18 @@ class DigitalProductController extends Controller {
 
   public function notification(Request $request){
       #updatestatus
-      $order = OrderDigital::where('invoice_no','=',$request->clientid)->update(['status' => $request->statuscode]);
+      // $order = OrderDigital::where('invoice_no','=',$request->clientid)->update(['status' => $request->statuscode]);
 
+      // $reversal = new Reversal;
+      // $reversal->server_id = $request->serverid;
+      // $reversal->client_id = $request->clientid;
+      // $reversal->status_code = $request->statuscode;
+      // $reversal->kp = $request->kp;
+      // $reversal->msisdn = $request->msisdn;
+      // $reversal->sn = $request->sn;
+      // $reversal->msg = $request->msg;
+      // $reversal->save();
+    // return $request->sn;
+      return response()->json(['data' => [$request->msisdn], 'message' => ['OK']]);
   }
 }
