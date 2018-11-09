@@ -54,6 +54,7 @@
                             <thead>
                                 <tr>
                                     <th>ID</th>
+                                    <th>Order-ID</th>
                                     <th>SKU</th>
                                     <th>Supplier</th>
                                     <th>Nama Barang</th>
@@ -70,6 +71,7 @@
                                 @foreach($totalsales as $total)           
                                 <tr>
                                     <td>{{$total->id}}</td>
+                                    <td>{{ $total->oid }}</td>
                                     <td>{{$total->sku}}</td>
                                     <td>{{ $total->supplier }}</td>
                                     <td>{{$total->name}}</td>
