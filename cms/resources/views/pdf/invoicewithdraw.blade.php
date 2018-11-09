@@ -24,8 +24,8 @@
     <table border="1" width="100%" cellpadding='0' cellspacing='0'>
         <thead>
             <tr>
-            	<th>Tanggal Pengajuan<th>
-                <th>Nama</th>
+                <th>Tanggal pengajuan</th>
+            	<th>Nama</th>
                 <th>Amount</th>
                 <th>No.Rek</th>
                 <th>Bank</th>
@@ -33,7 +33,7 @@
         </thead>    
         <tbody>
             <tr style="text-align: top">
-             	<td>{{$draw->date}}<br>
+             	<td>{{ $draw->date}}<br>
                   <br>
                   <br>
                   <br>
@@ -97,6 +97,16 @@
             
             <tr>      
                 @endforeach
+                
+                <p style="text-align: right;"><br>DiSetujui<br>
+                <br>
+                <br>
+                <br>
+                <br>
+                <br>
+                Erben
+                </p>
+                
         </tbody>
     </table> 
   
