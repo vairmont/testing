@@ -78,7 +78,7 @@ class VoucherController extends Controller
                     'discount' => $discount,
                     'cashbackrate' => $cashbackrate,
                     'cashback' => $cashback
-
+                    
                 ], 'message' => ['OK']]);
         }
             else

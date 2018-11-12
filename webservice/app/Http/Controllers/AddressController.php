@@ -17,89 +17,82 @@ class AddressController extends Controller
 {
 	public function getAddress(Request $request)
 	{
-		$agen = Address::join('city', 'city.id', '=', 'address.city_id')
+		$address = Address::join('city', 'city.id', '=', 'address.city_id')
 		->join('region', 'region.id', '=', 'address.region_id')
-		->select('address.name as name', 'region.name as region', 'city.name as city', 'address.address as address')
+		->select('address.name as name', 'region.name as region', 'city.name as city', 'address.address as address', 'address.zip')
 		->where('user_id', $request->get('user')->id)
 		->get();
 
-		return response()->json(['data' => $agen, 'message' => ['OK']]);
+		return response()->json(['data' => $address, 'message' => ['OK']]);
     }
        
 
-	Public function addAddress(Request $request)
+	public function addAddress(Request $request)
 	{
-		if(empty($request->name)) {s
-            return response()->json(['data' => [], 'message' => ['Nama alamat tidak boleh kosong']]);
+		if(empty($request->name)) {
+            return response()->json(['data' => [], 'message' => ['Nama alamat tidak boleh kosong.']]);
         }
 
-        if(empty($request->name)) {s
-            return response()->json(['data' => [], 'message' => ['Nama alamat tidak boleh kosong']]);
+        if(empty($request->city_id)) {
+            return response()->json(['data' => [], 'message' => ['Kota harus dipilih.']]);
         }
 
-        if(empty($request->name)) {s
-            return response()->json(['data' => [], 'message' => ['Nama alamat tidak boleh kosong']]);
+        if(empty($request->region_id)) {
+            return response()->json(['data' => [], 'message' => ['Kecamatan harus dipilih.']]);
         }
         
-        if(empty($request->name)) {s
-            return response()->json(['data' => [], 'message' => ['Nama alamat tidak boleh kosong']]);
+        if(empty($request->address)) {
+            return response()->json(['data' => [], 'message' => ['Alamat lengkap tidak boleh kosong']]);
         }
+
+        if(empty($request->zip)) {
+            return response()->json(['data' => [], 'message' => ['Kode pos tidak boleh kosong']]);
+        }
+
 
 		else {
 
-			$user = [
-				'role_id' => 5,
-				'phone' => $request->phone,
-				'password' => Hash::make('123456'),
-				'api_token' => uniqid(),
-				'status' => 'active'
-			];
+            $code = Region::where('id', '=', $request->region_id)
+                    ->select('code')
+                    ->first();
 
-			$createUser = User::create($user);
-
-			$dataAgen = Agen::where('id', $request->agen_id)->first();
-
-			$agen = [
-				'identifier' => $createUser->id,
-				'parent' => 0,
-				'business_name' => $dataAgen->business_name,
+			$address = [
 				'name' => $request->name,
-				'address' => $dataAgen->address,
-				'ktp_photo' => '',
-				'kk_photo' => $dataAgen->kk_photo
+				'user_id' => $request->get('user')->id,
+				'city_id' => $request->city_id,
+				'region_id' => $request->region_id,
+                'region_code' => $code->code,
+				'address' => $request->address,
+				'zip' => $request->zip
 			];
 
-			$createAgen = Agen::create($agen);
+			$createAddress = Address::create($address);
 
-			$family = [
-				'parent_id' => $dataAgen->id,
-				'child_id' => $createAgen->id,
-				'relation' => $request->relation
-            ];
-            $create = Family::create($family);
-
-            return response()->json(['family_id' => $createAgen->id, 'message' => ['OK']]);
+            return response()->json(['family_id' => $createAddress->id, 'message' => ['OK']]);
     	}
+    }
+
+    public function editAddress(Request $request)
+    {
+        $code = Region::where('id', '=', $request->region_id)
+                    ->select('code')
+                    ->first();
+
+            $address = [
+                'name' => $request->name,
+                'user_id' => $request->get('user')->id,
+                'city_id' => $request->city_id,
+                'region_id' => $request->region_id,
+                'region_code' => $code->code,
+                'address' => $request->address,
+                'zip' => $request->zip
+            ];
+
+        $save = Address::where('user_id', '=', $request->get('user')->id)
+        ->update($data);
+
+        return response()->json(['message' => ['OK']]);        
     }		
-
-    public function uploadKTP(Request $request)
-	{
-		// upload photos will store in storage/app/photos
-		if(empty($request->ktp_photo)) {
-            return response()->json(['data' => [], 'message' => ['Foto Ktp tidak boleh kosong']]);
-        }
-		else {
-
-			$path = $request->file('ktp_photo')->store('photo_ktp');
-
-			Agen::where('id', $request->header('family_id'))
-			->update([
-				'ktp_photo' => "storage/app/".$path
-			]);
-
-			return response()->json(['data' => [], 'message' => ['OK']]);
-		}
-	}
 
 }
 

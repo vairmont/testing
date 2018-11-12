@@ -8,6 +8,6 @@ class Region extends Model{
 
   protected $table = 'region';
 
-  protected $fillable = ['id', 'city_id', 'name'];
+  protected $fillable = ['id', 'city_id', 'name', 'code'];
 
 }
