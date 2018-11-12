@@ -16,8 +16,11 @@ use Illuminate\Http\Request;
 
 class DigitalProductController extends Controller {
   public function checkOp(Request $request) {
-   $operator = Prefix::join('operator','prefix.operator_id','=','operator.id')
-                    ->where('prefix.prefix','=',$request->prefix)
+
+    $subprefix = substr($request->prefix, -3);
+    $prefix = substr_replace($subprefix, '0',0,0);
+    $operator = Prefix::join('operator','prefix.operator_id','=','operator.id')
+                    ->where('prefix.prefix','=',$prefix)
                     ->first();
 
     if($operator == null)
@@ -96,7 +99,7 @@ class DigitalProductController extends Controller {
             $history->user_id = $request->get('user')->id;
             $history->amount = $orderD->total;
             if($customer->wanee < $orderD->total){
-              return response()->json(['data' => [], 'message' => ['Saldo anda tidak']]);
+              return response()->json(['data' => [], 'message' => ['Saldo anda tidak cukup']]);
             }
             $history->saldo_akhir = $customer->wanee - $orderD->total;
             $history->reason = 'Pembelian Pulsa';
