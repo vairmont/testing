@@ -225,7 +225,7 @@ class OrderControllerCustomer extends Controller
     $orderbillingdetail->customer_name = $request['customer_name'];
     $orderbillingdetail->customer_phone = $request['customer_phone'];
     $orderbillingdetail->customer_address = "";
-    $orderbillingdetail->customer_address2 = $add->address2;
+    $orderbillingdetail->customer_address2 = $request->customer_address2;
     $orderbillingdetail->notes = $request['notes'];
     $orderbillingdetail->save();
 
@@ -333,7 +333,7 @@ class OrderControllerCustomer extends Controller
     $orderbillingdetail->customer_name = $request['customer_name'];
     $orderbillingdetail->customer_phone = $request['customer_phone'];
     $orderbillingdetail->customer_address = "";
-    $orderbillingdetail->customer_address2 = $add->address2;
+    $orderbillingdetail->customer_address2 = $customer_address2;
     $orderbillingdetail->notes = $request['notes'];
     $orderbillingdetail->save();
 
@@ -353,110 +353,6 @@ class OrderControllerCustomer extends Controller
         }
       }
   }
-
-    public function updateStatusJne(Request $request){
-      $userkey = "TESTAPI";
-      $passkey = "25c898a9faea1a100859ecd9ef674548";
-      $awb = Order::where('airway_bill', '!=', null)
-              ->select('airway_bill', 'status', 'id')
-              ->get();
-              
-      foreach ($awb as $resi) {
-        $url = "http://apiv2.jne.co.id:10102/tracing/api/list/v1/cnote/".$resi->airway_bill;
-        
-      $fields = [
-        'username' => $userkey,
-        'api_key' => $passkey
-      ];
-
-       $curlHandle = curl_init();
-      curl_setopt($curlHandle, CURLOPT_URL, $url);
-      curl_setopt($curlHandle, CURLOPT_POSTFIELDS, http_build_query($fields));
-      curl_setopt($curlHandle, CURLOPT_HTTPHEADER, array(
-        'Accept : application/json',
-        'Content-Type : application/x-www-form-urlencoded',
-        'User-Agent : php-request'
-        
-      ));
-      curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, 1);
-      curl_setopt($curlHandle, CURLOPT_SSL_VERIFYHOST, 2);
-      curl_setopt($curlHandle, CURLOPT_SSL_VERIFYPEER, 0);
-      curl_setopt($curlHandle, CURLOPT_TIMEOUT,30);
-      curl_setopt($curlHandle, CURLOPT_POST, 1);
-      $results = curl_exec($curlHandle);
-      curl_close($curlHandle);
-      $res = json_decode($results, true);
-
-          if($res['cnote']['pod_status'] == 'ON PROCESS'){
-          
-            Order::where('id', $resi->id)
-              ->update([
-                'status' => '6'
-              ]);
-          }
-
-          if($res['cnote']['pod_status'] == 'DELIVERED'){
-          
-            Order::where('id', $resi->id)
-              ->update([
-                'status' => '7'
-              ]);
-          }
-
-          if($res['cnote']['pod_status'] == 'RETURN TO SHIPPER'){
-          
-            Order::where('id', $resi->id)
-              ->update([
-                'status' => '10'
-              ]);
-          }
-
-          if($res['cnote']['pod_status'] == 'UNDELIVERED'){
-          
-            Order::where('id', $resi->id)
-              ->update([
-                'status' => '11'
-              ]);
-          }
-
-      sleep(1);
-      }
-     
-     return response()->json(['data' => [], 'message' => ['OK']]);
-     
-    }
-
-    public function trackingJne (Request $request){
-      $userkey = "TESTAPI";
-      $passkey = "25c898a9faea1a100859ecd9ef674548";
-      $resi = $request->resi;
-      $url = "http://apiv2.jne.co.id:10102/tracing/api/list/v1/cnote/".$resi;
-
-      $fields = [
-        'username' => $userkey,
-        'api_key' => $passkey
-      ];
-
-       $curlHandle = curl_init();
-      curl_setopt($curlHandle, CURLOPT_URL, $url);
-      curl_setopt($curlHandle, CURLOPT_POSTFIELDS, http_build_query($fields));
-      curl_setopt($curlHandle, CURLOPT_HTTPHEADER, array(
-        'Accept : application/json',
-        'Content-Type : application/x-www-form-urlencoded',
-        'User-Agent : php-request'
-        
-      ));
-      curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, 1);
-      curl_setopt($curlHandle, CURLOPT_SSL_VERIFYHOST, 2);
-      curl_setopt($curlHandle, CURLOPT_SSL_VERIFYPEER, 0);
-      curl_setopt($curlHandle, CURLOPT_TIMEOUT,30);
-      curl_setopt($curlHandle, CURLOPT_POST, 1);
-      $results = curl_exec($curlHandle);
-      curl_close($curlHandle);
-      $res = json_decode($results, true);
-
-     return response()->json(['data' => [$res['cnote']['pod_status']], 'message' => ['OK']]);
-    }
 
     public function cancelOrder(Request $request) {
 

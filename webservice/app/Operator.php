@@ -9,5 +9,6 @@ class Operator extends Model
     protected $table = 'operator';
 
     protected $fillable = [
+    	'id', 'name', 'logo'
     ];
 }
