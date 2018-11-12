@@ -181,6 +181,7 @@ class OrderControllerCustomer extends Controller
     }
     $order->status = OrderStatus::CREATED;
     $order->agen_id = $agencust->identifier;
+    $order->address_id = $request->address_id;
     $order->save();
 
     $items = [];
@@ -212,87 +213,25 @@ class OrderControllerCustomer extends Controller
     }
 
     #Input Billing Detail
+    $add = Address::join('city', 'city.id', '=', 'address.city_id')
+                ->join('region', 'region.id', '=', 'address.region_id')
+                ->select('address.address as address2', 'region.name as region', 'city.name as city', 'address.zip as zip', 'region.code as code')
+                ->where('address.id', '=', $request->address_id)
+                ->first();
+
     $orderbillingdetail = new OrderBillingDetail;
 
     $orderbillingdetail->order_id =  $order->id;
     $orderbillingdetail->customer_name = $request['customer_name'];
     $orderbillingdetail->customer_phone = $request['customer_phone'];
     $orderbillingdetail->customer_address = "";
-    $orderbillingdetail->lat = $request['lat'];
-    $orderbillingdetail->long = $request['long'];
-    $orderbillingdetail->customer_address2 = $request['customer_address2'];
+    $orderbillingdetail->customer_address2 = $add->address2;
     $orderbillingdetail->notes = $request['notes'];
     $orderbillingdetail->save();
 
-    //JNE GET AWB
-      $userkey = "TESTAPI";
-      $passkey = "25c898a9faea1a100859ecd9ef674548";
-      $addr1 = "Ruko Sutera Niaga 3 Blok C/10";
-      $url = "http://apiv2.jne.co.id:10102/tracing/api/generatecnote";
-
-      $add = Address::join('city', 'city.id', '=', 'address.city_id')
-                ->join('region', 'region.id', '=', 'address.region_id')
-                ->select('address.address as address2', 'region.name as region', 'city.name as city', 'address.zip as zip', 'region.code as code')
-                ->where('address.id', '=', $request->address_id)
-                ->first();
-
-      $fields = [
-        'username' => $userkey,
-        'api_key' => $passkey,
-        'OLSHOP_BRANCH' => 'CGK000',
-        'OLSHOP_CUST' => '10950700',
-        'OLSHOP_ORDERID' => $order->invoice_no,
-        'OLSHOP_SHIPPER_NAME' => 'GrosirOne',
-        'OLSHOP_SHIPPER_ADDR1' => $addr1,
-        'OLSHOP_SHIPPER_ADDR2' => '-',
-        'OLSHOP_SHIPPER_CITY' => 'Tangerang',
-        'OLSHOP_SHIPPER_ZIP' => 15325,
-        'OLSHOP_SHIPPER_PHONE' => '08119500311',
-        'OLSHOP_RECEIVER_NAME' => $request->customer_name,
-        'OLSHOP_RECEIVER_ADDR1' => $add->address2,
-        'OLSHOP_RECEIVER_ADDR2' => '-',
-        'OLSHOP_RECEIVER_CITY' => $add->city,
-        'OLSHOP_RECEIVER_ZIP' => $add->zip,
-        'OLSHOP_RECEIVER_PHONE' => $request->get('user')->phone,
-        'OLSHOP_QTY' => $orderDetail->qty,
-        'OLSHOP_WEIGHT' => 8,
-        'OLSHOP_GOODSDESC' => $product->product_name,
-        'OLSHOP_GOODSVALUE' => '100000',
-        'OLSHOP_GOODSTYPE' => 2,
-        'OLSHOP_INS_FLAG' => 'N',
-        'OLSHOP_ORIG' => 'TGR10000',
-        'OLSHOP_DEST' => $add->code,
-        'OLSHOP_SERVICE' => 'REG',
-        'OLSHOP_COD_FLAG' => 'N',
-        'OLSHOP_COD_AMOUNT' => 0
-
-      ];
-    
-      $curlHandle = curl_init();
-      curl_setopt($curlHandle, CURLOPT_URL, $url);
-      curl_setopt($curlHandle, CURLOPT_POSTFIELDS, http_build_query($fields));
-      curl_setopt($curlHandle, CURLOPT_HTTPHEADER, array(
-        'Accept : application/json',
-        'Content-Type : application/x-www-form-urlencoded',
-        'User-Agent : php-request'
-        
-      ));
-      curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, 1);
-      curl_setopt($curlHandle, CURLOPT_SSL_VERIFYHOST, 2);
-      curl_setopt($curlHandle, CURLOPT_SSL_VERIFYPEER, 0);
-      curl_setopt($curlHandle, CURLOPT_TIMEOUT,30);
-      curl_setopt($curlHandle, CURLOPT_POST, 1);
-      $results = curl_exec($curlHandle);
-      curl_close($curlHandle);
-
-     $res = json_decode($results, true);
-
-     $order->airway_bill = $res['detail'][0]['cnote_no'];
-     $order->save();
-
     // clear cart
-    // CartDetail::where('cart_id',$cart->id)->delete();
-    // Cart::where('id',$cart->id)->delete();
+    CartDetail::where('cart_id',$cart->id)->delete();
+    Cart::where('id',$cart->id)->delete();
 
     #send push notif ke ag->e2
     $this->_sendPushNotification($order->agen_id, "Order Baru", "Ada order baru.");
@@ -350,6 +289,7 @@ class OrderControllerCustomer extends Controller
       }
       $order->status = OrderStatus::CREATED;
       $order->agen_id = $agencust->identifier;
+      $order->address_id = $request->address_id;
       $order->save();
 
       $items = [];
@@ -381,83 +321,22 @@ class OrderControllerCustomer extends Controller
       }
     
     #Input Billing Detail
+    $add = Address::join('city', 'city.id', '=', 'address.city_id')
+                ->join('region', 'region.id', '=', 'address.region_id')
+                ->select('address.address as address2', 'region.name as region', 'city.name as city', 'address.zip as zip', 'region.code as code')
+                ->where('address.id', '=', $request->address_id)
+                ->first();
+
     $orderbillingdetail = new OrderBillingDetail;
 
     $orderbillingdetail->order_id =  $order->id;
     $orderbillingdetail->customer_name = $request['customer_name'];
     $orderbillingdetail->customer_phone = $request['customer_phone'];
     $orderbillingdetail->customer_address = "";
-    $orderbillingdetail->lat = $request['lat'];
-    $orderbillingdetail->long = $request['long'];
-    $orderbillingdetail->customer_address2 = $request['customer_address2'];
+    $orderbillingdetail->customer_address2 = $add->address2;
     $orderbillingdetail->notes = $request['notes'];
     $orderbillingdetail->save();
 
-    //JNE GET AWB
-      $userkey = "TESTAPI";
-      $passkey = "25c898a9faea1a100859ecd9ef674548";
-      $addr1 = "Ruko Sutera Niaga 3 Blok C/10";
-      $url = "http://apiv2.jne.co.id:10102/tracing/api/generatecnote";
-
-      $add = Address::join('city', 'city.id', '=', 'address.city_id')
-                ->join('region', 'region.id', '=', 'address.region_id')
-                ->select('address.address as address2', 'region.name as region', 'city.name as city', 'address.zip as zip', 'region.code as code')
-                ->where('address.id', '=', $request->address_id)
-                ->first();
-
-      $fields = [
-        'username' => $userkey,
-        'api_key' => $passkey,
-        'OLSHOP_BRANCH' => 'CGK000',
-        'OLSHOP_CUST' => '10950700',
-        'OLSHOP_ORDERID' => $order->invoice_no,
-        'OLSHOP_SHIPPER_NAME' => 'GrosirOne',
-        'OLSHOP_SHIPPER_ADDR1' => $addr1,
-        'OLSHOP_SHIPPER_ADDR2' => '-',
-        'OLSHOP_SHIPPER_CITY' => 'Tangerang',
-        'OLSHOP_SHIPPER_ZIP' => 15325,
-        'OLSHOP_SHIPPER_PHONE' => '08119500311',
-        'OLSHOP_RECEIVER_NAME' => $request->customer_name,
-        'OLSHOP_RECEIVER_ADDR1' => $add->address2,
-        'OLSHOP_RECEIVER_ADDR2' => '-',
-        'OLSHOP_RECEIVER_CITY' => $add->city,
-        'OLSHOP_RECEIVER_ZIP' => $add->zip,
-        'OLSHOP_RECEIVER_PHONE' => $request->get('user')->phone,
-        'OLSHOP_QTY' => $orderDetail->qty,
-        'OLSHOP_WEIGHT' => 8,
-        'OLSHOP_GOODSDESC' => $product->product_name,
-        'OLSHOP_GOODSVALUE' => '100000',
-        'OLSHOP_GOODSTYPE' => 2,
-        'OLSHOP_INS_FLAG' => 'N',
-        'OLSHOP_ORIG' => 'TGR10000',
-        'OLSHOP_DEST' => $add->code,
-        'OLSHOP_SERVICE' => 'REG',
-        'OLSHOP_COD_FLAG' => 'N',
-        'OLSHOP_COD_AMOUNT' => 0
-
-      ];
-    
-      $curlHandle = curl_init();
-      curl_setopt($curlHandle, CURLOPT_URL, $url);
-      curl_setopt($curlHandle, CURLOPT_POSTFIELDS, http_build_query($fields));
-      curl_setopt($curlHandle, CURLOPT_HTTPHEADER, array(
-        'Accept : application/json',
-        'Content-Type : application/x-www-form-urlencoded',
-        'User-Agent : php-request'
-        
-      ));
-      curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, 1);
-      curl_setopt($curlHandle, CURLOPT_SSL_VERIFYHOST, 2);
-      curl_setopt($curlHandle, CURLOPT_SSL_VERIFYPEER, 0);
-      curl_setopt($curlHandle, CURLOPT_TIMEOUT,30);
-      curl_setopt($curlHandle, CURLOPT_POST, 1);
-      $results = curl_exec($curlHandle);
-      curl_close($curlHandle);
-
-     $res = json_decode($results, true);
-
-     $order->airway_bill = $res['detail'][0]['cnote_no'];
-     $order->save();
 
     // clear cart
     CartDetail::where('cart_id',$cart->id)->delete();
@@ -574,8 +453,9 @@ class OrderControllerCustomer extends Controller
       curl_setopt($curlHandle, CURLOPT_POST, 1);
       $results = curl_exec($curlHandle);
       curl_close($curlHandle);
+      $res = json_decode($results, true);
 
-     $res = json_decode($results, true);
+     return response()->json(['data' => [$res['cnote']['pod_status']], 'message' => ['OK']]);
     }
 
     public function cancelOrder(Request $request) {

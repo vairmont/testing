@@ -68,7 +68,7 @@ class AddressController extends Controller
 
 			$createAddress = Address::create($address);
 
-            return response()->json(['family_id' => $createAddress->id, 'message' => ['OK']]);
+            return response()->json(['address_id' => $createAddress->id, 'message' => ['OK']]);
     	}
     }
 
@@ -88,8 +88,8 @@ class AddressController extends Controller
                 'zip' => $request->zip
             ];
 
-        $save = Address::where('user_id', '=', $request->get('user')->id)
-        ->update($data);
+        $save = Address::where('id', '=', $request->address_id)
+        ->update($address);
 
         return response()->json(['message' => ['OK']]);        
     }		
