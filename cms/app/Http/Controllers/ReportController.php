@@ -389,6 +389,12 @@ class ReportController extends Controller
     ->join('store','store.id','=','users.store_id')
     ->whereIn('order.status',[7,9])
     ->select('store.store_name as stoname','agen.source as source','product.cost as cost','store.store_name as stoname','order_detail.qty as qty','incentive_category.rate as rate','order.invoice_no as invoice','agen.name as name','order_detail.order_id as id','product.product_name as proname','order_detail.price_for_agen as agen_price','order_detail.price_for_customer as customer_price','order.created_at as create','order.updated_at as update','order.agen_id as aid', 'product.promo_price');
+    $qry = $margin->get();
+    
+    $total1 = 0;
+    foreach($qry as $q) {
+        $total1 += (($q->customer_price * $q->qty * 0.95)-($q->cost * $q->qty))-(($q->customer_price * $q->qty * 0.95 * $q->rate / 100));
+    }
 
     if(isset($request->keyword) && !empty($request->keyword)) {
         $margin = $margin->where('product.product_name','like',$request->keyword.'%');
@@ -413,7 +419,6 @@ class ReportController extends Controller
             'Net Margin' =>number_format((($mar->customer_price * $mar->qty * 0.95)-($mar->cost * $mar->qty))-(($mar->customer_price * $mar->qty * 0.95 * $mar->rate / 100))),
         ]);
     }
-
     
     return Excel::create('Margin_report', function($excel) use($data) {
         $excel->sheet('Sheetname', function($sheet) use($data) {
@@ -428,7 +433,7 @@ class ReportController extends Controller
     }
     
         $margin = $margin->orderby('order.created_at','desc')->paginate(10);  
-        return view('report.bymargin',compact('margin','request'))->withTitle('Margin');
+        return view('report.bymargin',compact('margin','request','total1'))->withTitle('Margin');
    }
 
 }

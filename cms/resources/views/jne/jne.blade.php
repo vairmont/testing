@@ -69,7 +69,7 @@
                                                 <td>{{ $jn->qty }}</td>
                                                 <td>Rp.{{ number_format($jn->total)}}</td>
                                                 <td>
-                                                    <a href="{{ route('statusjne', ['id' => $jn->invoice]) }}" class="btn btn-primary">Verifikasi</a>                                                 
+                                                    <a href="{{ route('statusjne', ['id' => $jn->invoice]) }}" class="btn btn-primary">Print</a>                                                 
                                                 </td>
                                                 @endforeach
                                          @endif

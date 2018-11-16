@@ -108,6 +108,7 @@ class WithDrawController extends Controller
             $history->save();
 
             $pdf = PDF::loadView('pdf.invoicewithdraw',compact('amount','wanee','dif','withdraw','$request'));
+            //return view('pdf.invoicewithdraw',compact('amount','wanee','dif','withdraw','$request'));
             return $pdf->download('invoicewithdraw.pdf');
     }
     public function getByWithDrawDone(Request $request){

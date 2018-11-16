@@ -30,8 +30,7 @@
                     <button type="submit" name="is_export" value="1" class="btn btn-primary">Export</button>
                 </form>
             </div>
-
-         
+            <h2>Total Margin :  {{number_format( $total1) }}</h2>
             <!-- /.row -->
             <div class="row">
             <!-- div col -->
