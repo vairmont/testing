@@ -100,6 +100,10 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
   Route::get('/order/customer/done', 'OrderControllerCustomer@orderDone');
   Route::get('/order/customer/cancel', 'OrderControllerCustomer@orderCancel');
 
+  Route::post('/jne', 'JneController@updateStatusJne');
+  Route::post('/tracking', 'JneController@trackingJne');
+  Route::post('/resi', 'JneController@getResi');
+
   Route::post('/order/assign-agent', 'OrderController@assignOrderAgent');
   Route::post('/order/cancel', 'OrderController@cancelOrderAgent');
   Route::post('/purchase', 'OrderController@purchase');
@@ -132,6 +136,10 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
 
   Route::get('/getcustomer', 'UserController@getCustomerList');
   Route::get('/customer', 'CustomerController@getCustomer');
+
+  Route::get('/address', 'AddressController@getAddress');
+  Route::post('/address', 'AddressController@addAddress');
+  Route::post('/editaddress', 'AddressController@editAddress');
 
   Route::get('/family', 'FamilyController@getFamily');
   Route::get('/commission', 'CommissionController@getCommission');

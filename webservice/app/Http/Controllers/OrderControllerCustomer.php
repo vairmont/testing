@@ -15,6 +15,7 @@ use App\OrderCancel;
 use App\Product;
 use App\Family;
 use App\Customer;
+use App\Address;
 use App\User;
 use App\Agen;
 use App\Cart;
@@ -35,7 +36,7 @@ class OrderControllerCustomer extends Controller
       ->join('order_billing_detail','order_billing_detail.order_id','=','order.id')
       ->where('user_id', '=', $request->get('user')->id)
       ->whereIn('status',[1,2,6])
-      ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.lat','order_billing_detail.long','order_billing_detail.customer_address2', 'order_billing_detail.notes as order_notes')
+      ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.customer_address2', 'order_billing_detail.notes as order_notes')
       ->orderBy('created_at', 'asc')
       ->get();
 
@@ -63,7 +64,7 @@ class OrderControllerCustomer extends Controller
       ->join('agen', 'agen.identifier', '=', 'order.agen_id')
       ->where('user_id', '=', $request->get('user')->id)
       ->where('status', '=', 7)
-      ->select('order.*', 'order_billing_detail.order_id', 'order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.lat','order_billing_detail.long','order_billing_detail.customer_address2', 'order_billing_detail.notes as order_notes', 'agen.name as agen_name', 'agen.photo as agen_photo')
+      ->select('order.*', 'order_billing_detail.order_id', 'order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.customer_address2', 'order_billing_detail.notes as order_notes', 'agen.name as agen_name', 'agen.photo as agen_photo')
       ->get();
 
       $result = [];
@@ -135,7 +136,7 @@ class OrderControllerCustomer extends Controller
       // x2 for set exact distance
       $distance = (float)(($angle * $earthRadius) * 2);
 
-      if($storelocation->store_name == 'GrosirOne Cikupamas') {
+      if($storelocation->store_name == 'Cikupamas') {
         if($distance <= 25) {
           $cart = Cart::where('user_id', '=', $request->get('user')->id)->first();
 
@@ -180,6 +181,7 @@ class OrderControllerCustomer extends Controller
     }
     $order->status = OrderStatus::CREATED;
     $order->agen_id = $agencust->identifier;
+    $order->address_id = $request->address_id;
     $order->save();
 
     $items = [];
@@ -211,15 +213,19 @@ class OrderControllerCustomer extends Controller
     }
 
     #Input Billing Detail
+    $add = Address::join('city', 'city.id', '=', 'address.city_id')
+                ->join('region', 'region.id', '=', 'address.region_id')
+                ->select('address.address as address2', 'region.name as region', 'city.name as city', 'address.zip as zip', 'region.code as code')
+                ->where('address.id', '=', $request->address_id)
+                ->first();
+
     $orderbillingdetail = new OrderBillingDetail;
 
     $orderbillingdetail->order_id =  $order->id;
     $orderbillingdetail->customer_name = $request['customer_name'];
     $orderbillingdetail->customer_phone = $request['customer_phone'];
     $orderbillingdetail->customer_address = "";
-    $orderbillingdetail->lat = $request['lat'];
-    $orderbillingdetail->long = $request['long'];
-    $orderbillingdetail->customer_address2 = $request['customer_address2'];
+    $orderbillingdetail->customer_address2 = $request->customer_address2;
     $orderbillingdetail->notes = $request['notes'];
     $orderbillingdetail->save();
 
@@ -227,7 +233,7 @@ class OrderControllerCustomer extends Controller
     CartDetail::where('cart_id',$cart->id)->delete();
     Cart::where('id',$cart->id)->delete();
 
-    #send push notif ke agen
+    #send push notif ke ag->e2
     $this->_sendPushNotification($order->agen_id, "Order Baru", "Ada order baru.");
 
     return response()->json(['data' => [], 'message' => ['OK']]);
@@ -283,6 +289,7 @@ class OrderControllerCustomer extends Controller
       }
       $order->status = OrderStatus::CREATED;
       $order->agen_id = $agencust->identifier;
+      $order->address_id = $request->address_id;
       $order->save();
 
       $items = [];
@@ -314,17 +321,22 @@ class OrderControllerCustomer extends Controller
       }
     
     #Input Billing Detail
+    $add = Address::join('city', 'city.id', '=', 'address.city_id')
+                ->join('region', 'region.id', '=', 'address.region_id')
+                ->select('address.address as address2', 'region.name as region', 'city.name as city', 'address.zip as zip', 'region.code as code')
+                ->where('address.id', '=', $request->address_id)
+                ->first();
+
     $orderbillingdetail = new OrderBillingDetail;
 
     $orderbillingdetail->order_id =  $order->id;
     $orderbillingdetail->customer_name = $request['customer_name'];
     $orderbillingdetail->customer_phone = $request['customer_phone'];
     $orderbillingdetail->customer_address = "";
-    $orderbillingdetail->lat = $request['lat'];
-    $orderbillingdetail->long = $request['long'];
-    $orderbillingdetail->customer_address2 = $request['customer_address2'];
+    $orderbillingdetail->customer_address2 = $request->customer_address2;
     $orderbillingdetail->notes = $request['notes'];
     $orderbillingdetail->save();
+
 
     // clear cart
     CartDetail::where('cart_id',$cart->id)->delete();

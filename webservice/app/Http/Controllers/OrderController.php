@@ -39,7 +39,7 @@ class OrderController extends Controller
         ->leftJoin('order_billing_detail','order_billing_detail.order_id','=','order.id')
         ->where('order.agen_id', '=', $request->get('user')->id)
         ->where('order.status','=',1)
-        ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.lat','order_billing_detail.long','order_billing_detail.customer_address2')
+        ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.customer_address2')
         ->orderBy('created_at', 'asc')
         ->get();
 
@@ -51,7 +51,7 @@ class OrderController extends Controller
         ->leftJoin('order_billing_detail','order_billing_detail.order_id','=','order.id')
         ->where('order.agen_id', '=', $parent->id)
         ->where('order.status','=',1)
-        ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.lat','order_billing_detail.long','order_billing_detail.customer_address2')
+        ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address', 'order_billing_detail.customer_address2')
         ->orderBy('created_at', 'asc')
         ->get();
 
@@ -83,7 +83,7 @@ class OrderController extends Controller
         ->leftJoin('order_billing_detail','order_billing_detail.order_id','=','order.id')
         ->where('order.agen_id', '=', $request->get('user')->id)
         ->whereIn('order.status',[2,6])
-        ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.lat','order_billing_detail.long','order_billing_detail.customer_address2', 'order_billing_detail.notes as order_notes', 'order.shipment')
+        ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.customer_address2', 'order_billing_detail.notes as order_notes', 'order.shipment')
         ->get();
         
         $relation = "Kepala Keluarga";
@@ -95,7 +95,7 @@ class OrderController extends Controller
         ->leftJoin('order_billing_detail','order_billing_detail.order_id','=','order.id')
         ->where('order.agen_id', '=', $parent->id)
         ->whereIn('order.status',[2,6])
-        ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.lat','order_billing_detail.long','order_billing_detail.customer_address2', 'order_billing_detail.notes as order_notes', 'order.shipment')
+        ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.customer_address2', 'order_billing_detail.notes as order_notes', 'order.shipment')
         ->get();
 
         $relation = $parent->relation;
@@ -128,7 +128,7 @@ class OrderController extends Controller
         ->leftjoin('rating', 'rating.order_id', '=', 'order.id')
         ->where('order.agen_id', '=', $request->get('user')->id)
         ->where('order.status','=',7)
-        ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.lat','order_billing_detail.long','order_billing_detail.customer_address2', 'order_billing_detail.notes as order_notes', 'rating.rating', 'rating.notes')
+        ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.customer_address2', 'order_billing_detail.notes as order_notes', 'rating.rating', 'rating.notes')
         ->get();
 
         $relation = "Kepala Keluarga";
@@ -140,7 +140,7 @@ class OrderController extends Controller
         ->leftjoin('rating', 'rating.order_id', '=', 'order.id')
         ->where('order.agen_id', '=', $parent->id)
         ->where('order.status','=',7)
-        ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.lat','order_billing_detail.long','order_billing_detail.customer_address2', 'order_billing_detail.notes as order_notes', 'rating.rating', 'rating.notes')
+        ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.customer_address2', 'order_billing_detail.notes as order_notes', 'rating.rating', 'rating.notes')
         ->get();
 
         $relation = $parent->relation;
