@@ -94,7 +94,8 @@
                   <br>
                   <br>
                   <br>
-                  <br></td>
+                  <br>
+                </td>
             </tr>
             <tr>
                 <td style="border-color : transparent !important; border: none !important; "></td>

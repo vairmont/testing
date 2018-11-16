@@ -78,7 +78,7 @@ class ItemController extends Controller
                 'Biaya' => "Rp. ".$item->cost,
                 'Margin' => "Rp. ".$item->margin,
                 'Toko' => $store,
-                'Persediaan' => $stock, 
+                'Persediaan' => $stock,
             ]);
             
         }
