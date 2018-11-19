@@ -69,6 +69,7 @@
                                     <th>Insentif</th>
                                     <th>Paid by Agen</th>
                                     <th>Paid by Customer</th>
+                                    <th>PPN</th>
                                     <th>Discount invoice</th>
                                     <th>Store</th>
                                     <th>Source</th>
@@ -107,6 +108,13 @@
                                         </td>
                                         <td>Rp.{{ number_format($flow->customer_price * $flow->qty * 0.95)}}</td>
                                         <td>Rp.{{ number_format($flow->customer_price * $flow->qty)}}</td>
+                                        <td>
+                                            @if($flow->tax == 0)
+                                            Rp.{{  number_format(($flow->customer_price * $flow->qty * 0.95 * 0.1))}}
+                                            @else
+                                            0
+                                            @endif
+                                        </td>
                                         <td>
                                             {{ $flow->discount }}
                                         </td>
