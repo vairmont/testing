@@ -61,6 +61,7 @@
                             <thead>
                                 <tr>
                                     <th>ID</th>
+                                    <th>Pembeli</th>
                                     <th>Agen</th>
                                     <th>Order</th>
                                     <th>ProductName</th>
@@ -82,6 +83,7 @@
                                 @foreach($flowreport as $flow)                                          
                                     <tr>
                                         <td>{{$flow->id}}</td>
+                                        <td>{{ $flow->cusname }}</td>
                                         <td>
                                             @if($flow->name == NULL)
                                             Chasier
@@ -110,7 +112,7 @@
                                         <td>Rp.{{ number_format($flow->customer_price * $flow->qty)}}</td>
                                         <td>
                                             @if($flow->tax == 0)
-                                            Rp.{{  number_format(($flow->customer_price * $flow->qty * 0.95 * 0.1))}}
+                                            Rp.{{  number_format(($flow->customer_price * $flow->qty * 0.1))}}
                                             @else
                                             0
                                             @endif
