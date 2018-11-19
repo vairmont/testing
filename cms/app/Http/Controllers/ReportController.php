@@ -126,11 +126,12 @@ class ReportController extends Controller
         ->leftjoin('incentive_category','incentive_category.id','=','product.incentive_id')
         ->leftjoin('agen','agen.identifier','=','order.agen_id')
         ->leftjoin('users','users.id','=','agen.identifier')
+        ->leftjoin('customer','customer.identifier','=','order.user_id')
         ->leftjoin('store','store.id','=','users.store_id')
         
         ->whereIn('order.status',[7,9])
         ->where('order.type','=','sembako')
-        ->select('product.tax as tax','order.discount as discount','agen.source as source','store.store_name as stoname','order_detail.qty as qty','incentive_category.rate as rate','order.invoice_no as invoice','agen.name as name','order_detail.order_id as id','product.product_name as proname','order_detail.price_for_agen as agen_price','order_detail.price_for_customer as customer_price','order.created_at as create','order.updated_at as update','order.agen_id as aid', 'product.promo_price');
+        ->select('customer.name as cusname','product.tax as tax','order.discount as discount','agen.source as source','store.store_name as stoname','order_detail.qty as qty','incentive_category.rate as rate','order.invoice_no as invoice','agen.name as name','order_detail.order_id as id','product.product_name as proname','order_detail.price_for_agen as agen_price','order_detail.price_for_customer as customer_price','order.created_at as create','order.updated_at as update','order.agen_id as aid', 'product.promo_price');
 
         
         if(isset($request->date) && $request->date == '1'){
