@@ -214,7 +214,7 @@ class ReportController extends Controller
                 'Quantity' => $flow->qty,
                 'Margin' => ($flow->source == NULL) ? 0 : number_format($flow->customer_price * $flow->qty * 0.05),
                 'Isentif'=> ($flow->source == NULL) ? 0 : number_format($flow->customer_price * $flow->qty * 0.95 * $flow->rate / 100),
-                'PPN' => ($flow->tax == 0) ? number_format($flow->customer_price * $flow->qty * 0.95 * 0.1) : 0,
+                'PPN' => ($flow->tax == 0) ? number_format($flow->customer_price * $flow->qty * 0.1) : 0,
                 'Paid by Agen' => number_format($flow->customer_price * $flow->qty * 0.95),
                 'Paid by Customer' => number_format($flow->customer_price * $flow->qty),
                 'Discount' => number_format($flow->discount),
@@ -224,7 +224,7 @@ class ReportController extends Controller
                 
             ]);
         }
-        
+
         return Excel::create('Flow_report', function($excel) use($data) {
             $excel->sheet('Sheetname', function($sheet) use($data) {
                 $row = 1;
