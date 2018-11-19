@@ -142,7 +142,7 @@ class ReportController extends Controller
             ->leftjoin('store','store.id','=','users.store_id')
             ->whereIn('order.status',[7,9])
             ->where('order.type','=','sembako')
-            ->select('store.store_name as stoname','order_detail.qty as qty','incentive_category.rate as rate','order.invoice_no as invoice','agen.name as name','order_detail.order_id as id','product.product_name as proname','order_detail.price_for_agen as agen_price','order_detail.price_for_customer as customer_price','order.created_at as create','order.updated_at as update','order.agen_id as aid', 'product.promo_price')
+            ->select('product.tax as tax','store.store_name as stoname','order_detail.qty as qty','incentive_category.rate as rate','order.invoice_no as invoice','agen.name as name','order_detail.order_id as id','product.product_name as proname','order_detail.price_for_agen as agen_price','order_detail.price_for_customer as customer_price','order.created_at as create','order.updated_at as update','order.agen_id as aid', 'product.promo_price')
             ->whereDate('order.created_at','=',Carbon::today()->toDateString());
         }
         if(isset($request->date) && $request->date == '2'){
@@ -154,7 +154,7 @@ class ReportController extends Controller
             ->leftjoin('store','store.id','=','users.store_id')
             ->whereIn('order.status',[7,9])
             ->where('order.type','=','sembako')
-            ->select('store.store_name as stoname','order_detail.qty as qty','incentive_category.rate as rate','order.invoice_no as invoice','agen.name as name','order_detail.order_id as id','product.product_name as proname','order_detail.price_for_agen as agen_price','order_detail.price_for_customer as customer_price','order.created_at as create','order.updated_at as update','order.agen_id as aid', 'product.promo_price')
+            ->select('product.tax as tax','store.store_name as stoname','order_detail.qty as qty','incentive_category.rate as rate','order.invoice_no as invoice','agen.name as name','order_detail.order_id as id','product.product_name as proname','order_detail.price_for_agen as agen_price','order_detail.price_for_customer as customer_price','order.created_at as create','order.updated_at as update','order.agen_id as aid', 'product.promo_price')
             ->whereMonth('order.created_at', '=', date('m'));
         }
         if(isset($request->dayword1) && !empty($request->dayword1) && isset($request->dayword2) && !empty($request->dayword2)){
@@ -210,12 +210,14 @@ class ReportController extends Controller
                 'Quantity' => $flow->qty,
                 'Margin' => ($flow->source == NULL) ? 0 : number_format($flow->customer_price * $flow->qty * 0.05),
                 'Isentif'=> ($flow->source == NULL) ? 0 : number_format($flow->customer_price * $flow->qty * 0.95 * $flow->rate / 100),
+                'PPN' => ($flow->tax == 0) ? number_format($flow->customer_price * $flow->qty * 0.95 * 0.1) : 0,
                 'Paid by Agen' => number_format($flow->customer_price * $flow->qty * 0.95),
                 'Paid by Customer' => number_format($flow->customer_price * $flow->qty),
                 'Discount' => number_format($flow->discount),
                 'Store' => ($flow->source == NULL) ? "Serang" : $flow->stoname,
                 'Source'=> ($flow->source == NULL) ? "Kasir" : $flow->source,
                 'Tanggal' => $flow->create, 
+                
             ]);
         }
         
