@@ -207,16 +207,16 @@ class ReportController extends Controller
         foreach ($flowreport as $flow) {
             $data[] = ([
                 'ID' => $flow->id,
-                'Pembeli' => $flow->cusname,
+                'Pembeli' => ($flow->cusname == NULL) ? "Kasir" : $flow->cusname,
                 'Agen' => $flow->name,
                 'Order' => $flow->invoice,
                 'Nama Produk' =>$flow->proname,
                 'Quantity' => $flow->qty,
                 'Margin' => ($flow->source == NULL) ? 0 : number_format($flow->customer_price * $flow->qty * 0.05),
                 'Isentif'=> ($flow->source == NULL) ? 0 : number_format($flow->customer_price * $flow->qty * 0.95 * $flow->rate / 100),
-                'PPN' => ($flow->tax == 0) ? number_format($flow->customer_price * $flow->qty * 0.1) : 0,
                 'Paid by Agen' => number_format($flow->customer_price * $flow->qty * 0.95),
                 'Paid by Customer' => number_format($flow->customer_price * $flow->qty),
+                'PPN' => ($flow->tax == 0) ? number_format($flow->customer_price * $flow->qty * 0.1) : 0,
                 'Discount' => number_format($flow->discount),
                 'Store' => ($flow->source == NULL) ? "Serang" : $flow->stoname,
                 'Source'=> ($flow->source == NULL) ? "Kasir" : $flow->source,
