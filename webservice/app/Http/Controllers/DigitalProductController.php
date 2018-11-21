@@ -6,6 +6,7 @@ use Validator;
 use App\Prefix;
 use App\Operator;
 use App\User;
+use App\Customer;
 use App\Reversal;
 use App\DigitalProduct;
 use App\OrderDigital;
