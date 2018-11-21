@@ -8,6 +8,7 @@ use App\Operator;
 use App\User;
 use App\Customer;
 use App\Reversal;
+use App\Commission;
 use App\DigitalProduct;
 use App\OrderDigital;
 use App\Agen;
