@@ -127,6 +127,8 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
 
   Route::post('/voucher', 'VoucherController@checkVoucher');
 
+  Route::post('/wallet', 'JneController@wallet');
+
   Route::post('/withdraw', 'OrderController@withdraw');
   Route::get('/withdraw', 'WithdrawController@index');
   Route::get('/withdraw/pending', 'WithdrawController@pending');   
