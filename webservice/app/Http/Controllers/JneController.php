@@ -194,17 +194,17 @@ class JneController extends Controller
   {
 
     $datax = [
-    "kodetransaksi"=> "12",
+    "kodetransaksi"=> "07",
     "user"=> "grosirone",
     "password"=> "5b8598bed42b271cb8ec62c4bdd4f3ck",
-    "nova"=> "15200400003",
+    "nova"=> "",
     "idtrx"=> "",
-    "idmerchant"=> "",
+    "idmerchant"=> "18",
     "nominal"=> "0",
-    "keterangan"=> "52AAA1OO",
+    "keterangan"=> "0|08343232321|Richard|info@grosir.one",
     "kodemitra"=> "004",
     "kodebank"=> "",
-    "noref"=> "",
+    "noref"=> "0",
     "tglexpired"=> ""
   ];
   
@@ -217,11 +217,9 @@ class JneController extends Controller
   curl_setopt($ch, CURLOPT_POST, 1);
   curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
   curl_setopt($ch, CURLOPT_POSTFIELDS, "$data");
-
   curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
   curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY); 
   curl_setopt($ch, CURLOPT_TIMEOUT, 120);
-
 
   $datay = curl_exec($ch);
   $curl_errno = curl_errno($ch);
@@ -230,7 +228,9 @@ class JneController extends Controller
 
   curl_close($ch);
     $res = json_decode($datay, true);
-    // return $res['nominal'];
+    $nova = json_decode($datay, true);
+    return response()->json([$res['keterangan'], $nova['nova']]);
+    
     return response()->json(['data' => $datay, 'message' => ['OK']]);
     }
 }

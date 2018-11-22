@@ -418,5 +418,148 @@ class OrderControllerCustomer extends Controller
         curl_close($ch);
     }
 
-   
+    public function create(Request $request) {
+    $customer = User::where('id', '=', $request->get('user')->id)->first();
+
+    $cart = Cart::where('user_id', '=', $request->get('user')->id)->first();
+
+    $agencust = Customer::join('agen','customer.agen_id','=','agen.id')
+    ->where('customer.identifier','=',$request->get('user')->id)
+    ->select('agen.identifier')
+    ->first();
+
+    if ($cart->total == 0) {
+      return response()->json(['message' => 'Keranjang anda kosong.'], 400);
+    }
+
+    $cartDetails = CartDetail::where('cart_id', '=', $cart->id)->get();
+
+    $today = date("Ymd");
+    $rand = strtoupper(substr(uniqid(sha1(time())),0,4));
+    $unique = $today . $rand;
+
+    $order = new Order;
+    $order->invoice_no = $unique;
+    $order->user_id = $cart->user_id;
+    $order->subtotal = $cart->subtotal;
+    $order->voucher_code = $request->voucher_code;
+    $order->tax = $cart->tax;
+    $order->discount = 0;
+    if($cart->total < 50000) {
+      $order->total = $cart->total + 5000;
+    }
+    else {
+
+      if ($request->voucher_code != '' && $request->discount != 0) {
+          $order->total = $cart->total - $request->discount;
+      }
+
+      elseif ($request->voucher_code != '' && $request->discountrate != 0) {
+          $order->total = $cart->total - ($cart->total * $request->discountrate);
+      }
+
+      else{
+      $order->total = $cart->total;
+      }
+    }
+    $order->status = OrderStatus::CREATED;
+    $order->agen_id = $agencust->identifier;
+    $order->address_id = $request->address_id;
+    $order->save();
+
+    $items = [];
+    foreach ($cartDetails as $cartDetail) {
+      $product = Product::whereId($cartDetail->product_id)->first();
+      $orderDetail = new OrderDetail;
+      $orderDetail->order_id = $order->id;
+      $orderDetail->product_id = $product->id;
+      $orderDetail->category_id = $product->category_id;
+      $orderDetail->qty = $cartDetail->qty;
+      // if($cartDetail->qty >= 3){
+      //   $orderDetail->price_for_customer = $product->price_for_customer * 0.98;
+      //   $orderDetail->price_for_agen = $product->price_for_agen;
+      // }
+      // else{
+      $orderDetail->price_for_customer = ($product->promo_price == 0) ? $product->price_for_customer : $product->promo_price;
+      $orderDetail->price_for_agen = ($product->promo_price == 0) ? $product->price_for_customer : $product->promo_price;
+      // }
+      $orderDetail->save();
+
+      $items[] = [
+        'product_id' => $product->id,
+        'sku' => $product->sku,
+        'category_id' => $orderDetail->category_id,
+        'qty' => $orderDetail->qty,
+        'price_for_customer' => $orderDetail->price_for_customer,
+        'price_for_agen' => $orderDetail->price_for_agen
+      ];
+    }
+
+    #Input Billing Detail
+    $add = Address::join('city', 'city.id', '=', 'address.city_id')
+                ->join('region', 'region.id', '=', 'address.region_id')
+                ->select('address.address as address2', 'region.name as region', 'city.name as city', 'address.zip as zip', 'region.code as code')
+                ->where('address.id', '=', $request->address_id)
+                ->first();
+
+    $orderbillingdetail = new OrderBillingDetail;
+
+    $orderbillingdetail->order_id =  $order->id;
+    $orderbillingdetail->customer_name = $request['customer_name'];
+    $orderbillingdetail->customer_phone = $request['customer_phone'];
+    $orderbillingdetail->customer_address = "";
+    $orderbillingdetail->customer_address2 = $request->customer_address2;
+    $orderbillingdetail->notes = $request['notes'];
+    $orderbillingdetail->save();
+
+    // Pemotongan saldo wallet
+    $datax = [
+    "kodetransaksi"=> "09",
+    "user"=> "grosirone",
+    "password"=> "5b8598bed42b271cb8ec62c4bdd4f3ck",
+    "nova"=> "15200400003",
+    "idtrx"=> "201810107D44",
+    "idmerchant"=> "47",
+    "nominal"=> "25000",
+    "keterangan"=> "52AAA1OO",
+    "kodemitra"=> "004",
+    "kodebank"=> "",
+    "noref"=> "0",
+    "tglexpired"=> ""
+    ];
+    
+    $data = json_encode($datax);
+    $URL   = 'http://182.23.53.58:20128/';
+      $ch = curl_init($URL);
+
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+    curl_setopt($ch, CURLOPT_POSTFIELDS, "$data");
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY); 
+    curl_setopt($ch, CURLOPT_TIMEOUT, 120);
+
+    $datay = curl_exec($ch);
+    $curl_errno = curl_errno($ch);
+    $curl_error = curl_error($ch);
+      
+
+    curl_close($ch);
+    $res = json_decode($datay, true);
+    // return $res['nominal'];
+    return response()->json(['data' => $datay, 'message' => ['OK']]);
+
+    // clear cart
+    // CartDetail::where('cart_id',$cart->id)->delete();
+    // Cart::where('id',$cart->id)->delete();
+
+    #send push notif ke ag->e2
+    $this->_sendPushNotification($order->agen_id, "Order Baru", "Ada order baru.");
+
+    return response()->json(['data' => [$order->invoice_no], 'message' => ['OK']]);
+
+    }
+
 }
