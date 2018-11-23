@@ -16,7 +16,7 @@ class JneController extends Controller
 	public function getResi(Request $request)
 	{
 		
-    //JNE GET AWB
+      //JNE GET AWB
       $userkey = "TESTAPI";
       $passkey = "25c898a9faea1a100859ecd9ef674548";
       $addr1 = "Ruko Sutera Niaga 3 Blok C/10";
@@ -190,48 +190,5 @@ class JneController extends Controller
      return response()->json(['data' => [$res['cnote']['pod_status']], 'message' => ['OK']]);
     }
   	
-    public function wallet(Request $request)
-  {
-
-    $datax = [
-    "kodetransaksi"=> "07",
-    "user"=> "grosirone",
-    "password"=> "5b8598bed42b271cb8ec62c4bdd4f3ck",
-    "nova"=> "",
-    "idtrx"=> "",
-    "idmerchant"=> "18",
-    "nominal"=> "0",
-    "keterangan"=> "0|08343232321|Richard|info@grosir.one",
-    "kodemitra"=> "004",
-    "kodebank"=> "",
-    "noref"=> "0",
-    "tglexpired"=> ""
-  ];
-  
-  $data = json_encode($datax);
-  $URL   = 'http://182.23.53.58:20128/';
-    $ch = curl_init($URL);
-
-  curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-  curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-  curl_setopt($ch, CURLOPT_POST, 1);
-  curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
-  curl_setopt($ch, CURLOPT_POSTFIELDS, "$data");
-  curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-  curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY); 
-  curl_setopt($ch, CURLOPT_TIMEOUT, 120);
-
-  $datay = curl_exec($ch);
-  $curl_errno = curl_errno($ch);
-  $curl_error = curl_error($ch);
-    
-
-  curl_close($ch);
-    $res = json_decode($datay, true);
-    $nova = json_decode($datay, true);
-    return response()->json([$res['keterangan'], $nova['nova']]);
-    
-    return response()->json(['data' => $datay, 'message' => ['OK']]);
-    }
 }
 

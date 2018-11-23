@@ -339,6 +339,7 @@ class CustomerController extends Controller
             $res = json_decode($datay, true);
             $nova = json_decode($datay, true);            
 
+        //save data user & customer
             $user =[
                 'phone' => $request->phone,
                 'password' => '',

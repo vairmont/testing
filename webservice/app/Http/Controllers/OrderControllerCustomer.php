@@ -418,7 +418,7 @@ class OrderControllerCustomer extends Controller
         curl_close($ch);
     }
 
-    public function create(Request $request) {
+    public function createNew(Request $request) {
     $customer = User::where('id', '=', $request->get('user')->id)->first();
 
     $cart = Cart::where('user_id', '=', $request->get('user')->id)->first();
@@ -496,6 +496,7 @@ class OrderControllerCustomer extends Controller
     }
 
     #Input Billing Detail
+    $custo = Customer::where('identifier', '=', $request->get('user')->id)->first();
     $add = Address::join('city', 'city.id', '=', 'address.city_id')
                 ->join('region', 'region.id', '=', 'address.region_id')
                 ->select('address.address as address2', 'region.name as region', 'city.name as city', 'address.zip as zip', 'region.code as code')
@@ -508,20 +509,20 @@ class OrderControllerCustomer extends Controller
     $orderbillingdetail->customer_name = $request['customer_name'];
     $orderbillingdetail->customer_phone = $request['customer_phone'];
     $orderbillingdetail->customer_address = "";
-    $orderbillingdetail->customer_address2 = $request->customer_address2;
+    $orderbillingdetail->customer_address2 = $add->address2;
     $orderbillingdetail->notes = $request['notes'];
     $orderbillingdetail->save();
-
+    
     // Pemotongan saldo wallet
     $datax = [
     "kodetransaksi"=> "09",
     "user"=> "grosirone",
     "password"=> "5b8598bed42b271cb8ec62c4bdd4f3ck",
-    "nova"=> "15200400003",
-    "idtrx"=> "201810107D44",
+    "nova"=> $custo->no_va,
+    "idtrx"=> $order->invoice_no,
     "idmerchant"=> "47",
-    "nominal"=> "25000",
-    "keterangan"=> "52AAA1OO",
+    "nominal"=> $order->total,
+    "keterangan"=> $custo->terminal_id,
     "kodemitra"=> "004",
     "kodebank"=> "",
     "noref"=> "0",
@@ -548,18 +549,90 @@ class OrderControllerCustomer extends Controller
 
     curl_close($ch);
     $res = json_decode($datay, true);
-    // return $res['nominal'];
-    return response()->json(['data' => $datay, 'message' => ['OK']]);
 
     // clear cart
     // CartDetail::where('cart_id',$cart->id)->delete();
     // Cart::where('id',$cart->id)->delete();
 
+    //check payment response status
+    if(strpos($res['rc'], 'Sukses') !== false){
+    //JNE GET AWB
+      $userkey = "TESTAPI";
+      $passkey = "25c898a9faea1a100859ecd9ef674548";
+      $addr1 = "Ruko Sutera Niaga 3 Blok C/10";
+      $url = "http://apiv2.jne.co.id:10102/tracing/api/generatecnote";
+
+      $add = Address::join('city', 'city.id', '=', 'address.city_id')
+                ->join('region', 'region.id', '=', 'address.region_id')
+                ->select('address.address as address2', 'region.name as region', 'city.name as city', 'address.zip as zip', 'region.code as code')
+                ->where('address.id', '=', $request->address_id)
+                ->first();
+
+      $fields = [
+        'username' => $userkey,
+        'api_key' => $passkey,
+        'OLSHOP_BRANCH' => 'CGK000',
+        'OLSHOP_CUST' => '10950700',
+        'OLSHOP_ORDERID' => $order->invoice_no,
+        'OLSHOP_SHIPPER_NAME' => 'GrosirOne',
+        'OLSHOP_SHIPPER_ADDR1' => $addr1,
+        'OLSHOP_SHIPPER_ADDR2' => '-',
+        'OLSHOP_SHIPPER_CITY' => 'Tangerang',
+        'OLSHOP_SHIPPER_ZIP' => 15325,
+        'OLSHOP_SHIPPER_PHONE' => '08119500311',
+        'OLSHOP_RECEIVER_NAME' => $request->customer_name,
+        'OLSHOP_RECEIVER_ADDR1' => $add->address2,
+        'OLSHOP_RECEIVER_ADDR2' => '-',
+        'OLSHOP_RECEIVER_CITY' => $add->city,
+        'OLSHOP_RECEIVER_ZIP' => $add->zip,
+        'OLSHOP_RECEIVER_PHONE' => $request->get('user')->phone,
+        'OLSHOP_QTY' => $orderDetail->qty,
+        'OLSHOP_WEIGHT' => 8,
+        'OLSHOP_GOODSDESC' => $product->product_name,
+        'OLSHOP_GOODSVALUE' => '100000',
+        'OLSHOP_GOODSTYPE' => 2,
+        'OLSHOP_INS_FLAG' => 'N',
+        'OLSHOP_ORIG' => 'TGR10000',
+        'OLSHOP_DEST' => $add->code,
+        'OLSHOP_SERVICE' => 'REG',
+        'OLSHOP_COD_FLAG' => 'N',
+        'OLSHOP_COD_AMOUNT' => 0
+
+      ];
+    
+      $curlHandle = curl_init();
+      curl_setopt($curlHandle, CURLOPT_URL, $url);
+      curl_setopt($curlHandle, CURLOPT_POSTFIELDS, http_build_query($fields));
+      curl_setopt($curlHandle, CURLOPT_HTTPHEADER, array(
+        'Accept : application/json',
+        'Content-Type : application/x-www-form-urlencoded',
+        'User-Agent : php-request'
+        
+      ));
+      curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, 1);
+      curl_setopt($curlHandle, CURLOPT_SSL_VERIFYHOST, 2);
+      curl_setopt($curlHandle, CURLOPT_SSL_VERIFYPEER, 0);
+      curl_setopt($curlHandle, CURLOPT_TIMEOUT,30);
+      curl_setopt($curlHandle, CURLOPT_POST, 1);
+      $results = curl_exec($curlHandle);
+      curl_close($curlHandle);
+
+     $resi = json_decode($results, true);
+     $order->airway_bill = $resi['detail'][0]['cnote_no'];
+     $order->save();  
+
     #send push notif ke ag->e2
     $this->_sendPushNotification($order->agen_id, "Order Baru", "Ada order baru.");
 
-    return response()->json(['data' => [$order->invoice_no], 'message' => ['OK']]);
-
+    return response()->json(['data' => [$datay], 'nominal' => [$res['nominal']], 'invoice' => [$order->invoice_no], 'message' => ['OK']]);
     }
 
+    if(strpos($res['rc'], 'Saldo') !== false){
+        return response()->json(['data' => [], 'message' => ['Saldo tidak cukup']]);
+    }
+
+    return response()->json(['data' => [$order->invoice_no], 'message' => ['OK']]);
+
+      }
+    
 }
