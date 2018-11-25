@@ -46,6 +46,14 @@ class DigitalProductController extends Controller {
 
     $items = DigitalProduct::where('kode','=',$request->product_code)->first();
 
+    if($user->role_id == 5){
+      $nova = Agen::where('identifier', '=', $request->get('user')->id)->first();
+    }
+
+    else{
+      $nova = Customer::where('identifier', '=', $request->get('user')->id)->first();
+    } 
+
     $price = $items->price;
 
     if($user->role_id == 5){
@@ -59,86 +67,126 @@ class DigitalProductController extends Controller {
     DB::beginTransaction();
       try {
 
-        $order = new OrderDigital;
-        $order->invoice_no = $unique;
-        $order->product_code = $request->product_code;
-        $order->phone = $request->phone;
-        $order->user_id = $request->get('user')->id;
-        #tanpa discount
-        if($request->voucher_code != null)
-        {
-        $order->voucher_code = $request->voucher_code;
-        $order->total = $price - $request->discount;
-        }
-        #discount
-        else
-        {
-        $order->voucher_code = 0;
-        $order->discount = 0;
-        $order->total = $price;
-        }
-        $order->subtotal = $price;
-        $order->status = 0;
-        $order->status_payment = "done";
-        $order->payment_method = "wallet";
-        $order->save();
+            $order = new OrderDigital;
+            $order->invoice_no = $unique;
+        // Pemotongan saldo wallet
+        $datax = [
+    "kodetransaksi"=> "09",
+    "user"=> "grosirone",
+    "password"=> "5b8598bed42b271cb8ec62c4bdd4f3ck",
+    "nova"=> $nova->no_va,
+    "idtrx"=> $order->invoice_no,
+    "idmerchant"=> "47",
+    "nominal"=> $price,
+    "keterangan"=> $nova->terminal_id,
+    "kodemitra"=> "004",
+    "kodebank"=> "",
+    "noref"=> "0",
+    "tglexpired"=> ""
+    ];
+    
+    $data = json_encode($datax);
+    $URL   = 'http://182.23.53.58:20128/';
+      $ch = curl_init($URL);
 
-          if($user->role_id != 5)
-          {
-            $orderD = OrderDigital::find($order->id);
-            $customer = Customer::where('identifier','=',$request->get('user')->id)->first();
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+    curl_setopt($ch, CURLOPT_POSTFIELDS, "$data");
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY); 
+    curl_setopt($ch, CURLOPT_TIMEOUT, 120);
 
-            $incentive = $price * 0.01;
-            
-            $commission_pph = $incentive * 0.02;
-            $commission_netto = $incentive - $commission_pph;
-            
-            $commission = new Commission;
-            $commission->order_id = $orderD->id + 100000;
-            $commission->agen_id = $customer->agen_id;
-            $commission->incentive = $incentive;
-            $commission->commission_pph = $commission_pph;
-            $commission->commission_netto = $commission_netto;
-            $commission->margin_penjualan = 0;
-            $commission->save();
+    $datay = curl_exec($ch);
+    $curl_errno = curl_errno($ch);
+    $curl_error = curl_error($ch);
+      
 
-            $history = new WaneeHistory;
-            $history->user_id = $request->get('user')->id;
-            $history->amount = $orderD->total;
-            if($customer->wanee < $orderD->total){
-              return response()->json(['data' => [], 'message' => ['Saldo anda tidak cukup']]);
+    curl_close($ch);
+    $res = json_decode($datay, true);
+
+        //bila saldo cukup
+        if(strpos($res['rc'], 'Sukses') !== false){
+
+            $order->product_code = $request->product_code;
+            $order->phone = $request->phone;
+            $order->user_id = $request->get('user')->id;
+            #tanpa discount
+            if($request->voucher_code != null)
+            {
+            $order->voucher_code = $request->voucher_code;
+            $order->total = $price - $request->discount;
             }
-            $history->saldo_akhir = $customer->wanee - $orderD->total;
-            $history->reason = 'Pembelian Pulsa';
-            $history->save();
+            #discount
+            else
+            {
+            $order->voucher_code = 0;
+            $order->discount = 0;
+            $order->total = $price;
+            }
+            $order->subtotal = $price;
+            $order->status = 0;
+            $order->status_payment = "done";
+            $order->payment_method = "wallet";
+            $order->save();
 
-            $potong = Customer::where('customer.identifier', '=', $request->get('user')->id)
-                          ->update([
-                      'wanee' => $history->saldo_akhir
-                      ]);
+              if($user->role_id != 5)
+              {
+                
+                $orderD = OrderDigital::find($order->id);
+                $customer = Customer::where('identifier','=',$request->get('user')->id)->first();
+                $agen = Agen::where('agen.id', '=', $customer->agen_id)
+                ->first();
+
+                $incentive = $price * 0.01;
+                
+                $commission_pph = $incentive * 0.02;
+                $commission_netto = $incentive - $commission_pph;
+                
+                $commission = new Commission;
+                $commission->order_id = $orderD->id + 100000;
+                $commission->agen_id = $customer->agen_id;
+                $commission->incentive = $incentive;
+                $commission->commission_pph = $commission_pph;
+                $commission->commission_netto = $commission_netto;
+                $commission->margin_penjualan = 0;
+                $commission->save();
+
+                $history = new WaneeHistory;
+                $history->user_id = $agen->identifier;
+                $history->amount =  $commission_netto;
+                $history->saldo_akhir = $agen->wanee + $commission_netto;
+                $history->reason = 'Pembelian Pulsa';
+                $history->save();
+              }
+
+              // #kalau agen
+              // else
+              // {
+              // $agen = Agen::where('agen.identifier', '=', $request->get('user')->id)
+              //               ->select('agen.wanee')
+              //               ->first();
+
+              // $history = new WaneeHistory;
+              // $history->user_id = $request->get('user')->id;
+              // $history->amount = $order->total;
+              // if($agen->wanee < $order->total){
+              //     return response()->json(['data' => [], 'message' => ['Saldo anda tidak']]);
+              // }
+              // $history->saldo_akhir = $agen->wanee - $order->total;
+              // $history->reason = 'Pembelian Pulsa';
+              // $history->save();
+
+              // $potong = Agen::where('agen.identifier', '=', $request->get('user')->id)
+              //               ->update([
+              //           'wanee' => $history->saldo_akhir
+              //           ]);
+              // }
           }
-
-          #kalau agen
-          else
-          {
-          $agen = Agen::where('agen.identifier', '=', $request->get('user')->id)
-                        ->select('agen.wanee')
-                        ->first();
-
-          $history = new WaneeHistory;
-          $history->user_id = $request->get('user')->id;
-          $history->amount = $order->total;
-          if($agen->wanee < $order->total){
-              return response()->json(['data' => [], 'message' => ['Saldo anda tidak']]);
-          }
-          $history->saldo_akhir = $agen->wanee - $order->total;
-          $history->reason = 'Pembelian Pulsa';
-          $history->save();
-
-          $potong = Agen::where('agen.identifier', '=', $request->get('user')->id)
-                        ->update([
-                    'wanee' => $history->saldo_akhir
-                    ]);
+          //Saldo tidak cukup
+          if(strpos($res['rc'], 'Saldo') !== false){
+            return response()->json(['data' => [], 'message' => ['Saldo tidak cukup']]);
           }
 
       } catch(\Exception $e) {
