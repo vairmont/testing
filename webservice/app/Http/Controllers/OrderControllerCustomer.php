@@ -21,6 +21,7 @@ use App\Agen;
 use App\Cart;
 use App\Chat;
 use App\Store;
+use App\WaneeHistory;
 use App\CartDetail;
 use App\FCM;
 
@@ -620,6 +621,50 @@ class OrderControllerCustomer extends Controller
      $resi = json_decode($results, true);
      $order->airway_bill = $resi['detail'][0]['cnote_no'];
      $order->save();  
+
+     //KOMISI
+     $incentiveDetails = OrderDetail::join('product', 'product.id', '=', 'order_detail.product_id')
+                    ->join('incentive_category', 'incentive_category.id', '=', 'product.incentive_id')
+                    ->where('order_id', '=', $order->id)
+                    ->select('order_detail.price_for_customer', 'incentive_category.rate', 'order_detail.qty', 'product.promo_price', 'product.category_id')
+                    ->get();
+
+      $incentive = 0;
+      $prices = 0;
+
+      foreach ($incentiveDetails as $detail) {
+          $prices += (($detail->promo_price == 0) ? $detail->price_for_customer : $detail->promo_price) * $detail->qty;
+          $incentive += (($detail->promo_price == 0) ? $detail->price_for_customer : $detail->promo_price) * $detail->qty * 0.95 * $detail->rate / 100;   
+          }     
+          
+       
+      $commission_pph = ($incentive + 0) * $this->pph;
+      $commission_netto = $incentive - $commission_pph;
+      
+      $commission = new Commission;
+      $commission->order_id = $order->id;
+      $commission->agen_id = $order->agen_id;
+      $commission->incentive = $incentive;
+      $commission->commission_pph = $commission_pph;
+      $commission->commission_netto = $commission_netto;
+      $commission->margin_penjualan = 0;
+      $commission->save();
+
+      $agen = Agen::where('agen.identifier', '=', $order->agen_id)
+                    ->select('agen.wanee')
+                    ->first();
+
+      $history = new WaneeHistory;
+      $history->user_id = $request->get('user')->id;
+      $history->amount = $commission_netto;
+      $history->saldo_akhir = $agen->wanee + $commission_netto;
+      $history->reason = 'Komisi Agen';
+      $history->save();
+
+      $komisi = Agen::where('agen.identifier', '=', $request->get('user')->id)
+                    ->update([
+                'wanee' => $history->saldo_akhir
+            ]);
 
     #send push notif ke ag->e2
     $this->_sendPushNotification($order->agen_id, "Order Baru", "Ada order baru.");
