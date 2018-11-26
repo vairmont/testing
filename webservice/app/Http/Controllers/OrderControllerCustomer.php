@@ -21,6 +21,7 @@ use App\Agen;
 use App\Cart;
 use App\Chat;
 use App\Store;
+use App\WaneeHistory;
 use App\CartDetail;
 use App\FCM;
 
@@ -418,5 +419,112 @@ class OrderControllerCustomer extends Controller
         curl_close($ch);
     }
 
-   
+    public function createNew(Request $request) {
+    $customer = User::where('id', '=', $request->get('user')->id)->first();
+
+    $cart = Cart::where('user_id', '=', $request->get('user')->id)->first();
+
+    $agencust = Customer::join('agen','customer.agen_id','=','agen.id')
+    ->where('customer.identifier','=',$request->get('user')->id)
+    ->select('agen.identifier')
+    ->first();
+
+    if ($cart->total == 0) {
+      return response()->json(['message' => 'Keranjang anda kosong.'], 400);
+    }
+
+    $cartDetails = CartDetail::where('cart_id', '=', $cart->id)->get();
+
+    $today = date("Ymd");
+    $rand = strtoupper(substr(uniqid(sha1(time())),0,4));
+    $unique = $today . $rand;
+
+    $order = new Order;
+    $order->invoice_no = $unique;
+    $order->user_id = $cart->user_id;
+    $order->subtotal = $cart->subtotal;
+    $order->voucher_code = $request->voucher_code;
+    $order->tax = $cart->tax;
+    $order->payment = 'wallet';
+    $order->payment_status = 'pending';
+    $order->discount = 0;
+    if($cart->total < 50000) {
+      $order->total = $cart->total + 5000;
+    }
+    else {
+
+      if ($request->voucher_code != '' && $request->discount != 0) {
+          $order->total = $cart->total - $request->discount;
+      }
+
+      elseif ($request->voucher_code != '' && $request->discountrate != 0) {
+          $order->total = $cart->total - ($cart->total * $request->discountrate);
+      }
+
+      else{
+      $order->total = $cart->total;
+      }
+    }
+    $order->status = OrderStatus::CREATED;
+    $order->agen_id = $agencust->identifier;
+    $order->address_id = $request->address_id;
+    $order->save();
+
+    $items = [];
+    foreach ($cartDetails as $cartDetail) {
+      $product = Product::whereId($cartDetail->product_id)->first();
+      $orderDetail = new OrderDetail;
+      $orderDetail->order_id = $order->id;
+      $orderDetail->product_id = $product->id;
+      $orderDetail->category_id = $product->category_id;
+      $orderDetail->qty = $cartDetail->qty;
+      // if($cartDetail->qty >= 3){
+      //   $orderDetail->price_for_customer = $product->price_for_customer * 0.98;
+      //   $orderDetail->price_for_agen = $product->price_for_agen;
+      // }
+      // else{
+      $orderDetail->price_for_customer = ($product->promo_price == 0) ? $product->price_for_customer : $product->promo_price;
+      $orderDetail->price_for_agen = ($product->promo_price == 0) ? $product->price_for_customer : $product->promo_price;
+      // }
+      $orderDetail->save();
+
+      $items[] = [
+        'product_id' => $product->id,
+        'sku' => $product->sku,
+        'category_id' => $orderDetail->category_id,
+        'qty' => $orderDetail->qty,
+        'price_for_customer' => $orderDetail->price_for_customer,
+        'price_for_agen' => $orderDetail->price_for_agen
+      ];
+    }
+
+    #Input Billing Detail
+    $custo = Customer::where('identifier', '=', $request->get('user')->id)->first();
+    $add = Address::join('city', 'city.id', '=', 'address.city_id')
+                ->join('region', 'region.id', '=', 'address.region_id')
+                ->select('address.address as address2', 'region.name as region', 'city.name as city', 'address.zip as zip', 'region.code as code')
+                ->where('address.id', '=', $request->address_id)
+                ->first();
+
+    $orderbillingdetail = new OrderBillingDetail;
+
+    $orderbillingdetail->order_id =  $order->id;
+    $orderbillingdetail->customer_name = $request['customer_name'];
+    $orderbillingdetail->customer_phone = $request['customer_phone'];
+    $orderbillingdetail->customer_address = "";
+    $orderbillingdetail->customer_address2 = $add->address2;
+    $orderbillingdetail->notes = $request['notes'];
+    $orderbillingdetail->save();
+
+    // clear cart
+    // CartDetail::where('cart_id',$cart->id)->delete();
+    // Cart::where('id',$cart->id)->delete();
+
+    #send push notif ke ag->e2
+    $this->_sendPushNotification($order->agen_id, "Order Baru", "Ada order baru.");
+
+    return response()->json(['data' => [$order], 'message' => ['OK']]);
+    }
+  
+    
 }

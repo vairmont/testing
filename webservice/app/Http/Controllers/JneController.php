@@ -11,12 +11,12 @@ use App\User;
 use App\Agen;
 use App\FCM;
 
-class InsuranceController extends Controller
+class JneController extends Controller
 {
 	public function getResi(Request $request)
 	{
 		
-    //JNE GET AWB
+      //JNE GET AWB
       $userkey = "TESTAPI";
       $passkey = "25c898a9faea1a100859ecd9ef674548";
       $addr1 = "Ruko Sutera Niaga 3 Blok C/10";

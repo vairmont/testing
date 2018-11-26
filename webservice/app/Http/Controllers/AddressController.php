@@ -11,6 +11,7 @@ use App\User;
 use App\Address;
 use App\City;
 use App\Region;
+use App\Province;
 use App\FCM;
 
 class AddressController extends Controller
@@ -25,7 +26,29 @@ class AddressController extends Controller
 
 		return response()->json(['data' => $address, 'message' => ['OK']]);
     }
-       
+
+    public function getProvince(Request $request)
+    {
+        $address = Province::get();
+
+        return response()->json(['data' => $address, 'message' => ['OK']]);
+    }
+
+    public function getCity(Request $request)
+    {
+        $address = City::where('province_id', '=', $request->province_id)
+        ->get();
+
+        return response()->json(['data' => $address, 'message' => ['OK']]);
+    }
+
+    public function getRegion(Request $request)
+    {
+        $address = Region::where('city_id', '=', $request->city_id)
+        ->get();
+
+        return response()->json(['data' => $address, 'message' => ['OK']]);
+    }   
 
 	public function addAddress(Request $request)
 	{

@@ -90,7 +90,7 @@
                                 </div> -->
                                 <div class="col-xs-12 text-right">
                                     <div class="huge">{{number_format($salestoday->total_sales)}}</div>
-                                    <div>Sales Today</div>
+                                    <div>Sales Active</div>
                                 </div>
                             </div>
                         </div>
@@ -104,6 +104,99 @@
                     </div>
                 </div>
             </div>
+
+                        <!-- /.row -->
+            <div class="row">
+                <div class="col-lg-3 col-md-6">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa fa-archive fa-5x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div class="huge">{{$package100}}</div>
+                                    <div style="color: white">Package 100</div>
+                                </div>
+                            </div>
+                        </div>
+<!--                         <a href="#">
+                            <div class="panel-footer">
+                                <span class="pull-left">View Details</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a> -->
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="panel panel-green">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa fa-mobile fa-5x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div class="huge">{{$pulsa}}</div>
+                                    <div>Pulsa</div>
+                                </div>
+                            </div>
+                        </div>
+<!--                         <a href="#">
+                            <div class="panel-footer">
+                                <span class="pull-left">View Details</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a> -->
+                    </div> 
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="panel panel-yellow">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <i class="fa fa-star fa-5x"></i>
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div class="huge">{{$totalsales}}</div>
+                                    <div>Active Agent</div>
+                                </div>
+                            </div>
+                        </div>
+<!--                         <a href="#">
+                            <div class="panel-footer">
+                                <span class="pull-left">View Details</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a> -->
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="panel panel-red">
+                        <div class="panel-heading">
+                            <div class="row">
+<!--                                 <div class="col-xs-3">
+                                    <i class="fa fa-money-bill fa-5x"></i>
+                                </div> -->
+                                <div class="col-xs-12 text-right">
+                                    <div class="huge">{{number_format($total1)}}</div>
+                                    <div>Margin G1</div>
+                                </div>
+                            </div>
+                        </div>
+<!--                         <a href="#">
+                            <div class="panel-footer">
+                                <span class="pull-left">View Details</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a> -->
+                    </div>
+                </div>
+            </div>
+
             <!-- /.row -->
             <div class="row">
                 <div class="col-lg-8">

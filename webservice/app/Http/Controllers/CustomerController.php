@@ -166,35 +166,22 @@ class CustomerController extends Controller
     }
 
     public function updateCustomer (Request $request)
-    {
-        if(empty($request->agen_id)) {
-            return response()->json(['data' => [], 'message' => ['Agen harus dipilih']]);
-        }   
+    { 
 
-        if(empty($request->address)) {
-            return response()->json(['data' => [], 'message' => ['Alamat wajib diisi']]);
-        }
-
-        if(empty($request->lat)) {
-            return response()->json(['data' => [], 'message' => ['Alamat Map wajib dicari']]);
-        }
-    
-        else{
+            $agen = Agen::where('agen_code', '=', strtoupper($request->agen_code))->first();
+       
             User::where('id', $request->get('user')->id)
 
             ->update([
-                'store_id' => $request->store_id
+                'store_id' => 1
             ]);
             Customer::where('identifier', $request->get('user')->id)
             ->update([
-                'agen_id' => $request->agen_id,
-                'address' => $request->address,
-                'lat' => $request->lat,
-                'long' => $request->long
+                'agen_id' => $agen->id
                 ]);
 
             return response()->json(['data' => [], 'message' => ['OK']]);
-            }
+            
         }
 
         public function uploadPhotoCustomer(Request $request)
@@ -276,5 +263,94 @@ class CustomerController extends Controller
 
             return response()->json(['data' => $agen, 'message' => ['OK']]);
         }
+
+       public function addCustomerNew (Request $request)
+    {
+        if(empty($request->name)) {
+            return response()->json(['data' => [], 'message' => ['Nama tidak boleh kosong']]);
+        }   
+
+        if(empty($request->phone)) {
+            return response()->json(['data' => [], 'message' => ['Nomor HP tidak boleh kosong']]);
+        }
+
+        if(empty($request->gender)) {
+            return response()->json(['data' => [], 'message' => ['Gender tidak boleh kosong']]);
+        }
+
+        $val = Validator::make($request->all(), [
+            'phone' => 'unique:users,phone'
+
+        ]);
+
+        if($val->fails()) {
+            return response()->json(['data' => [], 'message' => $val->errors()->all()]);
+        }
+    
+        else{
+            //Regis Nomor VA & get terminal ID dari Jatelindo
+            $datax = [
+            "kodetransaksi"=> "07",
+            "user"=> "grosirone",
+            "password"=> "5b8598bed42b271cb8ec62c4bdd4f3ck",
+            "nova"=> "",
+            "idtrx"=> "",
+            "idmerchant"=> "18",
+            "nominal"=> "0",
+            "keterangan"=> "0|".$request->phone."|".$request->name."|info@grosir.one",
+            "kodemitra"=> "004",
+            "kodebank"=> "",
+            "noref"=> "0",
+            "tglexpired"=> ""
+          ];
+          
+          $data = json_encode($datax);
+          $URL   = 'http://182.23.53.58:20128/';
+            $ch = curl_init($URL);
+
+          curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+          curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+          curl_setopt($ch, CURLOPT_POST, 1);
+          curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+          curl_setopt($ch, CURLOPT_POSTFIELDS, "$data");
+          curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+          curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY); 
+          curl_setopt($ch, CURLOPT_TIMEOUT, 120);
+
+          $datay = curl_exec($ch);
+          $curl_errno = curl_errno($ch);
+          $curl_error = curl_error($ch);
+            
+
+          curl_close($ch);
+            $res = json_decode($datay, true);
+            $nova = json_decode($datay, true);            
+
+        //save data user & customer
+            $user =[
+                'phone' => $request->phone,
+                'password' => '',
+                'api_token' => uniqid(),
+                'role_id' => 2,
+                'store_id' => 0,
+                'status' => 'inactive'
+            ];
+            $save = User::create($user);
+
+            $customer = [
+                'identifier' =>$save->id,
+                'agen_id' => 0,
+                'name' => $request->name,
+                'address' => '',
+                'no_va' => $nova['nova'],
+                'terminal_id' => $res['keterangan'],
+                'gender' => $request->gender
+                ];
+            $create = Customer::create($customer);
+
+            return response()->json(['customer_id' => $create->id, 'message' => ['OK']]);
+            }
+        } 
+
 }
 

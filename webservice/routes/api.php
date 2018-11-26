@@ -23,7 +23,7 @@ Route::post('/v1/register/agen/ktp/upload', 'RegisterController@uploadKTP');
 Route::post('/v1/register/agen/kk/upload', 'RegisterController@uploadKK');
 Route::post('/v1/agen/photo/upload', 'UserController@uploadPhoto');
 
-Route::post('/v1/customer', 'CustomerController@addCustomer');
+Route::post('/v1/customer', 'CustomerController@addCustomerNew');
 Route::post('/v1/customertes', 'CustomerController@addCustomer2');
 Route::get('/v1/customer/check', 'CustomerController@checkData');
 Route::post('/v1/customer/photo/upload', 'CustomerController@uploadPhotoCustomer');
@@ -96,13 +96,13 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
   Route::get('/order/cancel', 'OrderController@orderCancel');
 
   Route::post('/order/customer/create', 'OrderControllerCustomer@create');
+  Route::post('/order/customer/createnew', 'OrderControllerCustomer@createNew');
   Route::get('/order/customer/process', 'OrderControllerCustomer@orderProcess');
   Route::get('/order/customer/done', 'OrderControllerCustomer@orderDone');
   Route::get('/order/customer/cancel', 'OrderControllerCustomer@orderCancel');
 
   Route::post('/jne', 'JneController@updateStatusJne');
   Route::post('/tracking', 'JneController@trackingJne');
-  Route::post('/resi', 'JneController@getResi');
 
   Route::post('/order/assign-agent', 'OrderController@assignOrderAgent');
   Route::post('/order/cancel', 'OrderController@cancelOrderAgent');
@@ -114,6 +114,9 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
   Route::post('/shipment', 'ShipmentController@addShipment');
   Route::post('/agen/shipment', 'ShipmentController@updateShipmentMethod');
 
+  Route::get('/province', 'AddressController@getProvince');
+  Route::post('/city', 'AddressController@getCity');
+  Route::post('/region', 'AddressController@getRegion');
 
   Route::get('/ranks', 'RankingController@index');
   Route::get('/akh', 'RankingController@akh');
@@ -126,6 +129,10 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
   Route::get('/notif', 'NotificationController@index');
 
   Route::post('/voucher', 'VoucherController@checkVoucher');
+
+  Route::get('/saldo', 'WalletController@cekSaldo');
+  Route::post('/wallet', 'WalletController@paymentWallet');
+
 
   Route::post('/withdraw', 'OrderController@withdraw');
   Route::get('/withdraw', 'WithdrawController@index');

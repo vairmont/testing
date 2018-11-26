@@ -41,6 +41,44 @@ class RegisterController extends Controller
         }
         else {
             
+             //Regis Nomor VA & get terminal ID dari Jatelindo
+            $datax = [
+            "kodetransaksi"=> "07",
+            "user"=> "grosirone",
+            "password"=> "5b8598bed42b271cb8ec62c4bdd4f3ck",
+            "nova"=> "",
+            "idtrx"=> "",
+            "idmerchant"=> "18",
+            "nominal"=> "0",
+            "keterangan"=> "0|".$request->phone."|".$request->name."|info@grosir.one",
+            "kodemitra"=> "004",
+            "kodebank"=> "",
+            "noref"=> "0",
+            "tglexpired"=> ""
+          ];
+          
+          $data = json_encode($datax);
+          $URL   = 'http://182.23.53.58:20128/';
+            $ch = curl_init($URL);
+
+          curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+          curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+          curl_setopt($ch, CURLOPT_POST, 1);
+          curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+          curl_setopt($ch, CURLOPT_POSTFIELDS, "$data");
+          curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+          curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY); 
+          curl_setopt($ch, CURLOPT_TIMEOUT, 120);
+
+          $datay = curl_exec($ch);
+          $curl_errno = curl_errno($ch);
+          $curl_error = curl_error($ch);
+            
+
+          curl_close($ch);
+            $res = json_decode($datay, true);
+            $nova = json_decode($datay, true);   
+
             $user =[
 				'phone' => $request->phone,
 				'password' => Hash::make('123456'),
@@ -48,6 +86,11 @@ class RegisterController extends Controller
 				'role_id' => 5,
 				'status' => 'inactive'
 			];
+      $uniq = strtoupper(substr($request->name, 0,4));
+      $number = rand(1000,9999);
+
+      $agen_code = $uniq.$number;
+      
 			$save = User::create($user);
 
             $agen = [
@@ -56,6 +99,9 @@ class RegisterController extends Controller
                 'name' => $request->name,
                 'phone' => $request->phone,
                 'address' => $request->address,
+                'no_va' => $nova['nova'],
+                'terminal_id' => $res['keterangan'],
+                'agen_code' => $agen_code,
                 'ktp_photo' => '',
                 'kk_photo' => ''
             ];
