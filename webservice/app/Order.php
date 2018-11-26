@@ -9,6 +9,6 @@ class Order extends Model
     protected $table = 'order';
 
     protected $fillable = [
-    	'invoice_no','user_id','subtotal','discount','tax', 'total','type', 'payment', 'shipment', 'airway_bill', 'status'
+    	'invoice_no','user_id','subtotal','discount','tax', 'total','type', 'payment', 'payment_status', 'shipment', 'airway_bill', 'status'
     ];
 }

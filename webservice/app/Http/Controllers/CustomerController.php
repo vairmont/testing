@@ -166,35 +166,22 @@ class CustomerController extends Controller
     }
 
     public function updateCustomer (Request $request)
-    {
-        if(empty($request->agen_id)) {
-            return response()->json(['data' => [], 'message' => ['Agen harus dipilih']]);
-        }   
+    { 
 
-        if(empty($request->address)) {
-            return response()->json(['data' => [], 'message' => ['Alamat wajib diisi']]);
-        }
-
-        if(empty($request->lat)) {
-            return response()->json(['data' => [], 'message' => ['Alamat Map wajib dicari']]);
-        }
-    
-        else{
+            $agen = Agen::where('agen_code', '=', strtoupper($request->agen_code))->first();
+       
             User::where('id', $request->get('user')->id)
 
             ->update([
-                'store_id' => $request->store_id
+                'store_id' => 1
             ]);
             Customer::where('identifier', $request->get('user')->id)
             ->update([
-                'agen_id' => $request->agen_id,
-                'address' => $request->address,
-                'lat' => $request->lat,
-                'long' => $request->long
+                'agen_id' => $agen->id
                 ]);
 
             return response()->json(['data' => [], 'message' => ['OK']]);
-            }
+            
         }
 
         public function uploadPhotoCustomer(Request $request)
