@@ -118,8 +118,6 @@ class WalletController extends Controller
         }
 
         if(strpos($res['rc'], 'Sukses') !== false){
-        //update payment status
-        $order->payment_status = 'success';  
         //JNE GET AWB
         $userkey = "TESTAPI";
         $passkey = "25c898a9faea1a100859ecd9ef674548";
@@ -135,9 +133,11 @@ class WalletController extends Controller
         $cart = Cart::where('user_id', '=', $request->get('user')->id)->first();
         $cartDetail = CartDetail::where('cart_id', '=', $cart->id)->first();
         $orderDetail = OrderDetail::where('order_id', '=', $order->id)->first();
-        $topup = customer::where('customer.identifier','=',$request->get('user')->id)
-                  ->decrement('plafon_kredit', round($order->total));
-        $product = Product::whereId($cartDetail->product_id)->first(); 
+        // $topup = customer::where('customer.identifier','=',$request->get('user')->id)
+        //           ->decrement('plafon_kredit', round($order->total));
+        $name = Customer::where('identifier', '=', $order->user_id)->first();
+        $product = Product::where('product.id', '=', $cartDetail->product_id)->first();
+        
         $fields = [
           'username' => $userkey,
           'api_key' => $passkey,
@@ -150,7 +150,7 @@ class WalletController extends Controller
           'OLSHOP_SHIPPER_CITY' => 'Tangerang',
           'OLSHOP_SHIPPER_ZIP' => 15325,
           'OLSHOP_SHIPPER_PHONE' => '08119500311',
-          'OLSHOP_RECEIVER_NAME' => $request->customer_name,
+          'OLSHOP_RECEIVER_NAME' => $name->name,
           'OLSHOP_RECEIVER_ADDR1' => $add->address2,
           'OLSHOP_RECEIVER_ADDR2' => '-',
           'OLSHOP_RECEIVER_CITY' => $add->city,
@@ -169,7 +169,7 @@ class WalletController extends Controller
           'OLSHOP_COD_AMOUNT' => 0
 
         ];
-      
+    
         $curlHandle = curl_init();
         curl_setopt($curlHandle, CURLOPT_URL, $url);
         curl_setopt($curlHandle, CURLOPT_POSTFIELDS, http_build_query($fields));
@@ -188,6 +188,11 @@ class WalletController extends Controller
         curl_close($curlHandle);
 
        $resi = json_decode($results, true);
+      
+        //update payment status
+        $order->payment_status = 'success'; 
+        $order->shipment = 'JNE'; 
+        $order->status = '2'; 
        $order->airway_bill = $resi['detail'][0]['cnote_no'];
        $order->save();  
      
@@ -207,7 +212,7 @@ class WalletController extends Controller
               }     
               
            
-          $commission_pph = ($incentive + 0) * $this->pph;
+          $commission_pph = ($incentive + 0) * 0.02;
           $commission_netto = $incentive - $commission_pph;
           
           $commission = new Commission;
@@ -241,6 +246,51 @@ class WalletController extends Controller
         return response()->json(['data' => [$datay], 'nominal' => [$res['nominal']], 'invoice' => [$order->invoice_no], 'message' => ['OK']]);
         }
 
+    }
+
+    protected function _sendPushNotification($user_id, $title, $body) {
+        // API access key from Google API's Console
+        define('API_ACCESS_KEY', 'AAAA6cPylp8:APA91bFB5i1sBcapzkGUd23jb8V7ojwjnoonnBlX317_IeVt-jxk5_WjSNHlhVrVn882ZcTWH4Nn5KOfr6onBetNT4PoVVn7olWyA7uSCXiy1DY7KVPEdYPgtNEkMfl8nhgvcYefNcxm');
+
+        $registrationIds = array();
+
+        $recipients = FCM::where('user_id',$user_id)->select('fcm_token')->get();
+
+        foreach ($recipients as $recipient) {
+            array_push($registrationIds, $recipient->fcm_token);
+        }
+
+        $msg = array
+        (
+            'title' => $title,
+            'body' => $body,
+            'vibrate' => "1",
+            'sound' => 'default',
+            'badge' => "1"
+        );
+
+        $fields = array
+        (
+            'registration_ids'  => $registrationIds,
+            'notification'  => $msg,
+            'priority' => 'high'
+        );
+         
+        $headers = array
+        (
+            'Authorization: key=' . API_ACCESS_KEY,
+            'Content-Type: application/json'
+        );
+         
+        $ch = curl_init();
+        curl_setopt($ch,CURLOPT_URL, 'https://fcm.googleapis.com/fcm/send');
+        curl_setopt($ch,CURLOPT_POST, true);
+        curl_setopt($ch,CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch,CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch,CURLOPT_POSTFIELDS, json_encode($fields));
+        $result = curl_exec($ch);
+        curl_close($ch);
     }
 }
 
