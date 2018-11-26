@@ -86,6 +86,11 @@ class RegisterController extends Controller
 				'role_id' => 5,
 				'status' => 'inactive'
 			];
+      $uniq = strtoupper(substr($request->name, 0,4));
+      $number = rand(1000,9999);
+
+      $agen_code = $uniq.$number;
+      
 			$save = User::create($user);
 
             $agen = [
@@ -96,6 +101,7 @@ class RegisterController extends Controller
                 'address' => $request->address,
                 'no_va' => $nova['nova'],
                 'terminal_id' => $res['keterangan'],
+                'agen_code' => $agen_code,
                 'ktp_photo' => '',
                 'kk_photo' => ''
             ];
