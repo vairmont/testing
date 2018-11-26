@@ -105,6 +105,7 @@ class DigitalProductController extends Controller {
 
     curl_close($ch);
     $res = json_decode($datay, true);
+    return $res['rc'];
 
         //bila saldo cukup
         if(strpos($res['rc'], 'Sukses') !== false){
