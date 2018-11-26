@@ -224,6 +224,7 @@ class ReportController extends Controller
                 
             ]);
         }
+        var_dump($data);die;
 
         return Excel::create('Flow_report', function($excel) use($data) {
             $excel->sheet('Sheetname', function($sheet) use($data) {
