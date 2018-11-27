@@ -321,7 +321,6 @@ class WalletController extends Controller
                 ->first();
 
                 $order->status_payment = 'success';
-                $order->status = 'done';
                 $order->save(); 
 
                 $incentive = $order->total * 0.01;
@@ -353,8 +352,8 @@ class WalletController extends Controller
         $user = '8CC9B6';
         $pin = 'BFGH4I';
         $pass = 'E0A5F6';
-        $kode = $request->product_code;
-        $tujuan = $request->phone;
+        $kode = $order->product_code;
+        $tujuan = $order->phone;
         $idtrx = $order->invoice_no;
         // set url 
         curl_setopt($ch, CURLOPT_URL, "http://202.146.39.54:8030/api/h2h?id=".$idrs."&pin=".$pin."&user=".$user."&pass=".$pass."&kodeproduk=".$kode."&tujuan=".$tujuan."&counter=1&idtrx=".$idtrx); 
