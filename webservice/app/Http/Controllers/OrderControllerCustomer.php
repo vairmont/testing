@@ -509,7 +509,7 @@ class OrderControllerCustomer extends Controller
 
     $orderbillingdetail->order_id =  $order->id;
     $orderbillingdetail->customer_name = $add->name;
-    $orderbillingdetail->customer_phone = $add->customer_phone;
+    $orderbillingdetail->customer_phone = $add->phone;
     $orderbillingdetail->customer_address = "";
     $orderbillingdetail->customer_address2 = $add->address2;
     $orderbillingdetail->notes = $request['notes'];
