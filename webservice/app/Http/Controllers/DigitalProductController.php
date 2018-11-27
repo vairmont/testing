@@ -51,7 +51,11 @@ class DigitalProductController extends Controller {
     $price = $items->price;
 
     if($user->role_id == 5){
-      $price = $items->price * 0.98;
+      $price = $items->price_agen;
+    }
+
+    if($user->role_id !== 5){
+      $price = $items->price;
     }
 
     $today = date("Ymd");
@@ -116,18 +120,17 @@ class DigitalProductController extends Controller {
 
   public function orderHistoryDigital(Request $request) {
 
-      $orders = OrderDigital::join('customer','customer.identifier','=','order.user_id')
-      ->join('order_billing_detail','order_billing_detail.order_id','=','order.id')
+      $orders = OrderDigital::join('customer','customer.identifier','=','order_digital.user_id')
       ->where('user_id', '=', $request->get('user')->id)
-      ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address2', 'order_billing_detail.notes as order_notes')
+      ->select('order_digital.*','customer.name as name')
       ->orderBy('created_at', 'asc')
       ->get();
 
       $result = [];
       foreach ($orders as $order) {
         $items = DigitalProduct::Join('order_digital', 'order_digital.product_code', '=', 'digital_product.kode')
-          ->where('order_id', '=', $order->id)
-          ->select('product.id as product_id', 'product.sku', 'product.product_name', 'order_detail.qty','product.price_for_customer','product.price_for_agen','product.img_url')
+          ->where('order_digital.id', '=', $order->id)
+          ->select('digital_product.type as type','digital_product.id as product_id', 'digital_product.kode', 'digital_product.name', 'digital_product.price','digital_product.price_agen')
           ->get();
 
         $result[] = [

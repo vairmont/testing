@@ -62,6 +62,8 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
 
   Route::get('/chat', 'ChatController@chatList');
   Route::post('/chat', 'ChatController@orderChat');
+  Route::get('/generalchat', 'ChatController@generalChatList');
+  Route::post('/generalchat', 'ChatController@generalChat');
 
   Route::get('/cart', 'ApiCartController@index');
   Route::post('/cart', 'ApiCartController@updateCart');
@@ -134,7 +136,9 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
   Route::post('/payment/wallet/sembako', 'WalletController@paymentWalletSembako');
   Route::post('/payment/wallet/digital', 'WalletController@paymentWalletDigital');
 
-  Route::get('/order/history/sembako', 'OrderControllerCustomer@orderHistorySembako');  
+  Route::get('/order/history/sembako', 'OrderControllerCustomer@orderHistorySembako'); 
+  Route::get('/order/history/digital', 'DigitalProductController@orderHistoryDigital');   
+  Route::get('/wallet/history', 'WalletController@walletHistory');   
 
   Route::post('/withdraw', 'OrderController@withdraw');
   Route::get('/withdraw', 'WithdrawController@index');

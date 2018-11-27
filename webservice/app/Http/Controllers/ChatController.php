@@ -74,6 +74,43 @@ class ChatController extends Controller
         }
     }
 
+    public function generalChatList(Request $request)
+    {
+            $chats = Chat::where('sender_id',$request->get('user')->id)
+                    ->where('recipient_id',$request->recipient_id)
+                    ->select('id','sender_id','recipient_id','message','created_at')
+                    ->get();
+
+            return response()->json(['data' => $chats, 'message' => ['OK']]);
+        
+    }
+
+    public function generalChat(Request $request)
+    {
+            $sender_id = $request->get('user')->id;
+            $customer = Customer::where('identifier', '=', $request->get('user')->id)->first();
+            $user = User::find($sender_id);
+            
+            if($user->role_id == 2) {
+                // customer
+                $chat['recipient_id'] = $customer->agen_id;
+            }
+            elseif($user->role_id == 5) {
+                // agen
+                $chat['recipient_id'] = $request->recipient_id;
+            }
+
+            $chat['sender_id'] = $sender_id;
+            $chat['message'] = nl2br($request->message);
+            Chat::create($chat);
+
+            // send push notification
+            $this->_sendPushNotification($chat['recipient_id'], "Pesan baru", nl2br($chat['message']));
+
+            return response()->json(['data' => [], 'message' => ['OK']]);
+        
+    }
+
     protected function _sendPushNotification($user_id, $title, $body) {
         // API access key from Google API's Console
         define('API_ACCESS_KEY', 'AAAA6cPylp8:APA91bFB5i1sBcapzkGUd23jb8V7ojwjnoonnBlX317_IeVt-jxk5_WjSNHlhVrVn882ZcTWH4Nn5KOfr6onBetNT4PoVVn7olWyA7uSCXiy1DY7KVPEdYPgtNEkMfl8nhgvcYefNcxm');

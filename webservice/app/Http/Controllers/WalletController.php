@@ -375,6 +375,25 @@ class WalletController extends Controller
 
     }
 
+    public function walletHistory(Request $request) {
+
+      $orders = OrderDigital::where('user_id', '=', $request->get('user')->id)
+      ->select('order_digital.*')
+      ->orderBy('created_at', 'asc')
+      ->get();
+
+      $ord = Order::where('user_id', '=', $request->get('user')->id)
+      ->select('order.*')
+      ->orderBy('created_at', 'asc')
+      ->get();
+        
+      $merged = $orders->merge($ord);
+
+      $result = $merged->all();
+    
+      return response()->json($result);
+    }
+
     protected function _sendPushNotification($user_id, $title, $body) {
         // API access key from Google API's Console
         define('API_ACCESS_KEY', 'AAAA6cPylp8:APA91bFB5i1sBcapzkGUd23jb8V7ojwjnoonnBlX317_IeVt-jxk5_WjSNHlhVrVn882ZcTWH4Nn5KOfr6onBetNT4PoVVn7olWyA7uSCXiy1DY7KVPEdYPgtNEkMfl8nhgvcYefNcxm');
