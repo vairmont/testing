@@ -419,6 +419,8 @@ class OrderControllerCustomer extends Controller
     }
 
     public function createNew(Request $request) {
+
+      $data = $request->json()->all();
     $customer = User::where('id', '=', $request->get('user')->id)->first();
 
     $cart = Cart::where('user_id', '=', $request->get('user')->id)->first();
@@ -428,11 +430,9 @@ class OrderControllerCustomer extends Controller
     ->select('agen.identifier')
     ->first();
 
-    if ($cart->total == 0) {
+    if ($data['total'] == 0) {
       return response()->json(['message' => 'Keranjang anda kosong.'], 400);
     }
-
-    $cartDetails = CartDetail::where('cart_id', '=', $cart->id)->get();
 
     $today = date("Ymd");
     $rand = strtoupper(substr(uniqid(sha1(time())),0,4));
@@ -440,61 +440,34 @@ class OrderControllerCustomer extends Controller
 
     $order = new Order;
     $order->invoice_no = $unique;
-    $order->user_id = $cart->user_id;
-    $order->subtotal = $cart->subtotal;
-    $order->voucher_code = $request->voucher_code;
-    $order->tax = $cart->tax;
+    $order->user_id = $request->get('user')->id;
+    $order->subtotal = $data['subtotal'];
+    $order->voucher_code = $data['voucher_code'];
+    $order->tax = '0';
     $order->payment = 'wallet';
     $order->payment_status = 'pending';
     $order->discount = 0;
-    if($cart->total < 50000) {
-      $order->total = $cart->total + 5000;
-    }
-    else {
-
-      if ($request->voucher_code != '' && $request->discount != 0) {
-          $order->total = $cart->total - $request->discount;
-      }
-
-      elseif ($request->voucher_code != '' && $request->discountrate != 0) {
-          $order->total = $cart->total - ($cart->total * $request->discountrate);
-      }
-
-      else{
-      $order->total = $cart->total;
-      }
-    }
     $order->status = OrderStatus::CREATED;
     $order->agen_id = $agencust->identifier;
-    $order->address_id = $request->address_id;
+    $order->address_id = $data['address_id'];
     $order->save();
 
-    $items = [];
-    foreach ($cartDetails as $cartDetail) {
-      $product = Product::whereId($cartDetail->product_id)->first();
+    foreach ($data['items'] as $items) {
+      $product = Product::whereId($items['product_id'])->first();
       $orderDetail = new OrderDetail;
       $orderDetail->order_id = $order->id;
       $orderDetail->product_id = $product->id;
       $orderDetail->category_id = $product->category_id;
-      $orderDetail->qty = $cartDetail->qty;
+      $orderDetail->qty = $items['qty'];
       // if($cartDetail->qty >= 3){
       //   $orderDetail->price_for_customer = $product->price_for_customer * 0.98;
       //   $orderDetail->price_for_agen = $product->price_for_agen;
       // }
       // else{
-      $orderDetail->price_for_customer = ($product->promo_price == 0) ? $product->price_for_customer : $product->promo_price;
-      $orderDetail->price_for_agen = ($product->promo_price == 0) ? $product->price_for_customer : $product->promo_price;
+      $orderDetail->price_for_customer = $items['price'];       
+      $orderDetail->price_for_agen = $items['price'] * 0.93;
       // }
       $orderDetail->save();
-
-      $items[] = [
-        'product_id' => $product->id,
-        'sku' => $product->sku,
-        'category_id' => $orderDetail->category_id,
-        'qty' => $orderDetail->qty,
-        'price_for_customer' => $orderDetail->price_for_customer,
-        'price_for_agen' => $orderDetail->price_for_agen
-      ];
     }
 
     #Input Billing Detail
@@ -502,7 +475,7 @@ class OrderControllerCustomer extends Controller
     $add = Address::join('city', 'city.id', '=', 'address.city_id')
                 ->join('region', 'region.id', '=', 'address.region_id')
                 ->select('address.address as address2', 'region.name as region', 'city.name as city', 'address.zip as zip', 'region.code as code', 'address.name as name', 'address.phone as phone')
-                ->where('address.id', '=', $request->address_id)
+                ->where('address.id', '=', $data['address_id'])
                 ->first();
 
     $orderbillingdetail = new OrderBillingDetail;
@@ -512,12 +485,8 @@ class OrderControllerCustomer extends Controller
     $orderbillingdetail->customer_phone = $add->phone;
     $orderbillingdetail->customer_address = "";
     $orderbillingdetail->customer_address2 = $add->address2;
-    $orderbillingdetail->notes = $request['notes'];
+    $orderbillingdetail->notes = $data['notes'];
     $orderbillingdetail->save();
-
-    // clear cart
-    CartDetail::where('cart_id',$cart->id)->delete();
-    Cart::where('id',$cart->id)->delete();
 
     #send push notif ke ag->e2
     $this->_sendPushNotification($order->agen_id, "Order Baru", "Ada order baru.");
