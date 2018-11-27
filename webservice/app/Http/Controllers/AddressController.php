@@ -78,12 +78,20 @@ class AddressController extends Controller
             return response()->json(['data' => [], 'message' => ['Kota harus dipilih.']]);
         }
 
+        if(empty($request->province_id)) {
+            return response()->json(['data' => [], 'message' => ['Provinsi harus dipilih.']]);
+        }
+
         if(empty($request->region_id)) {
             return response()->json(['data' => [], 'message' => ['Kecamatan harus dipilih.']]);
         }
         
         if(empty($request->address)) {
             return response()->json(['data' => [], 'message' => ['Alamat lengkap tidak boleh kosong']]);
+        }
+
+        if(empty($request->phone)) {
+            return response()->json(['data' => [], 'message' => ['Nomor Telpon tidak boleh kosong']]);
         }
 
         if(empty($request->zip)) {
@@ -93,16 +101,13 @@ class AddressController extends Controller
 
 		else {
 
-            $code = Region::where('id', '=', $request->region_id)
-                    ->select('code')
-                    ->first();
-
 			$address = [
 				'name' => $request->name,
+                'phone' => $request->phone,
 				'user_id' => $request->get('user')->id,
+                'province_id' => $request->province_id,
 				'city_id' => $request->city_id,
 				'region_id' => $request->region_id,
-                'region_code' => $code->code,
 				'address' => $request->address,
 				'zip' => $request->zip
 			];

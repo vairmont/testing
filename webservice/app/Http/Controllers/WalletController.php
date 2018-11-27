@@ -71,7 +71,7 @@ class WalletController extends Controller
     return response()->json(['data' => $res['nominal'], 'message' => ['OK']]);
     }
 
-    public function paymentWallet(Request $request){
+    public function paymentWalletSembako(Request $request){
         $order = Order::where('invoice_no', '=', $request->invoice_no)->first();
         $custo = Customer::where('identifier', '=', $request->get('user')->id)->first();
         // Pemotongan saldo wallet
