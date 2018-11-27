@@ -119,7 +119,7 @@ class DigitalProductController extends Controller {
     #send push notif ke agen
     $this->_sendPushNotification($order->agen_id, "Pulsa", "Customer Membeli Pulsa.");
 
-    return response()->json(['data' => [$order->invoice_no], 'message' => ['OK']]);
+    return response()->json(['data' => $order->invoice_no, 'message' => ['OK']]);
   }
 
   public function notification(Request $request){
