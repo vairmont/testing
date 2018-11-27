@@ -69,7 +69,7 @@ class WalletController extends Controller
     curl_close($ch);
     $res = json_decode($datay, true);
     
-    return response()->json(['data' => $res, 'message' => ['OK']]);
+    return response()->json(['data' => $res['nominal'], 'message' => ['OK']]);
     }
 
     public function paymentWalletSembako(Request $request){
