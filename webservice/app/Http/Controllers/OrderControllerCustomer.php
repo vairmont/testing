@@ -501,15 +501,15 @@ class OrderControllerCustomer extends Controller
     $custo = Customer::where('identifier', '=', $request->get('user')->id)->first();
     $add = Address::join('city', 'city.id', '=', 'address.city_id')
                 ->join('region', 'region.id', '=', 'address.region_id')
-                ->select('address.address as address2', 'region.name as region', 'city.name as city', 'address.zip as zip', 'region.code as code')
+                ->select('address.address as address2', 'region.name as region', 'city.name as city', 'address.zip as zip', 'region.code as code', 'address.name as name', 'address.phone as phone')
                 ->where('address.id', '=', $request->address_id)
                 ->first();
 
     $orderbillingdetail = new OrderBillingDetail;
 
     $orderbillingdetail->order_id =  $order->id;
-    $orderbillingdetail->customer_name = $request['customer_name'];
-    $orderbillingdetail->customer_phone = $request['customer_phone'];
+    $orderbillingdetail->customer_name = $add->name;
+    $orderbillingdetail->customer_phone = $add->customer_phone;
     $orderbillingdetail->customer_address = "";
     $orderbillingdetail->customer_address2 = $add->address2;
     $orderbillingdetail->notes = $request['notes'];
