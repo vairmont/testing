@@ -76,7 +76,7 @@ class ChatController extends Controller
 
     public function generalChatList(Request $request)
     {
-            $chats = Chat::where('sender_id',$request->get('user')->id)
+            $chats = GeneralChat::where('sender_id',$request->get('user')->id)
                     ->where('recipient_id',$request->recipient_id)
                     ->select('id','sender_id','recipient_id','message','created_at')
                     ->get();
@@ -102,7 +102,7 @@ class ChatController extends Controller
 
             $chat['sender_id'] = $sender_id;
             $chat['message'] = nl2br($request->message);
-            Chat::create($chat);
+            GeneralChat::create($chat);
 
             // send push notification
             $this->_sendPushNotification($chat['recipient_id'], "Pesan baru", nl2br($chat['message']));
