@@ -19,6 +19,7 @@ use App\Address;
 use App\User;
 use App\Agen;
 use App\Cart;
+use App\OrderDigital;
 use App\Chat;
 use App\Store;
 use App\WaneeHistory;
@@ -258,7 +259,7 @@ class WalletController extends Controller
     public function paymentWalletDigital(Request $request){
       $order = OrderDigital::where('invoice_no', '=', $request->invoice_no)->first();
       $user = User::where('id', '=', $request->get('user')->id)->first();
-      
+
         if($user->role_id == 5){
         $nova = Agen::where('identifier', '=', $request->get('user')->id)->first();
         }
@@ -275,7 +276,7 @@ class WalletController extends Controller
         "nova"=> $nova->no_va,
         "idtrx"=> $order->invoice_no,
         "idmerchant"=> "47",
-        "nominal"=> $price,
+        "nominal"=> $order->total,
         "keterangan"=> $nova->terminal_id,
         "kodemitra"=> "004",
         "kodebank"=> "",
@@ -303,8 +304,7 @@ class WalletController extends Controller
 
         curl_close($ch);
         $res = json_decode($datay, true);
-        return $res['rc'];
-
+        
         //Saldo tidak cukup
         if(strpos($res['rc'], 'Saldo') !== false){
           return response()->json(['data' => [], 'message' => ['Saldo tidak cukup']]);
@@ -315,18 +315,22 @@ class WalletController extends Controller
              if($user->role_id != 5)
               {
                 
-                $orderD = OrderDigital::where('id', '=', $request->invoice_no);
+                $order = OrderDigital::where('invoice_no', '=', $request->invoice_no)->first();
                 $customer = Customer::where('identifier','=',$request->get('user')->id)->first();
                 $agen = Agen::where('agen.id', '=', $customer->agen_id)
                 ->first();
 
-                $incentive = $price * 0.01;
+                $order->status_payment = 'success';
+                $order->status = 'done';
+                $order->save(); 
+
+                $incentive = $order->total * 0.01;
                 
                 $commission_pph = $incentive * 0.02;
                 $commission_netto = $incentive - $commission_pph;
                 
                 $commission = new Commission;
-                $commission->order_id = $orderD->id + 100000;
+                $commission->order_id = $order->id + 100000;
                 $commission->agen_id = $customer->agen_id;
                 $commission->incentive = $incentive;
                 $commission->commission_pph = $commission_pph;
@@ -365,10 +369,9 @@ class WalletController extends Controller
         curl_close($ch);
 
         $res = json_decode($output,true);
-        #send push notif ke agen
-        //$this->_sendPushNotification($order->agen_id, "Pulsa", "Customer Membeli Pulsa.");
-
-        return response()->json(['data' => [$res], 'message' => $res['msg']]);
+        // send push notif ke agen
+        $this->_sendPushNotification($order->agen_id, "Pulsa", "Customer Membeli Pulsa.");
+        return response()->json(['data' => [], 'message' => ['ok']]);
         }  
 
     }

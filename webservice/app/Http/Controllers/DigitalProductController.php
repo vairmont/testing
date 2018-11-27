@@ -14,6 +14,7 @@ use App\OrderDigital;
 use App\Agen;
 use App\WaneeHistory;
 use DB;
+use App\FCM;
 use Illuminate\Http\Request;
 
 class DigitalProductController extends Controller {
@@ -43,6 +44,7 @@ class DigitalProductController extends Controller {
 
   public function create(Request $request) {
     $user = User::where('id', '=', $request->get('user')->id)->first();
+    $customer = Customer::where('identifier', '=', $request->get('user')->id)->first();
 
     $items = DigitalProduct::where('kode','=',$request->product_code)->first();
 
@@ -64,6 +66,7 @@ class DigitalProductController extends Controller {
             $order->product_code = $request->product_code;
             $order->phone = $request->phone;
             $order->user_id = $request->get('user')->id;
+            $order->agen_id = $customer->agen_id;
             #tanpa discount
             if($request->voucher_code != null)
             {
@@ -113,33 +116,10 @@ class DigitalProductController extends Controller {
           throw $e;
       }
       DB::commit();
-        #curl
-        $ch = curl_init(); 
-
-        $idrs = 'DR1108';
-        $user = '8CC9B6';
-        $pin = 'BFGH4I';
-        $pass = 'E0A5F6';
-        $kode = $request->product_code;
-        $tujuan = $request->phone;
-        $idtrx = $order->invoice_no;
-        // set url 
-        curl_setopt($ch, CURLOPT_URL, "http://202.146.39.54:8030/api/h2h?id=".$idrs."&pin=".$pin."&user=".$user."&pass=".$pass."&kodeproduk=".$kode."&tujuan=".$tujuan."&counter=1&idtrx=".$idtrx); 
-
-        //return the transfer as a string 
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-
-        // $output contains the output string 
-        $output = curl_exec($ch); 
-
-        // close curl resource to free up system resources 
-        curl_close($ch);
-
-        $res = json_decode($output,true);
     #send push notif ke agen
-    //$this->_sendPushNotification($order->agen_id, "Pulsa", "Customer Membeli Pulsa.");
+    $this->_sendPushNotification($order->agen_id, "Pulsa", "Customer Membeli Pulsa.");
 
-    return response()->json(['data' => [$res], 'message' => $res['msg']]);
+    return response()->json(['data' => [$order->invoice_no], 'message' => ['ok']]);
   }
 
   public function notification(Request $request){
@@ -164,4 +144,49 @@ class DigitalProductController extends Controller {
       // curl_close($curlHandle);
       return response()->json(['data' => [], 'message' => 'OK']);
   }
+
+  protected function _sendPushNotification($user_id, $title, $body) {
+        // API access key from Google API's Console
+        define('API_ACCESS_KEY', 'AAAA6cPylp8:APA91bFB5i1sBcapzkGUd23jb8V7ojwjnoonnBlX317_IeVt-jxk5_WjSNHlhVrVn882ZcTWH4Nn5KOfr6onBetNT4PoVVn7olWyA7uSCXiy1DY7KVPEdYPgtNEkMfl8nhgvcYefNcxm');
+
+        $registrationIds = array();
+
+        $recipients = FCM::where('user_id',$user_id)->select('fcm_token')->get();
+
+        foreach ($recipients as $recipient) {
+            array_push($registrationIds, $recipient->fcm_token);
+        }
+
+        $msg = array
+        (
+            'title' => $title,
+            'body' => $body,
+            'vibrate' => "1",
+            'sound' => 'default',
+            'badge' => "1"
+        );
+
+        $fields = array
+        (
+            'registration_ids'  => $registrationIds,
+            'notification'  => $msg,
+            'priority' => 'high'
+        );
+         
+        $headers = array
+        (
+            'Authorization: key=' . API_ACCESS_KEY,
+            'Content-Type: application/json'
+        );
+         
+        $ch = curl_init();
+        curl_setopt($ch,CURLOPT_URL, 'https://fcm.googleapis.com/fcm/send');
+        curl_setopt($ch,CURLOPT_POST, true);
+        curl_setopt($ch,CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch,CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch,CURLOPT_POSTFIELDS, json_encode($fields));
+        $result = curl_exec($ch);
+        curl_close($ch);
+    }
 }

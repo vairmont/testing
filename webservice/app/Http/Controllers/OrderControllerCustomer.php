@@ -517,8 +517,8 @@ class OrderControllerCustomer extends Controller
     $orderbillingdetail->save();
 
     // clear cart
-    // CartDetail::where('cart_id',$cart->id)->delete();
-    // Cart::where('id',$cart->id)->delete();
+    CartDetail::where('cart_id',$cart->id)->delete();
+    Cart::where('id',$cart->id)->delete();
 
     #send push notif ke ag->e2
     $this->_sendPushNotification($order->agen_id, "Order Baru", "Ada order baru.");
