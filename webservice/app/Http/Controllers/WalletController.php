@@ -34,7 +34,7 @@ class WalletController extends Controller
     $custo = Customer::where('identifier', '=', $request->get('user')->id)->first();
  
     $datax = [
-    "kodetransaksi"=> "11",
+    "kodetransaksi"=> "01",
     "user"=> "grosirone",
     "password"=> "5b8598bed42b271cb8ec62c4bdd4f3ck",
     "nova"=> $custo->no_va,
