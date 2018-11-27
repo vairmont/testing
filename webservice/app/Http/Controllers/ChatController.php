@@ -11,6 +11,7 @@ use App\Order;
 use App\User;
 use App\Agen;
 use App\Chat;
+use App\GeneralChat;
 use App\FCM;
 
 class ChatController extends Controller
