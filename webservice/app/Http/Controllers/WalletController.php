@@ -370,7 +370,7 @@ class WalletController extends Controller
         $res = json_decode($output,true);
         // send push notif ke agen
         $this->_sendPushNotification($order->agen_id, "Pulsa", "Customer Membeli Pulsa.");
-        return response()->json(['data' => [$res], 'message' => ['OK']]);
+        return response()->json(['data' => [], 'message' => ['OK']]);
         }  
 
     }

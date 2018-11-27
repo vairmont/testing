@@ -67,19 +67,11 @@ class DigitalProductController extends Controller {
             $order->phone = $request->phone;
             $order->user_id = $request->get('user')->id;
             $order->agen_id = $customer->agen_id;
-            #tanpa discount
-            if($request->voucher_code != null)
-            {
-            $order->voucher_code = $request->voucher_code;
-            $order->total = $price - $request->discount;
-            }
-            #discount
-            else
-            {
+           
             $order->voucher_code = $request->voucher_code;
             $order->discount = $request->discount;
             $order->total = $request->total;
-            }
+            
             $order->subtotal = $price;
             $order->status = 0;
             $order->status_payment = "pending";
