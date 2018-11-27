@@ -79,7 +79,7 @@ class DigitalProductController extends Controller {
             }
             $order->subtotal = $price;
             $order->status = 0;
-            $order->status_payment = "done";
+            $order->status_payment = "pending";
             $order->payment_method = "wallet";
             $order->save();
 

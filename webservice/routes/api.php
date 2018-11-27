@@ -131,7 +131,8 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
   Route::post('/voucher', 'VoucherController@checkVoucher');
 
   Route::get('/saldo', 'WalletController@cekSaldo');
-  Route::post('/wallet', 'WalletController@paymentWallet');
+  Route::post('/payment/wallet/sembako', 'WalletController@paymentWalletSembako');
+  Route::post('/payment/wallet/digital', 'WalletController@paymentWalletDigital');
 
 
   Route::post('/withdraw', 'OrderController@withdraw');
