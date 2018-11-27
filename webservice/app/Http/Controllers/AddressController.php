@@ -21,7 +21,7 @@ class AddressController extends Controller
 		$address = Address::join('city', 'city.id', '=', 'address.city_id')
 		->join('region', 'region.id', '=', 'address.region_id')
         ->join('province', 'province.id', '=', 'address.province_id')
-		->select('address.name as name', 'address.phone as phone', 'province.name as province', 'region.name as region', 'city.name as city', 'address.address as address', 'address.zip')
+		->select('address.id', 'address.name as name', 'address.phone as phone', 'province.name as province', 'region.name as region', 'city.name as city', 'address.address as address', 'address.zip')
 		->where('user_id', $request->get('user')->id)
 		->get();
 
