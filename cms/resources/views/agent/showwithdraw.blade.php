@@ -36,11 +36,7 @@
                     <!-- row -->
                     </form>
                 </div>
-                @if(session()->has('message'))
-                <div class="alert alert-success">
-                    {{ session()->get('message') }}
-                </div>
-            @endif
+              
 
                     <!-- /.row -->
                     <div class="row">
@@ -49,7 +45,7 @@
                                     <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-example">
                                         <thead>
                                             <tr>
-                                                <th>Checker</>
+                                                <th>Checker</th>
                                                 <th>ID</th>
                                                 <th>Nama</th>
                                                 <th>Amount</th>
@@ -62,13 +58,13 @@
                                                 <th>Tanggal</th>
                                             </tr>
                                         </thead>
-                                        <form class="form-inline" method="POST" action="{{  route('check2')}}">
+                                        <form class="form-inline" method="POST" action="{{  route('check3')}}">
                                                 {{ csrf_field() }}
                                    
-                                               <button class=" btn btn-primary"type="submit" name="check2">Verifikasi</button> 
+                                               <button class=" btn btn-primary"type="submit" name="check3">Verifikasi</button> 
                                         <tbody>
                                          @if(count($withdraw) > 0)
-                                            @foreach($withdraw as $draw)
+                                            @foreach($withdraw->all() as $draw)
                                            
                                                 <tr>
                                                 <td>

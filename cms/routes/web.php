@@ -34,6 +34,7 @@ Route::get('/byagent','EmployeeController@getByAgent');
 Route::get('/bywaneehistory','EmployeeController@getBywanneHistory');
 Route::get('/bywaneepending','EmployeeController@getByWaneePending');
 Route::get('/bywaneeapprove','EmployeeController@getByWaneeApprove');
+Route::get('/byshowwithdraw', 'WithDrawController@getByShowWithDraw');
 Route::get('/bywithdraw', 'WithDrawController@getByWithDraw');
 Route::get('/bywithdrawdone', 'WithDrawController@getByWithDrawDone');
 
@@ -47,9 +48,10 @@ Route::post('/verifywanee4','EmployeeController@updateStatus2')->name('status4')
 
 
 Route::get('/verifywanee2/{id}','EmployeeController@updateStatus')->name('status2');
-Route::get('/verifywithdraw/{id}','WithDrawController@updateStatus')->name('status');
 Route::post('/verifyagent/{id}','EmployeeController@updateVerify')->name('verify');
 
+Route::post('/verifywithdraw','WithDrawController@updateStatus')->name('check2');
+Route::post('/verifyshowwithdraw','WithDrawController@updateStatusWithdraw')->name('check3');
 
 Route::get('/bypurchaseorder','InventoryController@getByPurchaseorder');
 Route::get('/bytransferorder','InventoryController@getByTransferorder');
