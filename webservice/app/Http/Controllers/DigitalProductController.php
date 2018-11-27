@@ -76,9 +76,9 @@ class DigitalProductController extends Controller {
             #discount
             else
             {
-            $order->voucher_code = 0;
-            $order->discount = 0;
-            $order->total = $price;
+            $order->voucher_code = $request->voucher_code;
+            $order->discount = $request->discount;
+            $order->total = $request->total;
             }
             $order->subtotal = $price;
             $order->status = 0;
