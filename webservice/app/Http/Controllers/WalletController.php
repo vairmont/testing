@@ -347,28 +347,28 @@ class WalletController extends Controller
               }
 
         #curl
-        $ch = curl_init(); 
+        // $ch = curl_init(); 
 
-        $idrs = 'DR1108';
-        $user = '8CC9B6';
-        $pin = 'BFGH4I';
-        $pass = 'E0A5F6';
-        $kode = $request->product_code;
-        $tujuan = $request->phone;
-        $idtrx = $order->invoice_no;
-        // set url 
-        curl_setopt($ch, CURLOPT_URL, "http://202.146.39.54:8030/api/h2h?id=".$idrs."&pin=".$pin."&user=".$user."&pass=".$pass."&kodeproduk=".$kode."&tujuan=".$tujuan."&counter=1&idtrx=".$idtrx); 
+        // $idrs = 'DR1108';
+        // $user = '8CC9B6';
+        // $pin = 'BFGH4I';
+        // $pass = 'E0A5F6';
+        // $kode = $request->product_code;
+        // $tujuan = $request->phone;
+        // $idtrx = $order->invoice_no;
+        // // set url 
+        // curl_setopt($ch, CURLOPT_URL, "http://202.146.39.54:8030/api/h2h?id=".$idrs."&pin=".$pin."&user=".$user."&pass=".$pass."&kodeproduk=".$kode."&tujuan=".$tujuan."&counter=1&idtrx=".$idtrx); 
 
-        //return the transfer as a string 
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        // //return the transfer as a string 
+        // curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 
-        // $output contains the output string 
-        $output = curl_exec($ch); 
+        // // $output contains the output string 
+        // $output = curl_exec($ch); 
 
-        // close curl resource to free up system resources 
-        curl_close($ch);
+        // // close curl resource to free up system resources 
+        // curl_close($ch);
 
-        $res = json_decode($output,true);
+        // $res = json_decode($output,true);
         // send push notif ke agen
         $this->_sendPushNotification($order->agen_id, "Pulsa", "Customer Membeli Pulsa.");
         return response()->json(['data' => [], 'message' => ['ok']]);

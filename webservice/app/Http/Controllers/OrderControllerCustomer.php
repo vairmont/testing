@@ -526,5 +526,27 @@ class OrderControllerCustomer extends Controller
     return response()->json(['data' => [$order], 'message' => ['OK']]);
     }
   
-    
+    public function orderHistory(Request $request) {
+
+      $orders = Order::join('customer','customer.identifier','=','order.user_id')
+      ->join('order_billing_detail','order_billing_detail.order_id','=','order.id')
+      ->where('user_id', '=', $request->get('user')->id)
+      ->whereIn('status',[1,2,6])
+      ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.customer_address2', 'order_billing_detail.notes as order_notes')
+      ->orderBy('created_at', 'asc')
+      ->get();
+
+      $result = [];
+      foreach ($orders as $order) {
+        $items = OrderDetail::Join('product', 'product.id', '=', 'order_detail.product_id')
+          ->where('order_id', '=', $order->id)
+          ->select('product.id as product_id', 'product.sku', 'product.product_name', 'order_detail.qty','product.price_for_customer','product.price_for_agen','product.img_url')
+          ->get();
+
+        $result[] = [
+          'order' => $order,
+          'items' => $items,
+          'created_at' => Carbon::parse($order->created_at)->format('d M Y H:i')
+        ];
+      }
 }
