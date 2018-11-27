@@ -29,23 +29,41 @@ class AddressController extends Controller
 
     public function getProvince(Request $request)
     {
-        $address = Province::get();
+        $address = Province::select('province.*');
+
+        if(isset($request->keyword) && !empty($request->keyword)) {
+            $address = $address->where('province.name','like',"%".$request->keyword."%");
+        }
+
+        $address = $address->orderBy('province.name','asc')->get();
 
         return response()->json(['data' => $address, 'message' => ['OK']]);
     }
 
     public function getCity(Request $request)
     {
-        $address = City::where('province_id', '=', $request->province_id)
-        ->get();
+        $address = City::where('province_id', '=', $request->province_id);
+        
+
+        if(isset($request->keyword) && !empty($request->keyword)) {
+            $address = $address->where('city.name','like',"%".$request->keyword."%");
+        }
+
+        $address = $address->orderBy('city.name','asc')->get();
 
         return response()->json(['data' => $address, 'message' => ['OK']]);
     }
 
     public function getRegion(Request $request)
     {
-        $address = Region::where('city_id', '=', $request->city_id)
-        ->get();
+        $address = Region::where('city_id', '=', $request->city_id);
+        
+
+        if(isset($request->keyword) && !empty($request->keyword)) {
+            $address = $address->where('region.name','like',"%".$request->keyword."%");
+        }
+
+        $address = $address->orderBy('region.name','asc')->get();
 
         return response()->json(['data' => $address, 'message' => ['OK']]);
     }   

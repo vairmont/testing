@@ -115,8 +115,8 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
   Route::post('/agen/shipment', 'ShipmentController@updateShipmentMethod');
 
   Route::get('/province', 'AddressController@getProvince');
-  Route::post('/city', 'AddressController@getCity');
-  Route::post('/region', 'AddressController@getRegion');
+  Route::get('/city', 'AddressController@getCity');
+  Route::get('/region', 'AddressController@getRegion');
 
   Route::get('/ranks', 'RankingController@index');
   Route::get('/akh', 'RankingController@akh');
