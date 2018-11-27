@@ -321,7 +321,6 @@ class WalletController extends Controller
                 ->first();
 
                 $order->status_payment = 'success';
-                $order->status = 'done';
                 $order->save(); 
 
                 $incentive = $order->total * 0.01;
