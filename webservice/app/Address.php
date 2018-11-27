@@ -8,6 +8,6 @@ class Address extends Model{
 
   protected $table = 'address';
 
-  protected $fillable = ['id', 'user_id', 'city_id', 'region_id', 'phone', 'address', 'name', 'zip'];
+  protected $fillable = ['id', 'user_id', 'city_id', 'region_id', 'province_id', 'phone', 'address', 'name', 'zip'];
 
 }

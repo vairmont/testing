@@ -134,6 +134,7 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
   Route::post('/payment/wallet/sembako', 'WalletController@paymentWalletSembako');
   Route::post('/payment/wallet/digital', 'WalletController@paymentWalletDigital');
 
+  Route::get('/order/history/sembako', 'OrderControllerCustomer@orderHistorySembako');  
 
   Route::post('/withdraw', 'OrderController@withdraw');
   Route::get('/withdraw', 'WithdrawController@index');
