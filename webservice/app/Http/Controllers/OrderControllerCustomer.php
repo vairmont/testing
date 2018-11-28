@@ -442,11 +442,12 @@ class OrderControllerCustomer extends Controller
     $order->invoice_no = $unique;
     $order->user_id = $request->get('user')->id;
     $order->subtotal = $data['subtotal'];
+    $order->discount = $data['discount'];
+    $order->total = $data['total'];
     $order->voucher_code = $data['voucher_code'];
     $order->tax = '0';
     $order->payment = 'wallet';
     $order->payment_status = 'pending';
-    $order->discount = 0;
     $order->status = OrderStatus::CREATED;
     $order->agen_id = $agencust->identifier;
     $order->address_id = $data['address_id'];
