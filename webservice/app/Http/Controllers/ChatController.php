@@ -78,7 +78,7 @@ class ChatController extends Controller
     public function generalChatList(Request $request)
     {
             $chats = GeneralChat::where('sender_id',$request->get('user')->id)
-                    ->where('recipient_id',$request->recipient_id)
+                    ->where('recipient_id','=', $request->recipient_id)
                     ->select('id','sender_id','recipient_id','message','created_at')
                     ->get();
 
