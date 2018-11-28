@@ -36,8 +36,8 @@ class OrderControllerCustomer extends Controller
       $orders = Order::join('customer','customer.identifier','=','order.user_id')
       ->join('order_billing_detail','order_billing_detail.order_id','=','order.id')
       ->where('user_id', '=', $request->get('user')->id)
-      ->whereIn('status',[1,2,6])
-      ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.customer_address2', 'order_billing_detail.notes as order_notes')
+      ->whereIn('status', 1,2,6)
+      ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address2', 'order_billing_detail.notes as order_notes')
       ->orderBy('created_at', 'asc')
       ->get();
 
@@ -45,7 +45,7 @@ class OrderControllerCustomer extends Controller
       foreach ($orders as $order) {
         $items = OrderDetail::Join('product', 'product.id', '=', 'order_detail.product_id')
           ->where('order_id', '=', $order->id)
-          ->select('product.id as product_id', 'product.sku', 'product.product_name', 'order_detail.qty','product.price_for_customer','product.price_for_agen','product.img_url')
+          ->select('product.id as product_id', 'product.sku', 'product.product_name', 'order_detail.qty','order_detail.price_for_customer','product.img_url')
           ->get();
 
         $result[] = [
@@ -54,26 +54,25 @@ class OrderControllerCustomer extends Controller
           'created_at' => Carbon::parse($order->created_at)->format('d M Y H:i')
         ];
       }
-      
       return response()->json($result, 200);
     }
 
     public function orderDone(Request $request) {
 
-      $orders = Order::join('order_billing_detail', 'order_billing_detail.order_id', '=', 'order.id')
-      ->join('agen', 'agen.identifier', '=', 'order.agen_id')
+      $orders = Order::join('customer','customer.identifier','=','order.user_id')
+      ->join('order_billing_detail','order_billing_detail.order_id','=','order.id')
       ->where('user_id', '=', $request->get('user')->id)
       ->where('status', '=', 7)
-      ->select('order.*', 'order_billing_detail.order_id', 'order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.customer_address2', 'order_billing_detail.notes as order_notes', 'agen.name as agen_name', 'agen.photo as agen_photo')
+      ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address2', 'order_billing_detail.notes as order_notes')
+      ->orderBy('created_at', 'asc')
       ->get();
 
       $result = [];
       foreach ($orders as $order) {
         $items = OrderDetail::Join('product', 'product.id', '=', 'order_detail.product_id')
           ->where('order_id', '=', $order->id)
-          ->select('product.id as product_id', 'product.sku', 'product.product_name', 'order_detail.qty','product.price_for_customer','product.price_for_agen','product.img_url')
+          ->select('product.id as product_id', 'product.sku', 'product.product_name', 'order_detail.qty','order_detail.price_for_customer','product.img_url')
           ->get();
-
 
         $result[] = [
           'order' => $order,
@@ -81,7 +80,6 @@ class OrderControllerCustomer extends Controller
           'created_at' => Carbon::parse($order->created_at)->format('d M Y H:i')
         ];
       }
-
       return response()->json($result, 200);
     }
 
