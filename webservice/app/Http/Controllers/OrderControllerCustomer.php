@@ -491,7 +491,7 @@ class OrderControllerCustomer extends Controller
     #send push notif ke ag->e2
     $this->_sendPushNotification($order->agen_id, "Order Baru", "Ada order baru.");
 
-    return response()->json(['data' => [$order], 'message' => ['OK']]);
+    return response()->json(['data' => $order->invoice_no, 'message' => ['OK']]);
     }
   
     public function orderHistorySembako(Request $request) {

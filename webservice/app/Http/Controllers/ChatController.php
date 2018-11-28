@@ -81,7 +81,7 @@ class ChatController extends Controller
                     ->where('recipient_id','=', $request->recipient_id)
                     ->select('id','sender_id','recipient_id','message','created_at')
                     ->get();
-
+                    
             return response()->json(['data' => $chats, 'message' => ['OK']]);
         
     }
