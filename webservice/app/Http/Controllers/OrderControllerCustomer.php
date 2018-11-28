@@ -508,7 +508,7 @@ class OrderControllerCustomer extends Controller
       foreach ($orders as $order) {
         $items = OrderDetail::Join('product', 'product.id', '=', 'order_detail.product_id')
           ->where('order_id', '=', $order->id)
-          ->select('product.id as product_id', 'product.sku', 'product.product_name', 'order_detail.qty','product.price_for_customer','product.price_for_agen','product.img_url')
+          ->select('product.id as product_id', 'product.sku', 'product.product_name', 'order_detail.qty','order_detail.price_for_customer','product.img_url')
           ->get();
 
         $result[] = [
