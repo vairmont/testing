@@ -33,7 +33,6 @@ class WithDrawController extends Controller
     }
     public function updateStatusWithdraw(Request $request){
         $id = [];
-
         $draw = [];
         foreach($request->checkbox as $val) {
             $withdraw = WithDraw::join('agen','agen.identifier','=','withdraw.agen_id')
