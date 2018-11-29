@@ -102,7 +102,7 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
   Route::get('/order/customer/done', 'OrderControllerCustomer@orderDone');
   Route::get('/order/customer/cancel', 'OrderControllerCustomer@orderCancel');
 
-  Route::post('/jne', 'JneController@updateStatusJne');
+  Route::get('/jne', 'JneController@updateStatusJne');
   Route::post('/tracking', 'JneController@trackingJne');
 
   Route::post('/order/assign-agent', 'OrderController@assignOrderAgent');

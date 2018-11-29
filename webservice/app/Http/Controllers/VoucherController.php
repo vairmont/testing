@@ -52,6 +52,10 @@ class VoucherController extends Controller
             else{
                 $cashback = 0;
             }
+
+            if($data->product_type !== $request->product_type){
+                return response()->json(['data' => [], 'message' => ['Invalid Voucher Code']]);
+            }
             if ($request->subtotal < $data->min_purchase && $data->min_purchase > 0) {
                 return response()->json(['data' => [], 'message' => ['Mohon Maaf, pembelian minimal untuk menggunakan kode voucher ini adalah Rp ' .number_format($data->min_purchase)]]);
             }

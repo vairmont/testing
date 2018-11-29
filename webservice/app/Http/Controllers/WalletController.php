@@ -376,20 +376,26 @@ class WalletController extends Controller
     }
 
     public function walletHistory(Request $request) {
+      if($request->type == 'digital'){
+          $orders = OrderDigital::where('user_id', '=', $request->get('user')->id)
+              ->select('order_digital.*')
+              ->where('payment_method', '=', 'wallet')
+              ->where('status', '=', '1')
+              ->orderBy('created_at', 'asc')
+              ->get();
+      }
 
-      $orders = OrderDigital::where('user_id', '=', $request->get('user')->id)
-      ->select('order_digital.*')
-      ->orderBy('created_at', 'asc')
-      ->get();
+      elseif($request->type == 'sembako'){
 
-      $ord = Order::where('user_id', '=', $request->get('user')->id)
-      ->select('order.*')
-      ->orderBy('created_at', 'asc')
-      ->get();
-        
-      $merged = $orders->merge($ord);
+        $ord = Order::where('user_id', '=', $request->get('user')->id)
+            ->select('order.*')
+            ->where('payment_method', '=', 'wallet')
+            ->whereIn('status', [2,6,7,10,11])
+            ->orderBy('created_at', 'asc')
+            ->get();
 
-      $result = $merged->all();
+
+      }    
     
       return response()->json($result);
     }
