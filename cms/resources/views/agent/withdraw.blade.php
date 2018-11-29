@@ -36,7 +36,11 @@
                     <!-- row -->
                     </form>
                 </div>
-              
+                @if(session()->has('message'))
+                <div class="alert alert-success">
+                    {{ session()->get('message') }}
+                </div>
+            @endif
 
                     <!-- /.row -->
                     <div class="row">
@@ -45,6 +49,7 @@
                                     <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-example">
                                         <thead>
                                             <tr>
+                                                <th>Checker</>
                                                 <th>ID</th>
                                                 <th>Nama</th>
                                                 <th>Amount</th>
@@ -55,15 +60,20 @@
                                                 <th>Source</th>
                                                 <th>Status</th>
                                                 <th>Tanggal</th>
-                                                <th>Approver</th>
                                             </tr>
                                         </thead>
-                                        
+                                        <form class="form-inline" method="POST" action="{{  route('check2')}}">
+                                                {{ csrf_field() }}
+                                   
+                                               <button class=" btn btn-primary"type="submit" name="check2">Verifikasi</button> 
                                         <tbody>
                                          @if(count($withdraw) > 0)
-                                            @foreach($withdraw->all() as $draw)
+                                            @foreach($withdraw as $draw)
                                            
                                                 <tr>
+                                                <td>
+                                                <input type="checkbox" name="checkbox[]" value="{{ $draw->id }}">
+                                                </td>
                                                 <td>{{$draw->id}}</td>
                                                 <td>{{$draw->name}}</td>
                                                 <td>Rp.{{number_format($draw->amount)}}</td>
@@ -74,12 +84,11 @@
                                                 <td>{{$draw->source}}</td>
                                                 <td>{{$draw->status}}</td>
                                                 <td>{{$draw->date}}</td>
-                                                <td>
-                                                    <a href="{{ route('status', ['id' => $draw->id]) }}" class="btn btn-primary">Verifikasi</a>                                                 
-                                                </td>
+                                               
                                                 @endforeach
                                          @endif
                                         </tbody>
+                                    </form>
                                         <tfoot>
                                           
                                         </tfoot>

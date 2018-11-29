@@ -14,6 +14,7 @@ use App\OrderDigital;
 use App\Agen;
 use App\WaneeHistory;
 use DB;
+use App\FCM;
 use Illuminate\Http\Request;
 
 class DigitalProductController extends Controller {
@@ -43,21 +44,18 @@ class DigitalProductController extends Controller {
 
   public function create(Request $request) {
     $user = User::where('id', '=', $request->get('user')->id)->first();
+    $customer = Customer::where('identifier', '=', $request->get('user')->id)->first();
 
     $items = DigitalProduct::where('kode','=',$request->product_code)->first();
-
-    if($user->role_id == 5){
-      $nova = Agen::where('identifier', '=', $request->get('user')->id)->first();
-    }
-
-    else{
-      $nova = Customer::where('identifier', '=', $request->get('user')->id)->first();
-    } 
 
     $price = $items->price;
 
     if($user->role_id == 5){
-      $price = $items->price * 0.98;
+      $price = $items->price_agen;
+    }
+
+    if($user->role_id !== 5){
+      $price = $items->price;
     }
 
     $today = date("Ymd");
@@ -69,97 +67,20 @@ class DigitalProductController extends Controller {
 
             $order = new OrderDigital;
             $order->invoice_no = $unique;
-        // Pemotongan saldo wallet
-        $datax = [
-    "kodetransaksi"=> "09",
-    "user"=> "grosirone",
-    "password"=> "5b8598bed42b271cb8ec62c4bdd4f3ck",
-    "nova"=> $nova->no_va,
-    "idtrx"=> $order->invoice_no,
-    "idmerchant"=> "47",
-    "nominal"=> $price,
-    "keterangan"=> $nova->terminal_id,
-    "kodemitra"=> "004",
-    "kodebank"=> "",
-    "noref"=> "0",
-    "tglexpired"=> ""
-    ];
-    
-    $data = json_encode($datax);
-    $URL   = 'http://182.23.53.58:20128/';
-      $ch = curl_init($URL);
-
-    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-    curl_setopt($ch, CURLOPT_POST, 1);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
-    curl_setopt($ch, CURLOPT_POSTFIELDS, "$data");
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY); 
-    curl_setopt($ch, CURLOPT_TIMEOUT, 120);
-
-    $datay = curl_exec($ch);
-    $curl_errno = curl_errno($ch);
-    $curl_error = curl_error($ch);
-      
-
-    curl_close($ch);
-    $res = json_decode($datay, true);
-
-        //bila saldo cukup
-        if(strpos($res['rc'], 'Sukses') !== false){
-
             $order->product_code = $request->product_code;
             $order->phone = $request->phone;
             $order->user_id = $request->get('user')->id;
-            #tanpa discount
-            if($request->voucher_code != null)
-            {
+            $order->agen_id = $customer->agen_id;
+           
             $order->voucher_code = $request->voucher_code;
-            $order->total = $price - $request->discount;
-            }
-            #discount
-            else
-            {
-            $order->voucher_code = 0;
-            $order->discount = 0;
-            $order->total = $price;
-            }
+            $order->discount = $request->discount;
+            $order->total = $request->total;
+            
             $order->subtotal = $price;
             $order->status = 0;
-            $order->status_payment = "done";
+            $order->status_payment = "pending";
             $order->payment_method = "wallet";
             $order->save();
-
-              if($user->role_id != 5)
-              {
-                
-                $orderD = OrderDigital::find($order->id);
-                $customer = Customer::where('identifier','=',$request->get('user')->id)->first();
-                $agen = Agen::where('agen.id', '=', $customer->agen_id)
-                ->first();
-
-                $incentive = $price * 0.01;
-                
-                $commission_pph = $incentive * 0.02;
-                $commission_netto = $incentive - $commission_pph;
-                
-                $commission = new Commission;
-                $commission->order_id = $orderD->id + 100000;
-                $commission->agen_id = $customer->agen_id;
-                $commission->incentive = $incentive;
-                $commission->commission_pph = $commission_pph;
-                $commission->commission_netto = $commission_netto;
-                $commission->margin_penjualan = 0;
-                $commission->save();
-
-                $history = new WaneeHistory;
-                $history->user_id = $agen->identifier;
-                $history->amount =  $commission_netto;
-                $history->saldo_akhir = $agen->wanee + $commission_netto;
-                $history->reason = 'Pembelian Pulsa';
-                $history->save();
-              }
 
               // #kalau agen
               // else
@@ -183,45 +104,43 @@ class DigitalProductController extends Controller {
               //           'wanee' => $history->saldo_akhir
               //           ]);
               // }
-          }
-          //Saldo tidak cukup
-          if(strpos($res['rc'], 'Saldo') !== false){
-            return response()->json(['data' => [], 'message' => ['Saldo tidak cukup']]);
-          }
+          
+          
 
       } catch(\Exception $e) {
           DB::rollback();
           throw $e;
       }
       DB::commit();
-      #curl
-        $ch = curl_init(); 
-
-        $idrs = 'DR1108';
-        $user = '8CC9B6';
-        $pin = 'BFGH4I';
-        $pass = 'E0A5F6';
-        $kode = $request->product_code;
-        $tujuan = $request->phone;
-        $idtrx = $order->invoice_no;
-        // set url 
-        curl_setopt($ch, CURLOPT_URL, "http://202.146.39.54:8030/api/h2h?id=".$idrs."&pin=".$pin."&user=".$user."&pass=".$pass."&kodeproduk=".$kode."&tujuan=".$tujuan."&counter=1&idtrx=".$idtrx); 
-
-        //return the transfer as a string 
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-
-        // $output contains the output string 
-        $output = curl_exec($ch); 
-
-        // close curl resource to free up system resources 
-        curl_close($ch);
-
-        $res = json_decode($output,true);
     #send push notif ke agen
-    //$this->_sendPushNotification($order->agen_id, "Pulsa", "Customer Membeli Pulsa.");
+    $this->_sendPushNotification($order->agen_id, "Pulsa", "Customer Membeli Pulsa.");
 
-    return response()->json(['data' => [$res], 'message' => $res['msg']]);
+    return response()->json(['data' => $order->invoice_no, 'message' => ['OK']]);
   }
+
+  public function orderHistoryDigital(Request $request) {
+
+      $orders = OrderDigital::join('customer','customer.identifier','=','order_digital.user_id')
+      ->where('user_id', '=', $request->get('user')->id)
+      ->select('order_digital.*','customer.name as name')
+      ->orderBy('created_at', 'asc')
+      ->get();
+
+      $result = [];
+      foreach ($orders as $order) {
+        $items = DigitalProduct::Join('order_digital', 'order_digital.product_code', '=', 'digital_product.kode')
+          ->where('order_digital.id', '=', $order->id)
+          ->select('digital_product.type as type','digital_product.id as product_id', 'digital_product.kode', 'digital_product.name', 'digital_product.price','digital_product.price_agen')
+          ->get();
+
+        $result[] = [
+          'order' => $order,
+          'items' => $items,
+          'created_at' => Carbon::parse($order->created_at)->format('d M Y H:i')
+        ];
+      }
+      return response()->json($result, 200);
+    }
 
   public function notification(Request $request){
       #updatestatus
@@ -245,4 +164,49 @@ class DigitalProductController extends Controller {
       // curl_close($curlHandle);
       return response()->json(['data' => [], 'message' => 'OK']);
   }
+
+  protected function _sendPushNotification($user_id, $title, $body) {
+        // API access key from Google API's Console
+        define('API_ACCESS_KEY', 'AAAA6cPylp8:APA91bFB5i1sBcapzkGUd23jb8V7ojwjnoonnBlX317_IeVt-jxk5_WjSNHlhVrVn882ZcTWH4Nn5KOfr6onBetNT4PoVVn7olWyA7uSCXiy1DY7KVPEdYPgtNEkMfl8nhgvcYefNcxm');
+
+        $registrationIds = array();
+
+        $recipients = FCM::where('user_id',$user_id)->select('fcm_token')->get();
+
+        foreach ($recipients as $recipient) {
+            array_push($registrationIds, $recipient->fcm_token);
+        }
+
+        $msg = array
+        (
+            'title' => $title,
+            'body' => $body,
+            'vibrate' => "1",
+            'sound' => 'default',
+            'badge' => "1"
+        );
+
+        $fields = array
+        (
+            'registration_ids'  => $registrationIds,
+            'notification'  => $msg,
+            'priority' => 'high'
+        );
+         
+        $headers = array
+        (
+            'Authorization: key=' . API_ACCESS_KEY,
+            'Content-Type: application/json'
+        );
+         
+        $ch = curl_init();
+        curl_setopt($ch,CURLOPT_URL, 'https://fcm.googleapis.com/fcm/send');
+        curl_setopt($ch,CURLOPT_POST, true);
+        curl_setopt($ch,CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch,CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch,CURLOPT_POSTFIELDS, json_encode($fields));
+        $result = curl_exec($ch);
+        curl_close($ch);
+    }
 }

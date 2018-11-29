@@ -8,6 +8,6 @@ class DigitalProduct extends Model
 {
     protected $table = 'digital_product';
 
-    protected $fillable = [
+    protected $fillable = [ 'id', 'operator_id', 'name', 'type', 'kode', 'price', 'price_agen'
     ];
 }

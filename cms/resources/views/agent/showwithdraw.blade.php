@@ -9,12 +9,17 @@
     <div class="container-fluid">
 
         <div class="">
+
                 <h2>ShowWithDraw</h2>
+
+
         <!-- H2 -->
         </div>
 
             <div class="row">
-            <form class="form-inline" method="GET" action="{{url('/showwithdraw')}}">
+
+            <form class="form-inline" method="GET" action="{{url('/bywithdraw')}}">
+
                 <div class="form-group col-lg-6">
                     <input class="form-control mr-sm-2" type="text" name="keyword" placeholder="Nama Agen" aria-label="Search">
                     <button type="submit" class="btn btn-primary">Search</button>
@@ -45,7 +50,8 @@
                                     <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-example">
                                         <thead>
                                             <tr>
-                                                <th></th>
+
+                                                <th>Checker</th>
                                                 <th>ID</th>
                                                 <th>Nama</th>
                                                 <th>Amount</th>
@@ -58,35 +64,34 @@
                                                 <th>Tanggal</th>
                                             </tr>
                                         </thead>
-                                        
-                                        <form class="form-inline" action="{{ route('statid') }}" method="POST" >
-                                            {{ csrf_field() }}
-                                            <tbody>
-                                             @if(count($withdraw) > 0)
-                                                @foreach($withdraw->all() as $draw)
+                                        <form class="form-inline" method="POST" action="{{  route('check3')}}">
+                                                {{ csrf_field() }}
+                                   
+                                               <button class=" btn btn-primary"type="submit" name="check3">Verifikasi</button> 
+                                        <tbody>
+                                         @if(count($withdraw) > 0)
+                                            @foreach($withdraw->all() as $draw)
+                                           
+                                                <tr>
+                                                <td>
+                                                <input type="checkbox" name="checkbox[]" value="{{ $draw->id }}">
+                                                </td>
+                                                <td>{{$draw->id}}</td>
+                                                <td>{{$draw->name}}</td>
+                                                <td>Rp.{{number_format($draw->amount)}}</td>
+                                                <td>Rp.{{number_format($draw->wanee)}}</td>
+                                                <td>Rp. {{ number_format($draw->plafon) }}</td>
+                                                <td>{{$draw->nokredit}}</td>
+                                                <td>{{ $draw->bank }}</td>
+                                                <td>{{$draw->source}}</td>
+                                                <td>{{$draw->status}}</td>
+                                                <td>{{$draw->date}}</td>
                                                
-                                                    <tr> 
-                                                        <td> <input type="checkbox" name="checkbox[]" value="{{ $draw->id }}">
-                                                    <td>{{$draw->id}}</td>
-                                                    <td>{{$draw->name}}</td>
-                                                    <td>Rp.{{number_format($draw->amount)}}</td>
-                                                    <td>Rp.{{number_format($draw->wanee)}}</td>
-                                                    <td>Rp. {{ number_format($draw->plafon) }}</td>
-                                                    <td>{{$draw->nokredit}}</td>
-                                                    <td>{{ $draw->bank }}</td>
-                                                    <td>{{$draw->source}}</td>
-                                                    <td>{{$draw->status}}</td>
-                                                    <td>{{$draw->date}}</td>
-                                                    @endforeach
-                                             @endif
-                                            </tbody> 
-                                            
-                                            <button class="btn btn-primary" type="submit" name="statid">
-                                                Verify
-                                            </button>
-                                        
-                                        </form>
-                                        
+                                                @endforeach
+                                         @endif
+                                        </tbody>
+                                    </form>
+
                                         <tfoot>
                                           
                                         </tfoot>

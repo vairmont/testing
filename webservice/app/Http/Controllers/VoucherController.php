@@ -22,7 +22,7 @@ class VoucherController extends Controller
             ->where('valid_from','<=',Carbon\Carbon::now())
             ->select('discount', 'cashback', 'product_type', 'voucher_code', 'min_purchase', 'bonus_item', 'quota', 'quota_per_account', 'min_purchase', 'max_purchase')
             ->first();
-            
+           
         if ($data != null) {
 
             if($data->discount > 0 && $data->discount < 100){

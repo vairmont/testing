@@ -9,6 +9,6 @@ class OrderDigital extends Model
     protected $table = 'order_digital';
 
     protected $fillable = [
-    	'order_id','invoice_no','category_id','qty','base_price'
+    	'order_id','invoice_no','category_id','qty','base_price', 'discount', 'voucher_code', 'total'
     ];
 }

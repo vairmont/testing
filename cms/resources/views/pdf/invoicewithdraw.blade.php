@@ -14,17 +14,10 @@
             <br>Tangerang 15810 Banten, Ruko Rodeo Paramount, Block C No 22
         </p>
     </div>
-    <p style="text-align:right;">Date   :
-        {{ Carbon\Carbon::now()->format('d M Y ') }}
-    </p>
-    <h3>To</h3>
-    @foreach($withdraw as $draw)
-        Name     : {{ $draw ->name }}<br>
-    </p>
-    <table border="2" width="100%" cellpadding='0' cellspacing='1'>
+    <table border="1" width="100%" cellpadding='0' cellspacing='0'>
         <thead>
             <tr>
-                <th>Tanggal pengajuan</th>
+                <th>Waktu pengajuan</th>
             	<th>Nama</th>
                 <th>Amount</th>
                 <th>No.Rek</th>
@@ -32,83 +25,24 @@
             </tr>
         </thead>    
         <tbody>
+            @foreach($draw as $draw)
             <tr style="text-align: top">
-             	<td>{{ $draw->date}}<br>
-                  <br>
-                  <br>
-                  <br>
-                  <br>
-                  <br>
-                  <br>
-                  <br>
-                  <br>
-                  <br>
-                  <br>
-                  </td>
-                  
-                  
-                  <td>{{$draw->name}}<br>
-                  <br>
-                  <br>
-                  <br>
-                  <br>
-                  <br>
-                  <br>
-                  <br>
-                  <br>
-                  <br>
-                  <br></td>
-                  <td>
-                  Rp. {{number_format($draw->amount)}}
-                  <br>
-                  <br>
-                  <br>
-                  <br>
-                  <br>
-                  <br>
-                  <br>
-                  <br>
-                  <br>
-                  <br>
-                  <br></td>
-                  <td>{{ $draw-> nokredit }}<br>
-                  <br>
-                  <br>
-                  <br>
-                  <br>
-                  <br>
-                  <br>
-                  <br>
-                  <br>
-                  <br>
-                  <br></td>
-                  <td>{{$draw->bank}}<br>
-                  <br>
-                  <br>
-                  <br>
-                  <br>
-                  <br>
-                  <br>
-                  <br>
-                  <br>
-                  <br>
-                  <br>
-                 
-            
-            <tr>      
-                @endforeach
-                
-                <p style="text-align: right;"><br>DiSetujui<br>
-                <br>
-                <br>
-                <br>
-                <br>
-                <br>
-                Erben
-                </p>
-                
+             	<td>{{ Carbon\Carbon::parse($draw->date)->format('d M Y H:i:s') }}</td>
+                <td>{{$draw->name}}</td>
+                <td>Rp {{number_format($draw->amount)}}</td>
+                <td>{{ $draw-> nokredit }}</td>
+                <td>{{ $draw->bank}}</td>
+            </tr>
+            @endforeach   
         </tbody>
     </table> 
-  
+    <p style="text-align: right;"><br>Di setujui<br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        Erben
+        </p>
 </body>
 </html>
