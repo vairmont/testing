@@ -19,6 +19,7 @@ use App\Address;
 use App\User;
 use App\Agen;
 use App\Cart;
+use App\OrderDigital;
 use App\Chat;
 use App\Store;
 use App\WaneeHistory;
@@ -71,19 +72,26 @@ class WalletController extends Controller
     return response()->json(['data' => $res['nominal'], 'message' => ['OK']]);
     }
 
-    public function paymentWallet(Request $request){
+    public function paymentWalletSembako(Request $request){
         $order = Order::where('invoice_no', '=', $request->invoice_no)->first();
-        $custo = Customer::where('identifier', '=', $request->get('user')->id)->first();
+        $user = User::where('id', '=', $request->get('user')->id)->first();
+        if($user->role_id == 5){
+        $nova = Agen::where('identifier', '=', $request->get('user')->id)->first();
+        }
+
+        else{
+          $nova = Customer::where('identifier', '=', $request->get('user')->id)->first();
+        } 
         // Pemotongan saldo wallet
         $datax = [
         "kodetransaksi"=> "09",
         "user"=> "grosirone",
         "password"=> "5b8598bed42b271cb8ec62c4bdd4f3ck",
-        "nova"=> $custo->no_va,
+        "nova"=> $nova->no_va,
         "idtrx"=> $order->invoice_no,
         "idmerchant"=> "47",
         "nominal"=> $order->total,
-        "keterangan"=> $custo->terminal_id,
+        "keterangan"=> $nova->terminal_id,
         "kodemitra"=> "004",
         "kodebank"=> "",
         "noref"=> "0",
@@ -246,6 +254,144 @@ class WalletController extends Controller
         return response()->json(['data' => [$datay], 'nominal' => [$res['nominal']], 'invoice' => [$order->invoice_no], 'message' => ['OK']]);
         }
 
+    }
+
+    public function paymentWalletDigital(Request $request){
+      $order = OrderDigital::where('invoice_no', '=', $request->invoice_no)->first();
+      $user = User::where('id', '=', $request->get('user')->id)->first();
+
+        if($user->role_id == 5){
+        $nova = Agen::where('identifier', '=', $request->get('user')->id)->first();
+        }
+
+        else{
+          $nova = Customer::where('identifier', '=', $request->get('user')->id)->first();
+        } 
+
+      // Pemotongan saldo wallet
+        $datax = [
+        "kodetransaksi"=> "09",
+        "user"=> "grosirone",
+        "password"=> "5b8598bed42b271cb8ec62c4bdd4f3ck",
+        "nova"=> $nova->no_va,
+        "idtrx"=> $order->invoice_no,
+        "idmerchant"=> "47",
+        "nominal"=> $order->total,
+        "keterangan"=> $nova->terminal_id,
+        "kodemitra"=> "004",
+        "kodebank"=> "",
+        "noref"=> "0",
+        "tglexpired"=> ""
+        ];
+        
+        $data = json_encode($datax);
+        $URL   = 'http://182.23.53.58:20128/';
+          $ch = curl_init($URL);
+
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+        curl_setopt($ch, CURLOPT_POSTFIELDS, "$data");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY); 
+        curl_setopt($ch, CURLOPT_TIMEOUT, 120);
+
+        $datay = curl_exec($ch);
+        $curl_errno = curl_errno($ch);
+        $curl_error = curl_error($ch);
+          
+
+        curl_close($ch);
+        $res = json_decode($datay, true);
+        
+        //Saldo tidak cukup
+        if(strpos($res['rc'], 'Saldo') !== false){
+          return response()->json(['data' => [], 'message' => ['Saldo tidak cukup']]);
+        }
+
+        if(strpos($res['rc'], 'Sukses') !== false){
+              //untuk Customer
+             if($user->role_id != 5)
+              {
+                
+                $order = OrderDigital::where('invoice_no', '=', $request->invoice_no)->first();
+                $customer = Customer::where('identifier','=',$request->get('user')->id)->first();
+                $agen = Agen::where('agen.id', '=', $customer->agen_id)
+                ->first();
+
+                $order->status_payment = 'success';
+                $order->save(); 
+
+                $incentive = $order->total * 0.01;
+                
+                $commission_pph = $incentive * 0.02;
+                $commission_netto = $incentive - $commission_pph;
+                
+                $commission = new Commission;
+                $commission->order_id = $order->id + 100000;
+                $commission->agen_id = $customer->agen_id;
+                $commission->incentive = $incentive;
+                $commission->commission_pph = $commission_pph;
+                $commission->commission_netto = $commission_netto;
+                $commission->margin_penjualan = 0;
+                $commission->save();
+
+                $history = new WaneeHistory;
+                $history->user_id = $agen->identifier;
+                $history->amount =  $commission_netto;
+                $history->saldo_akhir = $agen->wanee + $commission_netto;
+                $history->reason = 'Pembelian Pulsa';
+                $history->save();
+              }
+
+        #curl
+        $ch = curl_init(); 
+
+        $idrs = 'DR1108';
+        $user = '8CC9B6';
+        $pin = 'BFGH4I';
+        $pass = 'E0A5F6';
+        $kode = $order->product_code;
+        $tujuan = $order->phone;
+        $idtrx = $order->invoice_no;
+        // set url 
+        curl_setopt($ch, CURLOPT_URL, "http://202.146.39.54:8030/api/h2h?id=".$idrs."&pin=".$pin."&user=".$user."&pass=".$pass."&kodeproduk=".$kode."&tujuan=".$tujuan."&counter=1&idtrx=".$idtrx); 
+
+        //return the transfer as a string 
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+
+        // $output contains the output string 
+        $output = curl_exec($ch); 
+
+        // close curl resource to free up system resources 
+        curl_close($ch);
+
+        $res = json_decode($output,true);
+        // send push notif ke agen
+        $this->_sendPushNotification($order->agen_id, "Pulsa", "Customer Membeli Pulsa.");
+        return response()->json(['data' => [$res], 'message' => ['OK']]);
+        }  
+
+    }
+
+    public function walletHistory(Request $request) {
+
+      $orders = OrderDigital::where('user_id', '=', $request->get('user')->id)
+      ->select('order_digital.*')
+      ->orderBy('created_at', 'asc')
+      ->get();
+
+      $ord = Order::where('user_id', '=', $request->get('user')->id)
+      ->select('order.*')
+      ->orderBy('created_at', 'asc')
+      ->get();
+        
+      $merged = $orders->merge($ord);
+
+      $result = $merged->all();
+    
+      return response()->json($result);
     }
 
     protected function _sendPushNotification($user_id, $title, $body) {

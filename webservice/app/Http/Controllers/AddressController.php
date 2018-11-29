@@ -20,7 +20,8 @@ class AddressController extends Controller
 	{
 		$address = Address::join('city', 'city.id', '=', 'address.city_id')
 		->join('region', 'region.id', '=', 'address.region_id')
-		->select('address.name as name', 'region.name as region', 'city.name as city', 'address.address as address', 'address.zip')
+        ->join('province', 'province.id', '=', 'address.province_id')
+		->select('address.id', 'address.name as name', 'address.phone as phone', 'province.name as province', 'region.name as region', 'city.name as city', 'address.address as address', 'address.zip')
 		->where('user_id', $request->get('user')->id)
 		->get();
 
@@ -29,23 +30,41 @@ class AddressController extends Controller
 
     public function getProvince(Request $request)
     {
-        $address = Province::get();
+        $address = Province::select('province.*');
+
+        if(isset($request->keyword) && !empty($request->keyword)) {
+            $address = $address->where('province.name','like',"%".$request->keyword."%");
+        }
+
+        $address = $address->orderBy('province.name','asc')->get();
 
         return response()->json(['data' => $address, 'message' => ['OK']]);
     }
 
     public function getCity(Request $request)
     {
-        $address = City::where('province_id', '=', $request->province_id)
-        ->get();
+        $address = City::where('province_id', '=', $request->province_id);
+        
+
+        if(isset($request->keyword) && !empty($request->keyword)) {
+            $address = $address->where('city.name','like',"%".$request->keyword."%");
+        }
+
+        $address = $address->orderBy('city.name','asc')->get();
 
         return response()->json(['data' => $address, 'message' => ['OK']]);
     }
 
     public function getRegion(Request $request)
     {
-        $address = Region::where('city_id', '=', $request->city_id)
-        ->get();
+        $address = Region::where('city_id', '=', $request->city_id);
+        
+
+        if(isset($request->keyword) && !empty($request->keyword)) {
+            $address = $address->where('region.name','like',"%".$request->keyword."%");
+        }
+
+        $address = $address->orderBy('region.name','asc')->get();
 
         return response()->json(['data' => $address, 'message' => ['OK']]);
     }   
@@ -60,12 +79,20 @@ class AddressController extends Controller
             return response()->json(['data' => [], 'message' => ['Kota harus dipilih.']]);
         }
 
+        if(empty($request->province_id)) {
+            return response()->json(['data' => [], 'message' => ['Provinsi harus dipilih.']]);
+        }
+
         if(empty($request->region_id)) {
             return response()->json(['data' => [], 'message' => ['Kecamatan harus dipilih.']]);
         }
         
         if(empty($request->address)) {
             return response()->json(['data' => [], 'message' => ['Alamat lengkap tidak boleh kosong']]);
+        }
+
+        if(empty($request->phone)) {
+            return response()->json(['data' => [], 'message' => ['Nomor Telpon tidak boleh kosong']]);
         }
 
         if(empty($request->zip)) {
@@ -75,16 +102,13 @@ class AddressController extends Controller
 
 		else {
 
-            $code = Region::where('id', '=', $request->region_id)
-                    ->select('code')
-                    ->first();
-
 			$address = [
 				'name' => $request->name,
+                'phone' => $request->phone,
 				'user_id' => $request->get('user')->id,
+                'province_id' => $request->province_id,
 				'city_id' => $request->city_id,
 				'region_id' => $request->region_id,
-                'region_code' => $code->code,
 				'address' => $request->address,
 				'zip' => $request->zip
 			];

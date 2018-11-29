@@ -23,8 +23,7 @@ Route::post('/v1/register/agen/ktp/upload', 'RegisterController@uploadKTP');
 Route::post('/v1/register/agen/kk/upload', 'RegisterController@uploadKK');
 Route::post('/v1/agen/photo/upload', 'UserController@uploadPhoto');
 
-Route::post('/v1/customer', 'CustomerController@addCustomerNew');
-Route::post('/v1/customertes', 'CustomerController@addCustomer2');
+Route::post('/v1/customer', 'CustomerController@addCustomernew');
 Route::get('/v1/customer/check', 'CustomerController@checkData');
 Route::post('/v1/customer/photo/upload', 'CustomerController@uploadPhotoCustomer');
 
@@ -62,6 +61,8 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
 
   Route::get('/chat', 'ChatController@chatList');
   Route::post('/chat', 'ChatController@orderChat');
+  Route::get('/generalchat', 'ChatController@generalChatList');
+  Route::post('/generalchat', 'ChatController@generalChat');
 
   Route::get('/cart', 'ApiCartController@index');
   Route::post('/cart', 'ApiCartController@updateCart');
@@ -115,8 +116,8 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
   Route::post('/agen/shipment', 'ShipmentController@updateShipmentMethod');
 
   Route::get('/province', 'AddressController@getProvince');
-  Route::post('/city', 'AddressController@getCity');
-  Route::post('/region', 'AddressController@getRegion');
+  Route::get('/city', 'AddressController@getCity');
+  Route::get('/region', 'AddressController@getRegion');
 
   Route::get('/ranks', 'RankingController@index');
   Route::get('/akh', 'RankingController@akh');
@@ -131,8 +132,12 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
   Route::post('/voucher', 'VoucherController@checkVoucher');
 
   Route::get('/saldo', 'WalletController@cekSaldo');
-  Route::post('/wallet', 'WalletController@paymentWallet');
+  Route::post('/payment/wallet/sembako', 'WalletController@paymentWalletSembako');
+  Route::post('/payment/wallet/digital', 'WalletController@paymentWalletDigital');
 
+  Route::get('/order/history/sembako', 'OrderControllerCustomer@orderHistorySembako'); 
+  Route::get('/order/history/digital', 'DigitalProductController@orderHistoryDigital');   
+  Route::get('/wallet/history', 'WalletController@walletHistory');   
 
   Route::post('/withdraw', 'OrderController@withdraw');
   Route::get('/withdraw', 'WithdrawController@index');

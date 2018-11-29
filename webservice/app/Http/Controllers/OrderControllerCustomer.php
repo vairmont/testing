@@ -36,8 +36,8 @@ class OrderControllerCustomer extends Controller
       $orders = Order::join('customer','customer.identifier','=','order.user_id')
       ->join('order_billing_detail','order_billing_detail.order_id','=','order.id')
       ->where('user_id', '=', $request->get('user')->id)
-      ->whereIn('status',[1,2,6])
-      ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.customer_address2', 'order_billing_detail.notes as order_notes')
+      ->whereIn('status', [1,2,6])
+      ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address2', 'order_billing_detail.notes as order_notes')
       ->orderBy('created_at', 'asc')
       ->get();
 
@@ -45,7 +45,7 @@ class OrderControllerCustomer extends Controller
       foreach ($orders as $order) {
         $items = OrderDetail::Join('product', 'product.id', '=', 'order_detail.product_id')
           ->where('order_id', '=', $order->id)
-          ->select('product.id as product_id', 'product.sku', 'product.product_name', 'order_detail.qty','product.price_for_customer','product.price_for_agen','product.img_url')
+          ->select('product.id as product_id', 'product.sku', 'product.product_name', 'order_detail.qty','order_detail.price_for_customer','product.img_url')
           ->get();
 
         $result[] = [
@@ -54,27 +54,25 @@ class OrderControllerCustomer extends Controller
           'created_at' => Carbon::parse($order->created_at)->format('d M Y H:i')
         ];
       }
-      
-
       return response()->json($result, 200);
     }
 
     public function orderDone(Request $request) {
 
-      $orders = Order::join('order_billing_detail', 'order_billing_detail.order_id', '=', 'order.id')
-      ->join('agen', 'agen.identifier', '=', 'order.agen_id')
+      $orders = Order::join('customer','customer.identifier','=','order.user_id')
+      ->join('order_billing_detail','order_billing_detail.order_id','=','order.id')
       ->where('user_id', '=', $request->get('user')->id)
       ->where('status', '=', 7)
-      ->select('order.*', 'order_billing_detail.order_id', 'order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address','order_billing_detail.customer_address2', 'order_billing_detail.notes as order_notes', 'agen.name as agen_name', 'agen.photo as agen_photo')
+      ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address2', 'order_billing_detail.notes as order_notes')
+      ->orderBy('created_at', 'asc')
       ->get();
 
       $result = [];
       foreach ($orders as $order) {
         $items = OrderDetail::Join('product', 'product.id', '=', 'order_detail.product_id')
           ->where('order_id', '=', $order->id)
-          ->select('product.id as product_id', 'product.sku', 'product.product_name', 'order_detail.qty','product.price_for_customer','product.price_for_agen','product.img_url')
+          ->select('product.id as product_id', 'product.sku', 'product.product_name', 'order_detail.qty','order_detail.price_for_customer','product.img_url')
           ->get();
-
 
         $result[] = [
           'order' => $order,
@@ -82,7 +80,6 @@ class OrderControllerCustomer extends Controller
           'created_at' => Carbon::parse($order->created_at)->format('d M Y H:i')
         ];
       }
-
       return response()->json($result, 200);
     }
 
@@ -420,6 +417,8 @@ class OrderControllerCustomer extends Controller
     }
 
     public function createNew(Request $request) {
+
+      $data = $request->json()->all();
     $customer = User::where('id', '=', $request->get('user')->id)->first();
 
     $cart = Cart::where('user_id', '=', $request->get('user')->id)->first();
@@ -429,11 +428,9 @@ class OrderControllerCustomer extends Controller
     ->select('agen.identifier')
     ->first();
 
-    if ($cart->total == 0) {
+    if ($data['total'] == 0) {
       return response()->json(['message' => 'Keranjang anda kosong.'], 400);
     }
-
-    $cartDetails = CartDetail::where('cart_id', '=', $cart->id)->get();
 
     $today = date("Ymd");
     $rand = strtoupper(substr(uniqid(sha1(time())),0,4));
@@ -441,90 +438,83 @@ class OrderControllerCustomer extends Controller
 
     $order = new Order;
     $order->invoice_no = $unique;
-    $order->user_id = $cart->user_id;
-    $order->subtotal = $cart->subtotal;
-    $order->voucher_code = $request->voucher_code;
-    $order->tax = $cart->tax;
+    $order->user_id = $request->get('user')->id;
+    $order->subtotal = $data['subtotal'];
+    $order->discount = $data['discount'];
+    $order->total = $data['total'];
+    $order->voucher_code = $data['voucher_code'];
+    $order->tax = '0';
     $order->payment = 'wallet';
     $order->payment_status = 'pending';
-    $order->discount = 0;
-    if($cart->total < 50000) {
-      $order->total = $cart->total + 5000;
-    }
-    else {
-
-      if ($request->voucher_code != '' && $request->discount != 0) {
-          $order->total = $cart->total - $request->discount;
-      }
-
-      elseif ($request->voucher_code != '' && $request->discountrate != 0) {
-          $order->total = $cart->total - ($cart->total * $request->discountrate);
-      }
-
-      else{
-      $order->total = $cart->total;
-      }
-    }
     $order->status = OrderStatus::CREATED;
     $order->agen_id = $agencust->identifier;
-    $order->address_id = $request->address_id;
+    $order->address_id = $data['address_id'];
     $order->save();
 
-    $items = [];
-    foreach ($cartDetails as $cartDetail) {
-      $product = Product::whereId($cartDetail->product_id)->first();
+    foreach ($data['items'] as $items) {
+      $product = Product::whereId($items['product_id'])->first();
       $orderDetail = new OrderDetail;
       $orderDetail->order_id = $order->id;
       $orderDetail->product_id = $product->id;
       $orderDetail->category_id = $product->category_id;
-      $orderDetail->qty = $cartDetail->qty;
+      $orderDetail->qty = $items['qty'];
       // if($cartDetail->qty >= 3){
       //   $orderDetail->price_for_customer = $product->price_for_customer * 0.98;
       //   $orderDetail->price_for_agen = $product->price_for_agen;
       // }
       // else{
-      $orderDetail->price_for_customer = ($product->promo_price == 0) ? $product->price_for_customer : $product->promo_price;
-      $orderDetail->price_for_agen = ($product->promo_price == 0) ? $product->price_for_customer : $product->promo_price;
+      $orderDetail->price_for_customer = $items['price'];       
+      $orderDetail->price_for_agen = $items['price'] * 0.93;
       // }
       $orderDetail->save();
-
-      $items[] = [
-        'product_id' => $product->id,
-        'sku' => $product->sku,
-        'category_id' => $orderDetail->category_id,
-        'qty' => $orderDetail->qty,
-        'price_for_customer' => $orderDetail->price_for_customer,
-        'price_for_agen' => $orderDetail->price_for_agen
-      ];
     }
 
     #Input Billing Detail
     $custo = Customer::where('identifier', '=', $request->get('user')->id)->first();
     $add = Address::join('city', 'city.id', '=', 'address.city_id')
                 ->join('region', 'region.id', '=', 'address.region_id')
-                ->select('address.address as address2', 'region.name as region', 'city.name as city', 'address.zip as zip', 'region.code as code')
-                ->where('address.id', '=', $request->address_id)
+                ->select('address.address as address2', 'region.name as region', 'city.name as city', 'address.zip as zip', 'region.code as code', 'address.name as name', 'address.phone as phone')
+                ->where('address.id', '=', $data['address_id'])
                 ->first();
 
     $orderbillingdetail = new OrderBillingDetail;
 
     $orderbillingdetail->order_id =  $order->id;
-    $orderbillingdetail->customer_name = $request['customer_name'];
-    $orderbillingdetail->customer_phone = $request['customer_phone'];
+    $orderbillingdetail->customer_name = $add->name;
+    $orderbillingdetail->customer_phone = $add->phone;
     $orderbillingdetail->customer_address = "";
     $orderbillingdetail->customer_address2 = $add->address2;
-    $orderbillingdetail->notes = $request['notes'];
+    $orderbillingdetail->notes = $data['notes'];
     $orderbillingdetail->save();
-
-    // clear cart
-    // CartDetail::where('cart_id',$cart->id)->delete();
-    // Cart::where('id',$cart->id)->delete();
 
     #send push notif ke ag->e2
     $this->_sendPushNotification($order->agen_id, "Order Baru", "Ada order baru.");
 
-    return response()->json(['data' => [$order], 'message' => ['OK']]);
+    return response()->json(['data' => $order->invoice_no, 'message' => ['OK']]);
     }
   
-    
+    public function orderHistorySembako(Request $request) {
+
+      $orders = Order::join('customer','customer.identifier','=','order.user_id')
+      ->join('order_billing_detail','order_billing_detail.order_id','=','order.id')
+      ->where('user_id', '=', $request->get('user')->id)
+      ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address2', 'order_billing_detail.notes as order_notes')
+      ->orderBy('created_at', 'asc')
+      ->get();
+
+      $result = [];
+      foreach ($orders as $order) {
+        $items = OrderDetail::Join('product', 'product.id', '=', 'order_detail.product_id')
+          ->where('order_id', '=', $order->id)
+          ->select('product.id as product_id', 'product.sku', 'product.product_name', 'order_detail.qty','order_detail.price_for_customer','product.img_url')
+          ->get();
+
+        $result[] = [
+          'order' => $order,
+          'items' => $items,
+          'created_at' => Carbon::parse($order->created_at)->format('d M Y H:i')
+        ];
+      }
+      return response()->json($result, 200);
+    }
 }
