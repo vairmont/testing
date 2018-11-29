@@ -105,6 +105,9 @@
                             <li>
                                 <a href="{{url('/byagent')}}">Verifikasi Agen</a>
                             </li>
+                             <li>   
+                                <a href="{{url('/byshowwithdraw')}}">Show Withdraw</a>
+                            </li>
                             <li>
                                 <a href="{{url('/bywithdraw')}}">Withdraw</a>
                             </li>

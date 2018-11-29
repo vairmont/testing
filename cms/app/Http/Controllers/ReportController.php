@@ -11,6 +11,7 @@ use App\Commission;
 use App\OrderDetail;
 use App\Product;
 use Excel;
+use PDF;
 use Carbon\Carbon;
 use App\Supplier;
 use App\ProductCategory;
@@ -441,5 +442,46 @@ class ReportController extends Controller
         $margin = $margin->orderby('order.created_at','desc')->paginate(10);  
         return view('report.bymargin',compact('margin','request','total1'))->withTitle('Margin');
    }
+
+   //Test tombol inVoice
+   public function getInvoice(request $request, $id)
+   {
+        $flowreport = Order::leftjoin('order_detail','order.id','=','order_detail.order_id')
+        ->leftjoin('product','product.id','=','order_detail.product_id')
+        ->leftjoin('incentive_category','incentive_category.id','=','product.incentive_id')
+        ->leftjoin('agen','agen.identifier','=','order.agen_id')
+        ->leftjoin('users','users.id','=','agen.identifier')
+        ->leftjoin('customer','customer.identifier','=','order.user_id')
+        ->leftjoin('store','store.id','=','users.store_id')
+        
+        ->whereIn('order.status',[7,9])
+        ->where('order.type','=','sembako')
+        ->select('customer.name as cusname','product.tax as tax','order.discount as discount','agen.source as source','store.store_name as stoname','order_detail.qty as qty','incentive_category.rate as rate','order.invoice_no as invoice','agen.name as name','order_detail.order_id as id','product.product_name as proname','order_detail.price_for_agen as agen_price','order_detail.price_for_customer as customer_price','order.created_at as create','order.updated_at as update','order.agen_id as aid', 'product.promo_price')
+        ->where('order_detail.order_id',$id)
+
+        
+        ->get();
+        //var_dump($id); die;
+        
+        //$pdf = PDF::loadView('pdf.invoicebyorder',compact('flowreport','request'));
+        return view('pdf.invoicebyorder',compact('flowreport','request'));
+        /* test_awal
+        ->get();
+        var_dump($id); die;
+        */
+
+
+    // testing keluar PDF   
+    /*
+    $pdf = PDF::loadView('pdf.invoicebyorder',compact('name','$flow')
+    return view('pdf.invoicebyorder',compact('name','$flow'));
+    
+    // belum
+    return view('report.bystore',compact('flowreport','total','request','total2','total3'))->withTitle('By store');
+    */
+        
+        
+   }
+
 
 }

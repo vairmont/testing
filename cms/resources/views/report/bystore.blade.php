@@ -75,6 +75,7 @@
                                     <th>Store</th>
                                     <th>Source</th>
                                     <th>Tanggal</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
 
@@ -136,6 +137,9 @@
                                         </td>
                                         <td>{{$flow->create}}</td>
                                         
+                                        <td>
+                                            <a href="{{ route('getinv', ['id' => $flow->id]) }}" class="btn btn-primary">InVoice</a>
+                                        </td>
                                     </tr>
                                     @endforeach
                                 @endif

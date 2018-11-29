@@ -17,9 +17,9 @@ class WithDrawController extends Controller
         $args['pages'] = $isExport;
 
         $withdraw = WithDraw::join('agen','agen.identifier','=','withdraw.agen_id')
-        ->select('withdraw.created_at as date','agen.source as source','agen.account_no as nokredit','agen.wanee as wanee','withdraw.id as id','withdraw.agen_id as agenid','withdraw.amount as amount','withdraw.status as status','agen.wanee as wanee', 'agen.name as name', 'agen.plafon_kredit as plafon', 'agen.bank as bank')
+        ->select('withdraw.created_at as date','agen.source as source','agen.account_no as nokredit','agen.wanee as wanee','withdraw.id as id','withdraw.agen_id as agenid','withdraw.amount as amount','withdraw.status as status', 'agen.name as name', 'agen.plafon_kredit as plafon', 'agen.bank as bank')
 
-        ->where('withdraw.status','=','process');
+        ->where('withdraw.status','=','pending');
         
 
         if(isset($request->keyword) && !empty($request->keyword)){
@@ -31,6 +31,66 @@ class WithDrawController extends Controller
         $withdraw = $withdraw->orderby('withdraw.id','asc')->get();  
         return view('agent.withdraw',compact('withdraw'))->withTitle('By withdraw');
     }
+
+    public function getByShowWithDraw(Request $request){
+        $isExport = $request->get('is_export', 0);
+        $args['pages'] = $isExport;
+
+        $withdraw = WithDraw::join('agen','agen.identifier','=','withdraw.agen_id')
+        ->select('withdraw.id as id','agen.name as name','withdraw.amount as ammount','agen.wanee as wanee',
+            'agen.plafon_kredit as plafon','agen.account_no as nokredit', 'agen.bank as bank','agen.source as source','withdraw.status as status', 'withdraw.created_at as date')
+
+        ->where('withdraw.status','=','process');
+
+        if(isset($request->keyword) && !empty($request->keyword)){
+            $swithdraw = $withdraw->where('agen.name','LIKE',$request->keyword.'%');
+        }
+        if ($isExport) {
+            $this->_export_excel($showwithdraw);
+        }
+        $withdraw = $withdraw->orderby('withdraw.id','asc')->get();  
+        return view('agent.showwithdraw',compact('withdraw'))->withTitle('By showwithdraw');
+    }
+
+    public function updateStatusPending(Request $request,$id){
+        $withdraw = WithDraw::join('agen','agen.identifier','=','withdraw.agen_id')
+        ->select('withdraw.id as id','agen.name as name','withdraw.amount as ammount','agen.wanee as wanee',
+            'agen.plafon_kredit as plafon','agen.account_no as nokredit', 'agen.bank as bank','agen.source as source','withdraw.status as status', 'withdraw.created_at as date')
+
+        //->where('withdraw.id','=','$id');
+        ->get();
+        //var_dump($id); die;
+        $updateStatusPending = WithDraw::find($id);
+        $updateStatusPending -> update([
+            'status' => 'pending'
+        ]);
+        return redirect()->back();
+    }
+
+    public function ubahStatus(request $request)
+    {
+        $draw = [];
+        $id = [];
+
+        foreach($request->checkbox as $temp)
+        {
+            $find = Withdraw::join('agen','agen.identifier','=','withdraw.agen_id')
+            ->select('withdraw.id as id','agen.name as name','withdraw.amount as ammount','agen.wanee as wanee',
+                'agen.plafon_kredit as plafon','agen.account_no as nokredit', 'agen.bank as bank','agen.source as source','withdraw.status as status', 'withdraw.created_at as date')
+            ->where('withdraw.id','=','$temp')
+            ->first();
+
+            $update = WithDraw::find($temp);
+            $update-> update([
+                'status' => 'pending'
+            ]);
+
+            array_push($draw,$find);
+        }
+         return redirect()->back();
+    
+    }
+
     private function _export_excel($withdraw) {
         $withdraw = $withdraw->get();
 

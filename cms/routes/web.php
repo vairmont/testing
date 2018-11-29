@@ -24,6 +24,10 @@ Route::get('/byitem', 'ReportController@getByItem');
 Route::get('/bystore', 'ReportController@getBystore');
 Route::get('/bymargin','ReportController@getByMargin');
 
+// percobaan tombol inVoice untuk Laporan Penjualan
+Route::get('/bystoreinvoice/{id}','ReportController@getInvoice')->name('getinv');
+
+
 Route::get('/bycategory','ReportController@getBycategory');
 Route::get('/byproduct/{category}','ReportController@getByProduct');
 Route::get('/byemployee','ReportController@getByEmployee');
@@ -34,6 +38,7 @@ Route::get('/byagent','EmployeeController@getByAgent');
 Route::get('/bywaneehistory','EmployeeController@getBywanneHistory');
 Route::get('/bywaneepending','EmployeeController@getByWaneePending');
 Route::get('/bywaneeapprove','EmployeeController@getByWaneeApprove');
+Route::get('/byshowwithdraw','WithDrawController@getByShowWithDraw');
 Route::get('/bywithdraw', 'WithDrawController@getByWithDraw');
 Route::get('/bywithdrawdone', 'WithDrawController@getByWithDrawDone');
 
@@ -48,6 +53,9 @@ Route::post('/verifywanee4','EmployeeController@updateStatus2')->name('status4')
 
 Route::get('/verifywanee2/{id}','EmployeeController@updateStatus')->name('status2');
 Route::get('/verifywithdraw/{id}','WithDrawController@updateStatus')->name('status');
+Route::get('/verifyshowwithdraw/{id}','WithDrawController@updateStatusPending')->name('statpending');
+//test_checkbox
+Route::post('/verifycheckshowwithdraw','WithDrawController@ubahStatus')->name('statid');
 Route::post('/verifyagent/{id}','EmployeeController@updateVerify')->name('verify');
 
 
