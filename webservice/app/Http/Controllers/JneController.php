@@ -9,6 +9,7 @@ use DB;
 use Hash;
 use App\User;
 use App\Agen;
+use App\Order;
 use App\FCM;
 
 class JneController extends Controller
@@ -90,6 +91,7 @@ class JneController extends Controller
       $userkey = "TESTAPI";
       $passkey = "25c898a9faea1a100859ecd9ef674548";
       $awb = Order::where('airway_bill', '!=', null)
+              ->whereIn('status', [2,6])
               ->select('airway_bill', 'status', 'id')
               ->get();
               
@@ -163,7 +165,6 @@ class JneController extends Controller
       $passkey = "25c898a9faea1a100859ecd9ef674548";
       $resi = $request->resi;
       $url = "http://apiv2.jne.co.id:10102/tracing/api/list/v1/cnote/".$resi;
-
       $fields = [
         'username' => $userkey,
         'api_key' => $passkey
@@ -187,7 +188,7 @@ class JneController extends Controller
       curl_close($curlHandle);
       $res = json_decode($results, true);
 
-     return response()->json(['data' => [$res['cnote']['pod_status']], 'message' => ['OK']]);
+     return response()->json(['data' => $res, 'message' => ['OK']]);
     }
   	
 }

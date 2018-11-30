@@ -123,14 +123,15 @@ class DigitalProductController extends Controller {
       $orders = OrderDigital::join('customer','customer.identifier','=','order_digital.user_id')
       ->where('user_id', '=', $request->get('user')->id)
       ->select('order_digital.*','customer.name as name')
-      ->orderBy('created_at', 'asc')
+      ->orderBy('created_at', 'desc')
       ->get();
 
       $result = [];
       foreach ($orders as $order) {
         $items = DigitalProduct::Join('order_digital', 'order_digital.product_code', '=', 'digital_product.kode')
+          ->join('operator', 'operator.id', '=', 'digital_product.operator_id')
           ->where('order_digital.id', '=', $order->id)
-          ->select('digital_product.type as type','digital_product.id as product_id', 'digital_product.kode', 'digital_product.name', 'digital_product.price','digital_product.price_agen')
+          ->select('digital_product.type as type','digital_product.id as product_id', 'digital_product.kode', 'digital_product.name', 'digital_product.price','digital_product.price_agen', 'operator.name as operator')
           ->get();
 
         $result[] = [
