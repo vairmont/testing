@@ -129,8 +129,9 @@ class DigitalProductController extends Controller {
       $result = [];
       foreach ($orders as $order) {
         $items = DigitalProduct::Join('order_digital', 'order_digital.product_code', '=', 'digital_product.kode')
+          ->join('operator', 'operator.id', '=', 'digital_product.operator_id')
           ->where('order_digital.id', '=', $order->id)
-          ->select('digital_product.type as type','digital_product.id as product_id', 'digital_product.kode', 'digital_product.name', 'digital_product.price','digital_product.price_agen')
+          ->select('digital_product.type as type','digital_product.id as product_id', 'digital_product.kode', 'digital_product.name', 'digital_product.price','digital_product.price_agen', 'operator.name as operator')
           ->get();
 
         $result[] = [
