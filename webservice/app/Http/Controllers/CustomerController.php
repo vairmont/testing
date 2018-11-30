@@ -193,7 +193,7 @@ class CustomerController extends Controller
             "password"=> "5b8598bed42b271cb8ec62c4bdd4f3ck",
             "nova"=> "",
             "idtrx"=> "",
-            "idmerchant"=> "18",
+            "idmerchant"=> "10",
             "nominal"=> "0",
             "keterangan"=> "0|".$request->phone."|".$request->name."|info@grosir.one",
             "kodemitra"=> "004",
@@ -223,7 +223,7 @@ class CustomerController extends Controller
           curl_close($ch);
             $res = json_decode($datay, true);
             $nova = json_decode($datay, true);            
-
+        
         //save data user & customer
 
             $user =[

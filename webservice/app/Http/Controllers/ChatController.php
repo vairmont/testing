@@ -77,11 +77,28 @@ class ChatController extends Controller
 
     public function generalChatList(Request $request)
     {
-            $chats = GeneralChat::where('sender_id',$request->get('user')->id)
+            $sender_id = $request->get('user')->id;
+            $customer = Customer::where('identifier', '=', $request->get('user')->id)->first();
+            $user = User::find($sender_id);
+            
+            if($user->role_id == 2) {
+                // customer
+                $chats = GeneralChat::where('sender_id',$request->get('user')->id)
+                    ->where('recipient_id','=', $customer->agen_id)
+                    ->select('id','sender_id','recipient_id','message','created_at')
+                    ->get();
+                    
+            }
+            elseif($user->role_id == 5) {
+                // agen
+                $chats = GeneralChat::where('sender_id',$request->get('user')->id)
                     ->where('recipient_id','=', $request->recipient_id)
                     ->select('id','sender_id','recipient_id','message','created_at')
                     ->get();
                     
+            }
+
+            
             return response()->json(['data' => $chats, 'message' => ['OK']]);
         
     }

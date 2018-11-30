@@ -465,5 +465,7 @@ class ReportController extends Controller
         return $pdf->download('invoicebyorder.pdf');
    }
 
-
+   public function paymentSuccess(Request $request){
+           return view('payment.paymentsuccess')->withTitle('Payment');   
+    }
 }
