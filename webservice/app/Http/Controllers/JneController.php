@@ -188,7 +188,7 @@ class JneController extends Controller
       curl_close($curlHandle);
       $res = json_decode($results, true);
 
-     return response()->json(['data' => [$res], 'message' => ['OK']]);
+     return response()->json(['data' => $res, 'message' => ['OK']]);
     }
   	
 }
