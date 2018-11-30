@@ -14,42 +14,99 @@
             <br>Tangerang 15810 Banten, Ruko Rodeo Paramount, Block C No 22
         </p>
     </div>
-    <p style="text-align:right;">Date   :
-        {{ Carbon\Carbon::now()->format('d M Y ') }}
-    </p>
     <h3>Transaksi</h3>
     @foreach($flowreport as $flow)
-    <p><b>Agen</b><br>
-       Nama : {{ $flow->name }}
-    </p>
-    
     <p><b>Customer</b><br>
-       Nama : {{ $flow->name }}
+       Nama   : {{ $flow->cusname }} <br>
+       Order  : {{$flow->invoice}}<br>
+       Store  : @if($flow->stoname == NULL)
+                    Serang
+                @else
+                    {{$flow->stoname}}
+                @endif
+                <br>
+       Source : @if($flow->source == NULL)
+                    Kasir
+                @else
+                    {{$flow->source}}
+                @endif
+                <br>
+       Date   : {{$flow->create}} <br>
     </p>
     <table border="1" width="100%" cellpadding='0' cellspacing='0'>
         <thead>
-            <tr>
-                <th>Order</th>
+            <tr style="text-align: center;">
                 <th>Nama Produk</th>
                 <th>Qty</th>
-                <th>Margin</th>
-                <th>Insentif</th>
-                <th>Paid by Agen</th>
+                <th>DPP</th>
+                <th>PPN</th>
                 <th>Paid by Customer</th>
+                <th>Margin</th>                    
+                <th>Paid by Agen</th>
+                <th>Insentif</th>
+                <th>Discount invoice</th>
             </tr>
         </thead>    
         <tbody>
-            <tr style="text-align: top">
-                  
-            </tr>
-            <tr>
-                <td>test</td>
-                <td>test</td>
-                <td>test</td>
-                <td>test</td>
-                <td>test</td>
-                <td>test</td>
-                <td>test</td>
+            <tr style="text-align: center;">
+                <td>{{$flow->proname}}</td>
+                <td>{{$flow->qty}}</td>
+                <td>
+                    @if($flow->tax == 0)
+                        Rp.{{  /*DPP*/
+                                number_format(
+                                    ($flow->customer_price * $flow->qty)-
+                                    ($flow->customer_price * $flow->qty * 0.1)
+                                )
+                            }}
+                    @else
+                        Rp.{{
+                                number_format($flow->customer_price * $flow->qty)     
+                            }}
+                    @endif
+                </td>
+                <td>
+                    @if($flow->tax == 0)
+                        Rp.{{  /*PPN*/
+                                number_format(
+                                    ($flow->customer_price * $flow->qty * 0.1)
+                                )
+                            }}
+                    @else
+                        0
+                    @endif
+                </td>
+                <td>
+                    Rp.{{ /*Paid by Customer*/
+                            number_format($flow->customer_price * $flow->qty)
+                        }}
+                </td>
+                <td>
+                    @if($flow->source == NULL)
+                        Rp.0
+                    @else
+                        Rp.{{ /*Margin*/
+                                number_format($flow->customer_price * $flow->qty * 0.05)
+                            }}
+                    @endif
+                </td>
+                <td>
+                    Rp.{{ /*Paid by Agen*/
+                            number_format($flow->customer_price * $flow->qty * 0.95)
+                        }}
+                </td>
+                <td>
+                    @if($flow->source == NULL)
+                        Rp.0
+                    @else
+                        Rp.{{ /*Insentif*/
+                                number_format($flow->customer_price * $flow->qty * 0.95 * $flow->rate / 100)
+                            }}
+                    @endif
+                </td>
+                <td>
+                    {{ /*Discount Invoice*/ $flow->discount }}
+                </td>
             </tr>
                 @endforeach
         </tbody>
@@ -64,3 +121,4 @@
     </p>
 </body>
 </html>
+
