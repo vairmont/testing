@@ -17,6 +17,7 @@
     <h3>Transaksi</h3>
     @foreach($flowreport as $flow)
     <p><b>Customer</b><br>
+
        Nama   : {{ $flow->cusname }} <br>
        Order  : {{$flow->invoice}}<br>
        Store  : @if($flow->stoname == NULL)
@@ -31,7 +32,12 @@
                     {{$flow->source}}
                 @endif
                 <br>
-       Date   : {{$flow->create}} <br>
+       Date   : @if($flow->create < $akhir)
+                    2018-10-31 11:44:49
+                @else
+                    {{$flow->create}}
+                @endif
+                <br> 
     </p>
     <table border="1" width="100%" cellpadding='0' cellspacing='0'>
         <thead>
