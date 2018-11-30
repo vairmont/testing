@@ -38,7 +38,7 @@ class OrderControllerCustomer extends Controller
       ->where('user_id', '=', $request->get('user')->id)
       ->whereIn('status', [1,2,6])
       ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address2', 'order_billing_detail.notes as order_notes')
-      ->orderBy('created_at', 'asc')
+      ->orderBy('created_at', 'desc')
       ->get();
 
       $result = [];
@@ -51,7 +51,8 @@ class OrderControllerCustomer extends Controller
         $result[] = [
           'order' => $order,
           'items' => $items,
-          'created_at' => Carbon::parse($order->created_at)->format('d M Y H:i')
+          'created_at' => Carbon::parse($order->created_at)->format('d M Y H:i'),
+          'agen_phone' => User::where('id', '=', $order->agen_id)->select('phone as agen_phone')->first()
         ];
       }
       return response()->json($result, 200);

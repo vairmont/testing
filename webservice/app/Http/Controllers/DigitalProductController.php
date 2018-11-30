@@ -123,7 +123,7 @@ class DigitalProductController extends Controller {
       $orders = OrderDigital::join('customer','customer.identifier','=','order_digital.user_id')
       ->where('user_id', '=', $request->get('user')->id)
       ->select('order_digital.*','customer.name as name')
-      ->orderBy('created_at', 'asc')
+      ->orderBy('created_at', 'desc')
       ->get();
 
       $result = [];
