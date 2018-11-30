@@ -375,9 +375,9 @@ class WalletController extends Controller
 
     }
 
-    public function walletHistory(Request $request) {
+    public function walletHistory(Request $request) { 
       if($request->type == 'digital'){
-          $orders = OrderDigital::where('user_id', '=', $request->get('user')->id)
+          $ord = OrderDigital::where('user_id', '=', $request->get('user')->id)
               ->select('order_digital.*')
               ->where('payment_method', '=', 'wallet')
               ->where('status', '=', '1')
@@ -389,15 +389,14 @@ class WalletController extends Controller
 
         $ord = Order::where('user_id', '=', $request->get('user')->id)
             ->select('order.*')
-            ->where('payment_method', '=', 'wallet')
+            ->where('payment', '=', 'wallet')
             ->whereIn('status', [2,6,7,10,11])
             ->orderBy('created_at', 'asc')
             ->get();
 
-
       }    
     
-      return response()->json($result);
+      return response()->json($ord);
     }
 
     protected function _sendPushNotification($user_id, $title, $body) {
