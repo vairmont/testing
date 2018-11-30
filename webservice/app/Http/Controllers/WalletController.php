@@ -381,19 +381,17 @@ class WalletController extends Controller
               ->select('order_digital.*')
               ->where('payment_method', '=', 'wallet')
               ->where('status', '=', '1')
-              ->orderBy('created_at', 'asc')
+              ->orderBy('created_at', 'desc')
               ->get();
       }
 
       elseif($request->type == 'sembako'){
-
         $ord = Order::where('user_id', '=', $request->get('user')->id)
             ->select('order.*')
             ->where('payment', '=', 'wallet')
             ->whereIn('status', [2,6,7,10,11])
-            ->orderBy('created_at', 'asc')
+            ->orderBy('created_at', 'desc')
             ->get();
-
       }    
     
       return response()->json($ord);
