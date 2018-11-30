@@ -43,7 +43,7 @@ class DigitalProductController extends Controller {
                       ->where('type', '=', 'nelpon')
                       ->get();
 
-    return response()->json(['data' => ['pulsa' => $list_product, 'paket' => $list, 'nelpon' => $list,'operator' => $operator], 'message' => ['OK']]);
+    return response()->json(['data' => ['pulsa' => $list_product, 'paket' => $list, 'nelpon' => $phone,'operator' => $operator], 'message' => ['OK']]);
   }
 
   public function create(Request $request) {
