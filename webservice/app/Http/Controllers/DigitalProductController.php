@@ -39,7 +39,11 @@ class DigitalProductController extends Controller {
                       ->where('type', '=', 'data')
                       ->get();
 
-    return response()->json(['data' => ['pulsa' => $list_product, 'paket' => $list, 'operator' => $operator], 'message' => ['OK']]);
+    $phone = DigitalProduct::where('operator_id','=',$operator->operator_id)
+                      ->where('type', '=', 'nelpon')
+                      ->get();
+
+    return response()->json(['data' => ['pulsa' => $list_product, 'paket' => $list, 'nelpon' => $phone,'operator' => $operator], 'message' => ['OK']]);
   }
 
   public function create(Request $request) {
