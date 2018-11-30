@@ -447,6 +447,9 @@ class ReportController extends Controller
    //Tombol inVoice untuk tampilan laporan penjualan
    public function getInvoice(request $request, $id)
    {
+        $awal = new Carbon('first day of july 2018');
+        $akhir = new Carbon('last day of september 2018');
+
         $flowreport = Order::leftjoin('order_detail','order.id','=','order_detail.order_id')
         ->leftjoin('product','product.id','=','order_detail.product_id')
         ->leftjoin('incentive_category','incentive_category.id','=','product.incentive_id')
@@ -460,9 +463,11 @@ class ReportController extends Controller
         ->select('customer.name as cusname','product.tax as tax','order.discount as discount','agen.source as source','store.store_name as stoname','order_detail.qty as qty','incentive_category.rate as rate','order.invoice_no as invoice','agen.name as name','order_detail.id as id','product.product_name as proname','order_detail.price_for_agen as agen_price','order_detail.price_for_customer as customer_price','order.created_at as create','order.updated_at as update','order.agen_id as aid', 'product.promo_price')
         ->where('order_detail.id',$id)
         ->get();
-        $pdf = PDF::loadView('pdf.invoicebyorder',compact('flowreport','request'));
-        //return view('pdf.invoicebyorder',compact('flowreport','request'));
+
+        $pdf = PDF::loadView('pdf.invoicebyorder',compact('awal','akhir','flowreport','request'));
+        //return view('pdf.invoicebyorder',compact('awal','akhir','flowreport','request'));
         return $pdf->download('invoicebyorder.pdf');
+        
    }
 
    public function paymentSuccess(Request $request){
