@@ -11,6 +11,7 @@ use App\Commission;
 use App\OrderDetail;
 use App\Product;
 use Excel;
+use PDF;
 use Carbon\Carbon;
 use App\Supplier;
 use App\ProductCategory;
@@ -131,7 +132,7 @@ class ReportController extends Controller
         
         ->whereIn('order.status',[7,9])
         ->where('order.type','=','sembako')
-        ->select('customer.name as cusname','product.tax as tax','order.discount as discount','agen.source as source','store.store_name as stoname','order_detail.qty as qty','incentive_category.rate as rate','order.invoice_no as invoice','agen.name as name','order_detail.order_id as id','product.product_name as proname','order_detail.price_for_agen as agen_price','order_detail.price_for_customer as customer_price','order.created_at as create','order.updated_at as update','order.agen_id as aid', 'product.promo_price');
+        ->select('customer.name as cusname','product.tax as tax','order.discount as discount','agen.source as source','store.store_name as stoname','order_detail.qty as qty','incentive_category.rate as rate','order.invoice_no as invoice','agen.name as name','order_detail.id as id','product.product_name as proname','order_detail.price_for_agen as agen_price','order_detail.price_for_customer as customer_price','order.created_at as create','order.updated_at as update','order.agen_id as aid', 'product.promo_price');
 
         
         if(isset($request->date) && $request->date == '1'){
@@ -212,11 +213,12 @@ class ReportController extends Controller
                 'Order' => $flow->invoice,
                 'Nama Produk' =>$flow->proname,
                 'Quantity' => $flow->qty,
-                'Margin' => ($flow->source == NULL) ? 0 : number_format($flow->customer_price * $flow->qty * 0.05),
-                'Isentif'=> ($flow->source == NULL) ? 0 : number_format($flow->customer_price * $flow->qty * 0.95 * $flow->rate / 100),
-                'Paid by Agen' => number_format($flow->customer_price * $flow->qty * 0.95),
-                'Paid by Customer' => number_format($flow->customer_price * $flow->qty),
+                'DPP' => ($flow->source == NULL) ? 0 : number_format(($flow->customer_price * $flow->qty)-($flow->customer_price * $flow->qty * 0.1)),
                 'PPN' => ($flow->tax == 0) ? number_format($flow->customer_price * $flow->qty * 0.1) : 0,
+                'Paid by Customer' => number_format($flow->customer_price * $flow->qty), 
+                'Margin' => ($flow->source == NULL) ? 0 : number_format($flow->customer_price * $flow->qty * 0.05),
+                'Paid by Agen' => number_format($flow->customer_price * $flow->qty * 0.95),
+                'Isentif'=> ($flow->source == NULL) ? 0 : number_format($flow->customer_price * $flow->qty * 0.95 * $flow->rate / 100),
                 'Discount' => number_format($flow->discount),
                 'Store' => ($flow->source == NULL) ? "Serang" : $flow->stoname,
                 'Source'=> ($flow->source == NULL) ? "Kasir" : $flow->source,
@@ -441,5 +443,27 @@ class ReportController extends Controller
         $margin = $margin->orderby('order.created_at','desc')->paginate(10);  
         return view('report.bymargin',compact('margin','request','total1'))->withTitle('Margin');
    }
+
+   //Tombol inVoice untuk tampilan laporan penjualan
+   public function getInvoice(request $request, $id)
+   {
+        $flowreport = Order::leftjoin('order_detail','order.id','=','order_detail.order_id')
+        ->leftjoin('product','product.id','=','order_detail.product_id')
+        ->leftjoin('incentive_category','incentive_category.id','=','product.incentive_id')
+        ->leftjoin('agen','agen.identifier','=','order.agen_id')
+        ->leftjoin('users','users.id','=','agen.identifier')
+        ->leftjoin('customer','customer.identifier','=','order.user_id')
+        ->leftjoin('store','store.id','=','users.store_id')
+        
+        ->whereIn('order.status',[7,9])
+        ->where('order.type','=','sembako')
+        ->select('customer.name as cusname','product.tax as tax','order.discount as discount','agen.source as source','store.store_name as stoname','order_detail.qty as qty','incentive_category.rate as rate','order.invoice_no as invoice','agen.name as name','order_detail.id as id','product.product_name as proname','order_detail.price_for_agen as agen_price','order_detail.price_for_customer as customer_price','order.created_at as create','order.updated_at as update','order.agen_id as aid', 'product.promo_price')
+        ->where('order_detail.id',$id)
+        ->get();
+        $pdf = PDF::loadView('pdf.invoicebyorder',compact('flowreport','request'));
+        //return view('pdf.invoicebyorder',compact('flowreport','request'));
+        return $pdf->download('invoicebyorder.pdf');
+   }
+
 
 }

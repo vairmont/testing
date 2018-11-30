@@ -9,12 +9,17 @@
     <div class="container-fluid">
 
         <div class="">
-                <h2>WithDraw</h2>
+
+                <h2>ShowWithDraw</h2>
+
+
         <!-- H2 -->
         </div>
 
             <div class="row">
+
             <form class="form-inline" method="GET" action="{{url('/bywithdraw')}}">
+
                 <div class="form-group col-lg-6">
                     <input class="form-control mr-sm-2" type="text" name="keyword" placeholder="Nama Agen" aria-label="Search">
                     <button type="submit" class="btn btn-primary">Search</button>
@@ -45,6 +50,7 @@
                                     <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-example">
                                         <thead>
                                             <tr>
+
                                                 <th>Checker</th>
                                                 <th>ID</th>
                                                 <th>Nama</th>
@@ -85,6 +91,7 @@
                                          @endif
                                         </tbody>
                                     </form>
+
                                         <tfoot>
                                           
                                         </tfoot>

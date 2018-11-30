@@ -105,6 +105,7 @@
                             <li>
                                 <a href="{{url('/byagent')}}">Verifikasi Agen</a>
                             </li>
+
                      
                         </ul>
                     <!-- /.nav-second-level -->
@@ -113,15 +114,18 @@
                         <a href="#"><i class="fa fa-cubes"></i> WithDraw<span class="fa arrow"></span></a>
                     
                         <ul class="nav nav-second-level">
-                                <li>
-                                        <a href="{{ url('/byshowwithdraw') }}">ShoW Withdraw</a>
-                                    </li>
-                                    <li>
-                                        <a href="{{url('/bywithdraw')}}">Withdraw</a>
-                                    </li>
-                                    <li>
-                                          <a href="{{ url('/bywithdrawdone')}}">View Withdraw</a>
-                                    </li>
+                            <li>
+                                <a href="{{ url('/byshowwithdraw') }}">ShoW Withdraw</a>
+                            </li>
+
+                             <li>
+                                 <a href="{{url('/bywithdraw')}}">Withdraw</a>
+                            </li>
+                            
+                            <li>
+                                 <a href="{{ url('/bywithdrawdone')}}">View Withdraw</a>
+                            </li>
+
                         </ul>
                     <!-- /.nav-second-level -->
                 </li>

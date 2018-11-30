@@ -66,15 +66,17 @@
                                     <th>Order</th>
                                     <th>ProductName</th>
                                     <th>Quantity</th>
-                                    <th>Margin</th>                    
-                                    <th>Insentif</th>
-                                    <th>Paid by Agen</th>
-                                    <th>Paid by Customer</th>
+                                    <th>DPP</th>
                                     <th>PPN</th>
+                                    <th>Paid by Customer</th>
+                                    <th>Margin</th>                    
+                                    <th>Paid by Agen</th>
+                                    <th>Insentif</th>
                                     <th>Discount invoice</th>
                                     <th>Store</th>
                                     <th>Source</th>
                                     <th>Tanggal</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
 
@@ -95,26 +97,54 @@
                                         <td>{{$flow->proname}}</td>
                                         <td>{{$flow->qty}}</td>
                                         <td>
-                                            @if($flow->source == NULL)
-                                            Rp.0
+                                            @if($flow->tax == 0)
+                                                Rp.{{  /* DPP */
+                                                        number_format(
+                                                            ($flow->customer_price * $flow->qty)-
+                                                            ($flow->customer_price * $flow->qty * 0.1)
+                                                        )
+                                                    }}
                                             @else
-                                            Rp.{{ number_format($flow->customer_price * $flow->qty * 0.05)}}
+                                                Rp.{{ number_format($flow->customer_price * $flow->qty)}}
                                             @endif
                                         </td>
-                                        <td>
-                                            @if($flow->source == NULL)
-                                            Rp.0
-                                            @else
-                                            Rp.{{ number_format($flow->customer_price * $flow->qty * 0.95 * $flow->rate / 100)}}
-                                            @endif
-                                        </td>
-                                        <td>Rp.{{ number_format($flow->customer_price * $flow->qty * 0.95)}}</td>
-                                        <td>Rp.{{ number_format($flow->customer_price * $flow->qty)}}</td>
                                         <td>
                                             @if($flow->tax == 0)
-                                            Rp.{{  number_format(($flow->customer_price * $flow->qty * 0.1))}}
+                                                Rp.{{  /* PPN */
+                                                        number_format(
+                                                            ($flow->customer_price * $flow->qty * 0.1)
+                                                        )
+                                                    }}
                                             @else
-                                            0
+                                                0
+                                            @endif
+                                        </td>
+                                        <td>
+                                            Rp.{{  /* Paid by Customer */
+                                                    number_format($flow->customer_price * $flow->qty)
+                                                }}
+                                        </td>
+                                        <td>
+                                            @if($flow->source == NULL)
+                                                Rp.0
+                                            @else
+                                                Rp.{{ /* Margin */
+                                                        number_format($flow->customer_price * $flow->qty * 0.05)
+                                                    }}
+                                            @endif
+                                        </td>
+                                        <td>
+                                            Rp.{{ /*Paid by Agen */
+                                                    number_format($flow->customer_price * $flow->qty * 0.95)
+                                                }}
+                                        </td>
+                                        <td>
+                                            @if($flow->source == NULL)
+                                                Rp.0
+                                            @else
+                                                Rp.{{ /* Insentif */
+                                                        number_format($flow->customer_price * $flow->qty * 0.95 * $flow->rate / 100)
+                                                    }}
                                             @endif
                                         </td>
                                         <td>
@@ -136,6 +166,9 @@
                                         </td>
                                         <td>{{$flow->create}}</td>
                                         
+                                        <td>
+                                            <a href="{{ route('getinv', ['id' => $flow->id]) }}" class="btn btn-primary">InVoice</a>
+                                        </td>
                                     </tr>
                                     @endforeach
                                 @endif
