@@ -137,7 +137,8 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
 
   Route::get('/order/history/sembako', 'OrderControllerCustomer@orderHistorySembako'); 
   Route::get('/order/history/digital', 'DigitalProductController@orderHistoryDigital');   
-  Route::get('/wallet/history', 'WalletController@walletHistory');   
+  Route::get('/wallet/history', 'WalletController@walletHistory');
+  Route::post('/digitaltes', 'DigitalProductController@digitalTes');    
 
   Route::post('/withdraw', 'OrderController@withdraw');
   Route::get('/withdraw', 'WithdrawController@index');
