@@ -470,7 +470,4 @@ class ReportController extends Controller
         
    }
 
-   public function paymentSuccess(Request $request){
-           return view('payment.paymentsuccess')->withTitle('Payment');   
-    }
 }
