@@ -10,12 +10,12 @@ namespace App\Constant;
 class OrderStatus {
 
   const CREATED = 1;
+  const REASSIGN = 1;
   const ASSIGNED = 2;
   const PICKUP = 3;
+  const FAILED = 4;
   const DELIVERY = 6;
-  const REASSIGN = 1;
   const COMPLETED = 7;
   const CASHDONE = 9;
   const CANCELLED = 8;
-
 }
