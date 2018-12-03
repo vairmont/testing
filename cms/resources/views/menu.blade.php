@@ -91,14 +91,14 @@
                         <a href="#"><i class="fa fa-group"></i> Admin<span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
                             <li>
-                                <a href="{{url('/bywaneehistory')}}">Show Wanee</a>
+                                <a href="{{url('/bywaneehistory')}}">Wanee</a>
                             </li>
                             
                             <li>
-                                <a href="{{url('/bywaneepending')}}">Wanee Pending</a>
+                                <a href="{{url('/bywaneepending')}}">Wanee Verification</a>
                             </li>
                             <li>
-                                <a href="{{url('/bywaneeapprove')}}">Wanee Approved</a>
+                                <a href="{{url('/bywaneeapprove')}}">Approved Wanee</a>
                             </li>
                             <p>-----------------------------------------------------------</p>
                             </li>
@@ -115,15 +115,15 @@
                     
                         <ul class="nav nav-second-level">
                             <li>
-                                <a href="{{ url('/byshowwithdraw') }}">ShoW Withdraw</a>
+                                <a href="{{ url('/byshowwithdraw') }}">Withdraw</a>
                             </li>
 
                              <li>
-                                 <a href="{{url('/bywithdraw')}}">Withdraw</a>
+                                 <a href="{{url('/bywithdraw')}}">Withdraw Verification</a>
                             </li>
                             
                             <li>
-                                 <a href="{{ url('/bywithdrawdone')}}">View Withdraw</a>
+                                 <a href="{{ url('/bywithdrawdone')}}">Approved Withdraw</a>
                             </li>
 
                         </ul>
