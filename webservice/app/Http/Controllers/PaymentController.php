@@ -25,9 +25,9 @@ class PaymentController extends Controller
 
             $end_point = 'https://api.xendit.co/v2/invoices';
 
-            $data['external_id'] = $request->external_id;
-            $data['amount'] = $request->amount;
-            $data['payer_email'] = $request->payer_email;
+            $data['external_id'] = 'test';
+            $data['amount'] = 80000;
+            $data['payer_email'] = 'test@gmail.com';
             $data['description'] = 'Order';
 
             // if (!empty($invoice_options['callback_virtual_account_id'])) {
@@ -70,15 +70,23 @@ class PaymentController extends Controller
 		//     "created": "2016-10-10T08:15:03.404Z"
 		// }
 
-    	$order = Order::where('invoice_no','=',$request->external_id)
-        		->update(['status' => 9,
-                  'payment' => $request->payment_method,
-                  'payemnt_status' => $request->status
-              	]);
+		$data = file_get_contents("php://input");
+
+    	$order = Order::where('invoice_no','=',$data['external_id'])->first();
+
+    	if($data['status'] == 'SETTLED')
+        $order->status = 9;
+    	else if($data['status'] == 'PAID')
+        $order->status = 9;
+    	else if($data['status'] == 'PENDING')
+    	$order->status = 7;
+
+    	$order->payment_status = $data['status'];
+    	$order->payment = $data['payment_method'];
+        $order->save();
+  
 
 
-
-
-    	return ;
+    	return 1;
     }
 }
