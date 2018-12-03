@@ -89,4 +89,9 @@ class PaymentController extends Controller
 
     	return 1;
     }
+
+    
+   public function paymentSuccess(Request $request){
+           return view('payment.paymentsuccess')->withTitle('Payment');   
+    }
 }

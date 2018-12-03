@@ -214,4 +214,52 @@ class DigitalProductController extends Controller {
         $result = curl_exec($ch);
         curl_close($ch);
     }
+    public function digitalTes(Request $request){
+        
+
+        #curl
+        $ch = curl_init(); 
+
+        $idrs = 'DR1108';
+        $user = '8CC9B6';
+        $pin = 'BFGH4I';
+        $pass = 'E0A5F6';
+        $kode = $order->product_code;
+        $tujuan = $order->phone;
+        $idtrx = $order->invoice_no;
+        // set url 
+        curl_setopt($ch, CURLOPT_URL, "http://202.146.39.54:8030/api/h2h?id=".$idrs."&pin=".$pin."&user=".$user."&pass=".$pass."&kodeproduk=".$kode."&tujuan=".$tujuan."&counter=1&idtrx=".$idtrx); 
+
+        //return the transfer as a string 
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+
+        // $output contains the output string 
+        $output = curl_exec($ch); 
+
+        // close curl resource to free up system resources 
+        curl_close($ch);
+
+        $res = json_decode($output,true);
+        
+        // send sms to requested number
+        $userkey = "ky7049";
+        $passkey = "go2018";
+        $telepon = $request->phone;
+        $message = 'abc';
+        $url = "https://alpha.zenziva.net/apps/smsapi.php";
+        $curlHandle = curl_init();
+        curl_setopt($curlHandle, CURLOPT_URL, $url);
+        curl_setopt($curlHandle, CURLOPT_POSTFIELDS, 'userkey='.$userkey.'&passkey='.$passkey.'&nohp='.$telepon.'&pesan='.urlencode($message));
+        curl_setopt($curlHandle, CURLOPT_HEADER, 0);
+        curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curlHandle, CURLOPT_SSL_VERIFYHOST, 2);
+        curl_setopt($curlHandle, CURLOPT_SSL_VERIFYPEER, 0);
+        curl_setopt($curlHandle, CURLOPT_TIMEOUT,30);
+        curl_setopt($curlHandle, CURLOPT_POST, 1);
+        $results = curl_exec($curlHandle);
+        curl_close($curlHandle);
+
+        return response()->json(['data' => [$res, $result], 'message' => ['OK']]);
+    }
+      
 }
