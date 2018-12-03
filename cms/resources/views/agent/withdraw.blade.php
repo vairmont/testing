@@ -13,6 +13,8 @@
         <!-- H2 -->
         </div>
 
+        {{ Carbon\Carbon::now() }}
+
             <div class="row">
             <form class="form-inline" method="GET" action="{{url('/bywithdraw')}}">
                 <div class="form-group col-lg-6">

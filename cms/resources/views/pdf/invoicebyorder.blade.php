@@ -4,10 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="{{ asset('css/invoice.css') }}" rel="stylesheet">
     <title>Document</title>
 </head>
 <body>
-<h2 style="text-align:right;">INVOICE</h2>
+<div class="container">
+<h2 style="text-align:center;">INVOICE</h2>
     <h3>PT. MITRA GROSIR NUSANTARA</h3>
     <div class="col-lg-6">
         <p> Jl.Boulevard Gading Serpong Pakulonan Barat,Kelapa dua,
@@ -47,10 +49,6 @@
                 <th>DPP</th>
                 <th>PPN</th>
                 <th>Paid by Customer</th>
-                <th>Margin</th>                    
-                <th>Paid by Agen</th>
-                <th>Insentif</th>
-                <th>Discount invoice</th>
             </tr>
         </thead>    
         <tbody>
@@ -87,32 +85,7 @@
                             number_format($flow->customer_price * $flow->qty)
                         }}
                 </td>
-                <td>
-                    @if($flow->source == NULL)
-                        Rp.0
-                    @else
-                        Rp.{{ /*Margin*/
-                                number_format($flow->customer_price * $flow->qty * 0.05)
-                            }}
-                    @endif
-                </td>
-                <td>
-                    Rp.{{ /*Paid by Agen*/
-                            number_format($flow->customer_price * $flow->qty * 0.95)
-                        }}
-                </td>
-                <td>
-                    @if($flow->source == NULL)
-                        Rp.0
-                    @else
-                        Rp.{{ /*Insentif*/
-                                number_format($flow->customer_price * $flow->qty * 0.95 * $flow->rate / 100)
-                            }}
-                    @endif
-                </td>
-                <td>
-                    {{ /*Discount Invoice*/ $flow->discount }}
-                </td>
+                
             </tr>
                 @endforeach
         </tbody>
@@ -125,6 +98,7 @@
     <p>Dokumen ini Sah<br>
        Telah ditandatangani secara elektronik 
     </p>
+</div>
 </body>
 </html>
 

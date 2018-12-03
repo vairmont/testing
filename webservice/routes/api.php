@@ -34,6 +34,8 @@ Route::post('/v1/otp/check/agen', 'SmsController@verifyCheckAgen');
 Route::post('/v1/stores', 'CustomerController@getStore');
 Route::post('/v1/agen', 'CustomerController@getAgen');
 
+Route::post('/v1/xendit/createinvoice', 'PaymentController@createInvoice');
+
 Route::post('/v1/register/family', 'FamilyController@addFamily');
 Route::post('/v1/register/family/ktp/upload', 'FamilyController@uploadKTP');
 
