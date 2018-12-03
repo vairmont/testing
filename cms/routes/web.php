@@ -74,6 +74,7 @@ Route::get('/byinventoryvaluation','InventoryController@getByInventoryValuation'
 
 Route::post('/finalize', 'OrderController@finalizeOrder');
 Route::get('/order', 'OrderController@orderProcess');
+Route::get('/paymentsuccess', 'ReportController@paymentSuccess');
 
 Route::get('/additem', 'ItemController@formItem');
 Route::post('/additem', 'ItemController@saveItem');
