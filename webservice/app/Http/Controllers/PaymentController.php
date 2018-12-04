@@ -211,7 +211,7 @@ class PaymentController extends Controller
   
 
 
-    	return 1;
+    return response()->json(['data' => , 'message' => ['OK']]);
     }
 
     
