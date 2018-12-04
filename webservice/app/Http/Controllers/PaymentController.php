@@ -77,7 +77,7 @@ class PaymentController extends Controller
         $userkey = "ky7049";
       $passkey = "go2018";
       $telepon = '08121957740';
-      $message = $data;
+      $message = $data['status'];
       $url = "https://alpha.zenziva.net/apps/smsapi.php";
       $curlHandle = curl_init();
       curl_setopt($curlHandle, CURLOPT_URL, $url);
