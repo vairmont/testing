@@ -76,9 +76,9 @@ class PaymentController extends Controller
     	if($request->status == 'SETTLED'){
            $order->status = 9;
         }
-    	else if($data['status'] == 'PAID')
+    	else if($request->status == 'PAID')
         $order->status = 9;
-    	else if($data['status'] == 'PENDING')
+    	else if($request->status == 'PENDING')
     	$order->status = 7;
 
         
