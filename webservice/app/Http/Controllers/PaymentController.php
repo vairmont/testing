@@ -83,10 +83,11 @@ class PaymentController extends Controller
 		// }
     
 
-               $userkey = "ky7049";
+        if($request->description == 'sembako'){
+            $userkey = "ky7049";
               $passkey = "go2018";
               $telepon = '08121957740';
-              $message = $request->description;
+              $message = 1;
               $url = "https://alpha.zenziva.net/apps/smsapi.php";
               $curlHandle = curl_init();
               curl_setopt($curlHandle, CURLOPT_URL, $url);
@@ -99,12 +100,43 @@ class PaymentController extends Controller
               curl_setopt($curlHandle, CURLOPT_POST, 1);
               $results = curl_exec($curlHandle);
               curl_close($curlHandle);
-        if($request->description == 'sembako'){
         $order = Order::where('invoice_no','=',$request->external_id)->first();
             if($request->status == 'SETTLED'){
+                $userkey = "ky7049";
+              $passkey = "go2018";
+              $telepon = '08121957740';
+              $message = 2;
+              $url = "https://alpha.zenziva.net/apps/smsapi.php";
+              $curlHandle = curl_init();
+              curl_setopt($curlHandle, CURLOPT_URL, $url);
+              curl_setopt($curlHandle, CURLOPT_POSTFIELDS, 'userkey='.$userkey.'&passkey='.$passkey.'&nohp='.$telepon.'&pesan='.urlencode($message));
+              curl_setopt($curlHandle, CURLOPT_HEADER, 0);
+              curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, 1);
+              curl_setopt($curlHandle, CURLOPT_SSL_VERIFYHOST, 2);
+              curl_setopt($curlHandle, CURLOPT_SSL_VERIFYPEER, 0);
+              curl_setopt($curlHandle, CURLOPT_TIMEOUT,30);
+              curl_setopt($curlHandle, CURLOPT_POST, 1);
+              $results = curl_exec($curlHandle);
+              curl_close($curlHandle);
                $order->status = 10;
             }
             else if($request->status == 'PAID'){
+                 $userkey = "ky7049";
+              $passkey = "go2018";
+              $telepon = '08121957740';
+              $message = 3;
+              $url = "https://alpha.zenziva.net/apps/smsapi.php";
+              $curlHandle = curl_init();
+              curl_setopt($curlHandle, CURLOPT_URL, $url);
+              curl_setopt($curlHandle, CURLOPT_POSTFIELDS, 'userkey='.$userkey.'&passkey='.$passkey.'&nohp='.$telepon.'&pesan='.urlencode($message));
+              curl_setopt($curlHandle, CURLOPT_HEADER, 0);
+              curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, 1);
+              curl_setopt($curlHandle, CURLOPT_SSL_VERIFYHOST, 2);
+              curl_setopt($curlHandle, CURLOPT_SSL_VERIFYPEER, 0);
+              curl_setopt($curlHandle, CURLOPT_TIMEOUT,30);
+              curl_setopt($curlHandle, CURLOPT_POST, 1);
+              $results = curl_exec($curlHandle);
+              curl_close($curlHandle);
              //JNE GET AWB
                 $userkey = "TESTAPI";
                 $passkey = "25c898a9faea1a100859ecd9ef674548";
@@ -117,8 +149,6 @@ class PaymentController extends Controller
                           ->where('address.id', '=', $order->address_id)
                           ->first();
 
-                $cart = Cart::where('user_id', '=', $request->get('user')->id)->first();
-                $cartDetail = CartDetail::where('cart_id', '=', $cart->id)->first();
                 $orderDetail = OrderDetail::where('order_id', '=', $order->id)->first();
                 $name = Customer::where('identifier', '=', $order->user_id)->first();
                 $product = Product::where('product.id', '=', $cartDetail->product_id)->first();
@@ -225,6 +255,22 @@ class PaymentController extends Controller
             $order->status = 9;
             }
             else if($request->status == 'PENDING')
+                 $userkey = "ky7049";
+              $passkey = "go2018";
+              $telepon = '08121957740';
+              $message = 4;
+              $url = "https://alpha.zenziva.net/apps/smsapi.php";
+              $curlHandle = curl_init();
+              curl_setopt($curlHandle, CURLOPT_URL, $url);
+              curl_setopt($curlHandle, CURLOPT_POSTFIELDS, 'userkey='.$userkey.'&passkey='.$passkey.'&nohp='.$telepon.'&pesan='.urlencode($message));
+              curl_setopt($curlHandle, CURLOPT_HEADER, 0);
+              curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, 1);
+              curl_setopt($curlHandle, CURLOPT_SSL_VERIFYHOST, 2);
+              curl_setopt($curlHandle, CURLOPT_SSL_VERIFYPEER, 0);
+              curl_setopt($curlHandle, CURLOPT_TIMEOUT,30);
+              curl_setopt($curlHandle, CURLOPT_POST, 1);
+              $results = curl_exec($curlHandle);
+              curl_close($curlHandle);
             $order->status = 7;
 
             

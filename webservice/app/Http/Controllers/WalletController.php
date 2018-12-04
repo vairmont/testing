@@ -138,8 +138,6 @@ class WalletController extends Controller
                   ->where('address.id', '=', $order->address_id)
                   ->first();
 
-        $cart = Cart::where('user_id', '=', $request->get('user')->id)->first();
-        $cartDetail = CartDetail::where('cart_id', '=', $cart->id)->first();
         $orderDetail = OrderDetail::where('order_id', '=', $order->id)->first();
         $name = Customer::where('identifier', '=', $order->user_id)->first();
         $product = Product::where('product.id', '=', $cartDetail->product_id)->first();
