@@ -69,7 +69,6 @@ class PaymentController extends Controller
 		//     "updated": "2016-10-10T08:15:03.404Z",
 		//     "created": "2016-10-10T08:15:03.404Z"
 		// }
-         return response()->json(['data' => , 'message' => ['OK']]);
 		$data = file_get_contents("php://input");
 
     	$order = Order::where('invoice_no','=',$data['external_id'])->first();
@@ -211,7 +210,7 @@ class PaymentController extends Controller
   
 
 
-    return response()->json(['data' => , 'message' => ['OK']]);
+    return response()->json(['data' => [], 'message' => ['OK']]);
     }
 
     
