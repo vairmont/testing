@@ -10,9 +10,9 @@
 <body>
 <div class="container">
 <h2 style="text-align:center;">INVOICE</h2>
-    <h3>PT. MITRA GROSIR NUSANTARA</h3>
+    <h2>PT. MITRA GROSIR NUSANTARA</h2>
     <div class="col-lg-6">
-        <p> Jl.Boulevard Gading Serpong Pakulonan Barat,Kelapa dua,
+        <p class="small"> Jl.Boulevard Gading Serpong Pakulonan Barat,Kelapa dua,
             <br>Tangerang 15810 Banten, Ruko Rodeo Paramount, Block C No 22
         </p>
     </div>
@@ -22,18 +22,6 @@
 
        Nama   : {{ $flow->cusname }} <br>
        Order  : {{$flow->invoice}}<br>
-       Store  : @if($flow->stoname == NULL)
-                    Serang
-                @else
-                    {{$flow->stoname}}
-                @endif
-                <br>
-       Source : @if($flow->source == NULL)
-                    Kasir
-                @else
-                    {{$flow->source}}
-                @endif
-                <br>
        Date   : @if($flow->create < $akhir)
                     2018-10-31 11:44:49
                 @else
