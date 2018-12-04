@@ -232,7 +232,6 @@ class EmployeeController extends Controller
         
         $id = [];
         foreach($request->checkbox as $val) {
-            var_dump($val);die;
             $wanee = WaneeHistory::find($val);
            
             $wanee->update([
