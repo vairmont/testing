@@ -81,62 +81,94 @@ class PaymentController extends Controller
 		//     "updated": "2016-10-10T08:15:03.404Z",
 		//     "created": "2016-10-10T08:15:03.404Z"
 		// }
-    
-
-        if($request->description == 'sembako'){
-            $userkey = "ky7049";
-              $passkey = "go2018";
-              $telepon = '08121957740';
-              $message = 1;
-              $url = "https://alpha.zenziva.net/apps/smsapi.php";
-              $curlHandle = curl_init();
-              curl_setopt($curlHandle, CURLOPT_URL, $url);
-              curl_setopt($curlHandle, CURLOPT_POSTFIELDS, 'userkey='.$userkey.'&passkey='.$passkey.'&nohp='.$telepon.'&pesan='.urlencode($message));
-              curl_setopt($curlHandle, CURLOPT_HEADER, 0);
-              curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, 1);
-              curl_setopt($curlHandle, CURLOPT_SSL_VERIFYHOST, 2);
-              curl_setopt($curlHandle, CURLOPT_SSL_VERIFYPEER, 0);
-              curl_setopt($curlHandle, CURLOPT_TIMEOUT,30);
-              curl_setopt($curlHandle, CURLOPT_POST, 1);
-              $results = curl_exec($curlHandle);
-              curl_close($curlHandle);
-        $order = Order::where('invoice_no','=',$request->external_id)->first();
+    if($request->description == 'digital'){
+        $order = OrderDigital::where('invoice_no','=',$request->external_id)->first();
             if($request->status == 'SETTLED'){
-                $userkey = "ky7049";
-              $passkey = "go2018";
-              $telepon = '08121957740';
-              $message = 2;
-              $url = "https://alpha.zenziva.net/apps/smsapi.php";
-              $curlHandle = curl_init();
-              curl_setopt($curlHandle, CURLOPT_URL, $url);
-              curl_setopt($curlHandle, CURLOPT_POSTFIELDS, 'userkey='.$userkey.'&passkey='.$passkey.'&nohp='.$telepon.'&pesan='.urlencode($message));
-              curl_setopt($curlHandle, CURLOPT_HEADER, 0);
-              curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, 1);
-              curl_setopt($curlHandle, CURLOPT_SSL_VERIFYHOST, 2);
-              curl_setopt($curlHandle, CURLOPT_SSL_VERIFYPEER, 0);
-              curl_setopt($curlHandle, CURLOPT_TIMEOUT,30);
-              curl_setopt($curlHandle, CURLOPT_POST, 1);
-              $results = curl_exec($curlHandle);
-              curl_close($curlHandle);
-               $order->status = 10;
+                $order->status_payment = 'settled';
+                $order->payment_method = $request->payment_method;
+                $order->save();
             }
             else if($request->status == 'PAID'){
-                 $userkey = "ky7049";
-              $passkey = "go2018";
-              $telepon = '08121957740';
-              $message = 3;
-              $url = "https://alpha.zenziva.net/apps/smsapi.php";
-              $curlHandle = curl_init();
-              curl_setopt($curlHandle, CURLOPT_URL, $url);
-              curl_setopt($curlHandle, CURLOPT_POSTFIELDS, 'userkey='.$userkey.'&passkey='.$passkey.'&nohp='.$telepon.'&pesan='.urlencode($message));
-              curl_setopt($curlHandle, CURLOPT_HEADER, 0);
-              curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, 1);
-              curl_setopt($curlHandle, CURLOPT_SSL_VERIFYHOST, 2);
-              curl_setopt($curlHandle, CURLOPT_SSL_VERIFYPEER, 0);
-              curl_setopt($curlHandle, CURLOPT_TIMEOUT,30);
-              curl_setopt($curlHandle, CURLOPT_POST, 1);
-              $results = curl_exec($curlHandle);
-              curl_close($curlHandle);
+            $user = User::where('id', '=', $request->get('user')->id)->first();
+                 //untuk Customer
+             if($user->role_id != 5)
+              {
+                
+                $order = OrderDigital::where('invoice_no', '=', $request->invoice_no)->first();
+                $customer = Customer::where('identifier','=',$request->get('user')->id)->first();
+                $agen = Agen::where('agen.id', '=', $customer->agen_id)
+                ->first();
+
+                $incentive = $order->total * 0.01;
+                
+                $commission_pph = $incentive * 0.02;
+                $commission_netto = $incentive - $commission_pph;
+                
+                $commission = new Commission;
+                $commission->order_id = $order->id + 100000;
+                $commission->agen_id = $customer->agen_id;
+                $commission->incentive = $incentive;
+                $commission->commission_pph = $commission_pph;
+                $commission->commission_netto = $commission_netto;
+                $commission->margin_penjualan = 0;
+                $commission->save();
+
+                $history = new WaneeHistory;
+                $history->user_id = $agen->identifier;
+                $history->amount =  $commission_netto;
+                $history->saldo_akhir = $agen->wanee + $commission_netto;
+                $history->reason = 'Pembelian Pulsa';
+                $history->save();
+              }
+
+                #curl
+                $ch = curl_init(); 
+
+                $idrs = 'DR1108';
+                $user = '8CC9B6';
+                $pin = 'BFGH4I';
+                $pass = 'E0A5F6';
+                $kode = $order->product_code;
+                $tujuan = $order->phone;
+                $idtrx = $order->invoice_no;
+                // set url 
+                curl_setopt($ch, CURLOPT_URL, "http://202.146.39.54:8030/api/h2h?id=".$idrs."&pin=".$pin."&user=".$user."&pass=".$pass."&kodeproduk=".$kode."&tujuan=".$tujuan."&counter=1&idtrx=".$idtrx); 
+
+                //return the transfer as a string 
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+
+                // $output contains the output string 
+                $output = curl_exec($ch); 
+
+                // close curl resource to free up system resources 
+                curl_close($ch);
+
+                $res = json_decode($output,true);
+                // send push notif ke agen
+                $this->_sendPushNotification($order->agen_id, "Pulsa", "Customer Membeli Pulsa.");
+                $order->status_payment = 'paid';
+                $order->payment_method = $request->payment_method;
+                $order->save();
+            }
+            
+            else if($request->status == 'PENDING'){
+                $order->status_payment = 'pending';
+                $order->payment_method = $request->payment_method;
+                $order->save();
+            }
+            
+    }
+
+    else if($request->description == 'sembako'){
+           
+        $order = Order::where('invoice_no','=',$request->external_id)->first();
+            if($request->status == 'SETTLED'){
+                $order->status = 10;
+                $order->payment_status = $request->status;
+                $order->payment = $request->payment_method;
+                $order->save();
+            }
+            else if($request->status == 'PAID'){
             //JNE GET AWB
                 $userkey = "TESTAPI";
                 $passkey = "25c898a9faea1a100859ecd9ef674548";
@@ -202,11 +234,7 @@ class PaymentController extends Controller
                 curl_close($curlHandle);
 
                $resi = json_decode($results, true);
-              
-                //update payment status
-                $order->shipment = 'JNE'; 
-               $order->airway_bill = $resi['detail'][0]['cnote_no'];
-               $order->save();  
+                            
              
                 //KOMISI
                  $incentiveDetails = OrderDetail::join('product', 'product.id', '=', 'order_detail.product_id')
@@ -250,48 +278,25 @@ class PaymentController extends Controller
                   $komisi = Agen::where('agen.identifier', '=', $request->get('user')->id)
                                 ->update([
                             'wanee' => $history->saldo_akhir
-                        ]);
-            $order->status = 9;
-            }
-            else if($request->status == 'PENDING')
-                 $userkey = "ky7049";
-              $passkey = "go2018";
-              $telepon = '08121957740';
-              $message = 4;
-              $url = "https://alpha.zenziva.net/apps/smsapi.php";
-              $curlHandle = curl_init();
-              curl_setopt($curlHandle, CURLOPT_URL, $url);
-              curl_setopt($curlHandle, CURLOPT_POSTFIELDS, 'userkey='.$userkey.'&passkey='.$passkey.'&nohp='.$telepon.'&pesan='.urlencode($message));
-              curl_setopt($curlHandle, CURLOPT_HEADER, 0);
-              curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, 1);
-              curl_setopt($curlHandle, CURLOPT_SSL_VERIFYHOST, 2);
-              curl_setopt($curlHandle, CURLOPT_SSL_VERIFYPEER, 0);
-              curl_setopt($curlHandle, CURLOPT_TIMEOUT,30);
-              curl_setopt($curlHandle, CURLOPT_POST, 1);
-              $results = curl_exec($curlHandle);
-              curl_close($curlHandle);
-            $order->status = 7;
+                        ]);    
 
-            
+            $order->shipment = 'JNE'; 
+            $order->airway_bill = $resi['detail'][0]['cnote_no'];    
+            $order->status = 9;
             $order->payment_status = $request->status;
             $order->payment = $request->payment_method;
             $order->save();
+                
+            
+            }
+            else if($request->status == 'PENDING'){
+               
+            $order->status = 7;
+            $order->payment_status = $request->status;
+            $order->payment = $request->payment_method;
+            $order->save();
+            }
         }
-
-    	if($request->status == 'SETTLED'){
-           $order->status = 9;
-        }
-    	else if($request->status == 'PAID')
-        $order->status = 9;
-    	else if($request->status == 'PENDING')
-    	$order->status = 7;
-
-        
-    	$order->payment_status = $request->status;
-    	$order->payment = $request->payment_method;
-        $order->save();
-  
-
 
     return response()->json(['data' => [], 'message' => ['OK']]);
     }
