@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Order;
+use App\OrderDetail;
 use App\Prefix;
 use App\Operator;
 use App\User;
+use App\Address;
 use App\Customer;
 use App\Reversal;
 use App\Commission;
@@ -81,24 +83,24 @@ class PaymentController extends Controller
 		//     "updated": "2016-10-10T08:15:03.404Z",
 		//     "created": "2016-10-10T08:15:03.404Z"
 		// }
+
     if($request->description == 'digital'){
         $order = OrderDigital::where('invoice_no','=',$request->external_id)->first();
+         $user = User::where('id', '=', $order->user_id)->first();
+
             if($request->status == 'SETTLED'){
                 $order->status_payment = 'settled';
                 $order->payment_method = $request->payment_method;
                 $order->save();
             }
             else if($request->status == 'PAID'){
-            $user = User::where('id', '=', $request->get('user')->id)->first();
                  //untuk Customer
              if($user->role_id != 5)
               {
-                
-                $order = OrderDigital::where('invoice_no', '=', $request->invoice_no)->first();
-                $customer = Customer::where('identifier','=',$request->get('user')->id)->first();
+                $customer = Customer::where('identifier','=',$user->id)->first();
                 $agen = Agen::where('agen.id', '=', $customer->agen_id)
                 ->first();
-
+                
                 $incentive = $order->total * 0.01;
                 
                 $commission_pph = $incentive * 0.02;
@@ -162,13 +164,16 @@ class PaymentController extends Controller
     else if($request->description == 'sembako'){
            
         $order = Order::where('invoice_no','=',$request->external_id)->first();
+        $user = User::where('id', '=', $order->user_id)->first();
             if($request->status == 'SETTLED'){
                 $order->status = 10;
                 $order->payment_status = $request->status;
                 $order->payment = $request->payment_method;
                 $order->save();
+                return 2;
             }
             else if($request->status == 'PAID'){
+
             //JNE GET AWB
                 $userkey = "TESTAPI";
                 $passkey = "25c898a9faea1a100859ecd9ef674548";
@@ -201,7 +206,7 @@ class PaymentController extends Controller
                   'OLSHOP_RECEIVER_ADDR2' => '-',
                   'OLSHOP_RECEIVER_CITY' => $add->city,
                   'OLSHOP_RECEIVER_ZIP' => $add->zip,
-                  'OLSHOP_RECEIVER_PHONE' => $request->get('user')->phone,
+                  'OLSHOP_RECEIVER_PHONE' => $user->phone,
                   'OLSHOP_QTY' => $orderDetail->qty,
                   'OLSHOP_WEIGHT' => 8,
                   'OLSHOP_GOODSDESC' => 'Paket Sembako Rp. 100.000',
@@ -269,13 +274,13 @@ class PaymentController extends Controller
                                 ->first();
 
                   $history = new WaneeHistory;
-                  $history->user_id = $request->get('user')->id;
+                  $history->user_id = $user->id;
                   $history->amount = $commission_netto;
                   $history->saldo_akhir = $agen->wanee + $commission_netto;
                   $history->reason = 'Komisi Agen';
                   $history->save();
 
-                  $komisi = Agen::where('agen.identifier', '=', $request->get('user')->id)
+                  $komisi = Agen::where('agen.identifier', '=', $order->agen_id)
                                 ->update([
                             'wanee' => $history->saldo_akhir
                         ]);    
@@ -287,7 +292,6 @@ class PaymentController extends Controller
             $order->payment = $request->payment_method;
             $order->save();
                 
-            
             }
             else if($request->status == 'PENDING'){
                
@@ -304,5 +308,97 @@ class PaymentController extends Controller
     
    public function paymentSuccess(Request $request){
            return view('payment.paymentsuccess')->withTitle('Payment');   
+    }
+
+    protected function _sendPushNotification($user_id, $title, $body) {
+        // API access key from Google API's Console
+        define('API_ACCESS_KEY', 'AAAA6cPylp8:APA91bFB5i1sBcapzkGUd23jb8V7ojwjnoonnBlX317_IeVt-jxk5_WjSNHlhVrVn882ZcTWH4Nn5KOfr6onBetNT4PoVVn7olWyA7uSCXiy1DY7KVPEdYPgtNEkMfl8nhgvcYefNcxm');
+
+        $registrationIds = array();
+
+        $recipients = FCM::where('user_id',$user_id)->select('fcm_token')->get();
+
+        foreach ($recipients as $recipient) {
+            array_push($registrationIds, $recipient->fcm_token);
+        }
+
+        $msg = array
+        (
+            'title' => $title,
+            'body' => $body,
+            'vibrate' => "1",
+            'sound' => 'default',
+            'badge' => "1"
+        );
+
+        $fields = array
+        (
+            'registration_ids'  => $registrationIds,
+            'notification'  => $msg,
+            'priority' => 'high'
+        );
+         
+        $headers = array
+        (
+            'Authorization: key=' . API_ACCESS_KEY,
+            'Content-Type: application/json'
+        );
+         
+        $ch = curl_init();
+        curl_setopt($ch,CURLOPT_URL, 'https://fcm.googleapis.com/fcm/send');
+        curl_setopt($ch,CURLOPT_POST, true);
+        curl_setopt($ch,CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch,CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch,CURLOPT_POSTFIELDS, json_encode($fields));
+        $result = curl_exec($ch);
+        curl_close($ch);
+    }
+    public function digitalTes(Request $request){
+        
+
+        #curl
+        $ch = curl_init(); 
+
+        $idrs = 'DR1108';
+        $user = '8CC9B6';
+        $pin = 'BFGH4I';
+        $pass = 'E0A5F6';
+        $kode = $order->product_code;
+        $tujuan = $order->phone;
+        $idtrx = $order->invoice_no;
+        // set url 
+        curl_setopt($ch, CURLOPT_URL, "http://202.146.39.54:8030/api/h2h?id=".$idrs."&pin=".$pin."&user=".$user."&pass=".$pass."&kodeproduk=".$kode."&tujuan=".$tujuan."&counter=1&idtrx=".$idtrx); 
+
+        //return the transfer as a string 
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+
+        // $output contains the output string 
+        $output = curl_exec($ch); 
+
+        // close curl resource to free up system resources 
+        curl_close($ch);
+
+        $res = json_decode($output,true);
+        
+        // send sms to requested number
+        $userkey = "ky7049";
+        $passkey = "go2018";
+        $telepon = $request->phone;
+        $message = 'abc';
+        $url = "https://alpha.zenziva.net/apps/smsapi.php";
+        $curlHandle = curl_init();
+        curl_setopt($curlHandle, CURLOPT_URL, $url);
+        curl_setopt($curlHandle, CURLOPT_POSTFIELDS, 'userkey='.$userkey.'&passkey='.$passkey.'&nohp='.$telepon.'&pesan='.urlencode($message));
+        curl_setopt($curlHandle, CURLOPT_HEADER, 0);
+        curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curlHandle, CURLOPT_SSL_VERIFYHOST, 2);
+        curl_setopt($curlHandle, CURLOPT_SSL_VERIFYPEER, 0);
+        curl_setopt($curlHandle, CURLOPT_TIMEOUT,30);
+        curl_setopt($curlHandle, CURLOPT_POST, 1);
+        $results = curl_exec($curlHandle);
+        curl_close($curlHandle);
+
+        return response()->json(['data' => [$res, $result], 'message' => ['OK']]);
     }
 }
