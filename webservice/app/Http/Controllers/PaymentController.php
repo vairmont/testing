@@ -80,11 +80,10 @@ class PaymentController extends Controller
         $user = '8CC9B6';
         $pin = 'BFGH4I';
         $pass = 'E0A5F6';
-        $kode = $order->product_code;
         $tujuan = '08121957740';
         $idtrx = $order->invoice_no;
         // set url 
-        curl_setopt($ch, CURLOPT_URL, "http://202.146.39.54:8030/api/h2h?id=".$idrs."&pin=".$pin."&user=".$user."&pass=".$pass."&kodeproduk=".$kode."&tujuan=".$tujuan."&counter=1&idtrx=".$idtrx); 
+        curl_setopt($ch, CURLOPT_URL, "http://202.146.39.54:8030/api/h2h?id=".$idrs."&pin=".$pin."&user=".$user."&pass=".$pass."&tujuan=".$tujuan."&counter=1&idtrx=".$idtrx); 
 
         //return the transfer as a string 
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
