@@ -172,7 +172,7 @@ class PaymentController extends Controller
                   'OLSHOP_RECEIVER_PHONE' => $request->get('user')->phone,
                   'OLSHOP_QTY' => $orderDetail->qty,
                   'OLSHOP_WEIGHT' => 8,
-                  'OLSHOP_GOODSDESC' => $product->product_name,
+                  'OLSHOP_GOODSDESC' => 'sembako',
                   'OLSHOP_GOODSVALUE' => '100000',
                   'OLSHOP_GOODSTYPE' => 2,
                   'OLSHOP_INS_FLAG' => 'N',
