@@ -17,7 +17,6 @@ use App\Agen;
 use App\WaneeHistory;
 use DB;
 use App\FCM;
-use Illuminate\Http\Request;
 
 
 class PaymentController extends Controller
