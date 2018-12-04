@@ -248,9 +248,6 @@ class WalletController extends Controller
                     'wanee' => $history->saldo_akhir
                 ]);
 
-        #send push notif ke ag->e2
-        $this->_sendPushNotification($order->agen_id, "Order Baru", "Ada order baru.");
-
         return response()->json(['data' => [$datay], 'nominal' => [$res['nominal']], 'invoice' => [$order->invoice_no], 'message' => ['OK']]);
         }
 
