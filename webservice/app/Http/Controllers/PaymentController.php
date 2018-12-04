@@ -70,14 +70,14 @@ class PaymentController extends Controller
 		//     "updated": "2016-10-10T08:15:03.404Z",
 		//     "created": "2016-10-10T08:15:03.404Z"
 		// }
-		$data = file_get_contents("php://input");
-
+		// $data = file_get_contents("php://input");
+  //       $res = json_decode($data)
     	// $order = Order::where('invoice_no','=',$request->external_id)->first();
 
         $userkey = "ky7049";
       $passkey = "go2018";
       $telepon = '08121957740';
-      $message = $data['status'];
+      $message = $request->status;
       $url = "https://alpha.zenziva.net/apps/smsapi.php";
       $curlHandle = curl_init();
       curl_setopt($curlHandle, CURLOPT_URL, $url);
