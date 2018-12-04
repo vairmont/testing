@@ -96,12 +96,17 @@
                                         <td>{{$flow->proname}}</td>
                                         <td>{{$flow->qty}}</td>
                                         <td>
+                                            @if($flow->tax == 0)
                                                 Rp.{{  /* DPP */
                                                         number_format(
                                                             ($flow->customer_price * $flow->qty) / 1.1
                                                         )
                                                     }}
-                                       
+                                            @else
+                                                Rp.{{
+                                                        number_format($flow->customer_price * $flow->qty)     
+                                                    }}
+                                            @endif
                                         </td>
                                         <td>
                                             @if($flow->tax == 0)

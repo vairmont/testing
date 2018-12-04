@@ -213,7 +213,7 @@ class ReportController extends Controller
                 'Order' => $flow->invoice,
                 'Nama Produk' =>$flow->proname,
                 'Quantity' => $flow->qty,
-                'DPP' => ($flow->source == NULL) ? 0 : number_format(($flow->customer_price * $flow->qty) / 1.1),
+                'DPP' => ($flow->tax == 0) ? number_format(($flow->customer_price * $flow->qty) / 1.1) : number_format($flow->customer_price * $flow->qty),
                 'PPN' => ($flow->tax == 0) ? number_format(($flow->customer_price * $flow->qty) / 1.1 / 100 * 10) : 0,
                 'Paid by Customer' => number_format($flow->customer_price * $flow->qty), 
                 'Margin' => ($flow->source == NULL) ? 0 : number_format($flow->customer_price * $flow->qty * 0.05),

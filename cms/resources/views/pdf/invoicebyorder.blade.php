@@ -59,8 +59,7 @@
                     @if($flow->tax == 0)
                         Rp.{{  /*DPP*/
                                 number_format(
-                                    ($flow->customer_price * $flow->qty)-
-                                    ($flow->customer_price * $flow->qty * 0.1)
+                                    ($flow->customer_price * $flow->qty) / 1.1
                                 )
                             }}
                     @else
@@ -73,7 +72,7 @@
                     @if($flow->tax == 0)
                         Rp.{{  /*PPN*/
                                 number_format(
-                                    ($flow->customer_price * $flow->qty * 0.1)
+                                    (($flow->customer_price * $flow->qty) / 1.1) / 100 * 10 
                                 )
                             }}
                     @else
