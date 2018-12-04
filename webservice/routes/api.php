@@ -35,7 +35,7 @@ Route::post('/v1/stores', 'CustomerController@getStore');
 Route::post('/v1/agen', 'CustomerController@getAgen');
 
 Route::post('/v1/xendit/createinvoice', 'PaymentController@createInvoice');
-Route::get('/v1/xendit/callback', 'PaymentController@invoiceCallback');
+Route::post('/v1/xendit/callback', 'PaymentController@invoiceCallback');
 
 Route::post('/v1/register/family', 'FamilyController@addFamily');
 Route::post('/v1/register/family/ktp/upload', 'FamilyController@uploadKTP');
