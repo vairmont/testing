@@ -151,7 +151,6 @@ class PaymentController extends Controller
 
                 $orderDetail = OrderDetail::where('order_id', '=', $order->id)->first();
                 $name = Customer::where('identifier', '=', $order->user_id)->first();
-                $product = Product::where('product.id', '=', $cartDetail->product_id)->first();
                 
                 $fields = [
                   'username' => $userkey,
