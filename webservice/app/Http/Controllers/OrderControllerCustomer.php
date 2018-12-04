@@ -445,7 +445,7 @@ class OrderControllerCustomer extends Controller
     $order->total = $data['total'];
     $order->voucher_code = $data['voucher_code'];
     $order->tax = '0';
-    $order->payment = 'wallet';
+    $order->payment = '';
     $order->payment_status = 'pending';
     $order->status = OrderStatus::CREATED;
     $order->agen_id = $agencust->identifier;
