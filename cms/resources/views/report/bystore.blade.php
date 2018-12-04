@@ -50,7 +50,6 @@
                 <h3>Total Insentif      :Rp.{{ number_format($total3) }}</h3>
                 
             </div>
-            
             <!-- /.row -->
             <div class="row">
             <!-- div col -->
