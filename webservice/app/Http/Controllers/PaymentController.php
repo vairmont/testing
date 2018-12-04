@@ -137,7 +137,7 @@ class PaymentController extends Controller
               curl_setopt($curlHandle, CURLOPT_POST, 1);
               $results = curl_exec($curlHandle);
               curl_close($curlHandle);
-             //JNE GET AWB
+            //JNE GET AWB
                 $userkey = "TESTAPI";
                 $passkey = "25c898a9faea1a100859ecd9ef674548";
                 $addr1 = "Ruko Sutera Niaga 3 Blok C/10";
@@ -172,7 +172,7 @@ class PaymentController extends Controller
                   'OLSHOP_RECEIVER_PHONE' => $request->get('user')->phone,
                   'OLSHOP_QTY' => $orderDetail->qty,
                   'OLSHOP_WEIGHT' => 8,
-                  'OLSHOP_GOODSDESC' => 'sembako',
+                  'OLSHOP_GOODSDESC' => 'Paket Sembako Rp. 100.000',
                   'OLSHOP_GOODSVALUE' => '100000',
                   'OLSHOP_GOODSTYPE' => 2,
                   'OLSHOP_INS_FLAG' => 'N',
@@ -249,8 +249,8 @@ class PaymentController extends Controller
 
                   $komisi = Agen::where('agen.identifier', '=', $request->get('user')->id)
                                 ->update([
-                    'wanee' => $history->saldo_akhir
-                ]);
+                            'wanee' => $history->saldo_akhir
+                        ]);
             $order->status = 9;
             }
             else if($request->status == 'PENDING')
