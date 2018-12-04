@@ -70,39 +70,21 @@ class PaymentController extends Controller
 		//     "updated": "2016-10-10T08:15:03.404Z",
 		//     "created": "2016-10-10T08:15:03.404Z"
 		// }
-		// $data = file_get_contents("php://input");
-  //       $res = json_decode($data)
-    	// $order = Order::where('invoice_no','=',$request->external_id)->first();
+    	$order = Order::where('invoice_no','=',$request->external_id)->first();
 
-        $userkey = "ky7049";
-      $passkey = "go2018";
-      $telepon = '08121957740';
-      $message = $request->status;
-      $url = "https://alpha.zenziva.net/apps/smsapi.php";
-      $curlHandle = curl_init();
-      curl_setopt($curlHandle, CURLOPT_URL, $url);
-      curl_setopt($curlHandle, CURLOPT_POSTFIELDS, 'userkey='.$userkey.'&passkey='.$passkey.'&nohp='.$telepon.'&pesan='.urlencode($message));
-      curl_setopt($curlHandle, CURLOPT_HEADER, 0);
-      curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, 1);
-      curl_setopt($curlHandle, CURLOPT_SSL_VERIFYHOST, 2);
-      curl_setopt($curlHandle, CURLOPT_SSL_VERIFYPEER, 0);
-      curl_setopt($curlHandle, CURLOPT_TIMEOUT,30);
-      curl_setopt($curlHandle, CURLOPT_POST, 1);
-      $results = curl_exec($curlHandle);
-      curl_close($curlHandle);
 
-    	// if($request->status == 'SETTLED'){
-     //       $order->status = 9;
-     //    }
-    	// else if($data['status'] == 'PAID')
-     //    $order->status = 9;
-    	// else if($data['status'] == 'PENDING')
-    	// $order->status = 7;
+    	if($request->status == 'SETTLED'){
+           $order->status = 9;
+        }
+    	else if($data['status'] == 'PAID')
+        $order->status = 9;
+    	else if($data['status'] == 'PENDING')
+    	$order->status = 7;
 
         
-    	// $order->payment_status = $request->status;
-    	// $order->payment = $request->payment_method;
-     //    $order->save();
+    	$order->payment_status = $request->status;
+    	$order->payment = $request->payment_method;
+        $order->save();
   
 
 
