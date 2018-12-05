@@ -138,13 +138,8 @@ class WalletController extends Controller
                   ->where('address.id', '=', $order->address_id)
                   ->first();
 
-        $cart = Cart::where('user_id', '=', $request->get('user')->id)->first();
-        $cartDetail = CartDetail::where('cart_id', '=', $cart->id)->first();
         $orderDetail = OrderDetail::where('order_id', '=', $order->id)->first();
-        // $topup = customer::where('customer.identifier','=',$request->get('user')->id)
-        //           ->decrement('plafon_kredit', round($order->total));
         $name = Customer::where('identifier', '=', $order->user_id)->first();
-        $product = Product::where('product.id', '=', $cartDetail->product_id)->first();
         
         $fields = [
           'username' => $userkey,
@@ -166,7 +161,7 @@ class WalletController extends Controller
           'OLSHOP_RECEIVER_PHONE' => $request->get('user')->phone,
           'OLSHOP_QTY' => $orderDetail->qty,
           'OLSHOP_WEIGHT' => 8,
-          'OLSHOP_GOODSDESC' => $product->product_name,
+          'OLSHOP_GOODSDESC' => 'Paket Sembako Rp. 100.000',
           'OLSHOP_GOODSVALUE' => '100000',
           'OLSHOP_GOODSTYPE' => 2,
           'OLSHOP_INS_FLAG' => 'N',
