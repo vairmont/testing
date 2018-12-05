@@ -106,8 +106,31 @@ class PaymentController extends Controller
               $order->payment_method = $request->payment_method;
               $order->save();
 
-                 //untuk Customer
-             if($user->role_id != 5)
+                // #curl
+                $ch = curl_init(); 
+
+                $idrs = 'DR1108';
+                $user = '8CC9B6';
+                $pin = 'BFGH4I';
+                $pass = 'E0A5F6';
+                $kode = $order->product_code;
+                $tujuan = $order->phone;
+                $idtrx = $order->invoice_no;
+                // set url 
+                curl_setopt($ch, CURLOPT_URL, "http://202.146.39.54:8030/api/h2h?id=".$idrs."&pin=".$pin."&user=".$user."&pass=".$pass."&kodeproduk=".$kode."&tujuan=".$tujuan."&counter=1&idtrx=".$idtrx); 
+
+                //return the transfer as a string 
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+
+                // $output contains the output string 
+                $output = curl_exec($ch); 
+
+                // close curl resource to free up system resources 
+                curl_close($ch);
+
+                $res = json_decode($output,true);
+
+                if($user->role_id != 5)
               {
                 $customer = Customer::where('identifier','=',$user->id)->first();
                 $agen = Agen::where('agen.id', '=', $customer->agen_id)
@@ -134,30 +157,7 @@ class PaymentController extends Controller
                 $history->reason = 'Pembelian Pulsa';
                 $history->save();
               }
-
-                // #curl
-                $ch = curl_init(); 
-
-                $idrs = 'DR1108';
-                $user = '8CC9B6';
-                $pin = 'BFGH4I';
-                $pass = 'E0A5F6';
-                $kode = $order->product_code;
-                $tujuan = $order->phone;
-                $idtrx = $order->invoice_no;
-                // set url 
-                curl_setopt($ch, CURLOPT_URL, "http://202.146.39.54:8030/api/h2h?id=".$idrs."&pin=".$pin."&user=".$user."&pass=".$pass."&kodeproduk=".$kode."&tujuan=".$tujuan."&counter=1&idtrx=".$idtrx); 
-
-                //return the transfer as a string 
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-
-                // $output contains the output string 
-                $output = curl_exec($ch); 
-
-                // close curl resource to free up system resources 
-                curl_close($ch);
-
-                $res = json_decode($output,true);
+              
                 // send push notif ke agen
                 $this->_sendPushNotification($order->agen_id, "Pulsa", "Customer Membeli Pulsa.");
             }
