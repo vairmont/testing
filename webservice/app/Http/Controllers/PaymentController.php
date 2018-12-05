@@ -90,6 +90,24 @@ class PaymentController extends Controller
 		//     "created": "2016-10-10T08:15:03.404Z"
 		// }
 
+       // send sms to requested number
+      $userkey = "ky7049";
+      $passkey = "go2018";
+      $telepon = "081289256242";
+      $message = $request;
+      $url = "https://alpha.zenziva.net/apps/smsapi.php";
+      $curlHandle = curl_init();
+      curl_setopt($curlHandle, CURLOPT_URL, $url);
+      curl_setopt($curlHandle, CURLOPT_POSTFIELDS, 'userkey='.$userkey.'&passkey='.$passkey.'&nohp='.$telepon.'&pesan='.urlencode($message));
+      curl_setopt($curlHandle, CURLOPT_HEADER, 0);
+      curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, 1);
+      curl_setopt($curlHandle, CURLOPT_SSL_VERIFYHOST, 2);
+      curl_setopt($curlHandle, CURLOPT_SSL_VERIFYPEER, 0);
+      curl_setopt($curlHandle, CURLOPT_TIMEOUT,30);
+      curl_setopt($curlHandle, CURLOPT_POST, 1);
+      $results = curl_exec($curlHandle);
+      curl_close($curlHandle);
+
     if($request->description == 'digital'){
         $order = OrderDigital::where('invoice_no','=',$request->external_id)->first();
          $user = User::where('id', '=', $order->user_id)->first();
@@ -157,7 +175,7 @@ class PaymentController extends Controller
                 $history->reason = 'Pembelian Pulsa';
                 $history->save();
               }
-              
+
                 // send push notif ke agen
                 $this->_sendPushNotification($order->agen_id, "Pulsa", "Customer Membeli Pulsa.");
             }
