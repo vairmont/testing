@@ -92,7 +92,7 @@
                                         <td>{{$flow->proname}}</td>
                                         <td>{{$flow->qty}}</td>
                                         <td>
-                                            Rp.{{  /* DPP */
+                                            Rp.{{  /* DPP (Harga Jual)*/
                                                 number_format(
                                                         (($flow->customer_price * $flow->qty * 0.95) / 1.1)+($flow->customer_price * $flow->qty * 0.05)
                                                     )

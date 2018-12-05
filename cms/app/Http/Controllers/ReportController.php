@@ -473,6 +473,7 @@ class ReportController extends Controller
    // untuk Laporan penjualan bulan Nov ke atas 
    public function getByStoreNov(Request $request){
         $isExport = $request->get('is_export', 0);
+        //var_dump($isExport);die;
         $args['pages'] = $isExport;
 
         $bulanA = new Carbon('first day of november 2018');
@@ -551,13 +552,40 @@ class ReportController extends Controller
         foreach($qry as $q){
 
             $total3 += ($q->promo_price == 0) ? ($q->customer_price * $q->qty * 0.95 * $q->rate / 100) : ($q->promo_price * $q->qty * 0.95 * $q->rate / 100); 
-        }
+        } 
 
         if ($isExport) {
-            $this->_export_excel($qry);
+            $data = [];
+            foreach ($qry as $flow) {
+            $data[] = ([
+                'ID' => $flow->id,
+                'Pembeli' => ($flow->cusname == NULL) ? "Kasir" : $flow->cusname,
+                'Agen' => $flow->name,
+                'Order' => $flow->invoice,
+                'Nama Produk' =>$flow->proname,
+                'Quantity' => $flow->qty,
+                'Harga Jual' => number_format((($flow->customer_price * $flow->qty * 0.95) / 1.1)+($flow->customer_price * $flow->qty * 0.05)),
+                'Discount' => ($flow->source == NULL) ? 0 : number_format($flow->customer_price * $flow->qty * 0.05),
+                'DPP' => number_format(($flow->customer_price * $flow->qty * 0.95) / 1.1),
+                'PPN' => ($flow->tax == 0) ? number_format(((($flow->customer_price * $flow->qty * 0.95) / 1.1)) / 100 * 10 ) : 0,
+                'Paid by Customer' => ($flow->tax == 0) ? number_format($flow->customer_price * $flow->qty * 0.95) : number_format(($flow->customer_price * $flow->qty * 0.95) / 1.1), 
+                'Tanggal' => $flow->create, 
+                ]);
+            }
+            //var_dump($data);die;
+            return Excel::create('Flow_report', function($excel) use($data) {
+            $excel->sheet('Sheetname', function($sheet) use($data) {
+                $row = 1;
+
+                $sheet->fromArray($data, null, 'A' . $row, true, true);
+
+                $sheet->getStyle("A1:" . 'G' . $row)
+                    ->getAlignment()->setWrapText(false);
+            });
+        })->export('xls');
         }
         $flowreport = $flowreport->orderBy('order.id','desc')->paginate(10);
-        return view('report.bystorenov',compact('flowreport','total','request','total2','total3'))->withTitle('By Store Nov');
+        return view('report.bystorenov',compact('flowreport','total','request','total2','total3'))->withTitle('By store November');
     }
 
     //Tombol inVoice untuk tampilan laporan penjualan november
@@ -585,5 +613,5 @@ class ReportController extends Controller
         return $pdf->download('invoicenovbyorder.pdf');
         
    }
-
+        
 }
