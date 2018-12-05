@@ -422,8 +422,6 @@ class OrderControllerCustomer extends Controller
       $data = $request->json()->all();
     $customer = User::where('id', '=', $request->get('user')->id)->first();
 
-    $cart = Cart::where('user_id', '=', $request->get('user')->id)->first();
-
     $agencust = Customer::join('agen','customer.agen_id','=','agen.id')
     ->where('customer.identifier','=',$request->get('user')->id)
     ->select('agen.identifier')

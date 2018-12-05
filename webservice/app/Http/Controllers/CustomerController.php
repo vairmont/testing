@@ -72,7 +72,7 @@ class CustomerController extends Controller
 
             return response()->json(['data' => [], 'message' => ['OK']]);
             
-        }
+    }
 
         public function uploadPhotoCustomer(Request $request)
     {
@@ -240,6 +240,7 @@ class CustomerController extends Controller
                 'identifier' =>$save->id,
                 'agen_id' => $agen->id,
                 'name' => $request->name,
+                'email' => $request->email,
                 'no_va' => $nova['nova'],
                 'terminal_id' => $res['keterangan'],
                 'gender' => $request->gender

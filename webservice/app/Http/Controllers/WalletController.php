@@ -198,8 +198,12 @@ class WalletController extends Controller
         $order->status = '2'; 
        $order->airway_bill = $resi['detail'][0]['cnote_no'];
        $order->save();  
-     
-        //KOMISI
+
+         
+         //untuk Customer
+         if($user->role_id != 5)
+          {
+         //KOMISI
          $incentiveDetails = OrderDetail::join('product', 'product.id', '=', 'order_detail.product_id')
                         ->join('incentive_category', 'incentive_category.id', '=', 'product.incentive_id')
                         ->where('order_id', '=', $order->id)
@@ -242,6 +246,7 @@ class WalletController extends Controller
                         ->update([
                     'wanee' => $history->saldo_akhir
                 ]);
+          }              
 
         return response()->json(['data' => [$datay], 'nominal' => [$res['nominal']], 'invoice' => [$order->invoice_no], 'message' => ['OK']]);
         }
