@@ -22,9 +22,13 @@ Route::get('/daftaritem', 'ItemController@getDaftarItem');
 
 Route::get('/byitem', 'ReportController@getByItem');
 Route::get('/bystore', 'ReportController@getBystore');
+// untuk Laporan penjualan (custom) untuk bulan November ke atas 
+Route::get('/bystorenov', 'ReportController@getBystoreNov');
+Route::get('/bystorenovinvoice/{id}','ReportController@getInvoiceNov')->name('getinvnov');
+
 Route::get('/bymargin','ReportController@getByMargin');
 
-// percobaan tombol inVoice untuk Laporan Penjualan
+// tombol inVoice untuk Laporan Penjualan
 Route::get('/bystoreinvoice/{id}','ReportController@getInvoice')->name('getinv');
 
 

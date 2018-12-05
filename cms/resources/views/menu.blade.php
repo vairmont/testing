@@ -23,6 +23,10 @@
                         <li>
                             <a href="{{url('/bycategory')}}">Laporan Penjualan kategori</a>
                         </li>
+                        <p>-----------------------------------------------------------</p>
+                        <li>
+                            <a href="{{url('/bystorenov')}}">Laporan  Penjualan (Nov)</a>
+                        </li>
                     </ul>
                     <!-- /.nav-second-level -->
                 </li>
