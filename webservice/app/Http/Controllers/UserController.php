@@ -40,7 +40,8 @@ class UserController extends Controller
     {
         $data = [
         'name' => $request->name,
-        'address' => $request->address
+        'address' => $request->address,
+        'email' => $request->email
         ];
 
         $save = Customer::where('identifier', '=', $request->get('user')->id)
@@ -189,7 +190,6 @@ class UserController extends Controller
             }
         }
     }
-
 
     public function getCustomerList(Request $request){
         $agen = Agen::where('identifier','=', $request->get('user')->id)->first();

@@ -42,7 +42,9 @@ class PaymentController extends Controller
 	        );
 
             $end_point = 'https://api.xendit.co/v2/invoices';
-
+            // $custo = Customer::join('order', 'order.user_id', '=', 'customer.identifier')
+            //         ->where('order.invoice_no', '=', $request->invoice_no)
+            //         ->first();
             $data['external_id'] = $request->invoice_no;
             $data['amount'] = $request->total;
             $data['payer_email'] = 'jorjonna@gmail.com';

@@ -157,6 +157,11 @@ Route::group(['prefix' => '/v1','middleware' => 'VerifyBearerToken'], function (
   Route::post('/address', 'AddressController@addAddress');
   Route::post('/editaddress', 'AddressController@editAddress');
 
+  Route::get('/account', 'BankController@getAccount');
+  Route::post('/account', 'BankController@addAccount');
+  Route::post('/editaccount', 'BankController@editAccount');
+  Route::get('/bank', 'BankController@getBank');
+
   Route::get('/family', 'FamilyController@getFamily');
   Route::get('/commission', 'CommissionController@getCommission');
 });
