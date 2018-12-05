@@ -26,7 +26,11 @@ class PaymentController extends Controller
     public  function createInvoice (Request $request) {
 
 			// API access key from Google API's Console
-   			define('API_ACCESS_KEY', 'Basic eG5kX2RldmVsb3BtZW50X09vQ0NmTDV5MExlc2xNWmdLZElIV2FTWTRMMTlJWjl4WEd5UnhuMkxlTHlqQ3c1emdROg==');
+        // DEVELOP
+   			// define('API_ACCESS_KEY', 'Basic eG5kX2RldmVsb3BtZW50X09vQ0NmTDV5MExlc2xNWmdLZElIV2FTWTRMMTlJWjl4WEd5UnhuMkxlTHlqQ3c1emdROg==');
+
+        // PRODUCTION
+        define('API_ACCESS_KEY', 'Basic eG5kX3Byb2R1Y3Rpb25fUG9FZkw1eTBMZXNsTVpnS2RJSFdhU1k0TDE5SVo5eFhHeVJ4bjJMZUx5akN3NXpnUTo=');
 
 
             $curl = curl_init();
@@ -41,7 +45,7 @@ class PaymentController extends Controller
 
             $data['external_id'] = $request->invoice_no;
             $data['amount'] = $request->total;
-            $data['payer_email'] = $request->email;
+            $data['payer_email'] = 'jorjonna@gmail.com';
             $data['description'] = $request->type;
 
             // if (!empty($invoice_options['callback_virtual_account_id'])) {
@@ -123,7 +127,7 @@ class PaymentController extends Controller
                 $history->save();
               }
 
-                #curl
+                // #curl
                 $ch = curl_init(); 
 
                 $idrs = 'DR1108';
