@@ -470,4 +470,120 @@ class ReportController extends Controller
         
    }
 
+   // untuk Laporan penjualan bulan Nov ke atas 
+   public function getByStoreNov(Request $request){
+        $isExport = $request->get('is_export', 0);
+        $args['pages'] = $isExport;
+
+        $bulanA = new Carbon('first day of november 2018');
+
+        $flowreport = Order::leftjoin('order_detail','order.id','=','order_detail.order_id')
+        ->leftjoin('product','product.id','=','order_detail.product_id')
+        ->leftjoin('incentive_category','incentive_category.id','=','product.incentive_id')
+        ->leftjoin('agen','agen.identifier','=','order.agen_id')
+        ->leftjoin('users','users.id','=','agen.identifier')
+        ->leftjoin('customer','customer.identifier','=','order.user_id')
+        ->leftjoin('store','store.id','=','users.store_id')
+        
+        ->whereIn('order.status',[7,9])
+        ->where('order.created_at','>',$bulanA)
+        ->where('order.type','=','sembako')
+        ->select('customer.name as cusname','product.tax as tax','order.discount as discount','agen.source as source','store.store_name as stoname','order_detail.qty as qty','incentive_category.rate as rate','order.invoice_no as invoice','agen.name as name','order_detail.id as id','product.product_name as proname','order_detail.price_for_agen as agen_price','order_detail.price_for_customer as customer_price','order.created_at as create','order.updated_at as update','order.agen_id as aid', 'product.promo_price');
+
+        
+        if(isset($request->date) && $request->date == '1'){
+            $flowreport = Order::leftjoin('order_detail','order.id','=','order_detail.order_id')
+            ->leftjoin('product','product.id','=','order_detail.product_id')
+            ->leftjoin('incentive_category','incentive_category.id','=','product.incentive_id')
+            ->leftjoin('agen','agen.identifier','=','order.agen_id')
+            ->leftjoin('users','users.id','=','agen.identifier')
+            ->leftjoin('customer','customer.identifier','=','order.user_id')
+            ->leftjoin('store','store.id','=','users.store_id')
+            ->whereIn('order.status',[7,9])
+            ->where('order.created_at','>',$bulanA)
+            ->where('order.type','=','sembako')
+            ->select('customer.name as cusname','product.tax as tax','store.store_name as stoname','order_detail.qty as qty','incentive_category.rate as rate','order.invoice_no as invoice','agen.name as name','order_detail.order_id as id','product.product_name as proname','order_detail.price_for_agen as agen_price','order_detail.price_for_customer as customer_price','order.created_at as create','order.updated_at as update','order.agen_id as aid', 'product.promo_price')
+            ->whereDate('order.created_at','=',Carbon::today()->toDateString());
+        }
+        if(isset($request->date) && $request->date == '2'){
+            $flowreport = Order::leftjoin('order_detail','order.id','=','order_detail.order_id')
+            ->leftjoin('product','product.id','=','order_detail.product_id')
+            ->leftjoin('incentive_category','incentive_category.id','=','product.incentive_id')
+            ->leftjoin('agen','agen.identifier','=','order.agen_id')
+            ->leftjoin('users','users.id','=','agen.identifier')
+            ->leftjoin('customer','customer.identifier','=','order.user_id')
+            ->leftjoin('store','store.id','=','users.store_id')
+            ->whereIn('order.status',[7,9])
+            ->where('order.created_at','>',$bulanA)
+            ->where('order.type','=','sembako')
+            ->select('customer.name as cusname','product.tax as tax','store.store_name as stoname','order_detail.qty as qty','incentive_category.rate as rate','order.invoice_no as invoice','agen.name as name','order_detail.order_id as id','product.product_name as proname','order_detail.price_for_agen as agen_price','order_detail.price_for_customer as customer_price','order.created_at as create','order.updated_at as update','order.agen_id as aid', 'product.promo_price')
+            ->whereMonth('order.created_at', '=', date('m'));
+        }
+        if(isset($request->dayword1) && !empty($request->dayword1) && isset($request->dayword2) && !empty($request->dayword2)){
+            $flowreport = $flowreport->whereBetween('order.created_at',[$request->dayword1, Carbon::parse($request->dayword2)->addDays(1)]);
+        }
+        if(isset($request->keyword) && !empty($request->keyword)) {
+            $flowreport = $flowreport->where('agen.name','like',$request->keyword.'%');
+        }
+        if(isset($request->key) && !empty($request->key)) {
+            $flowreport = $flowreport->where('store.store_name','like',$request->key.'%');
+        }
+        if(isset($request->keyword1) && !empty($request->keyword1)) {
+            $flowreport = $flowreport->where('product.product_name','like',$request->keyword1.'%');
+        }
+        
+        
+        $qry = $flowreport->get();
+
+        $total = 0;
+        foreach($qry as $q) {
+        
+            $total += ($q->promo_price == 0) ? ($q->customer_price * $q->qty * 0.95) : ($q->promo_price * $q->qty * 0.95);
+        }
+
+        $total2 = 0;
+        foreach($qry as $q){
+
+            $total2 += ($q->promo_price == 0) ? ($q->customer_price * $q->qty * 0.05) : ($q->promo_price * $q->qty * 0.05);
+        }
+        
+        $total3 =0;
+        foreach($qry as $q){
+
+            $total3 += ($q->promo_price == 0) ? ($q->customer_price * $q->qty * 0.95 * $q->rate / 100) : ($q->promo_price * $q->qty * 0.95 * $q->rate / 100); 
+        }
+
+        if ($isExport) {
+            $this->_export_excel($qry);
+        }
+        $flowreport = $flowreport->orderBy('order.id','desc')->paginate(10);
+        return view('report.bystorenov',compact('flowreport','total','request','total2','total3'))->withTitle('By Store Nov');
+    }
+
+    //Tombol inVoice untuk tampilan laporan penjualan november
+   public function getInvoiceNov(request $request, $id)
+   {
+        $bulanA = new Carbon('first day of november 2018');
+
+        $flowreport = Order::leftjoin('order_detail','order.id','=','order_detail.order_id')
+        ->leftjoin('product','product.id','=','order_detail.product_id')
+        ->leftjoin('incentive_category','incentive_category.id','=','product.incentive_id')
+        ->leftjoin('agen','agen.identifier','=','order.agen_id')
+        ->leftjoin('users','users.id','=','agen.identifier')
+        ->leftjoin('customer','customer.identifier','=','order.user_id')
+        ->leftjoin('store','store.id','=','users.store_id')
+        
+        ->whereIn('order.status',[7,9])
+        ->where('order.created_at','>',$bulanA)
+        ->where('order.type','=','sembako')
+        ->select('customer.name as cusname','product.tax as tax','order.discount as discount','agen.source as source','store.store_name as stoname','order_detail.qty as qty','incentive_category.rate as rate','order.invoice_no as invoice','agen.name as name','order_detail.id as id','product.product_name as proname','order_detail.price_for_agen as agen_price','order_detail.price_for_customer as customer_price','order.created_at as create','order.updated_at as update','order.agen_id as aid', 'product.promo_price')
+        ->where('order_detail.id',$id)
+        ->get();
+
+        $pdf = PDF::loadView('pdf.invoicenovbyorder',compact('flowreport','request'));
+        //return view('pdf.invoicenovbyorder',compact('flowreport','request'));
+        return $pdf->download('invoicenovbyorder.pdf');
+        
+   }
+
 }
