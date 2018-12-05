@@ -37,6 +37,7 @@ class OrderControllerCustomer extends Controller
       ->join('order_billing_detail','order_billing_detail.order_id','=','order.id')
       ->where('user_id', '=', $request->get('user')->id)
       ->whereIn('status', [1,2,6])
+      ->where('airway_bill', '!=', null)
       ->select('order.*','customer.name as name','order_billing_detail.customer_name','order_billing_detail.customer_phone','order_billing_detail.customer_address2', 'order_billing_detail.notes as order_notes')
       ->orderBy('created_at', 'desc')
       ->get();

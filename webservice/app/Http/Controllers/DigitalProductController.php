@@ -126,6 +126,7 @@ class DigitalProductController extends Controller {
 
       $orders = OrderDigital::join('customer','customer.identifier','=','order_digital.user_id')
       ->where('user_id', '=', $request->get('user')->id)
+      ->where('status_payment', '!=', 'pending')
       ->select('order_digital.*','customer.name as name')
       ->orderBy('created_at', 'desc')
       ->get();
