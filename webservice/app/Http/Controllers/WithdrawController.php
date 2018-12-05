@@ -52,7 +52,7 @@ class WithdrawController extends Controller
         }
 
         if($request->amount < 10000){
-          return response()->json(['message' => ['Penarikan minimal Rp 10.000.']]);
+          return response()->json(['message' => ['Penarikan minimal Rp 100.000.']]);
         }
       else{
             
