@@ -9,6 +9,7 @@ use App\Agen;
 use App\User;
 use App\WaneeHistory;
 use App\Withdraw;
+use Hash;
 
 class WithdrawController extends Controller
 {
@@ -51,7 +52,7 @@ class WithdrawController extends Controller
           return response()->json(['data' => [], 'message' => ['Saldo anda kurang']]);
         }
 
-        if($request->amount < 10000){
+        if($request->amount < 100000){
           return response()->json(['message' => ['Penarikan minimal Rp 100.000.']]);
         }
       else{
