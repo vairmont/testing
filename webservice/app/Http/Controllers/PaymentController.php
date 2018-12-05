@@ -94,12 +94,18 @@ class PaymentController extends Controller
         $order = OrderDigital::where('invoice_no','=',$request->external_id)->first();
          $user = User::where('id', '=', $order->user_id)->first();
 
-            if($request->status == 'SETTLED'){
-                $order->status_payment = 'settled';
-                $order->payment_method = $request->payment_method;
-                $order->save();
-            }
-            else if($request->status == 'PAID'){
+            // if($request->status == 'SETTLED'){
+            //     $order->status_payment = 'settled';
+            //     $order->payment_method = $request->payment_method;
+            //     $order->save();
+            // }
+
+            if($request->status == 'PAID' || $request->status == 'SETTLED'){
+
+              $order->status_payment = $request->status;
+              $order->payment_method = $request->payment_method;
+              $order->save();
+
                  //untuk Customer
              if($user->role_id != 5)
               {
@@ -154,9 +160,6 @@ class PaymentController extends Controller
                 $res = json_decode($output,true);
                 // send push notif ke agen
                 $this->_sendPushNotification($order->agen_id, "Pulsa", "Customer Membeli Pulsa.");
-                $order->status_payment = 'paid';
-                $order->payment_method = $request->payment_method;
-                $order->save();
             }
             
             else if($request->status == 'PENDING'){
