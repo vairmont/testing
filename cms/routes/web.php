@@ -38,32 +38,27 @@ Route::get('/byemployee','ReportController@getByEmployee');
 
 Route::get('/bysupply', 'SupplierController@getBySupplier');
 
+//Wanee Controller
 Route::get('/byagent','EmployeeController@getByAgent');
 Route::get('/bywaneehistory','EmployeeController@getBywanneHistory');
 Route::get('/bywaneepending','EmployeeController@getByWaneePending');
 Route::get('/bywaneeapprove','EmployeeController@getByWaneeApprove');
-
 Route::get('/byshowwithdraw', 'WithDrawController@getByShowWithDraw');
+Route::post('/verifywanee3','EmployeeController@updateStatus1')->name('status3');
+Route::post('/verifywanee4','EmployeeController@updateStatus2')->name('status4');
+Route::get('/verifywanee2/{id}','EmployeeController@updateStatus')->name('status2');
+Route::get('/verifywanee/{id}','EmployeeController@updateStatus')->name('status1');
 
-Route::get('/bywithdraw', 'WithDrawController@getByWithDraw');
-Route::get('/bywithdrawdone', 'WithDrawController@getByWithDrawDone');
-
+//JNE Controller
 Route::get('/byjne','JneController@getByJne');
 Route::get('/verifyjne/{id}','JneController@updateStatus')->name('statusjne');
 
-Route::get('/verifywanee/{id}','EmployeeController@updateStatus')->name('status1');
-Route::post('/verifycheckbox','EmployeeController@updateCheck')->name('check1');
-Route::post('/verifywanee3','EmployeeController@updateStatus1')->name('status3');
-Route::post('/verifywanee4','EmployeeController@updateStatus2')->name('status4');
-
-
-Route::get('/verifywanee2/{id}','EmployeeController@updateStatus')->name('status2');
-
+//Withdraw Controller
+Route::get('/bywithdraw', 'WithDrawController@getByWithDraw');
+Route::get('/bywithdrawdone', 'WithDrawController@getByWithDrawDone');
 Route::get('/verifywithdraw/{id}','WithDrawController@updateStatus')->name('status');
-
-
+Route::post('/verifycheckbox','EmployeeController@updateCheck')->name('check1');
 Route::post('/verifyagent/{id}','EmployeeController@updateVerify')->name('verify');
-
 Route::post('/verifywithdraw','WithDrawController@updateStatus')->name('check2');
 Route::post('/verifyshowwithdraw','WithDrawController@updateStatusWithdraw')->name('check3');
 
@@ -71,7 +66,6 @@ Route::get('/bypurchaseorder','InventoryController@getByPurchaseorder');
 Route::get('/bytransferorder','InventoryController@getByTransferorder');
 Route::get('/bystockadjustment','InventoryController@getByAdjustment');
 Route::post('/editstock/{id}', 'InventoryController@editStock');
-
 Route::get('/bysupplier','InventoryController@getBySupplier');
 Route::get('/byinventoryhistory','InventoryController@getByInventoryHistory');
 Route::get('/byinventoryvaluation','InventoryController@getByInventoryValuation');
@@ -80,6 +74,7 @@ Route::post('/finalize', 'OrderController@finalizeOrder');
 Route::get('/order', 'OrderController@orderProcess');
 Route::get('/paymentsuccess', 'ReportController@paymentSuccess');
 
+//Item COntroller
 Route::get('/additem', 'ItemController@formItem');
 Route::post('/additem', 'ItemController@saveItem');
 Route::get('/edititem/{id}', 'ItemController@formItem');
@@ -88,6 +83,7 @@ Route::get('/deleteitem/{id}', 'ItemController@deleteItem');
 Route::get('/slider', 'ItemController@getByAddSlider');
 Route::post('/insert', 'ItemController@saveSlider');
 
+//Shipment Controller
 Route::get('/finalize', 'ShipmentController@finalizeOrder')->name('finalize');
 Route::get('/delivery', 'ShipmentController@orderDeliver');
 Route::get('/done', 'ShipmentController@orderFinished');
@@ -96,6 +92,7 @@ Route::get('/deliver', 'ShipmentController@deliverOrder')->name('delivery');
 Route::get('/invoice/{id}', 'ShipmentController@invoice')->name('invoice');
 Route::get('/order', 'ShipmentController@orderProcess');
 
+//Category Controller
 Route::get('/kategori', 'ItemController@getKategori');
 Route::get('/addkategori', 'ItemController@formKategori');
 Route::post('/addkategori', 'ItemController@saveKategori');
@@ -103,6 +100,8 @@ Route::get('/editkategori/{id}', 'ItemController@formKategori');
 Route::post('/editkategori/{id}', 'ItemController@saveKategori');
 Route::get('/deletekategori/{id}', 'ItemController@deleteKategori');
 
+//Digital Controller
+Route::get('/digitalprod', 'DigitalController@getProductItem');
 
 Route::get('/modifier', 'ItemController@getModifier');
 Route::get('/addmodifier', 'ItemController@getAddModifier');

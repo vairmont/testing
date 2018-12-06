@@ -337,6 +337,9 @@
                             <li>
                                 <a href="{{url('/slider')}}">Slider</a>
                             </li>
+                            <li>
+                                <a href="{{ url('/digitalprod') }}">Digital Product</a>
+                            </li>
                         </ul>
                 </li>
                 <li>
